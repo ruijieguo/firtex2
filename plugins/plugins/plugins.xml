@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plugins>
+  <plugin>		
+    <identifier>processor.msoffice</identifier>
+    <clsid>CEA6A13B-397B-439a-B1F2-DF447F9C5BB7</clsid>
+    <name>MS Office Parser For FirteX</name>			
+    <progid>FirteX.MSOfficeParserPlugin.1</progid>
+    <versionindependentprogid>FirteX.MSOfficeParserPlugin</versionindependentprogid>
+    <filename>msofficeparserplugin</filename>	
+    <enable>true</enable>
+  </plugin>
+  <plugin>		
+    <identifier>processor.pdf</identifier>
+    <clsid>DC8E0FBE-9DFF-4f99-8F2D-525EDE968392</clsid>
+    <name>PDF Parser For FirteX</name>			
+    <progid>FirteX.PDFParserPlugin.1</progid>
+    <versionindependentprogid>FirteX.PDFParserPlugin</versionindependentprogid>
+    <filename>pdfparserplugin</filename>	
+    <enable>true</enable>
+  </plugin>
+</plugins>

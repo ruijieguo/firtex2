@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5/zh_cn"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" 
+[<!ENTITY chap1 SYSTEM "introduction.xml">
+<!ENTITY chap2 SYSTEM "quick_start.xml">
+<!ENTITY chap3 SYSTEM "query_syntax.xml">
+]>
+
+<book>
+  <bookinfo>
+    <title>FirteX2 用户使用手册</title>
+    <author>
+      <firstname>郭</firstname>
+      <surname>瑞杰</surname>
+      <affiliation>
+	<address><email>ruijieguo@gmail.com</email></address>
+      </affiliation>
+    </author>
+
+    <copyright>
+      <year>2011</year>
+      <holder>Ruijie Guo</holder>
+    </copyright>
+
+    <abstract>
+      <para>本文档描述Firtex2的基本概念、功能和使用方法。</para>
+      <para>(QQ技术群：51732886，加入请注明firtex2字样)</para>
+    </abstract>
+
+  </bookinfo>
+&chap1;
+&chap2;
+&chap3;
+</book>
+
+

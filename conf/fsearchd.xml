@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configure>
+  <!--Global paramters-->
+  <global>
+    <general>
+      <!--Dictionary directory -->
+      <dictionary_path>../sysdata</dictionary_path>
+      <!-- Plugin directory -->
+      <plugin_path>../plugins</plugin_path>
+    </general>
+
+    <!-- Define storage parameters -->
+    <storage>
+      <!-- Define file system type, allowable values: filesystem.mmap/filesystem.block -->
+      <filesystem>filesystem.mmap</filesystem>
+    </storage>
+  </global>
+
+  <searchd>
+    <server>
+      <host>localhost:19801</host>
+      <thread_pool>10</thread_pool>
+      <logger_conf>./logger_conf.xml</logger_conf>
+    </server>
+
+    <resource>
+      <index_data>../examples/data/plain_utf8_index</index_data>
+      <default_field>BODY</default_field>
+      <refresh_timer>0</refresh_timer>
+    </resource>
+  </searchd>
+</configure>

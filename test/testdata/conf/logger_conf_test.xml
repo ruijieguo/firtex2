@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configure>
+  <appenders>
+    <appender>
+      <name>myAppender</name>
+      <base>appender.file</base>
+      <layout>layout.pattern</layout>
+      <pattern>%d [%l] [%m] [%F,%f,%L]</pattern>
+      <path>myAppenderPath</path>
+      <rotation>1M</rotation>
+    </appender>
+  </appenders>
+  <loggers>
+    <logger>
+      <name>/</name>
+      <appender>appender.console</appender>
+      <level>info</level>
+    </logger>
+    <logger>
+      <name>child.grandchild1</name>
+      <appender>appender.console</appender>
+      <level>info</level>
+    </logger>
+    <logger>
+      <name>child2.grandchild2</name>
+      <appender>appender.file</appender>
+      <path>test_path</path>
+      <secondary_path></secondary_path>
+      <rotation></rotation>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>child3</name>
+      <appender>myAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>child3.grandchild3</name>
+      <level>debug</level>
+    </logger>
+  </loggers>
+</configure>

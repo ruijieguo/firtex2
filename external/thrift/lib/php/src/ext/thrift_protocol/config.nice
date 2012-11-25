@@ -1,0 +1,12 @@
+#! /bin/sh
+#
+# Created by configure
+
+CPPFLAGS='-I/home/guorj/svn/firtex2/external/libevent -I/home/guorj/svn/firtex2/external/libevent/include -I/home/guorj/svn/firtex2/external/libevent/include/event2 -I/home/guorj/svn/firtex2/external -I/usr/local' \
+LDFLAGS='-L/home/guorj/svn/firtex2/external/libevent/.libs' \
+LIBS='-lssl -lcrypto -lrt -lpthread ' \
+'./configure' \
+'--disable-option-checking' \
+'--prefix=/usr/local' \
+'--with-boost=/home/guorj/svn/firtex2/external' \
+"$@"

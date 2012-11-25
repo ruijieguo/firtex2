@@ -1,0 +1,572 @@
+BODY {
+	MARGIN: 1em; FONT-FAMILY: sans-serif
+}
+P {
+	TEXT-ALIGN: left; LINE-HEIGHT: 1.15; FONT-SIZE: 10pt
+}
+P TT.computeroutput {
+	FONT-SIZE: 9pt
+}
+PRE.synopsis {
+	PADDING-BOTTOM: 0.5pc; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+.programlisting {
+	PADDING-BOTTOM: 0.5pc; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+.screen {
+    COLOR: #000;
+    BACKGROUND-COLOR: #e9e9e9;
+    FONT-WEIGHT: normal;
+    BORDER: 1px dotted #666699;
+    MAX-HEIGHT:20em; 
+    OVERFLOW:auto;
+}
+TD .programlisting {
+	PADDING-BOTTOM: 0pc; MARGIN: 0pc; PADDING-LEFT: 0pc; PADDING-RIGHT: 0pc; PADDING-TOP: 0pc
+}
+TD .screen {
+	PADDING-BOTTOM: 0pc; MARGIN: 0pc; PADDING-LEFT: 0pc; PADDING-RIGHT: 0pc; PADDING-TOP: 0pc
+}
+H1 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H2 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H3 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H4 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H5 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H6 {
+	TEXT-ALIGN: left; MARGIN: 1em 0em 0.5em; FONT-WEIGHT: bold
+}
+H1 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: normal; FONT-SIZE: 140%; FONT-WEIGHT: normal
+}
+H2 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: normal; FONT-SIZE: 140%; FONT-WEIGHT: bold
+}
+H3 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: normal; FONT-SIZE: 130%; FONT-WEIGHT: bold
+}
+H4 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: normal; FONT-SIZE: 120%; FONT-WEIGHT: bold
+}
+H5 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: italic; FONT-SIZE: 110%; FONT-WEIGHT: normal
+}
+H6 {
+	LINE-HEIGHT: normal; FONT-VARIANT: normal; FONT-STYLE: italic; FONT-SIZE: 100%; FONT-WEIGHT: normal
+}
+TITLE {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H1.title {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H2.title H3.title {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H4.title {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H5.title {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H6.title {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+.refentrytitle {
+	MARGIN-BOTTOM: 1pc; FONT-WEIGHT: bold
+}
+H1.title {
+	FONT-SIZE: 140%
+}
+H2.title {
+	FONT-SIZE: 140%
+}
+H3.title {
+	FONT-SIZE: 130%
+}
+H4.title {
+	FONT-SIZE: 120%
+}
+H5.title {
+	FONT-SIZE: 110%
+}
+H6.title {
+	FONT-SIZE: 100%
+}
+.section H1 {
+	MARGIN: 0em 0em 0.5em; FONT-SIZE: 140%
+}
+.section H2 {
+	FONT-SIZE: 140%
+}
+.section H3 {
+	FONT-SIZE: 130%
+}
+.section H4 {
+	FONT-SIZE: 120%
+}
+.section H5 {
+	FONT-SIZE: 110%
+}
+.section H6 {
+	FONT-SIZE: 100%
+}
+H1 TT.computeroutput {
+	FONT-SIZE: 140%
+}
+H2 TT.computeroutput {
+	FONT-SIZE: 140%
+}
+H3 TT.computeroutput {
+	FONT-SIZE: 130%
+}
+H4 TT.computeroutput {
+	FONT-SIZE: 130%
+}
+H5 TT.computeroutput {
+	FONT-SIZE: 130%
+}
+H6 TT.computeroutput {
+	FONT-SIZE: 130%
+}
+H3.author {
+	FONT-SIZE: 100%
+}
+LI {
+	LINE-HEIGHT: 1.3; FONT-SIZE: 10pt
+}
+UL {
+	TEXT-ALIGN: left
+}
+OL {
+	TEXT-ALIGN: left
+}
+A {
+	TEXT-DECORATION: none
+}
+A:hover {
+	TEXT-DECORATION: underline
+}
+.spirit-nav {
+	TEXT-ALIGN: right
+}
+.spirit-nav A {
+	PADDING-LEFT: 0.5em; COLOR: white
+}
+.spirit-nav IMG {
+	BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px
+}
+.navfooter {
+	TEXT-ALIGN: right
+}
+.navfooter A {
+	PADDING-LEFT: 0.5em; COLOR: white
+}
+.navfooter IMG {
+	BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px
+}
+
+.navheader {
+	TEXT-ALIGN: right
+}
+.navheader A {
+	PADDING-LEFT: 0.5em; COLOR: white
+}
+.navheader IMG {
+	BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px
+}
+
+.copyright-footer {
+	TEXT-ALIGN: right; FONT-SIZE: 70%
+}
+.copyright-footer P {
+	TEXT-ALIGN: right; FONT-SIZE: 80%
+}
+.toc {
+	PADDING-BOTTOM: 0.1pc; LINE-HEIGHT: 1.15; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 1pc; PADDING-RIGHT: 1pc; FONT-SIZE: 80%; PADDING-TOP: 0.1pc
+}
+.boost-toc {
+	PADDING-BOTTOM: 0.5pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; FLOAT: right; PADDING-TOP: 0.5pc
+}
+.toc .computeroutput {
+	FONT-SIZE: 120%
+}
+.table-title {
+	PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; MARGIN-LEFT: 4%
+}
+DIV.table P.title {
+	PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; MARGIN-LEFT: 4%
+}
+.informaltable TABLE {
+	WIDTH: 92%; MARGIN-LEFT: 4%; MARGIN-RIGHT: 4%
+}
+.table TABLE {
+	WIDTH: 92%; MARGIN-LEFT: 4%; MARGIN-RIGHT: 4%
+}
+DIV.informaltable TABLE {
+	PADDING-BOTTOM: 4px; PADDING-LEFT: 4px; PADDING-RIGHT: 4px; PADDING-TOP: 4px
+}
+DIV.table TABLE {
+	PADDING-BOTTOM: 4px; PADDING-LEFT: 4px; PADDING-RIGHT: 4px; PADDING-TOP: 4px
+}
+DIV.informaltable TABLE TR TD {
+	TEXT-ALIGN: left; PADDING-BOTTOM: 0.5em; PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; FONT-SIZE: 9pt; PADDING-TOP: 0.5em
+}
+DIV.table TABLE TR TD {
+	TEXT-ALIGN: left; PADDING-BOTTOM: 0.5em; PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; FONT-SIZE: 9pt; PADDING-TOP: 0.5em
+}
+DIV.informaltable TABLE TR TH {
+	BORDER-BOTTOM: white 1pt solid; BORDER-LEFT: white 1pt solid; PADDING-BOTTOM: 0.5em; PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; FONT-SIZE: 80%; BORDER-TOP: white 1pt solid; BORDER-RIGHT: white 1pt solid; PADDING-TOP: 0.5em
+}
+DIV.table TABLE TR TH {
+	BORDER-BOTTOM: white 1pt solid; BORDER-LEFT: white 1pt solid; PADDING-BOTTOM: 0.5em; PADDING-LEFT: 0.5em; PADDING-RIGHT: 0.5em; FONT-SIZE: 80%; BORDER-TOP: white 1pt solid; BORDER-RIGHT: white 1pt solid; PADDING-TOP: 0.5em
+}
+TABLE.simplelist {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; PADDING-BOTTOM: 0em !important; MARGIN: 0em; PADDING-LEFT: 0em !important; WIDTH: auto !important; PADDING-RIGHT: 0em !important; BORDER-TOP: medium none; BORDER-RIGHT: medium none; PADDING-TOP: 0em !important
+}
+TABLE.simplelist TD {
+	BORDER-BOTTOM: medium none; TEXT-ALIGN: left !important; BORDER-LEFT: medium none; PADDING-BOTTOM: 0em !important; MARGIN: 0em; PADDING-LEFT: 0em !important; PADDING-RIGHT: 0em !important; FONT-SIZE: 9pt !important; BORDER-TOP: medium none; BORDER-RIGHT: medium none; PADDING-TOP: 0em !important
+}
+DIV.note {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+DIV.tip {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+DIV.important {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+DIV.caution {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+DIV.warning {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+P.blurb {
+	PADDING-BOTTOM: 0.5pc; LINE-HEIGHT: 1.2; MARGIN: 1pc 4% 0pc; PADDING-LEFT: 0.5pc; PADDING-RIGHT: 0.5pc; DISPLAY: block; FONT-SIZE: 9pt; PADDING-TOP: 0.5pc
+}
+P.blurb IMG {
+	PADDING-BOTTOM: 1pt; PADDING-LEFT: 1pt; PADDING-RIGHT: 1pt; PADDING-TOP: 1pt
+}
+DIV.variablelist {
+	MARGIN: 1em 0px
+}
+DIV.variablelist DL DT {
+	FONT-SIZE: 10pt; FONT-WEIGHT: bold
+}
+SPAN.term {
+	FONT-SIZE: 10pt; FONT-WEIGHT: bold
+}
+DIV.variablelist TABLE TBODY TR TD {
+	TEXT-ALIGN: left; PADDING-BOTTOM: 0em; LINE-HEIGHT: 1; MARGIN: 0em 0em 0.5em; PADDING-LEFT: 0em; PADDING-RIGHT: 2em; FONT-SIZE: 10pt; VERTICAL-ALIGN: top; PADDING-TOP: 0em
+}
+DIV.variablelist DL DT {
+	MARGIN-BOTTOM: 0.2em
+}
+DIV.variablelist DL DD {
+	MARGIN: 0em 0em 0.5em 2em; FONT-SIZE: 10pt
+}
+DIV.variablelist TABLE TBODY TR TD P {
+	LINE-HEIGHT: 1; MARGIN: 0em 0em 0.5em
+}
+DIV.variablelist DL DD P {
+	LINE-HEIGHT: 1; MARGIN: 0em 0em 0.5em
+}
+SPAN.title {
+	FONT-STYLE: italic
+}
+SPAN.underline {
+	TEXT-DECORATION: underline
+}
+SPAN.strikethrough {
+	TEXT-DECORATION: line-through
+}
+DIV DIV.legalnotice P {
+	TEXT-ALIGN: left
+}
+
+@media Screen    
+{
+BODY {
+	BACKGROUND-COLOR: #ffffff; COLOR: #000000
+}
+.keyword {
+	COLOR: #0000aa
+}
+.identifier {
+	COLOR: #000000
+}
+.special {
+	COLOR: #707070
+}
+.preprocessor {
+	COLOR: #402080
+}
+.char {
+	COLOR: teal
+}
+.comment {
+	COLOR: #800000
+}
+.string {
+	COLOR: teal
+}
+.number {
+	COLOR: teal
+}
+.white_bkd {
+	BACKGROUND-COLOR: #ffffff
+}
+.dk_grey_bkd {
+	BACKGROUND-COLOR: #999999
+}
+A {
+	COLOR: #005a9c
+}
+A .keyword {
+	COLOR: #005a9c
+}
+A .identifier {
+	COLOR: #005a9c
+}
+A .special {
+	COLOR: #005a9c
+}
+A .preprocessor A .char {
+	COLOR: #005a9c
+}
+A .comment {
+	COLOR: #005a9c
+}
+A .string {
+	COLOR: #005a9c
+}
+A .number {
+	COLOR: #005a9c
+}
+A:visited {
+	COLOR: #9c5a9c
+}
+A:visited .keyword {
+	COLOR: #9c5a9c
+}
+A:visited .identifier {
+	COLOR: #9c5a9c
+}
+A:visited .special {
+	COLOR: #9c5a9c
+}
+A:visited .preprocessor A:visited .char {
+	COLOR: #9c5a9c
+}
+A:visited .comment {
+	COLOR: #9c5a9c
+}
+A:visited .string {
+	COLOR: #9c5a9c
+}
+A:visited .number {
+	COLOR: #9c5a9c
+}
+H1 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H2 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H3 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H4 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H5 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H6 A {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H1 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H2 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H3 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H4 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H5 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H6 A:hover {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H1 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H2 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H3 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H4 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H5 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+H6 A:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+.copyright {
+	COLOR: #666666; FONT-SIZE: small
+}
+DIV DIV.legalnotice P {
+	COLOR: #666666
+}
+PRE.synopsis {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+.programlisting {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+.screen {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+TD .programlisting {
+	BORDER-BOTTOM: #dcdcdc 0px solid; BORDER-LEFT: #dcdcdc 0px solid; BORDER-TOP: #dcdcdc 0px solid; BORDER-RIGHT: #dcdcdc 0px solid
+}
+TD .screen {
+	BORDER-BOTTOM: #dcdcdc 0px solid; BORDER-LEFT: #dcdcdc 0px solid; BORDER-TOP: #dcdcdc 0px solid; BORDER-RIGHT: #dcdcdc 0px solid
+}
+DIV.note {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.tip {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.important {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.caution {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.warning {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+P.blurb {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+.toc {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.informaltable TABLE TR TD {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.table TABLE TR TD {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.informaltable TABLE TR TH {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BACKGROUND-COLOR: #f0f0f0; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+DIV.table TABLE TR TH {
+	BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BACKGROUND-COLOR: #f0f0f0; BORDER-TOP: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid
+}
+.copyright-footer {
+	COLOR: #8f8f8f
+}
+SPAN.highlight {
+	COLOR: #00a000
+}
+
+}
+
+@media Print    
+{
+A {
+	COLOR: black
+}
+A:visited {
+	COLOR: black
+}
+.spirit-nav {
+	DISPLAY: none
+}
+.navfooter {
+	DISPLAY: none
+}
+.navheader {
+	DISPLAY: none
+}
+
+PRE.synopsis {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+.programlisting {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+.screen {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+TD .programlisting {
+	BORDER-BOTTOM: #dcdcdc 0px solid; BORDER-LEFT: #dcdcdc 0px solid; BORDER-TOP: #dcdcdc 0px solid; BORDER-RIGHT: #dcdcdc 0px solid
+}
+TD .screen {
+	BORDER-BOTTOM: #dcdcdc 0px solid; BORDER-LEFT: #dcdcdc 0px solid; BORDER-TOP: #dcdcdc 0px solid; BORDER-RIGHT: #dcdcdc 0px solid
+}
+.toc {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+.informaltable TABLE {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-COLLAPSE: collapse; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+.table TABLE {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-COLLAPSE: collapse; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+DIV.informaltable TABLE TR TD {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+DIV.table TABLE TR TD {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+DIV.informaltable TABLE TR TH {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+DIV.table TABLE TR TH {
+	BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: gray 1px solid; BORDER-TOP: gray 1px solid; BORDER-RIGHT: gray 1px solid
+}
+TABLE.simplelist TR TD {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+SPAN.highlight {
+	FONT-WEIGHT: bold
+}
+    }
+SPAN.inlinemediaobject IMG {
+	VERTICAL-ALIGN: middle
+}
+SUP {
+	POSITION: relative; LINE-HEIGHT: 1; HEIGHT: 0px; VERTICAL-ALIGN: bottom
+}
+SUB {
+	POSITION: relative; LINE-HEIGHT: 1; HEIGHT: 0px; VERTICAL-ALIGN: bottom
+}
+SUP {
+	BOTTOM: 1ex
+}
+SUB {
+	TOP: 0.5ex
+}

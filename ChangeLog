@@ -1,0 +1,71 @@
+2012-11-24 Ruijie Guo <ruijieguo@gmail.com>
+	* [release] firtex2-0.5.0 released
+
+2012-11-23 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] update thrift to 0.9
+
+2012-05-3 Ruijie Guo <ruijieguo@gmail.com>
+	* [bugfix] phrase match failed in some case
+
+2012-04-28 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Add watchdog service
+
+2012-02-09 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Add fbench tool for benchmark
+
+2012-01-22 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Support rpc (using thrift)
+	* [refactor] Refactor HTTP server (using libevent instead of asio)
+	* [feature] Support datetime index and forward index(DATETIME/DATETIME64/DATETIME_I/DATETIME_IF)
+
+2011-07-30 Ruijie Guo <ruijieguo@gmail.com>
+	* [bugfix] memory uncontrolled when merging
+	* [bugfix] merge failed if the forward index value of last doc missed
+
+2011-07-23 Ruijie Guo <ruijieguo@gmail.com>
+	* Release firtex2-0.4.0
+
+2011-07-17 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] implement concurrent index merge
+	* [feature] implement in-memory index barrel merge
+
+2011-07-11 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] implement keep by commit index cleaner
+	* [remove] remove barrels.commits file in index database
+
+2011-07-10 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] implement mmap file system
+	* [optimize] improve merging performance
+	* [feature] implement concurrent merge scheduler
+
+2011-07-07 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] remove parser module, add processor module in extension branch
+	* [remove] refactor collection module, remove firtex/filelist/tw/gztw/ziptrec collection
+	* [feature] add standard colletion
+	* [feature] support processing document with multi-thread, configure by <process_thread_count>
+	* [feature] Add fproxy application, support simple distribute search
+	* [feature] Add fbuilder application
+	* [feature] Add Pattern/simple layout for logger
+	* [change] Change configure tag <merge_strategy> to <merge>, <index> to <build>
+
+2011-06-18 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Support building index with multi-thread, improve building performace, configure by <build_thread_count>
+
+2011-05-29 Ruijie Guo <ruijieguo@gmail.com>
+	* Release firtex2-0.3.0
+
+2011-05-19 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Add HTTP search service (based on asio)
+	* [bugfix] Search result uncorrect when there are multi index barrels
+
+2011-04-05 Ruijie Guo <ruijieguo@gmail.com>
+	* Release firtex2-0.2.0
+
+2011-04-03 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Add single word analyzer, support utf-8/gbk text
+
+2011-03-27 Ruijie Guo <ruijieguo@gmail.com>
+	* [feature] Refactor StandardAnalyzer, support utf-8/gbk Chinese word segment
+
+2011-03-12 Ruijie Guo <ruijieguo@gmail.com>
+	* Release firtex2-0.1.0

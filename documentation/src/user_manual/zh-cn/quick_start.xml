@@ -1,0 +1,1718 @@
+<chapter id="quick_start">
+  <title>快速入门</title>
+
+  <para>本节介绍FirteX2的编译、安装和基本使用.</para>
+  <sect1 id="quick_start_compile">
+    <title>编译和安装</title>
+    <sect2>
+      <title>支持系统</title>
+      <para>在大部分Linux平台和各个版本的Windows平台下，FirteX2无须修改即可直接编译成功。</para>
+      <para>到目前为止，FirteX2在如下平台下成功编译：</para>
+      <itemizedlist>
+	<listitem>Windows 7/Vista/XP/Windows server 2003, visual
+	studio 2005/2008/2010</listitem>
+	<listitem>Ubuntu 10.04 LTS/g++ 4.4.3</listitem>
+	<listitem>MAC OS X/g++ 4.2.1</listitem>
+      </itemizedlist>
+      <para>如果你在其他平台成功编译，请向我们报告。</para>
+    </sect2>
+    <sect2>
+      <title>在Linux系统安装FirteX2</title>
+      <orderedlist>
+	<listitem><para>编译依赖：</para>
+	  <itemizedlist>
+	    <listitem>
+	      <itemizedlist><para>必须工具：</para>
+		<listitem>g++ 4.4.3或更高版本</listitem>
+		<listitem>automake 1.10或更高版本</listitem>
+		<listitem>bison 2.3或更高版本</listitem>
+		<listitem>flex2.5.35或更高版本</listitem>
+	      </itemizedlist>
+	    </listitem>
+	    <listitem>
+	      <itemizedlist><para>可选工具：</para>
+		<listitem>doxygen 1.6.3或更高版本(用于生成API文档)</listitem>
+		<listitem>libxml/libxslt/libexslt/xsltproc/docbook xsl 1.76.1或更高版本（用于编译生成本文档）</listitem>
+	      </itemizedlist>
+	    </listitem>
+	  </itemizedlist>
+	</listitem>
+	
+	<listitem><para>编译和安装：</para>
+	  <orderedlist>
+	    <listitem>从<ulink url="http://www.sourceforge.net/projects/firtex">http://www.sourceforge.net/projects/firtex</ulink>获取最新发布源代码，解压缩并进入解压缩目录：
+	      <screen>
+$tar zxf firtex2-0.5.0.tar.gz
+$cd firtex2-0.5.0</screen>
+	    </listitem>  
+	    <listitem>生成编译文件和脚本：
+	      <screen>$chmod +x ./bootstrap.sh &amp;&amp; ./bootstrap.sh</screen>
+	    该脚本支持configure命令参数。
+	    </listitem>
+	    <listitem>也可单独配置编译：
+	      <screen>$./configure</screen>
+	      <para>configure命令有如下几个主要配置参数：
+		<itemizedlist>
+		  <listitem>--with-debug[=yes/no]: 带debug信息编译,
+		  默认为release模式编译(-g -O3)</listitem>
+		  <listitem>--with-profile[=yes/no]: 带-pg编译, 用于程序profile</listitem>
+		  <listitem>--prefix[=PATH]: 指定安装路径前缀，默认前缀是/usr/local.</listitem>
+		  <listitem>--with-tcmalloc[=PATH]: 指定tcmalloc安装目录，在测试用例中链接tcmalloc，用于自动检测内存泄露，默认不带tcmalloc编译</listitem>
+		  <listitem>--with-snowball[=yes/no]:是否编译snowball模块 (用于英文词根还原), 默认不编译</listitem>
+		  <listitem>--without-highlighter[=yes/no]: 是否编译highlighter模块,默认编译</listitem>
+		  <listitem>--with-boost[=PATH]: 是否指定boost库编译,
+		  默认使用自自带地简化版boost库</listitem>
+		  <listitem>--with-thrift[=PATH]:
+		  是否指定thrift库, 默认使用自带的thrift库</listitem>
+		</itemizedlist>
+	      </para>
+	    </listitem>
+	    <listitem>编译：
+	      <screen>$make</screen>
+	    </listitem>
+	    <listitem>安装：
+	      <screen>$make install</screen>
+	      <para>默认可执行程序将安装至/usr/local,
+	      可通过configure的--prefix参数指定其他目录. 执行安装后,
+	      可执行程序将安装至$(prefix)/firtex2/bin,
+	      配置文件样例将安装至$(prefix)/firtex2/conf目录, 插件将安装至$(prefix)/firtex2/plugins目录,分词词典等系统数据文件将安装至$(prefix)/firtex2/sysdata目录. 库文件将安装至$(prefix)/lib, 头文件将安装至$(prefix)/include目录.</para>
+	    </listitem>
+	    
+	    <listitem>编译生成本文档：
+	      <screen>$cd documentation/src
+$make docbook</screen>
+	      <para>编译生成HTML文档需要安装libxml/libxslt/libexslt/xsltproc，编译生成PDF文档需要安装fop。</para>
+	    </listitem>
+	  </orderedlist>
+	  <tip>
+	    <title>编译注意事项</title>
+	    <orderedlist>
+	      <listitem>
+		<para>使用低版本flex(版本号低于2.5.35)编译，解析器部分的代码可能编译不过，请更新flex版本，或者执行：
+		  <screen>make distclean</screen>
+		后重新编译。
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		Ubuntu 12.03 LTS等平台下编译可能出现错误提示：Error: libcrypto required，可以通过安装libssl-dev解决该问题。
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </tip>
+      </listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Windows系统下编译</title>
+      <orderedlist>
+	<listitem><para>编译依赖：</para>
+	  <itemizedlist>
+	    <listitem>visual studio 2005或2008或2010</listitem>
+	  </itemizedlist>
+	</listitem>
+
+	<listitem>
+	  <para>使用Visual sutodio编译：</para>
+	  <para>win32目录下有visual studio 2005/2008/2010工程项目文件，分别为All-Inclusive_8.0.sln/All-Inclusive_9.0.sln/All-Inclusive_10.0.sln, 打开编译即可，提供有Release/Debug两种编译模式.</para>
+	</listitem>
+
+      </orderedlist>
+    </sect2>
+  </sect1>
+
+  <sect1 id="quick_start_build_index">
+    <title>构建索引</title>
+    <sect2 id="quick_start_index">
+      <title>索引(Index)</title>
+      <para>每篇文档(Document)由多个词(Term)组成，为了从海量数据中快速检索出包含某些词或符合某些条件的文档，需要预先对文档编制索引(Index)。根据文档与词的关系不同，可以分为：</para>
+     
+      <itemizedlist>
+	<listitem>倒排索引(Inverted Index):
+	将词(Term)映射到文档(一般使用数值类型的文档ID表示一篇文档), 以加快检索任务的速度。倒排文档由词汇表（Vocabulary）和事件表（Occurrence）两部分组成。词汇表中的每个元素称为词（Term）或索引项，事件表则是倒排链（Inverted lists）的集合，每个词对应一个倒排链。倒排链一般也称作后缀链（Posting Lists），包含词所在文档的编号、出现频率和出现位置等信息。</listitem>
+	<listitem>正排索引(Forward Index): 将文档映射到词或文档的属性。主要用于查询结果的展示，排序和过滤。正排在一些文献和开源项目中也称为属性(Attribute)</listitem>
+      </itemizedlist>
+      <para>
+      FirteX2同时支持倒排和正排索引，支持如下几类文本类型：
+      </para>
+      <table id="index_type">
+	<title>FirteX2索引类型</title>
+	<tgroup cols="3">
+	  <thead><row><entry>文本类型名称</entry><entry>索引类型</entry><entry>说明</entry></row></thead>
+	  <tbody>
+	    <row>
+	      <entry>TEXT</entry>
+	      <entry>倒排索引</entry>
+	      <entry>GBK编码的中、英文文本的索引结构，分词器：analyzer.standard, 配置：encode=gbk;algorithm=max_forward，分词算法是基于词典的前向最大匹配分词；
+	      索引器：indexer.text，索引结构包含文档ID，词频和词位置信息。</entry>
+	    </row>
+
+	    <row>
+	      <entry>UTF8_TEXT</entry>
+	      <entry>倒排索引</entry>
+	      <entry>UTF-8编码的中、英文文本的索引结构，分词器：analyzer.standard, 配置：encode=utf-8;algorithm=max_forward，分词算法是基于词典的前向最大匹配分词；
+	      索引器：indexer.text，索引结构包含文档ID，词频和词位置信息。</entry>
+	    </row>
+
+	    <row>
+	      <entry>SW_TEXT</entry>
+	      <entry>倒排索引</entry>
+	      <entry>GBK编码的中、英文文本的索引结构，分词器：analyzer.single, 配置：encode=gbk，分词算法是单字分词；
+	      索引器：indexer.text，索引结构包含文档ID，词频和词位置信息。</entry>
+	    </row>
+
+	    <row>
+	      <entry>UTF8_SW_TEXT</entry>
+	      <entry>倒排索引</entry>
+	      <entry>UTF-8编码的中、英文文本的索引结构，分词器：analyzer.single, 配置：encode=utf-8，分词算法是单字分词；
+	      索引器：indexer.text，索引结构包含文档ID，词频和词位置信息</entry>
+	    </row>
+
+	    <row>
+	      <entry>KEYWORD</entry>
+	      <entry>倒排索引</entry>
+	      <entry>针对需要准确匹配文本的索引结构，采用KeywordAnalyzer，整个文本将作为一个Token进行索引，倒排链包含文档ID，词频信息，不包含词的位置信息。</entry>
+	    </row>
+
+	    <row>
+	      <entry>PRIMARY_KEY</entry>
+	      <entry>倒排索引</entry>
+	      <entry>针对主键(Primary key)的索引结构，每篇文档对应唯一主键值，倒排链仅包含文档ID信息。</entry>
+	    </row>
+
+	    <row>
+	      <entry>INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE</entry>
+	      <entry>正排索引</entry>
+	      <entry>数值类型的正排索引，存储文档的一些数值属性，例如：时间戳，价格，类别等。</entry>
+	    </row>
+
+	    <row>
+	      <entry>Length Norm</entry>
+	      <entry>正排索引</entry>
+	      <entry>存储文档的按词数目计算的长度信息,主要用于文档相关性计算。</entry>
+	    </row>
+ 
+	  </tbody>
+	</tgroup>
+      </table>
+    </sect2>
+    
+    <sect2 id="quick_start_data_source">
+      <title>数据源</title>
+      <sect3 id="quick_start_collection">
+	<title>数据集(Collection)</title>
+	<para>FirteX2内置了四种数据集解析器：</para>
+	<table>
+	  <title>Collection类型</title>
+	  <tgroup cols="3">
+	    <thead><row><entry>数据源</entry><entry>标识符</entry><entry>说明</entry></row></thead>
+	    <tbody>
+	      <row>
+		<entry>firtex标准文档集</entry>
+		<entry>collection.standard</entry>
+		<entry>输入为文件目录，每个文件为gzip压缩或非压缩的firtex格式文件</entry>
+	      </row>
+	      <row>
+		<entry>文件目录</entry>
+		<entry>collection.directory</entry>
+		<entry>输入为文件目录，递归遍历目录中的所有文件，将发现的有效文件加入索引</entry>
+	      </row>
+	      <row>
+		<entry>TREC文档集</entry>
+		<entry>collection.trec</entry>
+		<entry>输入为文件目录，每个文件为压缩或非压缩的TREC格式文本,递归遍历目录中的所有文件，将发现的有效文件加入索引</entry>
+	      </row>
+
+	    </tbody>
+	  </tgroup>
+	</table>
+	<orderedlist>
+	  <listitem>firtex标准文档集：
+	    <para>firtex标准输入文件格式是一种比xml更节省空间，比json文件格式可读性更好的自定义文档格式.</para>
+	    <para>格式定义如下:</para>
+	    <para>
+	      <itemizedlist>
+		<listitem>
+		  <para>文档引导行:</para>
+		  <para>DOC=ADD/DELETE/UPDATE^[\n</para>
+		  <para>ADD、DELETE、UPDATE分别表示添加、删除和更新一篇文档。</para>
+		</listitem>
+		<listitem>
+		  <para>文档结束行:</para>
+		  <para>^]\n</para>
+		  <para>标识一篇文档的结束。</para>
+		</listitem>
+		<listitem>
+		  <para>字段行:</para>
+		  <para>field_name=field_value^^\n</para>
+		  <para>field_name是字段名，field_value是该字段对应的值。</para>
+		</listitem>
+	      </itemizedlist>
+	    </para>
+
+	    <para>
+	      <para>下面例子中包含了两篇文档：</para>
+	      <screen>
+DOC=ADD^[
+field1=value11^^
+field2=value12^^
+field3=value13^^
+^]
+DOC=ADD^[
+field1=value22^^
+field2=value22^^
+field3=value23^^
+^]	      </screen>
+	      <table>
+		<title>分隔符号定义</title>
+		<tgroup cols="3">
+		  <thead><row><entry>16进制编码值</entry><entry>显示形态<co id="collection_1"/></entry><entry>Emacs输入方法</entry><entry>vi输入方法</entry><entry>描述</entry></row></thead>
+		  <tbody>
+		    <row>
+		      <entry>0x1B</entry>
+		      <entry>^[</entry>
+		      <entry>C-q C-3或C-x 8 ret 1B</entry>
+		      <entry>C-v C-3或者C-v 27</entry>
+		      <entry>文档引导行的结尾符号</entry>
+		    </row>
+		    <row>
+		      <entry>0x1D</entry>
+		      <entry>^]</entry>
+		      <entry>C-q C-5或C-x 8 ret 1D</entry>
+		      <entry>C-v C-5或C-v 29</entry>
+		      <entry>标识一篇文档结束</entry>
+		    </row>
+		    <row>
+		      <entry>0x1E</entry>
+		      <entry>^^</entry>
+		      <entry>C-q C-6或C-x 8 ret 1E</entry>
+		      <entry>C-v C-6或C-v 30</entry>
+		      <entry>字段分割符号</entry>
+		    </row>
+		  </tbody>
+		</tgroup>
+	      </table>
+	      <calloutlist>
+		<callout arearefs="collection_1">
+		请不要拷贝此符号生成你的文档，该符号只是为了显示方便由两个字符拼凑而成，
+		可以在你的文档生成程序或者编辑器中直接使用16进制编码值生成文档。
+		</callout>
+	      </calloutlist>
+	    </para>
+	  </listitem>
+
+	  <listitem>文件目录：
+	    <para>文档目录形式的数据源支持一级或多级目录，文档格式支持纯文本，HTML、PDF和Microsoft Office系列文档，关于文档处理的更多介绍请参考下一节。</para>
+	  </listitem>
+	  <listitem>TREC文档集：
+	    <para>TREC文档集的形式是一级或多级目录，文件既可以是压缩也可以是非压缩；文档格式是一种简化版的XML格式，例如TREC的gov2数据的格式如下：</para>
+	  	<screen>
+<![CDATA[
+<DOC>
+  <DOCNO>GX000-00-0000000</DOCNO>
+    <DOCHDR>
+    html网页头部信息
+    </DOCHDR>
+    html网页的原始内容
+</DOC>
+<DOC>
+...
+</DOC>
+]]>
+	</screen>
+
+	  </listitem>
+	</orderedlist> 
+      </sect3>
+
+      <sect3>
+	<title>文档内容解析和处理(Document Processor)</title>
+	<para>FirteX2内置了四种文档格式处理器：</para>
+	<table>
+	  <title>Document processor类型</title>
+	  <tgroup cols="3">
+	    <thead><row><entry>Processor</entry><entry>文档类型</entry><entry>功能</entry></row></thead>
+	    <tbody>
+	      <row>
+		<entry>processor.plain</entry>
+		<entry>纯文本(txt)</entry>
+		<entry>只读取原始文件，不做任何格式处理</entry>
+	      </row>
+	      <row>
+		<entry>processor.standard</entry>
+		<entry>firtex标准格式文档<co id="processor_1"/></entry>
+		<entry>解析firtex标准格式文档，提取文件内容</entry>
+	      </row>
+	      <row>
+		<entry>processor.html</entry>
+		<entry>HTML文件</entry>
+		<entry>解析HTML文件，提取文本，提取的内容包括TITLE, KEYWORDS和BODY</entry>
+	      </row>
+	      <row>
+		<entry>processor.pdf</entry>
+		<entry>PDF文件</entry>
+		<entry>解析PDF文件，提取文本，提取的内容包括TITLE, SUBJECT,
+		KEYWORDS, AUTHOR, CREATOR, PRODUCER, CREATIONDATE,
+		LASTMODIFIEDDATE和CONTENT。该解析器基于xpdf, 以插件形式实现。</entry>
+	      </row>
+	      <row>
+		<entry>processor.msoffice</entry>
+		<entry>word/ppt/xsl文件</entry>
+		<entry>解析microsoft office系列文件，提取文本。该解析器修改自wv，以插件形式实现。</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+	<calloutlist>
+	  <callout arearefs="processor_1">请参考<link linkend="quick_start_collection">文档集介绍</link>部分</callout>
+	</calloutlist>
+      </sect3>
+
+      <sect3>
+	<title>文本分析器(Analyzer)</title>
+	<para>文本分析器用于分析文档内容，包括词语切分，停用词过滤，大小写转换，
+	词根还原(stemming)等，FirteX2内置如下几种Analyzer：
+	</para>
+	<table id="quick_start_analyzer">
+	  <title>Analyzer类型</title>
+	  <tgroup cols="3">
+	    <thead><row><entry>分析器</entry><entry>标识符</entry><entry>功能</entry></row></thead>
+	    <tbody>
+	      <row>
+		<entry>StandardAnalyzer<co id="analyzer_1"/></entry>
+		<entry>analyzer.standard</entry>
+		<entry>基于词典的分词算法，支持前向最大匹配分词（配置：algorithm=max_forward）和Unigram分词（配置：algorithm=unigram）；支持GBK（配置：encode=gbk）和UTF-8文本（配置：encode=utf-8），前向最大匹配分词速度快，但准确率不高，Unigram分词准确率稍高，但分词速度较慢。</entry>
+	      </row>
+
+	      <row>
+		<entry>SingleWordAnalyzer</entry>
+		<entry>analyzer.single</entry>
+		<entry>基于flex实现的单字分词算法，支持GBK（配置：encode=gbk）和UTF-8文本（配置：encode=utf-8）</entry>
+	      </row>
+
+	      <row>
+		<entry>WhitespaceAnalyzer.cpp</entry>
+		<entry>analyzer.whitespace</entry>
+		<entry>按空格切分词语。</entry>
+	      </row>
+	      <row>
+		<entry>KeywordAnalyzer</entry>
+		<entry>analyzer.keyword</entry>
+		<entry>将字段整个文本分成一个词（Term）。</entry>
+	      </row>
+	      <row>
+		<entry>NumericAnalyzer</entry>
+		<entry>analyzer.numeric.int32/int64</entry>
+		<entry>将字段文本转换成数值。</entry>
+	      </row>
+	      <row>
+		<entry>DateTimeAnalyzer</entry>
+		<entry>analyzer.datetime</entry>
+		<entry>
+		  <para>将日期字段转换成int64的数值，支持格式：</para>
+		  <para>"1999-3-3 4:43:44"，"1999/3/3 4:43:44"，"1999年3月3日 4点43分44秒"，
+		  "1999年3月3日 4点43分"，"1999年3月3日 4点"，"1999年3月3日"，...等格式。
+		  </para>
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+
+	<calloutlist>
+	  <callout arearefs="analyzer_1"><para>StandardAnalyzer内置gbk和utf-8两个词典，词条目总数大约27万左右，用户也可以使用lexibuilder工具构建并替换使用自己的词典：</para><screen>lexibuilder -s source_dict_file -t target_dict_file</screen>
+	    <para>源词典每一行包含一个词及词频，词与词频之间用空格分隔。</para></callout>
+	</calloutlist>  
+
+	<para>Analyzer可设置前缀Filter(ante filter)和后缀Filter(post filter)，FirteX2内置如下几种Filter：</para>
+	<table id="quick_start_filter">
+	  <title>Filter说明</title>
+	  <tgroup cols="3">
+	    <thead><row><entry>Filter</entry><entry>标识符</entry><entry>描述</entry></row></thead>
+	    <tbody>
+	      <row>
+		<entry>StandardStopFilter</entry>
+		<entry>filter.stopword</entry>
+		<entry>配合StandardAnalyzer的后缀Filter，用于过滤停用词</entry>
+	      </row>
+	      <row>
+		<entry>LowcaseFilter</entry>
+		<entry>filter.lowercase</entry>
+		<entry>用于将英文单词转换成小写形式</entry>
+	      </row>
+	      <row>
+		<entry>SynonymFilter</entry>
+		<entry>filter.synonym</entry>
+		<entry>同义词转换</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </sect3>
+
+      <sect3>
+	<title>文档模式(Document Schema)</title>
+	<para>FirteX2支持每篇文档定义多个字段（Field），各个字段定义不同的索引类型，存储方式和权重。</para>
+	<para>例如，下面的例子定义的文档模式包含4个字段，URL字段使用PRIMARY_KEY索引，原始文本将存储在索引库中；TITLE和BODY字段使用TEXT索引，TITLE字段权重为2.0（默认权重为1.0），MODIFIED字段使用INT64的正排索引，该字段在查询中可以指定为排序或者过滤字段。
+	  <informalexample>
+	    <screen>
+	      <![CDATA[
+<index_schema>
+  <fields>
+    <field>
+      <name>URL</name>
+      <type>PRIMARY_KEY</type>
+      <store>true</store>
+    </field>
+    <field>
+      <name>TITLE</name>
+      <type>TEXT</type>
+      <store>true</store>
+      <boost>2.0</boost>
+    </field>
+    <field>
+      <name>BODY</name>
+      <type>TEXT</type>
+      <store>true</store>
+    </field>
+    <field>
+      <name>MODIFIED</name>
+      <type>INT64</type>
+      <store>true</store>
+    </field>
+  </fields>
+</index_schema>]]>
+	    </screen>
+	  </informalexample>
+	</para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="quick_start_example">
+      <title>实例</title>
+      <para>本节以真实数据为例，介绍如何构建FirteX2索引</para>
+      <sect3>
+	<title>实例一：对文件目录中的纯文本数据构建索引</title>
+	
+	<orderedlist>
+	  <listitem>参考
+	    <link linkend="quick_start_compile">前一节</link>
+	 编译安装FirteX2，假设代码目录为/tmp/firtex2/，安装到默认目录/usr/local，
+	  则FirteX2程序和数据将安装到/usr/local/firtex2目录，
+	  样例数据可以从/tmp/firtex2/example/data/获取，配置文件可以从/usr/local/firtex2/conf获取。
+	  </listitem>
+	  <listitem>修改配置文件/usr/local/firtex2/conf/fbuilder.xml的索引数据路径：
+	    <example>
+	      <title>配置文件-fbuilder.xml</title>
+	      <screen>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configure&gt;
+  
+  &lt;!--全局参数配置--&gt;
+  &lt;global&gt;
+    &lt;general&gt;
+      &lt;!--词典文件目录--&gt;
+      &lt;dictionary_path&gt;../sysdata&lt;/dictionary_path&gt;
+    &lt;/general&gt;
+  
+    &lt;!--索引合并策略定义--&gt;
+    &lt;merge&gt;
+      &lt;!--合并策略名称，可配值：--&gt;
+      &lt;!--nomerge: 不合并, Build性能最优--&gt;
+      &lt;!--optimize: 优化合并，查询性能最优--&gt;
+      &lt;!--dbt: 智能选取合适大小的索引桶进行合并，查询性能和索引性能有较好的折中--&gt;
+      &lt;strategy&gt;nomerge&lt;/strategy&gt;
+      &lt;!-- 设置Merge过程中最多允许打开的文件句柄总数，较小的值可能使Merge分多次进行，导致较差的Merge性能--&gt;
+      &lt;max_allowed_open_files&gt;800&lt;/max_allowed_open_files&gt;
+    &lt;/merge&gt;
+    
+    &lt;!--索引构建相关参数--&gt;
+    &lt;build&gt;
+      &lt;!--内存索引最大可用内存(MB)，值越大Build性能最优，但耗费更多内存--&gt;
+      &lt;memory&gt;128&lt;/memory&gt;
+      &lt;!-- 设置Build线程数量，对于多核或多CPU机器，可以适当增大数值提高索引性能，但一般不超过核总数 --&gt;
+      &lt;build_thread_count&gt;1&lt;/build_thread_count&gt;
+      &lt;!-- 配置过时数据清理策略 --&gt;
+      &lt;index_cleaner&gt;
+        &lt;!-- 配置清理策略，可选值：keep_by_commit --&gt;
+	&lt;strategy&gt;keep_by_commit&lt;/strategy&gt;
+        &lt;!-- 配置清理策略的参数，对于keep_by_commit策略，可选值是：keep_count --&gt;
+	&lt;parameter&gt;keep_count=2&lt;/parameter&gt;
+      &lt;/index_cleaner&gt;
+    &lt;/build&gt;
+  &lt;/global&gt;
+  
+  &lt;!--索引数据路径/Build模式定义--&gt;
+  &lt;index&gt;
+    &lt;!--源数据路径--&gt;
+    &lt;source&gt;/tmp/firtex2/examples/data/plain_utf8&lt;/source&gt;
+    &lt;!--索引数据输出目录--&gt;
+    &lt;target&gt;/tmp/firtex2/examples/data/plain_utf_8_index&lt;/target&gt;
+    &lt;!--索引构建模式，可配值：batch/append--&gt;
+    &lt;build_mode&gt;batch&lt;/build_mode&gt;
+  &lt;/index&gt;
+
+  &lt;!--文档集相关配置--&gt;
+  &lt;collection&gt;
+    &lt;!--文档集名称，可空缺--&gt;
+    &lt;name&gt;test1&lt;/name&gt;
+    &lt;!--文档集标识符--&gt;
+    &lt;identifier&gt;collection.directory&lt;/identifier&gt;<co id="1"/>
+    &lt;!--文档集中的文档格式，可配值：txt/html/pdf/doc/ppt/xsl--&gt;
+    &lt;doc_types&gt;txt&lt;/doc_types&gt;
+    &lt;!-- 过滤目录中的.svn目录，且只索引文件扩展名为txt的文件 --&gt;
+    &lt;parameter&gt;filter=.svn;file_extension=txt&lt;/parameter&gt;
+    &lt;!-- 设置处理文档内容的线程数量，对于多核或多CPU机器，可以适当调大提高文档处理性能，但一般不超过核总数，而且不大于Build线程数量 --&gt;
+    &lt;process_thread_count&gt;1&lt;/process_thread_count&gt;
+  &lt;/collection&gt;
+  
+  &lt;!--文档索引模式定义--&gt;
+  &lt;index_schema&gt;
+    &lt;!--文档字段定义--&gt;
+    &lt;fields&gt;
+      &lt;!--单个字段定义--&gt;
+      &lt;field&gt;
+	&lt;!--字段名称，定义文件路径索引方式--&gt;
+	&lt;name&gt;FILEPATH&lt;/name&gt;
+        &lt;!--字段类型定义，可配值：TEXT/UTF8_TEXT/SW_TEXT/UTF8_SW_TEXT/PRIMARY_KEY/KEYWORD/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE--&gt;<co id="2"/>
+	&lt;type&gt;KEYWORD&lt;/type&gt;
+	&lt;!--字段内容是否存储在索引库中，可配值：true/false--&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+      &lt;field&gt;
+	&lt;!-- 定义文件名索引方式 --&gt;
+	&lt;name&gt;FILENAME&lt;/name&gt;
+	&lt;type&gt;KEYWORD&lt;/type&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;!-- 定义文件扩展名索引方式 --&gt;
+	&lt;name&gt;FILETYPE&lt;/name&gt;
+	&lt;type&gt;KEYWORD&lt;/type&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;!-- 定义文件时间索引方式 --&gt;
+	&lt;name&gt;MODIFIED&lt;/name&gt;
+	&lt;type&gt;INT64&lt;/type&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;!-- 定义文件大小的索引方式 --&gt;
+	&lt;name&gt;FILESIZE&lt;/name&gt;
+	&lt;type&gt;INT32&lt;/type&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;!-- 定义文件内容的索引方式 --&gt;
+	&lt;name&gt;BODY&lt;/name&gt;
+	&lt;type&gt;TEXT&lt;/type&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+    &lt;/fields&gt;
+  &lt;/index_schema&gt;
+&lt;/configure&gt;
+	      </screen>
+	      <calloutlist>
+		<callout arearefs="1">请参考前一节<link linkend="quick_start_collection">文档集介绍</link>部分</callout>
+		<callout arearefs="2">请参考前一节<link linkend="quick_start_index">索引类型介绍</link>部分</callout>
+	      </calloutlist>  
+	    </example>
+	  </listitem>
+
+	  <listitem>
+	    使用fbuilder工具构建索引：
+	    <screen>$cd /usr/local/firtex2/bin/
+$./fbuilder -c ../conf/fbuilder.xml</screen>
+	  </listitem>
+	</orderedlist>
+
+      </sect3>
+
+      <sect3>
+	<title>实例二：对TREC格式的数据集构建索引</title>
+	<para>如下所示XML片段是TREC数据的典型格式(例如TREC的GOV2数据集合)</para>
+	<screen>
+<![CDATA[
+<DOC>
+  <DOCNO>GX000-00-0000000</DOCNO>
+    <DOCHDR>
+    html网页头部信息
+    </DOCHDR>
+    html网页的原始内容
+</DOC>
+<DOC>
+...
+</DOC>
+]]>
+	</screen>
+
+	<orderedlist>
+	  <listitem>
+	    <para>对应上述格式TREC数据的配置文件存放在/tmp/firtex2/example/data/gov2.xml，如下所示：</para>
+	    <example>
+	      <title>TREC数据集配置文件-gov2.xml</title>
+	      <screen>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configure&gt;
+  
+  &lt;!--全局参数配置--&gt;
+  &lt;global&gt;
+    &lt;general&gt;
+      &lt;!--词典文件目录--&gt;
+      &lt;dictionary_path&gt;/tmp/firtex2/sysdata&lt;/dictionary_path&gt;
+    &lt;/general&gt;
+  
+    &lt;!--索引合并策略定义--&gt;
+    &lt;merge&gt;
+      &lt;!--合并策略名称，可配值：--&gt;
+      &lt;!--nomerge: 不合并, Build性能最优--&gt;
+      &lt;!--optimize: 优化合并，查询性能最优--&gt;
+      &lt;!--dbt: 根据各索引桶大小职能选取合并，查询性能和索引性能有较好的折中--&gt;
+      &lt;strategy&gt;nomerge&lt;/strategy&gt;
+      &lt;!-- 设置Merge过程中最多允许打开的文件句柄总数，如果索引桶数量较多，较小的值可能使Merge分层进行，导致较差的Merge性能--&gt;
+      &lt;max_allowed_open_files&gt;800&lt;/max_allowed_open_files&gt;
+    &lt;/merge&gt;
+    
+    &lt;!--索引构建相关参数--&gt;
+    &lt;build&gt;
+      &lt;!--内存索引最大可用内存(MB)，值越大Build性能最优，但耗费更多内存--&gt;
+      &lt;memory&gt;128&lt;/memory&gt;
+      &lt;!-- 设置Build线程数量，对于多核或多CPU机器，可以适当增大数值提高索引性能，但一般不超过核总数 --&gt;
+      &lt;build_thread_count&gt;1&lt;/build_thread_count&gt;
+    &lt;/build&gt;
+  &lt;/global&gt;
+  
+  &lt;!--索引数据路径/Build模式定义--&gt;
+  &lt;index&gt;
+    &lt;!--源数据路径--&gt;
+    &lt;source&gt;/tmp/firtex2/examples/data/gov2&lt;/source&gt;
+    &lt;!--索引数据输出目录--&gt;
+    &lt;target&gt;/tmp/firtex2/examples/data/gov2_index&lt;/target&gt;
+    &lt;!--索引构建模式，可配值：batch/append--&gt;
+    &lt;build_mode&gt;batch&lt;/build_mode&gt;
+  &lt;/index&gt;
+
+  &lt;!--文档集相关配置--&gt;
+  &lt;collection&gt;
+    &lt;!--文档集名称，可空缺--&gt;
+    &lt;name&gt;test1&lt;/name&gt;
+    &lt;!--文档集标识符--&gt;
+    &lt;identifier&gt;collection.trec&lt;/identifier&gt;
+    &lt;!--文档集中的文档格式，可配值：txt/html/pdf/doc/ppt/xsl--&gt;
+    &lt;doc_types&gt;html&lt;/doc_types&gt;
+    &lt;!-- 过滤目录中的.svn目录，且只索引文件扩展名为gz的文件 --&gt;
+    &lt;parameter&gt;filter=.svn;file_extension=tz&lt;/parameter&gt;
+    &lt;!-- 设置处理文档内容的线程数量，对于多核或多CPU机器，可以适当调大提高文档处理性能，但一般不超过核总数，而且不大于Build线程数量 --&gt;
+    &lt;process_thread_count&gt;1&lt;/process_thread_count&gt;
+
+    &lt;!--定义文档集的格式模板，告诉FirteX2如何解析该文档集--&gt;
+    &lt;template&gt;
+      &lt;!--定义文档标签名称--&gt;
+      &lt;doc_tag&gt;DOC&lt;/doc_tag&gt; 
+
+      &lt;!--定义TREC数据的嵌入在&lt;/DOCHDR&gt;和&lt;/DOC&gt;标签之间的内容对应哪个索引字段--&gt;
+      &lt;embedded_field&gt;BODY&lt;/embedded_field&gt;
+      &lt;metadata&gt;
+        &lt;meta&gt;
+          &lt;!--meta名称，支持抽取url/date/content-type/content-length/last-modified/title元信息--&gt;
+          &lt;name&gt;url&lt;/name&gt;
+	  &lt;!--该标签对应的索引字段名称--&gt;
+          &lt;field_name&gt;URL&lt;/field_name&gt;
+        &lt;/meta&gt;
+        &lt;meta&gt;
+          &lt;name&gt;date&lt;/name&gt;
+          &lt;field_name&gt;DATE&lt;/field_name&gt;
+        &lt;/meta&gt;
+        &lt;meta&gt;
+          &lt;name&gt;content-type&lt;/name&gt;
+          &lt;field_name&gt;TYPE&lt;/field_name&gt;
+        &lt;/meta&gt;
+        &lt;meta&gt;
+          &lt;name&gt;content-length&lt;/name&gt;
+          &lt;field_name&gt;LENGTH&lt;/field_name&gt;
+        &lt;/meta&gt;
+        &lt;meta&gt;
+          &lt;name&gt;last-modified&lt;/name&gt;
+          &lt;field_name&gt;MODIFIED&lt;/field_name&gt;
+        &lt;/meta&gt;
+        &lt;meta&gt;
+          &lt;name&gt;title&lt;/name&gt;
+          &lt;field_name&gt;TITLE&lt;/field_name&gt;
+        &lt;/meta&gt;
+      &lt;/metadata&gt;
+
+      &lt;!--定义TREC文档所包含的标签名称，标签顺序必须与TREC文档中出现顺序一致--&gt;
+      &lt;tags&gt;
+	&lt;!--字段的标签信息--&gt;
+        &lt;tag&gt;
+          &lt;!--标签名称，必须与TREC文档中的标签名一致--&gt;
+          &lt;name&gt;DOCNO&lt;/name&gt;
+	  &lt;!--该标签对应的索引字段名称，如果不索引该字段或者索引字段名与标签名称一致，此项可省略--&gt;
+          &lt;field_name&gt;DOCID&lt;/field_name&gt;
+        &lt;/tag&gt;
+        &lt;tag&gt;
+	  &lt;name&gt;DOCHDR&lt;/name&gt;
+	&lt;/tag&gt;
+      &lt;/tags&gt;
+    &lt;/template&gt;
+
+  &lt;/collection&gt;
+  &lt;index_schema&gt;
+    &lt;!--文档字段定义--&gt;
+    &lt;fields&gt;
+      &lt;!--单个字段定义--&gt;
+      &lt;field&gt;
+	&lt;!--字段名称--&gt;
+	&lt;name&gt;DOCID&lt;/name&gt;
+	&lt;!--字段内容是否存储在索引库中，可配值：true/false--&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;URL&lt;/name&gt;
+	&lt;!--只存储字段值--&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;DATE&lt;/name&gt;
+	&lt;!--DATETIME正排索引,字段类型参考&lt;link linkend="quick_start_index"&gt;索引类型介绍&lt;/link&gt;一节--&gt;
+	&lt;type&gt;DATETIME&lt;/type&gt;
+	&lt;!--存储字段原始值--&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;TYPE&lt;/name&gt;
+	&lt;!--KEYWORD索引--&gt;
+	&lt;type&gt;KEYWORD&lt;/type&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;LENGTH&lt;/name&gt;
+	&lt;!--int64正排索引--&gt;
+	&lt;type&gt;INT64&lt;/type&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;MODIFIED&lt;/name&gt;
+	&lt;!--DATETIME正排索引--&gt;
+	&lt;type&gt;DATETIME&lt;/type&gt;
+	&lt;!--存储字段原始值--&gt;
+	&lt;store&gt;true&lt;/store&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;TITLE&lt;/name&gt;
+	&lt;!--utf-8类型文本，构建倒排索引--&gt;
+	&lt;type&gt;UTF8_TEXT&lt;/type&gt;
+      &lt;/field&gt;
+
+      &lt;field&gt;
+	&lt;name&gt;BODY&lt;/name&gt;
+	<!--utf-8类型文本，构建倒排索引-->
+	&lt;type&gt;TEXT&lt;/type&gt;
+      &lt;/field&gt;
+    &lt;/fields&gt;
+  &lt;/index_schema&gt;
+&lt;/configure&gt;
+	      </screen>
+	    </example>
+	  </listitem>
+
+	  <listitem>
+	    使用fbuilder工具构建索引：
+	    <screen>$./fbuilder -c /tmp/firtex2/examples/data/gov2.xml</screen>
+	  </listitem>
+	  <listitem>
+	    也可以使用fxist4c工具构建索引：
+	    <screen>$./fxist4c -b /tmp/firtex2/examples/data/gov2.xml</screen>
+	  </listitem>
+
+	</orderedlist>
+      </sect3>
+
+    </sect2>
+    
+    <sect2>
+      <title>自定义字段索引方式</title>
+      <para>FirteX2内置了<link linkend="index_type">多种倒排索引类型</link>和<link linkend="index_type">多种正排索引类型</link>，如果还不能满足你的需求，FirteX2允许你自定义字段处理方式和新的索引类型。</para>
+      <orderedlist>
+	<listitem>
+	  <para>示例一：启用停用词。</para>
+	  <para>在&lt;index_schema&gt;部分增加&lt;type_define&gt;标签</para>
+	  <screen>
+&lt;type_define&gt;
+  &lt;!--定义新类型--&gt;
+  &lt;field_type&gt;
+    &lt;!--新类型名称，可覆盖已有类型名称，也可以是新名称--&gt;
+    &lt;name&gt;TEXT&lt;/name&gt;
+    &lt;!--字段值的类型，可选值参考<link linkend="index_type">索引类型介绍</link>一节--&gt;
+    &lt;value_type&gt;TEXT&lt;/value_type&gt;
+    &lt;!--定义索引器相关配置--&gt;
+    &lt;index_type&gt;
+      &lt;!--索引类型表示符，可选值参考上一节<link linkend="index_type">索引类型介绍</link>--&gt;
+      &lt;identifier&gt;indexer.text&lt;/identifier&gt;
+      &lt;!--定义文本分析器配置--&gt;
+      &lt;analyzer&gt;
+        &lt;!--文本分析器标识符和参数，格式：标识符,参数名:参数值,参数名:参数值...。标识符可选值参考上一节<link linkend="quick_start_analyzer">分析器类型介绍</link>--&gt;
+        &lt;identifier&gt;analyzer.standard&lt;/identifier&gt;
+	&lt;!-- 分析器配置：gbk编码和前向最大匹配分词算法--&gt;
+	&lt;parameter&gt;encode=gbk;algorithm=max_forward&lt;/parameter&gt;
+        &lt;!--配置后缀Filter和参数，格式：标识符,参数名=参数值,参数名=参数值...。标识符可选值参考上一节<link linkend="quick_start_filter">Filter类型介绍</link>--&gt;
+        &lt;post_filter&gt;filter.stopword,words=的 吗 阿&lt;/post_filter&gt;
+      &lt;/analyzer&gt;
+    &lt;/index_type&gt;
+  &lt;/field_type&gt;
+&lt;/type_define&gt;
+	  </screen>
+	  <para>定义好新类型后，文档字段定义：</para>
+	  <screen>
+&lt;field&gt;
+  &lt;name&gt;BODY&lt;/name&gt;
+  &lt;type&gt;TEXT&lt;/type&gt;
+&lt;/field&gt;
+	  </screen>
+	  <para>将使用新定义的TEXT类型索引。完整配置文件在examples/data/stopword_plain.xml中</para>
+	</listitem>
+	<listitem>
+	  <para>示例：对英文文本进行小写转换，并启用词根还原(stemming)。</para>
+	  <para>在&lt;index_schema&gt;部分定义新类型ENGLISH_TEXT：</para>
+	  <screen>
+&lt;type_define&gt;
+  &lt;!--定义新类型--&gt;
+  &lt;field_type&gt;
+    &lt;!--新类型名称，可覆盖已有类型名称，也可以是新名称--&gt;
+    &lt;name&gt;ENGLISH_TEXT&lt;/name&gt;
+    &lt;!--字段值的类型，可选值：TEXT/STRING/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE--&gt;
+    &lt;value_type&gt;TEXT&lt;/value_type&gt;
+    &lt;!--定义索引器相关配置--&gt;
+    &lt;index_type&gt;
+      &lt;!--索引类型表示符，可选值参考上一节<link linkend="quick_start_index">索引类型介绍</link>--&gt;
+      &lt;identifier&gt;indexer.text&lt;/identifier&gt;
+      &lt;!--定义文本分析器配置--&gt;
+      &lt;analyzer&gt;
+        &lt;!--文本分析器标识符和参数，格式：标识符,参数名=参数值,参数名=参数值...。标识符可选值参考上一节<link linkend="quick_start_analyzer">分析器类型介绍</link>--&gt;
+        &lt;identifier&gt;analyzer.standard&lt;/identifier&gt;
+	&lt;!-- 分析器配置：utf-8编码和前向最大匹配分词算法--&gt;
+	&lt;parameter&gt;encode=utf-8;algorithm=max_forward&lt;/parameter&gt;
+        &lt;!--配置后缀Filter和参数，格式：标识符,参数名=参数值,参数名=参数值...。标识符可选值参考上一节<link linkend="quick_start_filter">Filter类型介绍</link>--&gt;
+        &lt;ante_filter&gt;filter.lowercase;filter.snowball&lt;/ante_filter&gt;
+      &lt;/analyzer&gt;
+    &lt;/index_type&gt;
+  &lt;/field_type&gt;
+&lt;/type_define&gt;
+	  </screen>
+	  <para>完整配置在examples/data/stemming_gov2.xml中。</para>
+	</listitem>
+      </orderedlist>
+    
+      <para>目前FirteX2提供的Analyzer还不够丰富，用户可以继承Analyzer类，实现自己新的Analyzer。新实现的Analyzer如果希望通过配置文件直接配置使用，需要将新实现的Analyzer注册到系统中。注册方法是在代码src/analyzer/AnalyzerFactory::AnalyzerFactory()中调用registerCreator()注册新类型。</para>
+    </sect2>
+
+    <sect2>
+      <title>通过API构建索引</title>
+      <para>FirteX2提供了简介的API用来构建索引：</para>
+      <example>
+	<title>通过API构建索引</title>
+	<programlisting>
+<![CDATA[
+    //定义文档模式
+    DocumentSchema schema;
+    //添加URI字段，使用PRIMARY_KEY索引，原始值存储到索引库中
+    schema.addField("URI", "PRIMARY_KEY", true);
+    //添加TITLE字段，使用KEYWORD索引，原始值存储到索引库中
+    schema.addField("TITLE", "KEYWORD", true);
+    //添加BODY字段，使用TEXT索引，不存储原始值
+    schema.addTextField("BODY");
+    //添加MODIFIED字段，使用INT32类型的正排索引，存储原始值
+    schema.addField("MODIFIED", "INT32", true);
+
+    Index index;
+    //以APPEND模式打开索引库，增量添加文档
+    index.open("/tmp/test_index", INDEX::APPEND, &schema);
+    //获取索引书写器
+    IndexWriterPtr pIndexWriter = index.acquireWriter();
+
+    //生成一个空闲文档对象
+    DocumentPtr pDoc = new Document(pIndexWriter->getDocSchema());
+    pDoc->setAction(Document::AT_ADD);
+
+    //依次填充文档字段值
+    pDoc->addField(0, "uri of document");
+    pDoc->addField(1, "title of document");
+    pDoc->addField(2, "body of document");
+    pDoc->addField(3, 1024);
+    ...
+    //将文档添加到索引库中
+    pIndexWriter->addDocument(pDoc);
+
+    //关闭索引书写器
+    pIndexWriter->close();]]>
+	  </programlisting>
+	</example>
+      </sect2>
+    </sect1>
+
+    <sect1 id="quick_start_query">
+      <title>查询</title>
+      <para>FirteX2提供了两个工具可以用来查询索引：fxsit4c和fsearchd</para>
+      <sect2>
+	<title>用fxist4实现简单搜索</title>
+	<para>命令格式：</para>
+	<screen>./fxist4c -s [INDEX_PATH] -e [QUERY_EXPR] [-d [DEF_FIELD]] [-l [LEXICON_DIR]]</screen>
+	<para>其中-s 指定索引路径，-e 指定查询表达式，-d
+	指定默认查询字段名，-l 指定分词词典文件目录（系统提供的词典目录为sysdata）</para>
+	<para>例如，下述命令在索引库/temp/test_index上查询BODY中出现”搜索“，
+	并且TITLE中出现“开源”，PRICE字段值大于等于100的文档，对查询结果的BODY字段做摘要：
+	</para>
+	<screen>$./fxist4c -s /temp/test_index -e "query=BODY:’搜索‘ AND TITLE:‘开源’;filter=PRICE&lt;100;parameter=snippet:BODY"</screen>
+      </sect2>
+
+      <sect2>
+	<title>单机搜索</title>
+	<para>单机搜索可以使用fsearchd服务程序实现。fsearchd接收HTTP查询命令，并发执行查询命令，返回XML格式的查询结果。</para>
+	<para>fsearchd的配置文件fsearchd.xml(在/usr/local/firtex2/conf目录中)：</para>
+	<example>
+	  <title>fsearchd配置文件--fsearchd.xml</title>
+	  <screen>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configure&gt;
+  &lt;!--全局配置参数--&gt;
+  &lt;global&gt;
+    &lt;general&gt;
+      &lt;!--词典数据路径--&gt;
+      &lt;dictionary_path&gt;../../sysdata&lt;/dictionary_path&gt;
+    &lt;/general&gt;
+    &lt;!-- 配置文件系统，可选值：--&gt;
+    &lt;storage&gt;
+      &lt;!--filesystem.mmap：使用MMap方式Load索引数据，一般在内存比索引数据大情况下使用，默认使用mmap方式 --&gt;  
+      &lt;!--filesystem.block：使用Block换入换出方式读取索引数据，一般在内存比索引数据小情况下使用，
+      目前版本暂未实现Block cache--&gt;
+      &lt;filesystem&gt;filesystem.mmap&lt;/filesystem&gt;
+    &lt;/storage&gt;
+  &lt;/global&gt;
+
+  &lt;data&gt;
+    &lt;!--索引库路径--&gt;
+    &lt;index_data&gt;./plain_utf8_index&lt;/index_data&gt;
+    &lt;!--错误日志配置文件路径--&gt;
+    &lt;error_log_conf&gt;./logger.xml&lt;/error_log_conf&gt;
+    &lt;!--查询默认字段，查询表达式中未指定字段名时使用此字段名--&gt;
+    &lt;default_field&gt;BODY&lt;/default_field&gt;
+  &lt;/data&gt;
+  &lt;!--服务相关配置--&gt;
+  &lt;server&gt;
+    &lt;!--服务主机名称--&gt;
+    &lt;host&gt;localhost&lt;/host&gt;
+    &lt;!--监听端口--&gt;
+    &lt;listen_port&gt;19802&lt;/listen_port&gt;
+    &lt;!--并发线程数--&gt;
+    &lt;thread_pool&gt;10&lt;/thread_pool&gt;
+  &lt;/server&gt;
+&lt;/configure&gt;
+	  </screen>
+	</example>
+	<para>启动搜索服务：</para>
+	<screen>./fsearchd -c ../conf/fsearchd.xml -t http</screen>
+	<para>搜索服务启动后，将在指定端口监听接收HTTP查询。接收的HTTP请求格式是：
+	  <screen>http://IP地址:端口号/search?查询表达式</screen>
+	  其中IP地址是服务主机的IP地址，端口号是配置文件中指定的监听端口号，查询命令与fxist4c工具的查询命令一致，
+	  详细格式请参考<link linkend="query_syntax">查询语法章节</link>。
+	</para>
+	<para>可以在浏览器（IE或Firefox等）的地址栏中直接输入查询请求查看查询结果，检测搜索服务是否正常启动。</para>
+	<para>注意：如果浏览器不能正常显示xml查询结果，可通过查看源文件检查查询结果。</para>
+
+	<para>fsearchd同时支持rpc：
+	  <screen>./fsearchd -c ../conf/fsearchd.xml -t rpc</screen>
+	  可以使用firtex2提供的rcp client查询：
+	  <screen>./frpcclient -s localhost -p 19801 -q query=BODY:test</screen>
+	</para>
+
+	<example>
+	  <title>fsearchd的返回结果示例：</title>
+	  <screen>
+&lt;?xml version="1.0"?&gt;
+&lt;result&gt;
+	&lt;hits number_hits="3" total_hits="24174" cost="15"&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;791822&lt;/docid&gt;
+			&lt;score&gt;15.70&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX034-B38-352]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://musicweb.austin.tx.us:80/Carpe.Diem/Archives/96Feb.html]]&gt;
+				&lt;/URL&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;482231&lt;/docid&gt;
+			&lt;score&gt;15.68&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX083-B19-73]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://ws.comspec.com:80/webcat/venlist/claris4.html]]&gt;
+				&lt;/URL&gt;
+				&lt;TITLE&gt;
+					&lt;![CDATA[CLARIS/APPLE PLUS                   On Line Catalogue 729047     ]]&gt;
+				&lt;/TITLE&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;459833&lt;/docid&gt;
+			&lt;score&gt;15.67&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX014-B28-355]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://matterhorn.dnttm.rssi.ru:80/Mac/History/timeline.html]]&gt;
+				&lt;/URL&gt;
+				&lt;TITLE&gt;
+					&lt;![CDATA[Apple Corporate Timeline]]&gt;
+				&lt;/TITLE&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+	&lt;/hits&gt;
+&lt;/result&gt;
+
+	  </screen>
+	</example>
+	
+	<para>
+	  <tip>
+	    <title>配置注意事项</title>
+	    <orderedlist>
+	      <listitem>
+		<para>由于libevent在Windows下不支持解析localhost，Windows下请将localhost替换成127.0.0.1。</para>
+	      </listitem>
+	    </orderedlist>
+	  </tip>
+	</para>
+
+      </sect2>
+
+      <sect2>
+	<title>分布式查询</title>
+	<para>当数据量比较大，单台机器无法容纳所有索引数据，需要将索引数据切分成多个部分，分布在多台机器上提供服务，这种方式称为数据sharding。</para>
+	<para>当用户查询量比较大时，单台机器服务能力不够，需要将同一份索引复制到多台机器提供服务(replica)。</para>
+	<para>firtex2支持数据sharding和replica。一份完整索引数据通过数据切分、复制分布在多台机器上，形成一个逻辑集群（cluster），firtex2支持单逻辑集群模式和多逻辑集群模式。</para>
+	<para>单集群模式，proxy连接一个或searcher服务，proxy将用户查询转发给所有searcher，并将结果排序合并后返回。</para>
+	<para>多集群模式，需要增加一个blender，blender和一个或多个proxy连接，proxy连接一个或searcher服务。blender将用户查询转发给proxy，并将proxy返回的结果合并后返回给用户。</para>
+	<para>proxy和blender由fproxy程序实现，参数--role=proxy时fproxy运行在proxy模式，参数--role=blender时fproxy运行在blender模式。</para>
+	<para>fproxy的几个主要参数：
+	<orderedlist>
+	    <listitem>
+	      <para>-d/--daemon:</para>
+	      <para>可参数，指定是否以后台服务形式运行，默认在前台运行。</para>
+	    </listitem>
+	    <listitem>
+	      <para>-c/--conf:</para>
+	      <para>必选参数，指定配置文件。</para>
+	    </listitem>
+	    <listitem>
+	      <para>-r/--role:</para>
+	      <para>可选参数，指定角色类型，默认值是proxy。</para>
+	      <para>--role=proxy: 以proxy角色运行。fproxy服务接收到用户查询后将查询转发给一台或者多台机器上的fsearchd服务程序，并将返回结果排序合并，返回给客户端。</para>
+	      <para>--role=blender: 以blender角色运行，在多逻辑cluster模式下使用。该模式下，fproxy服务接收到用户查询后将查询转发给一台或者多台机器上的以proxy模式运行的fproxy服务程序，并将返回结果合并，返回给客户端。</para>
+	    </listitem>
+	    <listitem>
+	      <para>-t/--service-type:</para>
+	      <para>可选参数，指定服务类型，RPC服务或者HTTP服务，默认值是RPC。</para>
+	    </listitem>
+	</orderedlist>
+	</para>
+	<para>fproxy的配置文件fproxy.xml(在/usr/local/firtex2/conf目录中)：</para>
+	<example>
+	  <title>fproxy配置文件--fproxy.xml</title>
+	  <screen>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configure&gt;
+  &lt;!--proxy模式参数配置 --&gt;
+  &lt;proxy&gt;
+    &lt;server&gt;
+      &lt;!--服务主机名称和监听端口--&gt;
+      &lt;host&gt;localhost:19803&lt;/host&gt;
+      &lt;!--错误日志配置文件路径--&gt;
+      &lt;logger_conf&gt;./logger_conf.xml&lt;/logger_conf&gt;
+      &lt;!--并发线程数--&gt;
+      &lt;thread_pool&gt;10&lt;/thread_pool&gt;
+    &lt;/server&gt;
+    &lt;resource&gt;
+      &lt;!-- 负载均衡策略, 目前只支持roun robin策略--&gt;
+      &lt;load_ballance&gt;round_robin&lt;/load_ballance&gt;
+      &lt;!-- 下挂的shard列表--&gt;
+      &lt;shards&gt;
+	&lt;shard&gt;
+          &lt;!-- shard名称--&gt;
+	  &lt;name&gt;shard1&lt;/name&gt;
+          &lt;!-- replica列表--&gt;
+	  &lt;replicas&gt;
+	    &lt;replica&gt;
+              &lt;!-- replica的服务主机名/IP和监听端口--&gt;
+	      &lt;server&gt;localhost:19801&lt;/server&gt;
+              &lt;!-- 该replica的权重，取值1-100，权重越高，被选择服务的概率越大--&gt;
+	      &lt;weight&gt;30&lt;/weight&gt;
+	    &lt;/replica&gt;
+	    &lt;replica&gt;
+	      &lt;server&gt;localhost:19801&lt;/server&gt;
+	      &lt;weight&gt;70&lt;/weight&gt;
+	    &lt;/replica&gt;
+	  &lt;/replicas&gt;
+	&lt;/shard&gt;
+	&lt;shard&gt;
+	  &lt;name&gt;shard2&lt;/name&gt;
+	  &lt;replicas&gt;
+	    &lt;replica&gt;
+	      &lt;server&gt;localhost:19801&lt;/server&gt;
+	      &lt;weight&gt;100&lt;/weight&gt;
+	    &lt;/replica&gt;
+	  &lt;/replicas&gt;
+	&lt;/shard&gt;
+      &lt;/shards&gt;
+    &lt;/resource&gt;
+  &lt;/proxy&gt;
+
+  &lt;!--blender模式参数配置 --&gt;
+  &lt;blender&gt;
+    &lt;server&gt;
+      &lt;!--服务主机名称和监听端口--&gt;
+      &lt;host&gt;localhost:19903&lt;/host&gt;
+      &lt;!--错误日志配置文件路径--&gt;
+      &lt;logger_conf&gt;./logger_conf.xml&lt;/logger_conf&gt;
+      &lt;!--并发线程数--&gt;
+      &lt;thread_pool&gt;10&lt;/thread_pool&gt;
+    &lt;/server&gt;
+
+    &lt;resource&gt;
+      &lt;!-- 下挂的cluster列表--&gt;
+      &lt;clusters&gt;
+	&lt;cluster&gt;
+          &lt;!-- cluster名称--&gt;
+	  &lt;name&gt;cluster1&lt;/name&gt;
+          &lt;!-- replica的服务主机名/IP和监听端口--&gt;
+	  &lt;server&gt;localhost:19801&lt;/server&gt;
+	&lt;/cluster&gt;
+	&lt;cluster&gt;
+	  &lt;name&gt;cluster2&lt;/name&gt;
+	  &lt;server&gt;localhost:19801&lt;/server&gt;
+	&lt;/cluster&gt;
+      &lt;/clusters&gt;
+    &lt;/resource&gt;
+  &lt;/blender&gt;
+
+&lt;/configure&gt;
+	  </screen>
+	</example>
+	<para>在proxy模式下，fproxy的查询返回结果和fsearchd的返回结果一致。</para>
+	<para>在blender模式下，当用户同时查询多个cluster时，fproxy将合并多个cluster的结果并返回。
+	  <example>
+	    <title>fproxy在blender模式下返回结果示例</title>
+	    <screen>
+&lt;?xml version="1.0"?&gt;
+&lt;result&gt;
+	&lt;hits number_hits="1" total_hits="24174" cost="18" cluster="cluster1"&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;177269&lt;/docid&gt;
+			&lt;score&gt;15.48&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX016-B13-119]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://www.compmarket.com:80/productinfo/tech/wp/clwwp.html]]&gt;
+				&lt;/URL&gt;
+				&lt;TITLE&gt;
+					&lt;![CDATA[A Look Inside the Color LaserWriter]]&gt;
+				&lt;/TITLE&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+	&lt;/hits&gt;
+	&lt;hits number_hits="2" total_hits="24174" cost="18" cluster="cluster2"&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;791822&lt;/docid&gt;
+			&lt;score&gt;15.70&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX034-B38-352]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://musicweb.austin.tx.us:80/Carpe.Diem/Archives/96Feb.html]]&gt;
+				&lt;/URL&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+		&lt;hit&gt;
+			&lt;docid&gt;482231&lt;/docid&gt;
+			&lt;score&gt;15.68&lt;/score&gt;
+			&lt;fields&gt;
+				&lt;DOCID&gt;
+					&lt;![CDATA[WTX083-B19-73]]&gt;
+				&lt;/DOCID&gt;
+				&lt;URL&gt;
+					&lt;![CDATA[http://ws.comspec.com:80/webcat/venlist/claris4.html]]&gt;
+				&lt;/URL&gt;
+				&lt;TITLE&gt;
+					&lt;![CDATA[CLARIS/APPLE PLUS                   On Line Catalogue 729047     ]]&gt;
+				&lt;/TITLE&gt;
+			&lt;/fields&gt;
+		&lt;/hit&gt;
+	&lt;/hits&gt;
+&lt;/result&gt;
+	    </screen>
+	  </example>
+	</para>
+      </sect2>
+
+      <sect2>
+	<title>实例</title>
+	<para>本节以真实数据为例，介绍在linux环境下如何创建单机和分布式搜索服务。</para>
+	<para>在本节中，假设代码在/mytest/firtex2目录，编译安装目录是/mytest/local_install(编译安装请参考<link linkend="quick_start_compile">编译和安装一节</link>)。首先拷贝样例数据至local_install/firtex2目录：
+	  <screen>cp -r /mytest/firtex2/examples /mytest/local_install/firtex2/</screen>
+	  <screen>cd /mytest/local_install/firtex2/</screen>
+	</para>
+	<sect3>
+	  <title>实例一：创建单机搜索服务</title>
+	  <para>本实例使用fbuilder工具构建索引，并且运行单机搜索服务程序fsearchd。</para>
+	  <para>
+	    <orderedlist>
+	      <listitem>
+		<para>创建索引:</para>
+		<para>拷贝配置文件conf/fbuilder.xml：
+		  <screen>cp conf/fbuilder.xml conf/fbuilder1.xml</screen>
+		</para>
+		<para>修改conf/fbuilder1.xml的&lt;target&gt;内容为：</para>
+		<para>&lt;target&gt;../test1/plain_utf8_index&lt;/target&gt;</para>
+		<para>构建索引：
+		  <screen>mkdir ./test1</screen>
+		  <screen>./bin/fbuilder -c ./conf/fbuilder1.xml</screen>
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>启动搜索服务程序:</para>
+		<para>拷贝配置文件conf/fsearchd.xml:
+		  <screen>cp conf/fsearchd.xml conf/fsearchd1.xml</screen>
+		</para>
+		<para>修改&lt;index_data&gt;:</para>
+		<para>&lt;index_data&gt;../test1/plain_utf8_index&lt;/index_data&gt;</para>
+		<para>启动HTTP搜索服务程序:
+		  <screen>./bin/fsearchd -c conf/fsearchd1.xml -t http</screen>
+		  <para>测试查询词：
+		    <screen>wget "http://localhost:19801/search?query=BODY:'信息';field_select=BODY:snippet"</screen>
+		  </para>
+		</para>
+		<para>启动RPC搜索服务程序:
+		  <screen>./bin/fsearchd -c conf/fsearchd1.xml -t rpc</screen>
+		  <para>使用frpcclient测试查询词：
+		    <screen>./bin/frpcclient -s localhost -p 19801 -q "query=BODY:'信息';field_select=BODY:snippet"</screen>
+		  </para>
+		</para>
+		
+		<tip>
+		  <title>查询注意事项</title>
+		  <orderedlist>
+		    <listitem>
+		      <para>查询词必须是utf-8编码，请确保shell或命令行控制台的编码是utf-8。</para>
+		    </listitem>
+		    <listitem>
+		      <para>在windows系统下请将配置文件和上述命令中的localhost替换成127.0.0.1，否则搜索服务可能启动失败。</para>
+		    </listitem>
+		  </orderedlist>
+		</tip>
+
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</sect3>
+
+	<sect3>
+	  <title>实例二：创建单cluster分布式搜索服务</title>
+	  <para>本实例使用fbuilder工具构建索引，并且运行包含2个shard，其中一个shard包含2个replica的分布式搜索服务。</para>
+	  <para>
+	    <orderedlist>
+	      <listitem>
+		<para>创建索引:</para>
+		<para>拷贝生成第1个shard的配置文件conf/fbuilder.xml：
+		  <screen>cp conf/fbuilder.xml conf/fbuilder2_1.xml</screen>
+		</para>
+		<para>修改conf/fbuilder2_1.xml的&lt;target&gt;内容为：</para>
+		<para>&lt;target&gt;../test2/shard1_index&lt;/target&gt;</para>
+		<para>构建索引：
+		  <screen>mkdir ./test2</screen>
+		  <screen>./bin/fbuilder -c ./conf/fbuilder2_1.xml</screen>
+		</para>
+
+		<para>拷贝生成第2个shard的配置文件conf/fbuilder.xml(源数据与shard1相同，这里只是为了演示)：
+		  <screen>cp conf/fbuilder.xml conf/fbuilder2_2.xml</screen>
+		</para>
+		<para>修改conf/fbuilder2_2.xml的&lt;target&gt;内容为：</para>
+		<para>&lt;target&gt;../test2/shard2_index&lt;/target&gt;</para>
+		<para>构建索引：
+		  <screen>./bin/fbuilder -c ./conf/fbuilder2_2.xml</screen>
+		</para>
+	      </listitem>
+	      
+	      <listitem>
+		<para>启动搜索服务程序:</para>
+		<itemizedlist>
+		  <listitem>
+		    <para>拷贝生成shard1的配置文件conf/fsearchd.xml:
+		      <screen>cp conf/fsearchd.xml conf/fsearchd2_1.xml</screen>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>修改&lt;host&gt;:</para>
+		    <para>&lt;host&gt;localhost:19802&lt;/host&gt;</para>
+		  </listitem>
+		  <listitem>
+		    <para>修改&lt;index_data&gt;:</para>
+		    <para>&lt;index_data&gt;../test2/shard1_index&lt;/index_data&gt;</para>
+		  </listitem>
+		  <listitem>
+		    <para>启动shard1的搜索服务程序:
+		      <screen>./bin/fsearchd -c ./conf/fsearchd2_1.xml -t http</screen>
+		    </para>
+		  </listitem>
+
+		  <listitem>
+		    <para>拷贝生成shard2的配置文件conf/fsearchd.xml:
+		      <screen>cp conf/fsearchd.xml conf/fsearchd2_2.xml</screen>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>修改&lt;host&gt;:</para>
+		    <para>&lt;host&gt;localhost:19803&lt;/host&gt;</para>
+		  </listitem>
+		  <listitem>
+		    <para>修改&lt;index_data&gt;:</para>
+		    <para>&lt;index_data&gt;../testd2/shard2_index&lt;/index_data&gt;</para>
+		  </listitem>
+		  <listitem>
+		    <para>启动shard2的搜索服务程序:
+		      <screen>./bin/fsearchd -c ./conf/fsearchd2_2.xml -t http</screen>
+		    </para>
+		  </listitem>
+		</itemizedlist>
+	      </listitem>
+	      
+	      <listitem>
+		<para>启动proxy服务程序:</para>
+		<itemizedlist>
+		  <listitem>
+		    <para>拷贝生成proxy的配置文件conf/fproxy.xml:
+		      <screen>cp conf/fproxy.xml conf/fproxy2.xml</screen>
+		    </para>		  
+		  </listitem>
+
+		  <listitem>
+		    <para>修改&lt;proxy&gt;标签中的&lt;host&gt;:</para>
+		    <para>&lt;host&gt;localhost:19804&lt;/host&gt;</para>
+		  </listitem>
+
+		  <listitem>
+		    <para>修改shard1的两个replica的&lt;server&gt;（两处）:</para>
+		    <para>&lt;server&gt;localhost:19802&lt;/server&gt;</para>
+		  </listitem>
+
+		  <listitem>
+		    <para>修改shard2的&lt;server&gt;:</para>
+		    <para>&lt;server&gt;localhost:19803&lt;/server&gt;</para>
+		  </listitem>
+
+		  <listitem>
+		    <para>运行proxy服务程序:
+		      <screen>./bin/fproxy -c ./conf/fproxy2.xml -t http</screen>
+		      <para>测试查询词：
+			<screen>wget "http://localhost:19804/search?query=BODY:'信息';field_select=BODY:snippet"</screen>
+		      </para>
+		    </para>
+		  </listitem>
+		
+		</itemizedlist>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</sect3>
+
+	<sect3>
+	  <title>实例三：创建多cluster分布式搜索服务</title>
+	  <para>本实例在实例二基础上，运行包含2个逻辑cluster的分布式搜索服务。</para>
+	  <orderedlist>
+	    <listitem>
+	      <para>修改&lt;blender&gt;标签中的&lt;host&gt;:</para>
+	      <para>&lt;host&gt;localhost:19805&lt;/host&gt;</para>
+	    </listitem>
+
+	    <listitem>
+	      <para>修改&lt;blender&gt;->&lt;resource&gt;->&lt;clusters&gt;的两个&lt;cluster&gt;中的&lt;server&gt;(这里只是演示，两个逻辑cluster指向同一个proxy):</para>
+	      <para>&lt;server&gt;localhost:19804&lt;/server&gt;</para>
+	    </listitem>
+	    
+	    <listitem>
+	      <para>以blender模式运行proxy服务程序:
+		<screen>./bin/fproxy -c ./conf/fproxy2.xml -t http -r blender</screen>
+		<para>测试查询词, 同时查询2个cluster：
+		  <screen>wget "http://localhost:19805/search?query=BODY:'信息';field_select=BODY:snippet"</screen>
+		只查询其中一个cluster：
+		  <screen>wget "http://localhost:19805/search?query=BODY:'信息';field_select=BODY:snippet;cluster=cluster1"</screen>
+		不同cluster执行不同查询:
+		  <screen>wget "http://localhost:19805/search?query=BODY:'信息';field_select=BODY:snippet;cluster=cluster1,cluster2{!query=BODY:'检查';field_select=BODY:snippet}"</screen>
+		</para>
+	      </para>
+	    </listitem>
+
+	  </orderedlist>
+	</sect3>
+
+      </sect2>
+
+      <sect2>
+	<title>搜索服务php客户端</title>
+	<para>php客户端支持http和RPC服务。</para>
+	<sect3>
+	  <title>http版php客户端</title>
+	  <para>接口介绍：</para>
+	  <para>
+	    <orderedlist>
+	      <listitem>
+		<para>查询</para>
+		<para>public function search($query, $sortBy, $filter, $offset, $limit)</para>
+		<itemizedlist>
+		  <listitem>
+		    <para>$query:</para>
+		    <para>查询表达式，查询语法请参考<link linkend="query_syntax_query_expr">查询表达式一节</link></para>
+		  </listitem>
+		  <listitem>
+		    <para>$sortBy:</para>
+		    <para>单个或多个排序字段，单个字段时参数为字符串类型，多个字段时参数为数组，每个元素指定一个字段，详细语法请参考<link linkend="query_syntax_sortby">查询语法排序表达式一节</link></para>
+		  </listitem>
+		  <listitem>
+		    <para>$filter:</para>
+		    <para>过滤条件，支持运算表达式，详细语法请参考<link linkend="query_syntax_filter">查询语法过滤表达式一节</link></para>
+		  </listitem>
+		  <listitem>
+		    <para>$offset:</para>
+		    <para>返回第几条结果。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$limit:</para>
+		    <para>总共返回多少条结果。</para>
+		  </listitem>
+		</itemizedlist>
+		<para>代码示例：</para>
+		<para>
+<screen>$client = new FirteXHTTPClient('http://localhost', '19801');
+$client->setFields('BODY:snippet');
+$sortBy = array(0 => 'MODIFIED', 1 => 'RELEVANCE');
+$result = $client->search('BODY:2', $sortBy, 'PRICE>10', 0, 10);
+print_r($result);</screen>
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</sect3>
+
+	<sect3>
+	  <title>rpc版php客户端</title>
+	  <para>接口介绍：</para>
+	  <para>
+	    <orderedlist>
+	      <listitem>
+		<para>public function syntaxSearch($uri)</para>
+		<para>给定语法完整的查询串，执行查询。</para>
+		<itemizedlist>
+		  <listitem>
+		    <para>$uri:</para>
+		    <para>查询表达式，详细语法请参考<link linkend="query_syntax">查询语法一章</link>。</para>
+		    <para>示例：</para>
+		    <para>
+		      <screen>$client = new FirteXRPCClient('localhost', '19801');
+$result = $client->syntaxSearch('query=BODY:2;field_select=BODY:snippet');
+print_r($result);</screen>
+		    </para>
+		  </listitem>
+		</itemizedlist>
+	      </listitem>
+	      <listitem>
+		<para>public function search($cmd)</para>
+		<para>给定填充好的查询结构体，执行查询。</para>
+		<para>参数：</para>
+		<para>$cmd: 查询结构体。</para>
+		<para>结构体成员：</para>
+		<itemizedlist>
+		  <listitem>
+		    <para>$query: 字符串类型，查询表达式，详细语法请参考<link linkend="query_syntax_query_expr">查询表达式一节</link></para>
+		  </listitem>
+		  <listitem>
+		    <para>$sortBy: 字符串或数组类型，单个或多个排序字段，单个字段时参数为字符串类型，多个字段时参数为数组，每个元素指定一个排序字段，详细语法请参考<link linkend="query_syntax_sortby">查询语法排序表达式一节</link></para>
+		  </listitem>
+		  <listitem>
+		    <para>$filter: 字符串类型，过滤条件，支持运算表达式，详细语法请参考<link linkend="query_syntax_filter">查询语法过滤表达式一节</link>。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$offset: 返回第几条结果。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$limit: 总共返回多少条结果。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$fieldSelect: 字符串或数组类型，配置查询结果返回哪些字段。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$encode: 字符串，查询表达式的编码类型，可取值：utf-8，gbk等</para>
+		  </listitem>
+		  <listitem>
+		    <para>$cluster: 字符串或数组，指定在哪些cluster执行查询，详细语法请参考<link linkend="query_syntax_cluster">指定cluster查询一节</link>。</para>
+		  </listitem>
+		  <listitem>
+		    <para>$traceLevel：字符串，指定返回调试信息类别，可取值：info/debug/trace。指定上述值后，查询结果中将附加相应级别的查询执行信息。</para>
+		  </listitem>
+		</itemizedlist>
+
+		<para>示例：</para>
+		<para>
+		  <screen>$client = new FirteXRPCClient('localhost', '19801');
+$vals = array('query' => 'BODY:2',
+              'fieldSelect' => array(0 => 'BODY:snippet'));
+$cmd = new firtex_QueryCommand($vals);
+$result = $client->search($cmd);
+print_r($result);
+		  </screen>
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</sect3>
+      </sect2>
+
+      <sect2>
+	<title>搜索服务python客户端</title>
+	<para>python客户端目前只提供了RPC服务的两个检索接口：</para>
+	<para>
+	  <orderedlist>
+	    <listitem>
+	      <para>def syntaxSearch(self, uri)：</para>
+	      <para>给定语法完整的查询串，执行查询。</para>
+	      <para>uri:</para>
+	      <para>查询表达式，详细语法请参考<link linkend="query_syntax">查询语法一章</link>。</para>
+	      <para>
+		<screen>
+client = FirteXRPCClient.FirteXRPCClient('localhost', 19801)
+result = client.syntaxSearch('query=BODY:2;field_select=BODY:snippet')
+print result
+		</screen>
+	      </para>
+	    </listitem>
+
+	    <listitem>
+	      <para>def search(self, cmd)：</para>
+	      <para>给定填充好的查询结构体，执行查询。</para>
+	      <para>参数：</para>
+	      <para>cmd: 查询结构体。</para>
+	      <para>结构体成员：</para>
+	      <itemizedlist>
+		<listitem>
+		  <para>query: 字符串类型，查询表达式，详细语法请参考<link linkend="query_syntax_query_expr">查询表达式一节</link></para>
+		</listitem>
+		<listitem>
+		  <para>sortBy: 字符串或数组类型，单个或多个排序字段，单个字段时参数为字符串类型，多个字段时参数为数组，每个元素指定一个排序字段，详细语法请参考<link linkend="query_syntax_sortby">查询语法排序表达式一节</link></para>
+		</listitem>
+		<listitem>
+		  <para>filter: 字符串类型，过滤条件，支持运算表达式，详细语法请参考<link linkend="query_syntax_filter">查询语法过滤表达式一节</link>。</para>
+		</listitem>
+		<listitem>
+		  <para>offset: 返回第几条结果。</para>
+		</listitem>
+		<listitem>
+		  <para>limit: 总共返回多少条结果。</para>
+		</listitem>
+		<listitem>
+		  <para>fieldSelect: 字符串或数组类型，配置查询结果返回哪些字段。</para>
+		</listitem>
+		<listitem>
+		  <para>encode: 字符串，查询表达式的编码类型，可取值：utf-8，gbk等</para>
+		</listitem>
+		<listitem>
+		  <para>cluster: 字符串或数组，指定在哪些cluster执行查询，详细语法请参考<link linkend="query_syntax_cluster">指定cluster查询一节</link>。</para>
+		</listitem>
+		<listitem>
+		  <para>traceLevel：字符串，指定返回调试信息类别，可取值：info/debug/trace。指定上述值后，查询结果中将附加相应级别的查询执行信息。</para>
+		</listitem>
+	      </itemizedlist>
+	      <para>示例：
+		<screen>
+fieldSelect = ['BODY:snippet']
+cmd = QueryCommand('BODY:2', None, None, 0, 10, fieldSelect)
+result = client.search(cmd)
+print result
+		</screen>
+	      </para>
+	    </listitem>
+	  </orderedlist>
+	</para>
+      </sect2>
+
+      <sect2>
+	<title>通过API查询</title>
+	<para>FirteX2的主要查询接口类是IndexSearcher，下面是一个简单的查询代码片段：</para>
+	<example>
+	  <title>通过API查询索引</title>
+	  <programlisting>
+<![CDATA[    //以只读方式打开索引库
+    Index index;
+    index.open("/temp/test_index", Index::READ, NULL);
+    //获取索引库的读取器
+    IndexReaderPtr pIndexReader = index.acquireReader();
+      
+    //定义搜索器对象，并传入索引库读取器
+    IndexSearcher searcher(pIndexReader);
+
+    //定义查询语法解析器对象，指定默认查询字段(BODY)和默认查询操作符(AND)
+    QueryParser queryParser(pIndexReader->getAnalyzerMapper(), 
+	      "BODY", QueryParser::OP_AND);
+
+    //在默认字段上查询hello，查询结果以索引顺序的升序排序
+    QueryHitsPtr pHits = searcher.search("query=hello;sort_by=INDEXORDER:ASC", queryParser);
+
+    //遍历查询结果
+    QueryHits::Iterator it = pHits->iterator();
+    while (it.hasNext())
+    {
+        QueryHits::HitDoc& hitDoc = it.next();
+        std::cout << "hit doc: " << hitDoc.getDocId() 
+		  << ", score: " << hitDoc.getScore() << std::endl;
+    }]]>
+	      </programlisting>
+	</example>
+	    <para>FirteX2支持动态刷新正在服务的索引数据，下述代码片段用于检测是否有新数据：</para>
+	    <example>
+	      <title>检测索引是否更新</title>
+	      <programlisting>
+<![CDATA[    //以只读方式打开索引库
+    Index index;
+    index.open("/temp/test_index", Index::READ, NULL);
+    //获取索引库的读取器
+    IndexReaderPtr pIndexReader = index.acquireReader();
+	
+    ...
+	
+    IndexReaderPtr pIndexReaderNew = index.acquireReader(true);
+    if (pIndexReaderNew != pIndexReader)
+    {
+    	//索引数据已经更新，替换旧版本读取器
+	pIndexReader = pIndexReaderNew;
+    }]]>
+		</programlisting>
+	      </example>
+	    </sect2>
+	  </sect1>
+
+	</chapter>

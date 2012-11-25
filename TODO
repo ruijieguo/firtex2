@@ -1,0 +1,20 @@
+== New Feature ==
+priority 1:
+  1. Real-time index update
+  2. MMap filesystem [DONE]
+  3. More merge strategy [DONE]
+
+priority 2:
+  1. Logger configuration [DONE]
+  2. Stored field compression
+  3. Index build job on hadoop
+  4. Distribute search service 
+	 
+priority 3:
+  1. Number index [DONE]
+  4. Ranking expression
+
+== Performance ==
+priority 1:
+  1. Multi-thread building index [DONE]
+  2. Search performance tuning

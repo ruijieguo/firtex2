@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>FirteX-Extension</ProjectName>
+    <ProjectGuid>{774CF74D-F4D3-4CD5-961A-734147AD9653}</ProjectGuid>
+    <RootNamespace>FirteX</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FirteX-Ext\Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FirteX\Release\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FirteX-ExtD</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FirteX-Ext</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/wd4290 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../include/firtex/extension/external;../include;../../contrib;../../include;../../external/libevent/include;../../external/libevent/WIN32-Code;../../src/external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CONSOLE;_WIN32_WINNT=0x0500;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ObjectFileName>FirteX-Ext\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>FirteX-Ext\Debug/vc70.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../include;../../contrib;../../include;../../src/external;../include/firtex/extension/external;../../external/libevent/include;../../external/libevent/WIN32-Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CONSOLE;_WIN32_WINNT=0x0500;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc70.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\processor\DocumentProcessorFactory.cpp" />
+    <ClCompile Include="..\src\processor\DocumentTemplate.cpp" />
+    <ClCompile Include="..\src\processor\GZipDocumentReader.cpp" />
+    <ClCompile Include="..\src\processor\HTMLDocumentProcessor.cpp" />
+    <ClCompile Include="..\src\processor\HTMLParser.cpp" />
+    <ClCompile Include="..\src\processor\MultiTypeDocumentProcessor.cpp" />
+    <ClCompile Include="..\src\processor\PlainDocumentProcessor.cpp" />
+    <ClCompile Include="..\src\processor\PlainDocumentReader.cpp" />
+    <ClCompile Include="..\src\processor\StandardDocumentProcessor.cpp" />
+    <ClCompile Include="..\src\processor\TrecDocumentProcessor.cpp" />
+    <ClCompile Include="..\src\collection\Collection.cpp" />
+    <ClCompile Include="..\src\collection\CollectionConfigure.cpp" />
+    <ClCompile Include="..\src\collection\CollectionFactory.cpp" />
+    <ClCompile Include="..\src\collection\ConsoleProgressObserver.cpp" />
+    <ClCompile Include="..\src\collection\DefaultFileFilter.cpp" />
+    <ClCompile Include="..\src\collection\DirCollection.cpp" />
+    <ClCompile Include="..\src\collection\DirectoryFileFetcher.cpp" />
+    <ClCompile Include="..\src\collection\MonitorDirectoryFileFetcher.cpp" />
+    <ClCompile Include="..\src\collection\StandardCollection.cpp" />
+    <ClCompile Include="..\src\collection\TrecCollection.cpp" />
+    <ClCompile Include="..\src\plugin\AnalyzerPlugins.cpp" />
+    <ClCompile Include="..\src\plugin\ComDocument.cpp" />
+    <ClCompile Include="..\src\plugin\ComDocumentSchema.cpp" />
+    <ClCompile Include="..\src\plugin\ComDocumentSource.cpp" />
+    <ClCompile Include="..\src\plugin\ComDocumentTemplate.cpp" />
+    <ClCompile Include="..\src\plugin\ComFieldTag.cpp" />
+    <ClCompile Include="..\src\plugin\ComObject.cpp" />
+    <ClCompile Include="..\src\plugin\ComRawDocument.cpp" />
+    <ClCompile Include="..\src\plugin\ComTokenSource.cpp" />
+    <ClCompile Include="..\src\plugin\ComTokenView.cpp" />
+    <ClCompile Include="..\src\plugin\DocumentProcessorPlugin.cpp" />
+    <ClCompile Include="..\src\plugin\DocumentProcessorPlugins.cpp" />
+    <ClCompile Include="..\src\plugin\FirteXCOM.cpp" />
+    <ClCompile Include="..\src\plugin\Plugin.cpp" />
+    <ClCompile Include="..\src\plugin\PluginFactory.cpp" />
+    <ClCompile Include="..\src\plugin\Plugins.cpp" />
+    <ClCompile Include="..\src\plugin\SharedLibrary.cpp" />
+    <ClCompile Include="..\src\plugin\SharedLibrary_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\plugin\SharedLibrary_WIN32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\com\Com.cpp" />
+    <ClCompile Include="..\src\com\ComUtil.cpp" />
+    <ClCompile Include="..\src\com\ComUtil_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\com\ComUtil_WIN32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\com\DllMain_WIN32.cpp" />
+    <ClCompile Include="..\src\com\DllServer.cpp" />
+    <ClCompile Include="..\src\network\EchoService.cpp" />
+    <ClCompile Include="..\src\network\EvHttpAsyncClient.cpp" />
+    <ClCompile Include="..\src\network\EvHttpRequestContext.cpp" />
+    <ClCompile Include="..\src\network\EvHttpRequestHandler.cpp" />
+    <ClCompile Include="..\src\network\EvHttpServer.cpp" />
+    <ClCompile Include="..\src\network\EvHttpServiceFactory.cpp" />
+    <ClCompile Include="..\src\network\EvHttpSyncClient.cpp" />
+    <ClCompile Include="..\src\network\EvThreadInitializer.cpp" />
+    <ClCompile Include="..\src\network\HTTPTypes.cpp" />
+    <ClCompile Include="..\src\util\Application.cpp" />
+    <ClCompile Include="..\src\util\HelpDisplayAppRunner.cpp" />
+    <ClCompile Include="..\src\util\Option.cpp" />
+    <ClCompile Include="..\src\util\OptionParser.cpp" />
+    <ClCompile Include="..\src\util\Process_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\util\Process_WIN32.cpp" />
+    <ClCompile Include="..\src\util\ServerApplication.cpp" />
+    <ClCompile Include="..\src\util\SignalHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\firtex\extension\processor\DocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\DocumentProcessorFactory.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\DocumentReader.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\DocumentSource.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\DocumentTemplate.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\GZipDocumentReader.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\HTMLDocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\HTMLParser.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\MultiTypeDocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\PlainDocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\PlainDocumentReader.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\RawDocument.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\StandardDocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\processor\TrecDocumentProcessor.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\Collection.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\CollectionConfigure.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\CollectionFactory.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\CollectionTemplate.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\ConsoleProgressObserver.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\DefaultFileFilter.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\DirCollection.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\DirectoryFileFetcher.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\FileFetcher.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\FileFilter.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\MonitorDirectoryFileFetcher.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\ProgressObserver.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\StandardCollection.h" />
+    <ClInclude Include="..\include\firtex\extension\collection\TrecCollection.h" />
+    <ClInclude Include="..\include\firtex\extension\com\Com.h" />
+    <ClInclude Include="..\include\firtex\extension\com\ComPtr.h" />
+    <ClInclude Include="..\include\firtex\extension\com\ComUtil.h" />
+    <ClInclude Include="..\include\firtex\extension\com\DllServer.h" />
+    <ClInclude Include="..\include\firtex\extension\com\Variant.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\AnalyzerPlugins.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComDocument.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComDocumentSchema.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComDocumentSource.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComDocumentTemplate.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComFieldTag.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComObject.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComRawDocument.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComTokenSource.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\ComTokenView.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\DocumentProcessorPlugin.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\DocumentProcessorPlugins.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\FirteXCOM.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\Plugin.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\PluginFactory.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\Plugins.h" />
+    <ClInclude Include="..\include\firtex\extension\plugin\SharedLibrary.h" />
+    <CustomBuildStep Include="..\include\firtex\extension\plugin\SharedLibrary_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\extension\plugin\SharedLibrary_WIN32.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EchoService.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvDataBuffer.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpAsyncClient.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpRequestContext.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpRequestHandler.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpServer.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpService.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpServiceFactory.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvHttpSyncClient.h" />
+    <ClInclude Include="..\include\firtex\extension\network\EvThreadInitializer.h" />
+    <ClInclude Include="..\include\firtex\extension\network\FunctionBinder.h" />
+    <ClInclude Include="..\include\firtex\extension\network\HTTPTypes.h" />
+    <ClInclude Include="..\include\firtex\extension\network\NetworkDefines.h" />
+    <ClInclude Include="..\include\firtex\extension\network\NetworkException.h" />
+    <ClInclude Include="..\include\firtex\extension\util\Application.h" />
+    <ClInclude Include="..\include\firtex\extension\util\AppRunner.h" />
+    <ClInclude Include="..\include\firtex\extension\util\HelpDisplayAppRunner.h" />
+    <ClInclude Include="..\include\firtex\extension\util\LibraryException.h" />
+    <ClInclude Include="..\include\firtex\extension\util\Option.h" />
+    <ClInclude Include="..\include\firtex\extension\util\OptionCallback.h" />
+    <ClInclude Include="..\include\firtex\extension\util\OptionException.h" />
+    <ClInclude Include="..\include\firtex\extension\util\OptionParser.h" />
+    <ClInclude Include="..\include\firtex\extension\util\Process.h" />
+    <CustomBuildStep Include="..\include\firtex\extension\util\Process_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\extension\util\Process_WIN32.h" />
+    <ClInclude Include="..\include\firtex\extension\util\ServerApplication.h" />
+    <ClInclude Include="..\include\firtex\extension\util\SharedOptionCallback.h" />
+    <ClInclude Include="..\include\firtex\extension\util\SignalHandler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

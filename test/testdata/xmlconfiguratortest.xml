@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configure>
+  <sub_item1>
+    <sub_item11>item11</sub_item11>
+  </sub_item1>
+  <sub_item1>
+    <sub_item11>item12</sub_item11>
+  </sub_item1>
+  <sub_item2>
+    <sub_item21>
+      <sub_item211>
+	<sub_item2111>item2111</sub_item2111>
+      </sub_item211>
+    </sub_item21>
+  </sub_item2>
+</configure>

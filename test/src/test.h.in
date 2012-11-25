@@ -1,0 +1,7 @@
+#ifndef __FX_TEST_DEFINE_H
+#define __FX_TEST_DEFINE_H
+
+#define TEST_DATA_PATH "@abs_top_srcdir@/test/testdata"
+#define TEST_OUTPUT_PATH "@abs_top_srcdir@/test/test_output"
+
+#endif

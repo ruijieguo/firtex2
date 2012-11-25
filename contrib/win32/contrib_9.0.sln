@@ -1,0 +1,43 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Snowball", "Snowball_9.0.vcproj", "{ABCF2DFF-C680-497E-A81E-422646D6DEBB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DoubleArrayTrieDict", "DoubleArrayTrieDict_9.0.vcproj", "{7F79FA4C-7266-4B21-9157-10EEAE8394FE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dictionary", "..\app\Dictionary\Dictionary_9.0.vcproj", "{CE1823A4-69AB-4764-A8B4-F41B31087014}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Highlighter", "highlighter_9.0.vcproj", "{24C81039-0230-4630-9AFA-666EC230258E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IconvFilter", "iconvfilter_9.0.vcproj", "{4906F717-C657-473B-8B98-2096F498F681}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABCF2DFF-C680-497E-A81E-422646D6DEBB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ABCF2DFF-C680-497E-A81E-422646D6DEBB}.Debug|Win32.Build.0 = Debug|Win32
+		{ABCF2DFF-C680-497E-A81E-422646D6DEBB}.Release|Win32.ActiveCfg = Release|Win32
+		{ABCF2DFF-C680-497E-A81E-422646D6DEBB}.Release|Win32.Build.0 = Release|Win32
+		{7F79FA4C-7266-4B21-9157-10EEAE8394FE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7F79FA4C-7266-4B21-9157-10EEAE8394FE}.Debug|Win32.Build.0 = Debug|Win32
+		{7F79FA4C-7266-4B21-9157-10EEAE8394FE}.Release|Win32.ActiveCfg = Release|Win32
+		{7F79FA4C-7266-4B21-9157-10EEAE8394FE}.Release|Win32.Build.0 = Release|Win32
+		{CE1823A4-69AB-4764-A8B4-F41B31087014}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CE1823A4-69AB-4764-A8B4-F41B31087014}.Debug|Win32.Build.0 = Debug|Win32
+		{CE1823A4-69AB-4764-A8B4-F41B31087014}.Release|Win32.ActiveCfg = Release|Win32
+		{CE1823A4-69AB-4764-A8B4-F41B31087014}.Release|Win32.Build.0 = Release|Win32
+		{24C81039-0230-4630-9AFA-666EC230258E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{24C81039-0230-4630-9AFA-666EC230258E}.Debug|Win32.Build.0 = Debug|Win32
+		{24C81039-0230-4630-9AFA-666EC230258E}.Release|Win32.ActiveCfg = Release|Win32
+		{24C81039-0230-4630-9AFA-666EC230258E}.Release|Win32.Build.0 = Release|Win32
+		{4906F717-C657-473B-8B98-2096F498F681}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4906F717-C657-473B-8B98-2096F498F681}.Debug|Win32.Build.0 = Debug|Win32
+		{4906F717-C657-473B-8B98-2096F498F681}.Release|Win32.ActiveCfg = Release|Win32
+		{4906F717-C657-473B-8B98-2096F498F681}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,944 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode Debug|Win32">
+      <Configuration>Unicode Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>FirteX</ProjectName>
+    <ProjectGuid>{07E8622C-8E15-45F3-8360-5A58291AF474}</ProjectGuid>
+    <RootNamespace>FirteX</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FirteX\Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FirteX\Release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)D</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /wd4290 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../include;../contrib;../src/external/iconv;../src/external;../src;../src/queryparser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;NOMINMAX;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ObjectFileName>FirteX\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>FirteX\Debug/vc70.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /wd4290 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>../include;../src/external;../src;../src/queryparser;../contrib;../src/external/iconv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc70.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../include;../contrib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ObjectFileName>FirteX\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>FirteX\Debug/vc70.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../lib/FirteXD.lib</OutputFile>
+      <AdditionalLibraryDirectories>..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\index\AsyncCommitScheduler.cpp" />
+    <ClCompile Include="..\src\index\AsyncDocumentConsumer.cpp" />
+    <ClCompile Include="..\src\index\BarrelDirectory.cpp" />
+    <ClCompile Include="..\src\index\BarrelsInfo.cpp" />
+    <ClCompile Include="..\src\index\BarrelTermPositionIterator.cpp" />
+    <ClCompile Include="..\src\index\BarrelTermPostingIterator.cpp" />
+    <ClCompile Include="..\src\index\ByteSliceInputStream.cpp" />
+    <ClCompile Include="..\src\index\ByteSliceOutputStream.cpp" />
+    <ClCompile Include="..\src\index\CommitList.cpp" />
+    <ClCompile Include="..\src\index\ComponentBuilder.cpp" />
+    <ClCompile Include="..\src\index\ComponentCreatorFactory.cpp" />
+    <ClCompile Include="..\src\index\ConcurrentMergeScheduler.cpp" />
+    <ClCompile Include="..\src\index\DBTMergePolicy.cpp" />
+    <ClCompile Include="..\src\index\DeletedDocumentFilter.cpp" />
+    <ClCompile Include="..\src\index\DocIdRecycling.cpp" />
+    <ClCompile Include="..\src\index\DocPostingDecoder.cpp" />
+    <ClCompile Include="..\src\index\DocPostingMerger.cpp" />
+    <ClCompile Include="..\src\index\DocPostingWriter.cpp" />
+    <ClCompile Include="..\src\index\DocSkipListReader.cpp" />
+    <ClCompile Include="..\src\index\DocSkipListWriter.cpp" />
+    <ClCompile Include="..\src\index\FieldMerger.cpp" />
+    <ClCompile Include="..\src\index\ForwardIndexFactory.cpp" />
+    <ClCompile Include="..\src\index\Index.cpp" />
+    <ClCompile Include="..\src\index\IndexBarrelKeeper.cpp" />
+    <ClCompile Include="..\src\index\IndexBarrelReader.cpp" />
+    <ClCompile Include="..\src\index\IndexBarrelWriter.cpp" />
+    <ClCompile Include="..\src\index\IndexCleanerFactory.cpp" />
+    <ClCompile Include="..\src\index\IndexMerger.cpp" />
+    <ClCompile Include="..\src\index\IndexReader.cpp" />
+    <ClCompile Include="..\src\index\IndexWriter.cpp" />
+    <ClCompile Include="..\src\index\InMemIndexBarrelReader.cpp" />
+    <ClCompile Include="..\src\index\InMemIndexMerger.cpp" />
+    <ClCompile Include="..\src\index\KeepByCommitIndexCleaner.cpp" />
+    <ClCompile Include="..\src\index\LengthNormMerger.cpp" />
+    <ClCompile Include="..\src\index\LengthNormReader.cpp" />
+    <ClCompile Include="..\src\index\LengthNormWriter.cpp" />
+    <ClCompile Include="..\src\index\MergePolicyFactory.cpp" />
+    <ClCompile Include="..\src\index\MultiFieldTermReader.cpp" />
+    <ClCompile Include="..\src\index\MultiIndex.cpp" />
+    <ClCompile Include="..\src\index\MultiIndexBarrelReader.cpp" />
+    <ClCompile Include="..\src\index\MultiIndexReader.cpp" />
+    <ClCompile Include="..\src\index\MultiPostingDecoder.cpp" />
+    <ClCompile Include="..\src\index\MultiStoredFieldsReader.cpp" />
+    <ClCompile Include="..\src\index\MultiTermIterator.cpp" />
+    <ClCompile Include="..\src\index\MultiTermPostingIterator.cpp" />
+    <ClCompile Include="..\src\index\MultiTermReader.cpp" />
+    <ClCompile Include="..\src\index\OptimizeMergePolicy.cpp" />
+    <ClCompile Include="..\src\index\OptPFDPostingCoding.cpp" />
+    <ClCompile Include="..\src\index\PosPostingDecoder.cpp" />
+    <ClCompile Include="..\src\index\PosPostingMerger.cpp" />
+    <ClCompile Include="..\src\index\PosPostingWriter.cpp" />
+    <ClCompile Include="..\src\index\PosSkipListReader.cpp" />
+    <ClCompile Include="..\src\index\PosSkipListWriter.cpp" />
+    <ClCompile Include="..\src\index\PostingCodingFactory.cpp" />
+    <ClCompile Include="..\src\index\PrimaryKeyIndex.cpp" />
+    <ClCompile Include="..\src\index\SequenceMergeScheduler.cpp" />
+    <ClCompile Include="..\src\index\SingleIndexBarrelReader.cpp" />
+    <ClCompile Include="..\src\index\StoredFieldsMerger.cpp" />
+    <ClCompile Include="..\src\index\StoredFieldsReaderImpl.cpp" />
+    <ClCompile Include="..\src\index\StoredFieldsWriter.cpp" />
+    <ClCompile Include="..\src\index\SyncCommitScheduler.cpp" />
+    <ClCompile Include="..\src\index\Term.cpp" />
+    <ClCompile Include="..\src\index\text\InMemTextTermReader.cpp" />
+    <ClCompile Include="..\src\index\text\TextComponentCreator.cpp" />
+    <ClCompile Include="..\src\index\text\TextIndexer.cpp" />
+    <ClCompile Include="..\src\index\text\TextIndexMerger.cpp" />
+    <ClCompile Include="..\src\index\text\TextTermIterator.cpp" />
+    <ClCompile Include="..\src\index\text\TextTermReader.cpp" />
+    <ClCompile Include="..\src\index\compress\OptPForDeltaCoding.cpp" />
+    <ClCompile Include="..\src\index\compress\Pack.cpp" />
+    <ClCompile Include="..\src\index\compress\S16Coding.cpp" />
+    <ClCompile Include="..\src\index\compress\Unpack.cpp" />
+    <ClCompile Include="..\src\index\keyword\InMemKeywordTermReader.cpp" />
+    <ClCompile Include="..\src\index\keyword\KeywordComponentCreator.cpp" />
+    <ClCompile Include="..\src\index\keyword\KeywordIndexer.cpp" />
+    <ClCompile Include="..\src\index\keyword\KeywordIndexMerger.cpp" />
+    <ClCompile Include="..\src\index\keyword\KeywordTermIterator.cpp" />
+    <ClCompile Include="..\src\index\keyword\KeywordTermReader.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyCreator.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyIndexer.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyMerger.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyPostingDecoder.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyTermIterator.cpp" />
+    <ClCompile Include="..\src\index\primarykey\PrimaryKeyTermReader.cpp" />
+    <ClCompile Include="..\src\analyzer\Analyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\AnalyzerFactory.cpp" />
+    <ClCompile Include="..\src\analyzer\AnalyzerMapper.cpp" />
+    <ClCompile Include="..\src\analyzer\DateTimeAnalyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\DateTimeBisonParser.cc" />
+    <ClCompile Include="..\src\analyzer\DateTimeLexer.cc" />
+    <ClCompile Include="..\src\analyzer\DoubleArrayTrie.cpp" />
+    <ClCompile Include="..\src\analyzer\FilterFactory.cpp" />
+    <ClCompile Include="..\src\analyzer\GBKTokenLexer.cc" />
+    <ClCompile Include="..\src\analyzer\KeywordAnalyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\LowercaseFilter.cpp" />
+    <ClCompile Include="..\src\analyzer\MaxForwardSegmenter.cpp" />
+    <ClCompile Include="..\src\analyzer\NumericAnalyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\SingleWordAnalyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\StandardAnalyzer.cpp" />
+    <ClCompile Include="..\src\analyzer\StandardStopFilter.cpp" />
+    <ClCompile Include="..\src\analyzer\SynonymFilter.cpp" />
+    <ClCompile Include="..\src\analyzer\SynonymMap.cpp" />
+    <ClCompile Include="..\src\analyzer\Token.cpp" />
+    <ClCompile Include="..\src\analyzer\TokenFilter.cpp" />
+    <ClCompile Include="..\src\analyzer\TokenSource.cpp" />
+    <ClCompile Include="..\src\analyzer\TokenView.cpp" />
+    <ClCompile Include="..\src\analyzer\UnigramSegmenter.cpp" />
+    <ClCompile Include="..\src\analyzer\UTF8TokenLexer.cc" />
+    <ClCompile Include="..\src\analyzer\WhitespaceAnalyzer.cpp" />
+    <ClCompile Include="..\src\thread\Condition.cpp" />
+    <ClCompile Include="..\src\thread\Event.cpp" />
+    <ClCompile Include="..\src\thread\Event_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\Event_WIN32.cpp" />
+    <ClCompile Include="..\src\thread\FastMutex.cpp" />
+    <ClCompile Include="..\src\thread\FastMutex_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\HPSMR.cpp" />
+    <ClCompile Include="..\src\thread\Mutex.cpp" />
+    <ClCompile Include="..\src\thread\Mutex_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\Mutex_WIN32.cpp" />
+    <ClCompile Include="..\src\thread\RWLock.cpp" />
+    <ClCompile Include="..\src\thread\RWLock_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\RWLock_WIN32.cpp" />
+    <ClCompile Include="..\src\thread\StoppableObject.cpp" />
+    <ClCompile Include="..\src\thread\Thread.cpp" />
+    <ClCompile Include="..\src\thread\Thread_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\Thread_WIN32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\ThreadLocal.cpp" />
+    <ClCompile Include="..\src\thread\ThreadPool.cpp" />
+    <ClCompile Include="..\src\search\AndQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\ArgListExprEvaluator.cpp" />
+    <ClCompile Include="..\src\search\BM25Scorer.cpp" />
+    <ClCompile Include="..\src\search\BooleanQuery.cpp" />
+    <ClCompile Include="..\src\search\BooleanQueryExecutorBuilder.cpp" />
+    <ClCompile Include="..\src\search\DefaultSimilarity.cpp" />
+    <ClCompile Include="..\src\search\DocSelectClause.cpp" />
+    <ClCompile Include="..\src\search\FeatureProvider.cpp" />
+    <ClCompile Include="..\src\search\FieldSelectClause.cpp" />
+    <ClCompile Include="..\src\search\Filter.cpp" />
+    <ClCompile Include="..\src\search\FilterClause.cpp" />
+    <ClCompile Include="..\src\search\IndexFeature.cpp" />
+    <ClCompile Include="..\src\search\IndexSearcher.cpp" />
+    <ClCompile Include="..\src\search\MatchComparator.cpp" />
+    <ClCompile Include="..\src\search\OrQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\ParameterClause.cpp" />
+    <ClCompile Include="..\src\search\PhraseQuery.cpp" />
+    <ClCompile Include="..\src\search\PhraseQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\Query.cpp" />
+    <ClCompile Include="..\src\search\QueryClause.cpp" />
+    <ClCompile Include="..\src\search\QueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\QueryFeature.cpp" />
+    <ClCompile Include="..\src\search\QueryHits.cpp" />
+    <ClCompile Include="..\src\search\QueryResult.cpp" />
+    <ClCompile Include="..\src\search\QueryTracer.cpp" />
+    <ClCompile Include="..\src\search\QueryTracerAppender.cpp" />
+    <ClCompile Include="..\src\search\RangeQuery.cpp" />
+    <ClCompile Include="..\src\search\ReqOptQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\ReqProhQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\ResultCollectorImpl.cpp" />
+    <ClCompile Include="..\src\search\ScorerProfile.cpp" />
+    <ClCompile Include="..\src\search\ScorerProfileFactory.cpp" />
+    <ClCompile Include="..\src\search\Similarity.cpp" />
+    <ClCompile Include="..\src\search\SimpleHitCollector.cpp" />
+    <ClCompile Include="..\src\search\SortClause.cpp" />
+    <ClCompile Include="..\src\search\SortedHitCollector.cpp" />
+    <ClCompile Include="..\src\search\Sorter.cpp" />
+    <ClCompile Include="..\src\search\Statement.cpp" />
+    <ClCompile Include="..\src\search\TermQuery.cpp" />
+    <ClCompile Include="..\src\search\TermQueryExecutor.cpp" />
+    <ClCompile Include="..\src\search\XMLResultFormatter.cpp" />
+    <ClCompile Include="..\src\search\XMLResultParser.cpp" />
+    <ClCompile Include="..\src\document\BuiltInFieldDefinition.cpp" />
+    <ClCompile Include="..\src\document\Document.cpp" />
+    <ClCompile Include="..\src\document\DocumentSchema.cpp" />
+    <ClCompile Include="..\src\document\DocumentType.cpp" />
+    <ClCompile Include="..\src\document\Field.cpp" />
+    <ClCompile Include="..\src\document\FieldDefinition.cpp" />
+    <ClCompile Include="..\src\document\FieldSchema.cpp" />
+    <ClCompile Include="..\src\document\FieldType.cpp" />
+    <ClCompile Include="..\src\utility\BinaryFile.cpp" />
+    <ClCompile Include="..\src\utility\BinaryFile_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\BinaryFile_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\BitVector.cpp" />
+    <ClCompile Include="..\src\utility\DateTime.cpp" />
+    <ClCompile Include="..\src\utility\DirectoryIterator.cpp" />
+    <ClCompile Include="..\src\utility\DirectoryIterator_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\DirectoryIterator_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\Environment.cpp" />
+    <ClCompile Include="..\src\utility\Environment_LINUX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\Environment_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\Exception.cpp" />
+    <ClCompile Include="..\src\utility\File.cpp" />
+    <ClCompile Include="..\src\utility\File_LINUX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\File_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\Hash.cpp" />
+    <ClCompile Include="..\src\utility\IconvWrapper.cpp" />
+    <ClCompile Include="..\src\utility\KeyValueParser.cpp" />
+    <ClCompile Include="..\src\utility\LooseBoundedPool.cpp" />
+    <ClCompile Include="..\src\utility\MiscUtil.cpp" />
+    <ClCompile Include="..\src\utility\MMapFile.cpp" />
+    <ClCompile Include="..\src\utility\MMapFile_POSIX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\MMapFile_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\Number.cpp" />
+    <ClCompile Include="..\src\utility\NumberFormatter.cpp" />
+    <ClCompile Include="..\src\utility\NumberParser.cpp" />
+    <ClCompile Include="..\src\utility\Path.cpp" />
+    <ClCompile Include="..\src\utility\Path_LINUX.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\utility\Path_WIN32.cpp" />
+    <ClCompile Include="..\src\utility\Reader.cpp" />
+    <ClCompile Include="..\src\utility\SimpleAllocator.cpp" />
+    <ClCompile Include="..\src\utility\SimpleSegregatedAllocator.cpp" />
+    <ClCompile Include="..\src\utility\StringTokenizer.cpp" />
+    <ClCompile Include="..\src\utility\StringUtils.cpp" />
+    <ClCompile Include="..\src\utility\SyncSegregatedAllocator.cpp" />
+    <ClCompile Include="..\src\utility\SystemInitializer.cpp" />
+    <ClCompile Include="..\src\utility\TextFile.cpp" />
+    <ClCompile Include="..\src\utility\TimeProbe.cpp" />
+    <ClCompile Include="..\src\utility\Timespan.cpp" />
+    <ClCompile Include="..\src\utility\Timestamp.cpp" />
+    <ClCompile Include="..\src\utility\URLDecoder.cpp" />
+    <ClCompile Include="..\src\utility\XMLDocumentWrapper.cpp" />
+    <ClCompile Include="..\src\utility\ZIPFile.cpp" />
+    <ClCompile Include="..\src\utility\ZLib.cpp" />
+    <ClCompile Include="..\src\config\Configurator.cpp" />
+    <ClCompile Include="..\src\config\GlobalConfig.cpp" />
+    <ClCompile Include="..\src\config\XMLConfigurator.cpp" />
+    <ClCompile Include="..\src\store\BlockFileInputStream.cpp" />
+    <ClCompile Include="..\src\store\BlockFileOutputStream.cpp" />
+    <ClCompile Include="..\src\store\BlockFileSystem.cpp" />
+    <ClCompile Include="..\src\store\FileSystemFactory.cpp" />
+    <ClCompile Include="..\src\store\InputStreamPool.cpp" />
+    <ClCompile Include="..\src\store\LocalFileOutputStream.cpp" />
+    <ClCompile Include="..\src\store\MMapFileInputStream.cpp" />
+    <ClCompile Include="..\src\store\MMapFileSystem.cpp" />
+    <ClCompile Include="..\src\common\AppenderFactory.cpp" />
+    <ClCompile Include="..\src\common\BasicLoggingLayout.cpp" />
+    <ClCompile Include="..\src\common\ConsoleAppender.cpp" />
+    <ClCompile Include="..\src\common\FileAppender.cpp" />
+    <ClCompile Include="..\src\common\LayoutAppender.cpp" />
+    <ClCompile Include="..\src\common\Logger.cpp" />
+    <ClCompile Include="..\src\common\LoggingLayoutFactory.cpp" />
+    <ClCompile Include="..\src\common\LoggingLevel.cpp" />
+    <ClCompile Include="..\src\common\Notifier.cpp" />
+    <ClCompile Include="..\src\common\PatternLoggingLayout.cpp" />
+    <ClCompile Include="..\src\common\Portability.cpp" />
+    <ClCompile Include="..\src\common\RefCountedObject.cpp" />
+    <ClCompile Include="..\src\queryparser\DefaultExprEvaluatorBuilder.cpp" />
+    <ClCompile Include="..\src\queryparser\DefaultQueryBuilder.cpp" />
+    <ClCompile Include="..\src\queryparser\ExprBisonParser.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\src\queryparser\ExprLexer.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\src\queryparser\ExprOptimizer.cpp" />
+    <ClCompile Include="..\src\queryparser\ExprParser.cpp" />
+    <ClCompile Include="..\src\queryparser\QueryExpr.cpp" />
+    <ClCompile Include="..\src\queryparser\QueryExprBisonParser.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\src\queryparser\QueryExprLexer.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\src\queryparser\QueryExprParser.cpp" />
+    <ClCompile Include="..\src\queryparser\QueryParser.cpp" />
+    <ClCompile Include="..\src\index\datetime\DateTimeComponentCreator.cpp" />
+    <ClCompile Include="..\src\index\datetime\DateTimeIndexer.cpp" />
+    <ClCompile Include="..\src\index\datetime\DateTimeIndexMerger.cpp" />
+    <ClCompile Include="..\src\index\datetime\DateTimeTermIterator.cpp" />
+    <ClCompile Include="..\src\index\datetime\DateTimeTermReader.cpp" />
+    <ClCompile Include="..\src\index\datetime\InMemDateTimeTermReader.cpp" />
+    <ClCompile Include="..\src\external\zlib\adler32.c" />
+    <ClCompile Include="..\src\external\zlib\compress.c" />
+    <ClCompile Include="..\src\external\zlib\crc32.c" />
+    <ClCompile Include="..\src\external\zlib\deflate.c" />
+    <ClCompile Include="..\src\external\zlib\gvmat32c.c" />
+    <ClCompile Include="..\src\external\zlib\gzio.c" />
+    <ClCompile Include="..\src\external\zlib\infback.c" />
+    <ClCompile Include="..\src\external\zlib\inffast.c" />
+    <ClCompile Include="..\src\external\zlib\inflate.c" />
+    <ClCompile Include="..\src\external\zlib\inftrees.c" />
+    <ClCompile Include="..\src\external\zlib\ioapi.c" />
+    <ClCompile Include="..\src\external\zlib\iowin32.c" />
+    <ClCompile Include="..\src\external\zlib\trees.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\src\external\zlib\uncompr.c" />
+    <ClCompile Include="..\src\external\zlib\unzip.c" />
+    <ClCompile Include="..\src\external\zlib\zip.c" />
+    <ClCompile Include="..\src\external\zlib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\firtex\index\datetime\DateTimeComponentCreator.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\DateTimeIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\DateTimeIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\DateTimeTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\DateTimeTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\InMemDateTimeTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\datetime\InMemDateTimeTermReader.h" />
+    <ClInclude Include="..\src\analyzer\DateTimeBisonParser.h" />
+    <ClInclude Include="..\src\queryparser\ExprBisonParser.h" />
+    <ClInclude Include="..\src\queryparser\y.tab.h" />
+    <ClInclude Include="..\include\firtex\FirteX.h" />
+    <ClInclude Include="..\include\firtex\utility\AutoPtr.h" />
+    <ClInclude Include="..\include\firtex\utility\BinaryFile.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\BinaryFile_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\BinaryFile_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\BitVector.h" />
+    <ClInclude Include="..\include\firtex\utility\BoundedChunkAllocator.h" />
+    <ClInclude Include="..\include\firtex\utility\BoundedConcurrentQueue.h" />
+    <ClInclude Include="..\include\firtex\utility\Charset.h" />
+    <ClInclude Include="..\include\firtex\utility\CharsetConverter.h" />
+    <ClInclude Include="..\include\firtex\utility\DateTime.h" />
+    <ClInclude Include="..\include\firtex\utility\DirectoryIterator.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\DirectoryIterator_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\DirectoryIterator_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\Environment.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\Environment_LINUX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\Environment_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\Exception.h" />
+    <ClInclude Include="..\include\firtex\utility\File.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\File_LINUX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\File_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\Hash.h" />
+    <ClInclude Include="..\include\firtex\utility\HashMap.h" />
+    <ClInclude Include="..\include\firtex\utility\IconvWrapper.h" />
+    <ClInclude Include="..\include\firtex\utility\Iterator.h" />
+    <ClInclude Include="..\include\firtex\utility\KeyValueParser.h" />
+    <ClInclude Include="..\include\firtex\utility\LinkedHashMap.h" />
+    <ClInclude Include="..\include\firtex\utility\LooseBoundedPool.h" />
+    <ClInclude Include="..\include\firtex\utility\MiscUtil.h" />
+    <ClInclude Include="..\include\firtex\utility\MMapFile.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\MMapFile_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\MMapFile_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\NonCopyable.h" />
+    <ClInclude Include="..\include\firtex\utility\Number.h" />
+    <ClInclude Include="..\include\firtex\utility\NumberFormatter.h" />
+    <ClInclude Include="..\include\firtex\utility\NumberParser.h" />
+    <ClInclude Include="..\include\firtex\utility\Path.h" />
+    <CustomBuildStep Include="..\include\firtex\utility\Path_LINUX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\utility\Path_WIN32.h" />
+    <ClInclude Include="..\include\firtex\utility\Pool.h" />
+    <ClInclude Include="..\include\firtex\utility\PriorityQueue.h" />
+    <ClInclude Include="..\include\firtex\utility\rapidxml.hpp" />
+    <ClInclude Include="..\include\firtex\utility\rapidxml_print.hpp" />
+    <ClInclude Include="..\include\firtex\utility\Reader.h" />
+    <ClInclude Include="..\include\firtex\utility\SimpleAllocator.h" />
+    <ClInclude Include="..\include\firtex\utility\SimpleSegregatedAllocator.h" />
+    <ClInclude Include="..\include\firtex\utility\Singleton.h" />
+    <ClInclude Include="..\include\firtex\utility\SlicedVector.h" />
+    <ClInclude Include="..\include\firtex\utility\SmallFloat.h" />
+    <ClInclude Include="..\include\firtex\utility\String.h" />
+    <ClInclude Include="..\include\firtex\utility\StringPool.h" />
+    <ClInclude Include="..\include\firtex\utility\StringReader.h" />
+    <ClInclude Include="..\include\firtex\utility\StringTokenizer.h" />
+    <ClInclude Include="..\include\firtex\utility\StringUtils.h" />
+    <ClInclude Include="..\include\firtex\utility\SynchronizedQueue.h" />
+    <ClInclude Include="..\include\firtex\utility\SyncSegregatedAllocator.h" />
+    <ClInclude Include="..\include\firtex\utility\SystemInitializer.h" />
+    <ClInclude Include="..\include\firtex\utility\TextFile.h" />
+    <ClInclude Include="..\include\firtex\utility\TimeProbe.h" />
+    <ClInclude Include="..\include\firtex\utility\Timespan.h" />
+    <ClInclude Include="..\include\firtex\utility\Timestamp.h" />
+    <ClInclude Include="..\include\firtex\utility\TypedSimpleChunkedPool.h" />
+    <ClInclude Include="..\include\firtex\utility\URLDecoder.h" />
+    <ClInclude Include="..\include\firtex\utility\XMLDocumentWrapper.h" />
+    <ClInclude Include="..\include\firtex\utility\ZIPFile.h" />
+    <ClInclude Include="..\include\firtex\utility\ZLib.h" />
+    <ClInclude Include="..\include\firtex\index\AsyncCommitScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\AsyncDocumentConsumer.h" />
+    <ClInclude Include="..\include\firtex\index\BarrelDirectory.h" />
+    <ClInclude Include="..\include\firtex\index\BarrelsInfo.h" />
+    <ClInclude Include="..\include\firtex\index\BarrelTermPositionIterator.h" />
+    <ClInclude Include="..\include\firtex\index\BarrelTermPostingIterator.h" />
+    <ClInclude Include="..\include\firtex\index\ByteSlice.h" />
+    <ClInclude Include="..\include\firtex\index\ByteSliceInputStream.h" />
+    <ClInclude Include="..\include\firtex\index\ByteSliceOutputStream.h" />
+    <ClInclude Include="..\include\firtex\index\CommitList.h" />
+    <ClInclude Include="..\include\firtex\index\CommitScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\Committable.h" />
+    <ClInclude Include="..\include\firtex\index\ComponentBuilder.h" />
+    <ClInclude Include="..\include\firtex\index\ComponentCreatorFactory.h" />
+    <ClInclude Include="..\include\firtex\index\ConcurrentMergeScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\DBTMergePolicy.h" />
+    <ClInclude Include="..\include\firtex\index\DeletedDocumentFilter.h" />
+    <ClInclude Include="..\include\firtex\index\DictLoader.h" />
+    <ClInclude Include="..\include\firtex\index\DocIdRecycling.h" />
+    <ClInclude Include="..\include\firtex\index\DocPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\DocPostingMerger.h" />
+    <ClInclude Include="..\include\firtex\index\DocPostingWriter.h" />
+    <ClInclude Include="..\include\firtex\index\DocSkipListReader.h" />
+    <ClInclude Include="..\include\firtex\index\DocSkipListWriter.h" />
+    <ClInclude Include="..\include\firtex\index\DocSkipPoint.h" />
+    <ClInclude Include="..\include\firtex\index\DocumentConsumer.h" />
+    <ClInclude Include="..\include\firtex\index\DocumentPool.h" />
+    <ClInclude Include="..\include\firtex\index\FieldComponentCreator.h" />
+    <ClInclude Include="..\include\firtex\index\FieldIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\FieldMerger.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexCreator.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexFactory.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexIterator.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexIteratorTraits.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexReader.h" />
+    <ClInclude Include="..\include\firtex\index\ForwardIndexWriter.h" />
+    <ClInclude Include="..\include\firtex\index\GPIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\ImmediateMerger.h" />
+    <ClInclude Include="..\include\firtex\index\Index.h" />
+    <ClInclude Include="..\include\firtex\index\IndexBarrelKeeper.h" />
+    <ClInclude Include="..\include\firtex\index\IndexBarrelReader.h" />
+    <ClInclude Include="..\include\firtex\index\IndexBarrelWriter.h" />
+    <ClInclude Include="..\include\firtex\index\IndexCleaner.h" />
+    <ClInclude Include="..\include\firtex\index\IndexCleanerFactory.h" />
+    <ClInclude Include="..\include\firtex\index\IndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\IndexReader.h" />
+    <ClInclude Include="..\include\firtex\index\IndexSchema.h" />
+    <ClInclude Include="..\include\firtex\index\IndexWriter.h" />
+    <ClInclude Include="..\include\firtex\index\IndexWriterNotification.h" />
+    <ClInclude Include="..\include\firtex\index\InMemDocPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\InMemIndexBarrelReader.h" />
+    <ClInclude Include="..\include\firtex\index\InMemIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\InMemoryIndexBarrelReader.h" />
+    <ClInclude Include="..\include\firtex\index\InMemoryTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\InMemPosPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\KeepByCommitIndexCleaner.h" />
+    <ClInclude Include="..\include\firtex\index\LengthNormEncoder.h" />
+    <ClInclude Include="..\include\firtex\index\LengthNormIterator.h" />
+    <ClInclude Include="..\include\firtex\index\LengthNormMerger.h" />
+    <ClInclude Include="..\include\firtex\index\LengthNormReader.h" />
+    <ClInclude Include="..\include\firtex\index\LengthNormWriter.h" />
+    <ClInclude Include="..\include\firtex\index\LogarithmicMerger.h" />
+    <ClInclude Include="..\include\firtex\index\Mergeable.h" />
+    <ClInclude Include="..\include\firtex\index\MergeFieldInfo.h" />
+    <ClInclude Include="..\include\firtex\index\MergeInfo.h" />
+    <ClInclude Include="..\include\firtex\index\MergePolicy.h" />
+    <ClInclude Include="..\include\firtex\index\MergePolicyFactory.h" />
+    <ClInclude Include="..\include\firtex\index\MergeProposal.h" />
+    <ClInclude Include="..\include\firtex\index\MergeScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\MultiFieldTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\MultiIndex.h" />
+    <ClInclude Include="..\include\firtex\index\MultiIndexBarrelReader.h" />
+    <ClInclude Include="..\include\firtex\index\MultiIndexReader.h" />
+    <ClInclude Include="..\include\firtex\index\MultiPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\MultiStoredFieldsReader.h" />
+    <ClInclude Include="..\include\firtex\index\MultiTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\MultiTermPostingIterator.h" />
+    <ClInclude Include="..\include\firtex\index\MultiTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\NoMergePolicy.h" />
+    <ClInclude Include="..\include\firtex\index\OptimizeMergePolicy.h" />
+    <ClInclude Include="..\include\firtex\index\OptPFDPostingCoding.h" />
+    <ClInclude Include="..\include\firtex\index\PosPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\PosPostingMerger.h" />
+    <ClInclude Include="..\include\firtex\index\PosPostingWriter.h" />
+    <ClInclude Include="..\include\firtex\index\PosSkipListReader.h" />
+    <ClInclude Include="..\include\firtex\index\PosSkipListWriter.h" />
+    <ClInclude Include="..\include\firtex\index\PostingCoding.h" />
+    <ClInclude Include="..\include\firtex\index\PostingCodingFactory.h" />
+    <ClInclude Include="..\include\firtex\index\PostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\PostingMerger.h" />
+    <ClInclude Include="..\include\firtex\index\PostingPool.h" />
+    <ClInclude Include="..\include\firtex\index\PostingWriter.h" />
+    <ClInclude Include="..\include\firtex\index\PrimaryKeyIndex.h" />
+    <ClInclude Include="..\include\firtex\index\SequenceMergeScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\SingleIndexBarrelReader.h" />
+    <ClInclude Include="..\include\firtex\index\StoredFieldsMerger.h" />
+    <ClInclude Include="..\include\firtex\index\StoredFieldsReader.h" />
+    <ClInclude Include="..\include\firtex\index\StoredFieldsReaderImpl.h" />
+    <ClInclude Include="..\include\firtex\index\StoredFieldsWriter.h" />
+    <ClInclude Include="..\include\firtex\index\SyncCommitScheduler.h" />
+    <ClInclude Include="..\include\firtex\index\Term.h" />
+    <ClInclude Include="..\include\firtex\index\TermInfo.h" />
+    <ClInclude Include="..\include\firtex\index\TermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\TermMeta.h" />
+    <ClInclude Include="..\include\firtex\index\TermPostingIterator.h" />
+    <ClInclude Include="..\include\firtex\index\TermReader.h" />
+    <ClInclude Include="..\include\firtex\index\TypedDict.h" />
+    <ClInclude Include="..\include\firtex\index\TypedDictWriter.h" />
+    <ClInclude Include="..\include\firtex\index\TypedDocPostingWriter.h" />
+    <ClInclude Include="..\include\firtex\index\TypedForwardIndexIterator.h" />
+    <ClInclude Include="..\include\firtex\index\TypedPosPostingWriter.h" />
+    <ClInclude Include="..\include\firtex\index\TypedSkipListReader.h" />
+    <ClInclude Include="..\include\firtex\index\TypedSkipListWriter.h" />
+    <ClInclude Include="..\include\firtex\index\TypedTerm.h" />
+    <ClInclude Include="..\include\firtex\index\text\InMemTextTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\text\InMemTextTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\text\TextComponentCreator.h" />
+    <ClInclude Include="..\include\firtex\index\text\TextIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\text\TextIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\text\TextTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\text\TextTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\compress\Coding.h" />
+    <ClInclude Include="..\include\firtex\index\compress\OptPForDeltaCoding.h" />
+    <ClInclude Include="..\include\firtex\index\compress\Pack.h" />
+    <ClInclude Include="..\include\firtex\index\compress\S16Coding.h" />
+    <ClInclude Include="..\include\firtex\index\compress\Unpack.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\InMemKeywordTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\InMemKeywordTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordComponentCreator.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordProducer.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\keyword\KeywordTermReaderImpl.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyCreator.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyMerger.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyPostingDecoder.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyPostingIterator.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\primarykey\PrimaryKeyTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexCreator.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexIterator.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexReader.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexReaderImpl.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexReaderMMapImpl.h" />
+    <ClInclude Include="..\include\firtex\index\forwardindex\PrimitiveTypeForwardIndexWriter.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\InMemSimpleNumericTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\InMemSimpleNumericTermReader.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\NumericHasher.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\SimpleNumericComponentCreator.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\SimpleNumericIndexer.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\SimpleNumericIndexMerger.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\SimpleNumericTermIterator.h" />
+    <ClInclude Include="..\include\firtex\index\numeric\SimpleNumericTermReader.h" />
+    <ClInclude Include="..\include\firtex\thread\atomic.h" />
+    <ClInclude Include="..\include\firtex\thread\atomic\Atomic_VC_X86.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount_GCC.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount_GCC_X86.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount_PTHREADS.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount_SYNC.h" />
+    <ClInclude Include="..\include\firtex\thread\AtomicCount_WIN32.h" />
+    <ClInclude Include="..\include\firtex\thread\atomic\AtomicIntegrals.h" />
+    <ClInclude Include="..\include\firtex\thread\Condition.h" />
+    <ClInclude Include="..\include\firtex\thread\Event.h" />
+    <ClInclude Include="..\include\firtex\thread\Event_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\Event_WIN32.h" />
+    <ClInclude Include="..\include\firtex\thread\FastMutex.h" />
+    <ClInclude Include="..\include\firtex\thread\FastMutex_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\HPSMR.h" />
+    <ClInclude Include="..\include\firtex\thread\interlocked.h" />
+    <ClInclude Include="..\include\firtex\thread\Mutex.h" />
+    <ClInclude Include="..\include\firtex\thread\Mutex_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\Mutex_WIN32.h" />
+    <ClInclude Include="..\include\firtex\thread\Runnable.h" />
+    <ClInclude Include="..\include\firtex\thread\RWLock.h" />
+    <ClInclude Include="..\include\firtex\thread\RWLock_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\RWLock_WIN32.h" />
+    <ClInclude Include="..\include\firtex\thread\ScopedLock.h" />
+    <ClInclude Include="..\include\firtex\thread\ScopedUnlock.h" />
+    <ClInclude Include="..\include\firtex\thread\StoppableObject.h" />
+    <ClInclude Include="..\include\firtex\thread\SynchronizedObject.h" />
+    <ClInclude Include="..\include\firtex\thread\Thread.h" />
+    <ClInclude Include="..\include\firtex\thread\Thread_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\Thread_WIN32.h" />
+    <ClInclude Include="..\include\firtex\thread\ThreadLocal.h" />
+    <ClInclude Include="..\include\firtex\thread\ThreadPool.h" />
+    <ClInclude Include="..\include\firtex\thread\TSS.h" />
+    <ClInclude Include="..\include\firtex\thread\TSS_MACOS.h" />
+    <ClInclude Include="..\include\firtex\thread\TSS_POSIX.h" />
+    <ClInclude Include="..\include\firtex\thread\TSS_WIN32.h" />
+    <ClInclude Include="..\include\firtex\store\BlockFileInputStream.h" />
+    <ClInclude Include="..\include\firtex\store\BlockFileOutputStream.h" />
+    <ClInclude Include="..\include\firtex\store\BlockFileSystem.h" />
+    <ClInclude Include="..\include\firtex\store\FileSystem.h" />
+    <ClInclude Include="..\include\firtex\store\FileSystemFactory.h" />
+    <ClInclude Include="..\include\firtex\store\InputStream.h" />
+    <ClInclude Include="..\include\firtex\store\InputStreamPool.h" />
+    <ClInclude Include="..\include\firtex\store\LocalFileOutputStream.h" />
+    <ClInclude Include="..\include\firtex\store\MMapFileInputStream.h" />
+    <ClInclude Include="..\include\firtex\store\MMapFileSystem.h" />
+    <ClInclude Include="..\include\firtex\store\OutputStream.h" />
+    <ClInclude Include="..\include\firtex\search\AndQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\ArgListExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\AttrExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\BinaryExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\BM25Scorer.h" />
+    <ClInclude Include="..\include\firtex\search\BooleanQuery.h" />
+    <ClInclude Include="..\include\firtex\search\BooleanQueryExecutorBuilder.h" />
+    <ClInclude Include="..\include\firtex\search\Clause.h" />
+    <ClInclude Include="..\include\firtex\search\ConstExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\DefaultSimilarity.h" />
+    <ClInclude Include="..\include\firtex\search\DocScoreFeature.h" />
+    <ClInclude Include="..\include\firtex\search\ExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\FeatureProvider.h" />
+    <ClInclude Include="..\include\firtex\search\Filter.h" />
+    <ClInclude Include="..\include\firtex\search\FilterClause.h" />
+    <ClInclude Include="..\include\firtex\search\HitCollector.h" />
+    <ClInclude Include="..\include\firtex\search\HitQueue.h" />
+    <ClInclude Include="..\include\firtex\search\IndexFeature.h" />
+    <ClInclude Include="..\include\firtex\search\IndexSearcher.h" />
+    <ClInclude Include="..\include\firtex\search\InExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\MatchComparator.h" />
+    <ClInclude Include="..\include\firtex\search\MatchedDoc.h" />
+    <ClInclude Include="..\include\firtex\search\MatchedDocSet.h" />
+    <ClInclude Include="..\include\firtex\search\OrQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\ParameterClause.h" />
+    <ClInclude Include="..\include\firtex\search\PhraseQuery.h" />
+    <ClInclude Include="..\include\firtex\search\PhraseQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\Query.h" />
+    <ClInclude Include="..\include\firtex\search\QueryClause.h" />
+    <ClInclude Include="..\include\firtex\search\QueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\QueryFeature.h" />
+    <ClInclude Include="..\include\firtex\search\QueryHits.h" />
+    <ClInclude Include="..\include\firtex\search\RangeQuery.h" />
+    <ClInclude Include="..\include\firtex\search\ReqOptQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\ReqProhQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\ScoredDoc.h" />
+    <ClInclude Include="..\include\firtex\search\Scorer.h" />
+    <ClInclude Include="..\include\firtex\search\ScorerProfile.h" />
+    <ClInclude Include="..\include\firtex\search\ScorerProfileFactory.h" />
+    <ClInclude Include="..\include\firtex\search\Similarity.h" />
+    <ClInclude Include="..\include\firtex\search\SimpleHitCollector.h" />
+    <ClInclude Include="..\include\firtex\search\SortClause.h" />
+    <ClInclude Include="..\include\firtex\search\SortedHitCollector.h" />
+    <ClInclude Include="..\include\firtex\search\Sorter.h" />
+    <ClInclude Include="..\include\firtex\search\Statement.h" />
+    <ClInclude Include="..\include\firtex\search\TermQuery.h" />
+    <ClInclude Include="..\include\firtex\search\TermQueryExecutor.h" />
+    <ClInclude Include="..\include\firtex\search\TermQueryFeature.h" />
+    <ClInclude Include="..\include\firtex\search\TermScoreFeature.h" />
+    <ClInclude Include="..\include\firtex\search\TernaryExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\UnaryExprEvaluator.h" />
+    <ClInclude Include="..\include\firtex\search\XMLHitsFormatter.h" />
+    <ClInclude Include="..\include\firtex\search\XMLSnippetHitsFormatter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\Analyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\AnalyzerFactory.h" />
+    <ClInclude Include="..\include\firtex\analyzer\AnalyzerMapper.h" />
+    <ClInclude Include="..\include\firtex\analyzer\DateTimeAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\DateTimeLexer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\DoubleArrayTrie.h" />
+    <ClInclude Include="..\include\firtex\analyzer\FilterFactory.h" />
+    <ClInclude Include="..\include\firtex\analyzer\GBKTokenLexer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\KeywordAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\LowercaseFilter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\MaxForwardSegmenter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\NumericAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\Segmenter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\SingleWordAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\StandardAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\StandardStopFilter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\StandardTokenizer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\SynonymFilter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\SynonymMap.h" />
+    <ClInclude Include="..\include\firtex\analyzer\Token.h" />
+    <ClInclude Include="..\include\firtex\analyzer\TokenFilter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\Tokenizer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\TokenSource.h" />
+    <ClInclude Include="..\include\firtex\analyzer\TokenView.h" />
+    <ClInclude Include="..\include\firtex\analyzer\UnigramSegmenter.h" />
+    <ClInclude Include="..\include\firtex\analyzer\UTF8TokenLexer.h" />
+    <ClInclude Include="..\include\firtex\analyzer\WhitespaceAnalyzer.h" />
+    <ClInclude Include="..\include\firtex\document\AnalyzedDocument.h" />
+    <ClInclude Include="..\include\firtex\document\AnalyzedField.h" />
+    <ClInclude Include="..\include\firtex\document\BuiltInFieldDefinition.h" />
+    <ClInclude Include="..\include\firtex\document\Document.h" />
+    <ClInclude Include="..\include\firtex\document\DocumentSchema.h" />
+    <ClInclude Include="..\include\firtex\document\DocumentType.h" />
+    <ClInclude Include="..\include\firtex\document\Field.h" />
+    <ClInclude Include="..\include\firtex\document\FieldDefinition.h" />
+    <ClInclude Include="..\include\firtex\document\FieldSchema.h" />
+    <ClInclude Include="..\include\firtex\document\FieldType.h" />
+    <ClInclude Include="..\include\firtex\document\TypedDocument.h" />
+    <ClInclude Include="..\include\firtex\config\Configurable.h" />
+    <ClInclude Include="..\include\firtex\config\Configurator.h" />
+    <ClInclude Include="..\include\firtex\config\GlobalConfig.h" />
+    <ClInclude Include="..\include\firtex\config\XMLConfigurator.h" />
+    <ClInclude Include="..\include\firtex\common\Any.h" />
+    <ClInclude Include="..\include\firtex\common\Appender.h" />
+    <ClInclude Include="..\include\firtex\common\AppenderFactory.h" />
+    <ClInclude Include="..\include\firtex\common\BasicLoggingLayout.h" />
+    <ClInclude Include="..\include\firtex\common\Common.h" />
+    <ClInclude Include="..\include\firtex\common\Compiler_GCC.h" />
+    <ClInclude Include="..\include\firtex\common\Compiler_IC.h" />
+    <ClInclude Include="..\include\firtex\common\Compiler_VC.h" />
+    <ClInclude Include="..\include\firtex\common\ConsoleAppender.h" />
+    <ClInclude Include="..\include\firtex\common\FileAppender.h" />
+    <ClInclude Include="..\include\firtex\common\IndexDefines.h" />
+    <ClInclude Include="..\include\firtex\common\IntTypes.h" />
+    <ClInclude Include="..\include\firtex\common\IO.h" />
+    <CustomBuildStep Include="..\include\firtex\common\IO_POSIX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuildStep>
+    <ClInclude Include="..\include\firtex\common\IO_WIN32.h" />
+    <ClInclude Include="..\include\firtex\common\LayoutAppender.h" />
+    <ClInclude Include="..\include\firtex\common\Logger.h" />
+    <ClInclude Include="..\include\firtex\common\LoggingEvent.h" />
+    <ClInclude Include="..\include\firtex\common\LoggingLayout.h" />
+    <ClInclude Include="..\include\firtex\common\LoggingLayoutFactory.h" />
+    <ClInclude Include="..\include\firtex\common\LoggingLevel.h" />
+    <ClInclude Include="..\include\firtex\common\Notifiable.h" />
+    <ClInclude Include="..\include\firtex\common\Notification.h" />
+    <ClInclude Include="..\include\firtex\common\Notifier.h" />
+    <ClInclude Include="..\include\firtex\common\PatternLoggingLayout.h" />
+    <ClInclude Include="..\include\firtex\common\Platform.h" />
+    <ClInclude Include="..\include\firtex\common\Portability.h" />
+    <ClInclude Include="..\include\firtex\common\RefCountedObject.h" />
+    <ClInclude Include="..\include\firtex\common\SharedPtr.h" />
+    <ClInclude Include="..\include\firtex\common\StdHeader.h" />
+    <ClInclude Include="..\include\firtex\common\tchar.h" />
+    <ClInclude Include="..\include\firtex\common\TypeDefs.h" />
+    <ClInclude Include="..\include\firtex\queryparser\DefaultExprEvaluatorBuilder.h" />
+    <ClInclude Include="..\include\firtex\queryparser\DefaultQueryBuilder.h" />
+    <ClInclude Include="..\include\firtex\queryparser\ExprEvaluatorBuilder.h" />
+    <ClInclude Include="..\include\firtex\queryparser\ExprLexer.h" />
+    <ClInclude Include="..\include\firtex\queryparser\ExprNode.h" />
+    <ClInclude Include="..\include\firtex\queryparser\ExprOptimizer.h" />
+    <ClInclude Include="..\include\firtex\queryparser\ExprParser.h" />
+    <ClInclude Include="..\include\firtex\queryparser\QueryBuilder.h" />
+    <ClInclude Include="..\include\firtex\queryparser\QueryExpr.h" />
+    <ClInclude Include="..\include\firtex\queryparser\QueryExprLexer.h" />
+    <ClInclude Include="..\include\firtex\queryparser\QueryExprParser.h" />
+    <ClInclude Include="..\include\firtex\queryparser\QueryParser.h" />
+    <ClInclude Include="..\src\external\zlib\crc32.h" />
+    <ClInclude Include="..\src\external\zlib\crypt.h" />
+    <ClInclude Include="..\src\external\zlib\deflate.h" />
+    <ClInclude Include="..\src\external\zlib\inffast.h" />
+    <ClInclude Include="..\src\external\zlib\inffixed.h" />
+    <ClInclude Include="..\src\external\zlib\inflate.h" />
+    <ClInclude Include="..\src\external\zlib\inftrees.h" />
+    <ClInclude Include="..\src\external\zlib\ioapi.h" />
+    <ClInclude Include="..\src\external\zlib\iowin32.h" />
+    <ClInclude Include="..\src\external\zlib\trees.h" />
+    <ClInclude Include="..\src\external\zlib\unzip.h" />
+    <ClInclude Include="..\src\external\zlib\zconf.h" />
+    <ClInclude Include="..\src\external\zlib\zip.h" />
+    <ClInclude Include="..\src\external\zlib\zlib.h" />
+    <ClInclude Include="..\src\external\zlib\zutil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\analyzer\DateTimeBisonParser.hh" />
+    <None Include="..\src\analyzer\location.hh" />
+    <None Include="..\src\analyzer\position.hh" />
+    <None Include="..\src\analyzer\stack.hh" />
+    <None Include="..\src\queryparser\ExprBisonParser.hh" />
+    <None Include="..\src\queryparser\location.hh" />
+    <None Include="..\src\queryparser\position.hh" />
+    <None Include="..\src\queryparser\QueryExprBisonParser.hh" />
+    <None Include="..\src\queryparser\stack.hh" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

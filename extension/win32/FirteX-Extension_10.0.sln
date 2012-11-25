@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirteX-Extension", "FirteX-Extension_10.0.vcxproj", "{774CF74D-F4D3-4CD5-961A-734147AD9653}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "com", "com_10.0.vcxproj", "{D0213A01-50B3-4F78-AC70-4D04E603AF50}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Unicode Debug|Win32 = Unicode Debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Debug|Win32.ActiveCfg = Debug|Win32
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Debug|Win32.Build.0 = Debug|Win32
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Release|Win32.ActiveCfg = Release|Win32
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Release|Win32.Build.0 = Release|Win32
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{774CF74D-F4D3-4CD5-961A-734147AD9653}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Debug|Win32.Build.0 = Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Release|Win32.ActiveCfg = Release|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Release|Win32.Build.0 = Release|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Unicode Debug|Win32.Build.0 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>PDFParserPlugin</ProjectName>
+    <ProjectGuid>{8506087D-1137-4B90-AFD4-E4E3435EEA3B}</ProjectGuid>
+    <RootNamespace>PDFParserPlugin</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\plugins\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../include;../../extension/include;./xpdf;xpdf\fofi;xpdf\goo;xpdf/xpdf;xpdf/splash;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PDFPARSERPLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>../../lib/comD.lib;WSock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>PDFParserPlugin.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)PDFParserPlugin.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)PDFParserPlugin.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../include;../../extension/include;./xpdf;xpdf\fofi;xpdf\goo;xpdf/xpdf;xpdf/splash;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;PDFPARSERPLUGIN_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\..\lib\com.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>PDFParserPlugin.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)PDFParserPlugin.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\extension\src\plugin\FirteXCOM.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PDFDocReader.cpp" />
+    <ClCompile Include="PDFParserPlugin.cpp" />
+    <ClCompile Include="PDFParserPluginFactory.cpp" />
+    <ClCompile Include="xpdf\xpdf\Annot.cc" />
+    <ClCompile Include="xpdf\xpdf\Array.cc" />
+    <ClCompile Include="xpdf\xpdf\BuiltinFont.cc" />
+    <ClCompile Include="xpdf\xpdf\BuiltinFontTables.cc" />
+    <ClCompile Include="xpdf\xpdf\Catalog.cc" />
+    <ClCompile Include="xpdf\xpdf\CharCodeToUnicode.cc" />
+    <ClCompile Include="xpdf\xpdf\CMap.cc" />
+    <ClCompile Include="xpdf\xpdf\Decrypt.cc" />
+    <ClCompile Include="xpdf\xpdf\Dict.cc" />
+    <ClCompile Include="xpdf\xpdf\Error.cc" />
+    <ClCompile Include="xpdf\xpdf\FontEncodingTables.cc" />
+    <ClCompile Include="xpdf\xpdf\Function.cc" />
+    <ClCompile Include="xpdf\xpdf\Gfx.cc" />
+    <ClCompile Include="xpdf\xpdf\GfxFont.cc" />
+    <ClCompile Include="xpdf\xpdf\GfxState.cc" />
+    <ClCompile Include="xpdf\xpdf\GlobalParams.cc" />
+    <ClCompile Include="xpdf\xpdf\ImageOutputDev.cc" />
+    <ClCompile Include="xpdf\xpdf\JArithmeticDecoder.cc" />
+    <ClCompile Include="xpdf\xpdf\JBIG2Stream.cc" />
+    <ClCompile Include="xpdf\xpdf\JPXStream.cc" />
+    <ClCompile Include="xpdf\xpdf\Lexer.cc" />
+    <ClCompile Include="xpdf\xpdf\Link.cc" />
+    <ClCompile Include="xpdf\xpdf\NameToCharCode.cc" />
+    <ClCompile Include="xpdf\xpdf\Object.cc" />
+    <ClCompile Include="xpdf\xpdf\Outline.cc" />
+    <ClCompile Include="xpdf\xpdf\OutputDev.cc" />
+    <ClCompile Include="xpdf\xpdf\Page.cc" />
+    <ClCompile Include="xpdf\xpdf\Parser.cc" />
+    <ClCompile Include="xpdf\xpdf\PDFDoc.cc" />
+    <ClCompile Include="xpdf\xpdf\PDFDocEncoding.cc" />
+    <ClCompile Include="xpdf\xpdf\PSOutputDev.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="xpdf\xpdf\PSTokenizer.cc" />
+    <ClCompile Include="xpdf\xpdf\SecurityHandler.cc" />
+    <ClCompile Include="xpdf\xpdf\Stream.cc" />
+    <ClCompile Include="xpdf\xpdf\TextOutputDev.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="xpdf\xpdf\UnicodeMap.cc" />
+    <ClCompile Include="xpdf\xpdf\UnicodeTypeTable.cc" />
+    <ClCompile Include="xpdf\xpdf\XRef.cc" />
+    <ClCompile Include="xpdf\fofi\FoFiBase.cc" />
+    <ClCompile Include="xpdf\fofi\FoFiEncodings.cc" />
+    <ClCompile Include="xpdf\fofi\FoFiTrueType.cc" />
+    <ClCompile Include="xpdf\fofi\FoFiType1.cc" />
+    <ClCompile Include="xpdf\fofi\FoFiType1C.cc" />
+    <ClCompile Include="xpdf\goo\FixedPoint.cc" />
+    <ClCompile Include="xpdf\goo\gfile.cc" />
+    <ClCompile Include="xpdf\goo\GHash.cc" />
+    <ClCompile Include="xpdf\goo\GList.cc" />
+    <ClCompile Include="xpdf\goo\gmem.cc" />
+    <ClCompile Include="xpdf\goo\gmempp.cc" />
+    <ClCompile Include="xpdf\goo\GString.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PDFParserPlugin.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\extension\include\plugin\FirteXCOM.h" />
+    <ClInclude Include="PDFDocReader.h" />
+    <ClInclude Include="PDFParserPlugin.h" />
+    <ClInclude Include="xpdf\xpdf\Annot.h" />
+    <ClInclude Include="xpdf\xpdf\Array.h" />
+    <ClInclude Include="xpdf\xpdf\BuiltinFont.h" />
+    <ClInclude Include="xpdf\xpdf\BuiltinFontTables.h" />
+    <ClInclude Include="xpdf\xpdf\Catalog.h" />
+    <ClInclude Include="xpdf\xpdf\CharCodeToUnicode.h" />
+    <ClInclude Include="xpdf\xpdf\CharTypes.h" />
+    <ClInclude Include="xpdf\xpdf\CMap.h" />
+    <ClInclude Include="xpdf\xpdf\CompactFontTables.h" />
+    <ClInclude Include="xpdf\xpdf\config.h" />
+    <ClInclude Include="xpdf\xpdf\Decrypt.h" />
+    <ClInclude Include="xpdf\xpdf\Dict.h" />
+    <ClInclude Include="xpdf\xpdf\Error.h" />
+    <ClInclude Include="xpdf\xpdf\ErrorCodes.h" />
+    <ClInclude Include="xpdf\xpdf\FontEncodingTables.h" />
+    <ClInclude Include="xpdf\xpdf\Function.h" />
+    <ClInclude Include="xpdf\xpdf\Gfx.h" />
+    <ClInclude Include="xpdf\xpdf\GfxFont.h" />
+    <ClInclude Include="xpdf\xpdf\GfxState.h" />
+    <ClInclude Include="xpdf\xpdf\GlobalParams.h" />
+    <ClInclude Include="xpdf\xpdf\ImageOutputDev.h" />
+    <ClInclude Include="xpdf\xpdf\JArithmeticDecoder.h" />
+    <ClInclude Include="xpdf\xpdf\JBIG2Stream.h" />
+    <ClInclude Include="xpdf\xpdf\JPXStream.h" />
+    <ClInclude Include="xpdf\xpdf\Lexer.h" />
+    <ClInclude Include="xpdf\xpdf\Link.h" />
+    <ClInclude Include="xpdf\xpdf\NameToCharCode.h" />
+    <ClInclude Include="xpdf\xpdf\NameToUnicodeTable.h" />
+    <ClInclude Include="xpdf\xpdf\Object.h" />
+    <ClInclude Include="xpdf\xpdf\Outline.h" />
+    <ClInclude Include="xpdf\xpdf\OutputDev.h" />
+    <ClInclude Include="xpdf\xpdf\Page.h" />
+    <ClInclude Include="xpdf\xpdf\Parser.h" />
+    <ClInclude Include="xpdf\xpdf\PDFDoc.h" />
+    <ClInclude Include="xpdf\xpdf\PDFDocEncoding.h" />
+    <ClInclude Include="xpdf\xpdf\PSOutputDev.h" />
+    <ClInclude Include="xpdf\xpdf\PSTokenizer.h" />
+    <ClInclude Include="xpdf\xpdf\SecurityHandler.h" />
+    <ClInclude Include="xpdf\xpdf\Stream-CCITT.h" />
+    <ClInclude Include="xpdf\xpdf\Stream.h" />
+    <ClInclude Include="xpdf\xpdf\TextOutputDev.h" />
+    <ClInclude Include="xpdf\xpdf\UnicodeMap.h" />
+    <ClInclude Include="xpdf\xpdf\UnicodeMapTables.h" />
+    <ClInclude Include="xpdf\xpdf\UnicodeTypeTable.h" />
+    <ClInclude Include="xpdf\xpdf\UTF8.h" />
+    <ClInclude Include="xpdf\xpdf\XPDFCore.h" />
+    <ClInclude Include="xpdf\xpdf\XRef.h" />
+    <ClInclude Include="xpdf\fofi\FoFiBase.h" />
+    <ClInclude Include="xpdf\fofi\FoFiEncodings.h" />
+    <ClInclude Include="xpdf\fofi\FoFiTrueType.h" />
+    <ClInclude Include="xpdf\fofi\FoFiType1.h" />
+    <ClInclude Include="xpdf\fofi\FoFiType1C.h" />
+    <ClInclude Include="xpdf\goo\FixedPoint.h" />
+    <ClInclude Include="xpdf\goo\gfile.h" />
+    <ClInclude Include="xpdf\goo\GHash.h" />
+    <ClInclude Include="xpdf\goo\GList.h" />
+    <ClInclude Include="xpdf\goo\gmem.h" />
+    <ClInclude Include="xpdf\goo\GMutex.h" />
+    <ClInclude Include="xpdf\goo\GString.h" />
+    <ClInclude Include="xpdf\goo\gtypes.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configure>
+  <logger>
+    <name>firtex.store.BlockFileSystem1</name>
+    <appender>appender.console</appender>
+    <level>trace</level>
+  </logger>
+</configure>

@@ -1,0 +1,59 @@
+cppunit_incdir = $(top_srcdir)/test/cppunit/include/cppunit
+
+cppunit_headers += $(cppunit_incdir)/AdditionalMessage.h\
+	$(cppunit_incdir)/Protector.h\
+	$(cppunit_incdir)/TestListener.h\
+	$(cppunit_incdir)/Asserter.h\
+	$(cppunit_incdir)/SourceLine.h\
+	$(cppunit_incdir)/TestPath.h\
+	$(cppunit_incdir)/BriefTestProgressListener.h\
+	$(cppunit_incdir)/SynchronizedObject.h\
+	$(cppunit_incdir)/TestResultCollector.h\
+	$(cppunit_incdir)/CompilerOutputter.h\
+	$(cppunit_incdir)/TestAssert.h\
+	$(cppunit_incdir)/TestResult.h\
+	$(cppunit_incdir)/TestCaller.h\
+	$(cppunit_incdir)/TestRunner.h\
+	$(cppunit_incdir)/Exception.h\
+	$(cppunit_incdir)/TestCase.h\
+	$(cppunit_incdir)/TestSuccessListener.h\
+	$(cppunit_incdir)/TestComposite.h\
+	$(cppunit_incdir)/TestSuite.h\
+	$(cppunit_incdir)/Message.h\
+	$(cppunit_incdir)/TestFailure.h\
+	$(cppunit_incdir)/TextOutputter.h\
+	$(cppunit_incdir)/Outputter.h\
+	$(cppunit_incdir)/TestFixture.h\
+	$(cppunit_incdir)/TextTestResult.h\
+	$(cppunit_incdir)/Test.h\
+	$(cppunit_incdir)/Portability.h\
+	$(cppunit_incdir)/TestLeaf.h\
+	$(cppunit_incdir)/config-auto.h\
+	$(cppunit_incdir)/config/config-bcb5.h\
+	$(cppunit_incdir)/config/config-mac.h\
+	$(cppunit_incdir)/config/CppUnitApi.h\
+	$(cppunit_incdir)/config/SelectDllLoader.h\
+	$(cppunit_incdir)/config/config-evc4.h\
+	$(cppunit_incdir)/config/config-msvc6.h\
+	$(cppunit_incdir)/config/SourcePrefix.h\
+	$(cppunit_incdir)/extensions/AutoRegisterSuite.h\
+	$(cppunit_incdir)/extensions/TestFactory.h\
+	$(cppunit_incdir)/extensions/TestSuiteBuilderContext.h\
+	$(cppunit_incdir)/extensions/ExceptionTestCaseDecorator.h\
+	$(cppunit_incdir)/extensions/TestFactoryRegistry.h\
+	$(cppunit_incdir)/extensions/TestSuiteFactory.h\
+	$(cppunit_incdir)/extensions/HelperMacros.h\
+	$(cppunit_incdir)/extensions/TestFixtureFactory.h\
+	$(cppunit_incdir)/extensions/TypeInfoHelper.h\
+	$(cppunit_incdir)/extensions/TestCaseDecorator.h\
+	$(cppunit_incdir)/extensions/TestNamer.h\
+	$(cppunit_incdir)/portability/CppUnitDeque.h\
+	$(cppunit_incdir)/portability/CppUnitMap.h\
+	$(cppunit_incdir)/portability/CppUnitSet.h\
+	$(cppunit_incdir)/portability/CppUnitStack.h\
+	$(cppunit_incdir)/portability/CppUnitVector.h\
+	$(cppunit_incdir)/portability/Stream.h\
+	$(cppunit_incdir)/tools/Algorithm.h\
+	$(cppunit_incdir)/tools/StringTools.h
+
+EXTRA_DIST += $(cppunit_headers)

@@ -1,0 +1,100 @@
+#========================================================================
+#
+# Sample xpdfrc file
+#
+# The Xpdf tools look for a config file in two places:
+# 1. ~/.xpdfrc
+# 2. in a system-wide directory, typically /usr/local/etc/xpdfrc
+#
+# This sample config file demonstrates some of the more common
+# configuration options.  Everything here is commented out.  You
+# should edit things (especially the file/directory paths, since
+# they'll likely be different on your system), and uncomment whichever
+# options you want to use.  For complete details on config file syntax
+# and available options, please see the xpdfrc(5) man page.
+#
+# Also, the Xpdf language support packages each include a set of
+# options to be added to the xpdfrc file.
+#
+# http://www.foolabs.com/xpdf/
+#
+#========================================================================
+
+#----- display fonts
+
+# These map the Base-14 fonts to the Type 1 fonts that ship with
+# ghostscript.  You'll almost certainly want to use something like
+# this, but you'll need to adjust this to point to wherever
+# ghostscript is installed on your system.  (But if the fonts are
+# installed in a "standard" location, xpdf will find them
+# automatically.)
+
+
+# If you need to display PDF files that refer to non-embedded fonts,
+# you should add one or more fontDir options to point to the
+# directories containing the font files.  Xpdf will only look at .pfa,
+# .pfb, and .ttf files in those directories (other files will simply
+# be ignored).
+
+#fontDir		/usr/local/fonts/bakoma
+
+#----- PostScript output control
+
+# Set the default PostScript file or command.
+
+#psFile			"|lpr -Pmyprinter"
+
+# Set the default PostScript paper size -- this can be letter, legal,
+# A4, or A3.  You can also specify a paper size as width and height
+# (in points).
+
+#psPaperSize		letter
+
+#----- text output control
+
+# Choose a text encoding for copy-and-paste and for pdftotext output.
+# The Latin1, ASCII7, and UTF-8 encodings are built into Xpdf.  Other
+# encodings are available in the language support packages.
+
+#textEncoding		UTF-8
+textEncoding		GBK
+
+# Choose the end-of-line convention for multi-line copy-and-past and
+# for pdftotext output.  The available options are unix, mac, and dos.
+
+#textEOL		unix
+
+#----- misc settings
+
+# Enable t1lib, FreeType, and anti-aliased text.
+
+enableT1lib		yes
+enableFreeType		yes
+#antialias		yes
+
+# Set the command used to run a web browser when a URL hyperlink is
+# clicked.
+
+#urlCommand	"netscape -remote 'openURL(%s)'"
+
+
+#----- begin Chinese Simplified support package (2004-jul-27)
+cidToUnicode	Adobe-GB1	chinese-simplified/Adobe-GB1.cidToUnicode
+unicodeMap	ISO-2022-CN	chinese-simplified/ISO-2022-CN.unicodeMap
+unicodeMap	EUC-CN		chinese-simplified/EUC-CN.unicodeMap
+unicodeMap	GBK		chinese-simplified/GBK.unicodeMap
+cMapDir		Adobe-GB1	chinese-simplified/CMap
+toUnicodeDir			chinese-simplified/CMap
+
+#displayCIDFontTT	Adobe-GB1 chinese-simplified/fonts/gkai00mp.ttf
+#displayCIDFontTT	AR PL KaitiM Big5	chinese-simplified/fonts/gkai00mp.ttf
+#----- end Chinese Simplified support package
+
+#----- begin Chinese Traditional support package (2004-jul-27)
+#cidToUnicode	Adobe-CNS1	chinese-traditional/Adobe-CNS1.cidToUnicode
+#unicodeMap	Big5		chinese-traditional/Big5.unicodeMap
+#unicodeMap	Big5ascii	chinese-traditional/Big5ascii.unicodeMap
+#cMapDir		Adobe-CNS1	chinese-traditional/CMap
+#toUnicodeDir			chinese-traditional/CMap
+#displayCIDFontTT	Adobe-CNS1	chinese-traditional/fonts/bkai00mp.ttf
+#----- end Chinese Traditional support package

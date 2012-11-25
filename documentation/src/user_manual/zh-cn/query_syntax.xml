@@ -1,0 +1,336 @@
+<chapter id="query_syntax">
+  <title>查询语法</title>
+  <para>FirteX2支持三类查询语法：query、sort_by、filter，和一种配置语法：parameter。</para>
+  <para>查询表达式：
+    <screen>query=查询子句;sort_by=排序子句;filter=过滤子句;parameter=参数子句</screen>
+  排序、过滤和参数子句是可选的，使用时必须配以查询子句。
+  </para>
+
+  <sect1 id="query_syntax_query_expr">
+    <title>查询表达式(query=)</title>
+    <sect2>
+      <title>词语和短语检索</title>
+      <itemizedlist>
+	<listitem>
+	  <para>词(Term)是独立的语义单元，在FirteX2中作为一个独立索引项被索引。词语检索也叫关键词检索，包含该词的文档都是命中文档。</para>
+	  <para>例如，词语查询： 
+	    <screen>query='中国'</screen>
+	  将在默认字段上检索文档。对于英文文本也可以省略单引号，对于中文必须使用单引号，否则解析器会提示解析失败。如果检索的词语被Analyzer解析成了多个词，这多个词默认做AND查询。
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>短语(Phrase)由一个或多个词组成，在查询中精确匹配短语中所有词（所有词在同一篇文档中出现，并且位置依次相邻）的文档才算命中。短语检索使用双引号：
+	    <screen>query=“中国北京"</screen>
+	  </para>
+	</listitem>
+
+	<listitem>
+	 
+	  <para>FirteX2支持Proximity查询，即检索词间距离小于某个值的文档，并且词间距离越小，文档相关性分值越大。</para>
+	  <para>Proximity查询使用“~”符号，例如：
+	    <screen>query="中国北京"~2</screen>
+	  查询出现中国和北京并且词间距离小于等于2的所有文档。
+	  </para>
+	</listitem>
+
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>跨字段检索</title>
+     
+      <para>索引包含多个字段时，可以指定在某个特定的字段中进行检索，如果没有指定字段名，则在默认字段上检索；
+      也可以跨多个字段检索。例如，需要在TITLE字段中查找开源搜索系统： 
+	<screen>query=TITLE:'开源搜索系统'</screen>
+      查找在TITLE中包含中国科学院，在BODY中包含开源搜索系统： 
+	<screen>query=TITLE:'中国科学院' AND BODY:'开源搜索系统'</screen>
+      如果BODY字段设置为默认检索字段，也可以表示如下： 
+	<screen>TITLE:'中国科学院' AND '开源搜索系统' </screen>
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>布尔检索</title>
+      <orderedlist>
+	<listitem>
+	  <para>OR操作符</para>
+	  <para>OR操作符连接的两个词或短语只要在文档中出现一个则视为命中。</para>
+	  <para>例如，查询在同一文档中出现 中科院 或者 中国科学院，表达式如下： 
+	    <screen>query='中科院' OR '中国科学院'</screen>
+	    不允许单独使用OR操作符，例如： 
+	    <screen>query=OR '中科院'</screen>是非法查询串。
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>AND操作符</para>
+	  <para>AND操作符连接的两个词语或短语必须都在文档中出现才视为命中。例如，查询在文档中同时出现新浪和微博： 
+	    <screen>query='新浪' AND '微博'</screen>
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>NOT操作符</para>
+	  <para>NOT操作符查询不出现NOT右侧查询词的文档，例如查询在文档中出现搜索引擎但不出现Lucene：
+	    <screen>query='搜索引擎' NOT 'lucene'</screen>
+	  </para>
+	  <para>不允许单独使用NOT操作符。</para>
+	</listitem>
+
+	<listitem>
+	  <para>+操作符</para>
+	  <para>+操作符查询必须出现+右侧查询词的文档，例如查询必须包含搜索可以包含开源的文档： 
+	    <screen>query=+'搜索' OR '开源'</screen>
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>-操作符</para>
+	  <para>-操作符查询必须不出现-右侧查询词的文档，例如查询包含搜索不能包含开源的文档： 
+	    <screen>query=-'开源' AND '搜索'</screen>
+	  </para>
+	  <para>不允许单独使用-操作符。</para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+
+    <sect2>
+      <title>分组</title>
+      <itemizedlist>
+	<listitem>
+	  <para>查询词分组：</para>
+	  <para>FirteX2支持对查询进行分组，这样可以避免查询歧义，实现"二取一"的查询。</para>
+	  <para>例如查询出现"中国" 并且出现"北京"或者"上海"可以使用下面的查询表达式： 
+	    <screen>query='中国' AND ('上海' OR '北京')</screen>
+	    上述查询和查询： 
+	    <screen>query='中国' AND '上海' OR '北京'</screen>
+	  是不一样的，后一查询表达式查询出现中国和上海，或者同时出现北京的文档 
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>FirteX2支持对字段进行分组，例如查询： 
+	    <screen>query=TITLE:('中国' AND '北京')</screen> 
+	    等同于：
+	    <screen>TITLE:'中国' AND TITLE:'北京'</screen> 
+	  </para>
+	</listitem>      
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>增加特定词权重</title>
+      <para>FirteX2支持设定特定词或短语的Boost值，提高包含这些词或短语的文档相关性分值。</para>
+      <para>设定Boost值使用^操作符，例如查询：
+	<screen>query='开源'^3.0 AND '搜索'</screen>
+      包含开源这个词的文档相关性分值将更高。Boost操作符也可以作用于短语，例如：
+	<screen>query="开源技术"^4 AND '搜索'</screen>
+      </para>
+      <para>默认boost值是1，词或短语的boost值必须大于0，允许小于1。</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="query_syntax_sortby">
+    <title>排序表达式(sort_by=)</title>
+    <para>sort_by是一种查询结果的后处理技术。查询结果默认按相关性从高到底排序，sort_by子句可以更改这个排序方式，允许用户按字段、计算表达式、文档索引顺序等方式排序。</para>
+    <sect2>
+      <title>按文档索引顺序排序</title>
+      <itemizedlist>
+	<listitem>
+	  <para>按文档索引顺序升序排序：
+	    <screen>sort_by=INDEXORDER:ASC</screen>
+	    该表达式与下述表达式等价：
+	    <screen>sort_by=DOCID:ASC</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>按文档索引顺序降序排序：
+	    <screen>sort_by=INDEXORDER:DES</screen>
+	    该表达式与下述表达式等价：
+	    <screen>sort_by=DOCID:DES</screen>
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>按字段排序</title>
+      <para>只有构建了<link linkend="quick_start_index">正排索引</link>的字段才允许用来排序，FirteX2支持的排序字段类型有：INT8/UINT8/INT16/UINT16/INT32/UINT32/INT64/UINT64/FLOAT/DOUBLE。</para>
+      <itemizedlist>
+	<listitem>
+	  <para>按字段升序排序：</para>
+	  <screen>sort_by=PRICE:ASC</screen>
+	其中PRICE必须是构建了正排索引的字段。
+	  <para>按字段降序排序：</para>
+	  <screen>sort_by=PRICE:DES</screen>
+	</listitem>
+
+	<listitem>
+	  <para>多重排序，例如：</para>
+	  <screen>sort_by=PRICE:ASC,USER_ID:DES</screen>
+	先按PRICE做升序排序，再按USER_ID做降序排序。
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>按计算表达式排序</title>
+      <itemizedlist>
+	<listitem>
+	  <para>排序子句支持'+'，'-'，'*'，'/'运算符，例如:
+	    <screen>sort_by=PRICE*0.8+DELIVER</screen>
+	  按价格打八折（PRICE*0.8)再加上运费(DELIVER)后的值做降序排序。
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>排序子句支持'|'，'&amp;'位操作符，例如：</para>
+	  <screen>sort_by=USER_ID&amp;3</screen>
+	  按USER_ID的降序排序，该语句等价于：
+	  <screen>sort_by=USER_ID AND 3</screen>
+	</listitem>
+
+	<listitem>
+	  <para>排序子句支持如下数学运算函数：abs()/ceil()/floor()/sin()/cos()/ln()/log2()/log10()/exp()/sqrt()/pow()/min()/max()，例如：</para>
+	  <screen>sort_by=SQRT(PRICE) + POW(DELIVER, 3.0)</screen>
+	</listitem>
+
+	<listitem>
+	  <para>排序子句支持如下函数：IF(va1, val2, val3)/IN(val1, val2, val3...)。</para>
+	  <para>例如：
+	    <screen>sort_by=IF(USER_RANK > 5, PRICE, DELIVER)</screen>
+	  如果USER_RANK的值大于5则按PRICE排序，否则按DELIVER排序。
+	  </para>
+	  <para>
+	    <screen>sort_by=IF(IN(USER_RANK, 3, 4, 5), PRICE, DELIVER)</screen>
+	  如果USER_RANK的等于3或者4或者5则按PRICE排序，否则按DELIVER排序。
+	  </para>
+	</listitem>
+
+      </itemizedlist>
+    </sect2>
+    <para>上述三种表达式可以混合多重使用，实现复杂的查询结果后排序功能。</para>
+  </sect1>
+
+  <sect1 id="query_syntax_filter">
+    <title>过滤表达式(filter=)</title>
+    <para>filter是一种查询结果的后过滤技术，可以用来过滤符合特定条件的文档。</para>  
+    <sect2>
+      <title>按字段值过滤</title>
+      <para>只有构建了<link linkend="quick_start_index">正排索引</link>的字段才允许用来排序，FirteX2支持的过滤字段类型有：INT8/UINT8/INT16/UINT16/INT32/UINT32/INT64/UINT64/FLOAT/DOUBLE。</para>
+      <para>例如：
+	<screen>filter=PRICE>100.0</screen>
+      只有价格大于100.0的文档将返回。
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>按计算表达式过滤</title>
+      <itemizedlist>
+	<listitem>
+	  <para>过滤子句支持'+'，'-'，'*'，'/'运算符，例如:
+	    <screen>filter=(PRICE*0.8+DELIVER) > 100.0</screen>
+	  价格打八折（PRICE*0.8)再加上运费(DELIVER)后的值大于100.0的文档将返回。
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>过滤子句支持'|'，'&amp;'位操作符，例如：</para>
+	  <screen>filter=(USER_RANK&amp;3) &lt;2</screen>
+	  USER_ID的低2位的值小于2的文档将返回，该语句等价于：
+	  <screen>filter=(USER_RANK AND 3) &lt;2</screen>
+	</listitem>
+
+	<listitem>
+	  <para>排序子句支持如下数学运算函数：abs()/ceil()/floor()/sin()/cos()/ln()/log2()/log10()/exp()/sqrt()/pow()/min()/max()，例如：</para>
+	  <screen>filter=SQRT(PRICE) + POW(DELIVER, 3.0) >= 10.0</screen>
+	</listitem>
+
+	<listitem>
+	  <para>排序子句支持如下函数：IF(va1, val2, val3)/IN(val1, val2, val3...)，例如：</para>
+	  <screen>filter=IF(USER_RANK > 5,PRICE,DELIVER)>=10.0</screen>
+	如果USER_RANK大于5，则PRICE大于等于10.0的文档将返回，否则DELIVER大于等于10.0的文档将返回。
+	  <screen>filter=IF(IN(USER_RANK,3,4,5),PRICE,DELIVER)>=10.0</screen>
+	如果USER_RANK等于3或者4或者5，则PRICE大于等于10.0的文档将返回，否则DELIVER大于等于10.0的文档将返回。
+	</listitem>
+
+      </itemizedlist>
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="query_syntax_param">
+    <title>参数配置(parameter=)</title>
+    <para>参数配置可以用来改变查询过程、返回结果数、结果输出方式等。参数配置格式如下：</para>
+    <para>parameter=参数名：参数值,参数名：参数值,...</para>
+    <sect2>
+      <title>设置返回结果数</title>
+      <para>例如：
+	<screen>parameter=start:5,top:10</screen>
+      返回命中文档的第5至10条结果。此配置可以用来实现翻页功能。
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>设置查询方式</title>
+      <para>FirteX2支持三种查询模式：根据查询表达式返回文档内容、根据查询表达式返回文档ID、根据文档ID获取文档内容。</para>
+      <para>查询模式通过phase参数指定，例如：
+	<screen>parameter=phase:0</screen>
+	表示根据表达式查询，并返回查询结果的文档内容。
+	<screen>parameter=phase:2</screen>
+      表示根据表达式查询，并返回查询结果的文档ID。
+	<screen>parameter=phase:1</screen>
+      表示查询表达式是文档ID列表，返回对应文档的内容。查询表达式的多个文档ID用','分割。      
+      </para>
+    </sect2>
+    <sect2>
+      <title>设置是否返回trace信息</title>
+      <para>通过trace语法，可以在query中指定是否在返回结果中带回trace信息，例如：</para>
+      <screen>parameter=trace:debug</screen>
+    表示在返回结果中带回debug信息，可取值为：info/debug/trace。
+    </sect2>
+  </sect1>
+
+  <sect1 id="query_syntax_field_select">
+    <title>字段选择配置(field_select=)</title>
+    <para>用来配置返回结果中包含哪些字段，哪些字段需要做snippet。参数配置格式如下：</para>
+    <para>field_select=字段名[：snippet],字段名[：snippet],...</para>
+    <para>例如，配置返回TITLE，BODY字段，并对BODY字段做snippet：
+      <screen>field_select=TITLE,BODY:snippet</screen>
+    </para>
+    <para>支持对多个字段做snippet。</para>
+  </sect1>
+
+  <sect1 id="query_syntax_urlencode">
+    <title>指定url编码(urlencode=)</title>
+    <para>指定url查询串本身的编码类型，可选值：utf-8,gbk,gb2312等，更多编码类型请参考iconv文档。</para>
+    <para>格式：<screen>urlencode=编码值</screen></para>
+    <para>如果用户设置了索引文档编码类型，并且url编码类型与索引文档的编码类型不一致，firtex2将自动进行编码转换。</para>
+  </sect1>
+
+  <sect1 id="query_syntax_cluster">
+    <title>指定cluster查询(cluster=)</title>
+    <para>当启用多cluster功能时（fblender），可通过该配置查询指定cluster：</para>
+    <para>cluster=cluster名称[{!cluster查询参数}],cluster名称[{!cluster查询参数}],...</para>
+    <sect2>
+      <title>只查询指定cluster</title>
+      <para>例如，只在cluster1，cluster2上执行查询串query_expr：
+	<screen>query=query_expr;cluster=cluster1,cluster2</screen>
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>不同cluster执行不同查询</title>
+      <para>在cluster1上执行query_expr1查询串，在cluster2上执行query_expr2查询串，在cluster3上执行query_expr3查询串：
+	<screen>query=query_expr1;cluster=cluster1,cluster2{!query=query_expr2},cluster3{!query=query_expr3}</screen>
+      </para>
+    </sect2>
+
+    <para>最后，以一个完整的查询表达式例子结束本章：
+      <screen>query=TITLE:'开源' OR '自由' AND BODY:'软件';sort_by=MODFIED,RELEVANCE;filter=SIZE&lt;10;parameter=start:10,top:10,phase:2;field_select=BODY:snippet,TITLE;cluster=cluster1,cluster2{!query=TITLE:商业软件;parameter=start:0,top:10}</screen>
+    </para>
+    <para>(QQ技术群：51732886，加入请注明firtex2字样)</para>
+  </sect1>
+
+</chapter>

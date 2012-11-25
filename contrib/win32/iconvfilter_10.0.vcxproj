@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>IconvFilter</ProjectName>
+    <ProjectGuid>{4906F717-C657-473B-8B98-2096F498F681}</ProjectGuid>
+    <RootNamespace>iconvfilter</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../include;../iconvfilter/include;../iconvfilter;../iconvfilter/libiconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;HAVE_CONFIG_H;HAVE_STRING_H=1;BUILDING_LIBCHARSET;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../../lib/IconvFilterD.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../include;../iconvfilter/include;../iconvfilter;../iconvfilter/libiconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;HAVE_CONFIG_H;HAVE_STRING_H=1;BUILDING_LIBCHARSET;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../../lib/iconvfilter.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\iconvfilter\src\CharsetDetector.cpp" />
+    <ClCompile Include="..\iconvfilter\src\IconvFilter.cpp" />
+    <ClCompile Include="..\iconvfilter\libiconv\src\iconv.c" />
+    <ClCompile Include="..\iconvfilter\libiconv\src\localcharset.c" />
+    <ClCompile Include="..\iconvfilter\universalchardet\CharDistribution.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\JpCntx.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\LangBulgarianModel.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\LangCyrillicModel.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\LangGreekModel.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\LangHungarianModel.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\LangThaiModel.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsBig5Prober.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsEscCharsetProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsEscSM.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsEUCJPProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsEUCKRProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsEUCTWProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsGB2312Prober.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsLatin1Prober.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsMBCSGroupProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsMBCSSM.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsSBCharSetProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsSBCSGroupProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsSJISProber.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsUniversalDetector.cpp" />
+    <ClCompile Include="..\iconvfilter\universalchardet\nsUTF8Prober.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\iconvfilter\include\CharsetDetector.h" />
+    <ClInclude Include="..\iconvfilter\include\IconvFilter.h" />
+    <ClInclude Include="..\iconvfilter\libiconv\include\iconv.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\CharDistribution.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\JpCntx.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsBig5Prober.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsCharSetProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsCodingStateMachine.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsEscCharsetProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsEUCJPProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsEUCKRProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsEUCTWProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsGB2312Prober.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsLatin1Prober.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsMBCSGroupProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsPkgInt.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsPRMem.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsPRTypes.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsSBCharSetProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsSBCSGroupProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsSJISProber.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsUniversalDetector.h" />
+    <ClInclude Include="..\iconvfilter\universalchardet\nsUTF8Prober.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

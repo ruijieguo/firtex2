@@ -1,0 +1,63 @@
+<chapter id="introduction">
+  <title>简介</title>
+
+  <para>本节介绍Firtex2的基本信息.</para>
+
+  <sect1 id="intro_about_firtex2">
+    <title>关于FirteX2</title>
+
+    <para>Firtex2是一套C++实现的高性能的、功能丰富的、跨平台的搜索系统。Firtex2适合各种需要搜索功能的应用程序，特别是数据量大，对性能要求较高的应用。</para>
+  </sect1>
+  <sect1 id="intro_feature">
+    <title>Firtex2的功能</title>
+    <para> 
+      Firtex2的主要功能有：
+      <itemizedlist> 
+	<listitem>高性能文本索引</listitem>
+	<listitem>高性能文本检索</listitem>
+	<listitem>海量数据处理</listitem>
+	<listitem>支持分布式搜索</listitem>
+	<listitem>提供良好的相关性排名，采用BM25检索模型，并支持灵活扩展</listitem>
+	<listitem>支持布尔，短语，和近义词查询</listitem>
+	<listitem>支持丰富的查询结果排序和过滤</listitem>
+	<listitem>支持增量索引和增量索引的实时加载切换</listitem>
+	<listitem>支持每个文档多检索字段，多属性</listitem>
+	<listitem>支持GBK和UTF-8编码的中、英文文本</listitem>
+	<listitem>提供文档摘要生成</listitem>
+	<listitem>跨平台解决方案，支持Windows/Linux系统的各个版本</listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1 id="intro_new_version">
+    <title>如何获取Firtex2最新版本</title>
+    <para>请从<ulink url="http://www.sourceforge.net/projects/firtex">Firtex2的sourceforge项目首页</ulink>获取，目前最新版本为firtex2-0.5.0。
+    </para>
+  </sect1>
+  <sect1 id="intro_licenses">
+    <title>开源协议</title>
+    <para>Firtex2以LGPL(<ulink url="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public License</ulink>)开放源码授权协议的形式发布，您可以在遵循LGPL协议的基础上自由使用Firtex2，也可以参与到Firtex2的开发中来。如果需要其他授权协议，请联系<ulink url="mailto:ruijieguo@gmail.com">我们</ulink>。
+    </para>
+  </sect1>
+  <sect1 id="intro_history">
+    <title>历史</title>
+    <para>
+      <itemizedlist>
+	<listitem>2005年10月：FirteX始创者因课题研究需要，启动FirteX项目</listitem>
+	<listitem>2006年8月：FirteX正式发布第一个版本1.0.2-beta</listitem>
+	<listitem>2006年11月：FirteX在sorceforge.net上发布1.0.2-beta2</listitem>
+	<listitem>2007年8月：发布firtex-1.0.3_rc版，架构和接口做了重大改进</listitem>
+	<listitem>2009年7月：发布firtex-1.2.0_rc_20090705版</listitem>
+	<listitem>2011年3月：firtex更名为firtex2，改用LGPL协议，发布firtex2-0.1.0版</listitem>
+      </itemizedlist>
+      </para>
+  </sect1>
+  <sect1 id="intro_reward">
+  <title>奖项</title>
+    <itemizedlist>
+      <listitem>2007年10月，FirteX获中科院开源软件竞赛一等奖</listitem>
+      <listitem>2007年9月，FirteX作为中国开源软件代表团队（共3个代表团队）参加第6届东北亚开源软件促进论坛暨第二届东北亚开源软件竞赛</listitem>
+      <listitem>2007年3月，FirteX获2006’第二届中国开源软件竞赛学生组银奖（金奖空缺）</listitem>
+      <listitem>2007年3月，2006’年第二届中国开源软件-开源软件优秀论文一等奖(获奖论文题目：《FirteX-高性能全文索引和检索平台》)</listitem>
+    </itemizedlist>
+  </sect1>
+</chapter>

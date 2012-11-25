@@ -1,0 +1,1 @@
+SUBDIRS = . zlib iconv

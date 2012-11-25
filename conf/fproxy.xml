@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configure>
+  <proxy>
+    <server>
+      <host>localhost:19803</host>
+      <logger_conf>./logger_conf.xml</logger_conf>
+      <thread_pool>10</thread_pool>
+    </server>
+    <resource>
+      <load_ballance>round_robin</load_ballance>
+      <shards>
+	<shard>
+	  <name>shard1</name>
+	  <replicas>
+	    <replica>
+	      <server>localhost:19801</server>
+	      <weight>30</weight>
+	    </replica>
+	    <replica>
+	      <server>localhost:19801</server>
+	      <weight>70</weight>
+	    </replica>
+	  </replicas>
+	</shard>
+	<shard>
+	  <name>shard2</name>
+	  <replicas>
+	    <replica>
+	      <server>localhost:19801</server>
+	      <weight>100</weight>
+	    </replica>
+	  </replicas>
+	</shard>
+      </shards>
+    </resource>
+  </proxy>
+
+  <blender>
+    <server>
+      <host>localhost:19903</host>
+      <logger_conf>./logger_conf.xml</logger_conf>
+      <thread_pool>10</thread_pool>
+    </server>
+
+    <resource>
+      <clusters>
+	<cluster>
+	  <name>cluster1</name>
+	  <server>localhost:19801</server>
+	</cluster>
+	<cluster>
+	  <name>cluster2</name>
+	  <server>localhost:19801</server>
+	</cluster>
+      </clusters>
+    </resource>
+  </blender>
+
+</configure>

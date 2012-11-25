@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configure>
+  <appenders>
+    <appender>
+      <name>myAppender</name>
+      <base>appender.file</base>
+      <path>./log.txt</path>
+      <!-- Log rotation, option: never/nK/nM -->
+      <rotation>1M</rotation>
+    </appender>
+  </appenders>
+
+  <loggers>
+    <logger>
+      <name>/</name>
+      <appender>myAppender</appender>
+      <level>info</level>
+    </logger>
+    <logger>
+      <name>firtex.search.xxx1</name>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.queryparser.xxx2</name>
+      <appender>appender.console</appender>
+      <level>trace</level>
+    </logger>
+  </loggers>
+</configure>

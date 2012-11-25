@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>Snowball</ProjectName>
+    <ProjectGuid>{ABCF2DFF-C680-497E-A81E-422646D6DEBB}</ProjectGuid>
+    <RootNamespace>Snowball</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)D</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../include;../snowball/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../include;../snowball/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\snowball\src\SnowballFilter.cpp" />
+    <ClCompile Include="..\snowball\src\SnowballWrapper.cpp" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_danish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_dutch.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_english.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_finnish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_french.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_german.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_hungarian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_italian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_norwegian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_porter.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_portuguese.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_spanish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_swedish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_KOI8_R_russian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_danish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_dutch.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_english.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_finnish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_french.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_german.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_hungarian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_italian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_norwegian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_porter.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_portuguese.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_russian.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_spanish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\src_c\stem_UTF_8_swedish.c" />
+    <ClCompile Include="..\snowball\src\stemmer\libstemmer\libstemmer.c" />
+    <ClCompile Include="..\snowball\src\stemmer\runtime\api.c" />
+    <ClCompile Include="..\snowball\src\stemmer\runtime\utilities.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\snowball\include\Snowball.h" />
+    <ClInclude Include="..\snowball\include\SnowballFilter.h" />
+    <ClInclude Include="..\snowball\include\SnowballWrapper.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_danish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_dutch.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_english.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_finnish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_french.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_german.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_hungarian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_italian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_norwegian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_porter.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_portuguese.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_spanish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_ISO_8859_1_swedish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_KOI8_R_russian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_danish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_dutch.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_english.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_finnish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_french.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_german.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_hungarian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_italian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_norwegian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_porter.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_portuguese.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_russian.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_spanish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\src_c\stem_UTF_8_swedish.h" />
+    <ClInclude Include="..\snowball\src\stemmer\libstemmer\modules.h" />
+    <ClInclude Include="..\snowball\src\stemmer\runtime\api.h" />
+    <ClInclude Include="..\snowball\src\stemmer\runtime\header.h" />
+    <ClInclude Include="..\snowball\src\stemmer\include\libstemmer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

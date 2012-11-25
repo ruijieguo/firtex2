@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="GB2312"?>
+<configure>
+  <!--Global parameters -->
+  <global>
+    <general>
+      <!--Dictionary directory -->
+      <dictionary_path>../../bin/data</dictionary_path>
+    </general>
+
+    <!--Merge strategy parameters-->
+    <merge>
+      <!--Merge strategy name, allowable values: nomerge/optimize-->
+      <!--nomerge: best performance for building index-->
+      <!--optimize: best performance for searching-->
+      <strategy>nomerge</strategy>
+    </merge>
+    
+    <build>
+      <!--Memory size(MB) for index building-->
+      <memory>32</memory>
+      <!-- Define index building thread count -->
+      <build_thread_count>1</build_thread_count>
+    </build>
+  </global>
+
+  <collection>
+    <!--Collection name, allow empty-->
+    <name></name>
+    <!--Collection identifier, allowable values: collection.directory/trec/trec.gz/filelist-->
+    <identifier>collection.directory</identifier>
+
+    <!--source file path -->
+    <source>./plain</source>
+    <!--target index path -->
+    <target>./plain_index</target>
+    <!--Index build mode, allowable values: batch/append-->
+    <!--batch: build index from scratch -->
+    <!--append: build index increamentally-->
+    <build_mode>batch</build_mode>
+
+    <!--Document type, allowable values: txt/html/pdf/doc/ppt/xsl-->
+    <doc_types>txt</doc_types>
+    <!-- Filter .svn directory, and only process .txt files -->
+    <parameter>filter=.svn;file_extension=txt</parameter>
+    <!-- Define document processing therad count -->
+    <process_thread_count>1</process_thread_count>
+  </collection>
+
+  <!--Define index schema-->
+  <index_schema>
+    <type_define>
+      <!--Define index type for removing stop word-->
+      <field_type>
+	<!--The index type name, replace the existed type-->
+	<name>TEXT</name>
+	<!--The type of field text, allowable values：TEXT/STRING/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE-->
+	<value_type>TEXT</value_type>
+	<!--Define indexer and analyzer paramter-->
+	<index_type>
+	  <!--Identifier of indexer-->
+	  <identifier>indexer.text</identifier>
+	  <!--Define analyzer of the field-->
+	  <analyzer>
+	    <!--Identifier of analyzer, format:ident,param=value,param=value....-->
+	    <identifier>analyzer.standard</identifier>
+	    <!-- Select max forward segmenter for gbk text -->
+	    <parameter>encode=gbk;algorithm=max_forward</parameter>
+	    <!--Define post filter for analyzer, format:ident,param=value,param=value...;ident,param=value,param=value...-->
+	    <post_filter>filter.stopword,words=的 吗 阿</post_filter>
+	  </analyzer>
+	</index_type>
+      </field_type>
+    </type_define>
+    
+    <!--Define fields of document-->
+    <fields>
+      <field>
+	<!--Field name-->
+	<name>PATH</name>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+      <field>
+	<name>BODY</name>
+	<!--The type of this field, allowable values: TEXT/KEYWORD/PRIMARY_KEY/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE-->
+	<type>TEXT</type>
+	<store>true</store>
+      </field>
+    </fields>
+  </index_schema>
+</configure>

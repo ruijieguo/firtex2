@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<configure>
+  <!--Global paramters-->
+  <global>
+    <general>
+      <!--Dictionary directory -->
+      <dictionary_path>../../bin/data</dictionary_path>
+    </general>
+
+    <storage>
+      <filesystem>filesystem.mmap</filesystem>
+    </storage>
+
+    <!--Merge strategy parameters-->
+    <merge>
+      <!--Merge strategy name, allowable values: nomerge/optimize-->
+      <!--nomerge: best performance for building index-->
+      <!--optimize: best performance for searching-->
+      <strategy>optimize</strategy>
+    </merge>
+
+    <build>
+      <!--Memory size(MB) for index building-->
+      <memory>64</memory>
+
+      <!-- Define index building thread count -->
+      <build_thread_count>2</build_thread_count>
+
+      <!-- Define index cleaner for cleaning staled index data -->
+      <index_cleaner>
+	<strategy>keep_by_commit</strategy>
+	<parameter>keep_count=1</parameter>
+      </index_cleaner>
+    </build>
+  </global>
+
+  <collection>
+    <!--Collection name, allow empty-->
+    <name></name>
+    <!--Collection identifier, allowable values: collection.directory/trec/trec.gz/filelist-->
+    <identifier>collection.trec</identifier>
+
+    <!--source file path -->
+    <source>./gov2</source>
+    <!--target index path -->
+    <target>./gov2_index</target>
+
+    <!--Index build mode, allowable values: batch/append-->
+    <!--batch: build index from scratch -->
+    <!--append: build index increamentally-->
+    <build_mode>batch</build_mode>
+
+    <!--Document type, allowable values: txt/html/pdf/doc/ppt/xsl-->
+    <doc_types>html</doc_types>
+    <!-- Filter .svn  directory, and only process .gz files -->
+    <parameter>filter=.svn;file_extension=gz</parameter>
+    <!-- Define document processing therad count -->
+    <process_thread_count>1</process_thread_count>
+
+    <!--Define collection document template-->
+    <template>
+      <!--Define document root tag-->
+      <doc_tag>DOC</doc_tag> 
+
+      <!--The data between </DOCHDR> and </DOC> will map to BODY field-->
+      <embedded_field>BODY</embedded_field>
+
+      <!-- Define what meta to extract from <DOCHDR> -->
+      <metadata>
+	<meta>
+	  <!-- Extract url from <DOCHDR> and map to URL field in schema -->
+	  <name>url</name>
+	  <field_name>URL</field_name>
+	</meta>
+	<meta>
+	  <!-- Extract Date meta from <DOCHDR> and map to DATE field in schema -->
+	  <name>date</name>
+	  <field_name>DATE</field_name>
+	</meta>
+	<meta>
+	  <!-- Extract Content-type from <DOCHDR> and map to TYPE field in schema -->
+	  <name>content-type</name>
+	  <field_name>TYPE</field_name>
+	</meta>
+	<meta>
+	  <!-- Extract Content-length from <DOCHDR> and map to LENGTH field in schema -->
+	  <name>content-length</name>
+	  <field_name>LENGTH</field_name>
+	</meta>
+	<meta>
+	  <!-- Extract last-modified from <DOCHDR> and map to MODIFIED field in schema -->
+	  <name>last-modified</name>
+	  <field_name>MODIFIED</field_name>
+	</meta>
+	<meta>
+	  <!-- Extract title from <title> and map to TITLE field in schema -->
+	  <name>title</name>
+	  <field_name>TITLE</field_name>
+	</meta>
+      </metadata>
+
+      <!--Define document tags -->
+      <tags>
+	<tag>
+	  <!--The tag name in the TREC document-->
+	  <name>DOCNO</name>
+	  <!-- Which field this tag map to-->
+	  <field_name>DOCID</field_name>
+	</tag>
+	<tag>
+	  <name>DOCHDR</name>
+	</tag>
+      </tags>
+    </template>
+  </collection>
+
+  <!--Define index schema-->
+  <index_schema>
+    <!--Define fields of document-->
+    <fields>
+      <field>
+	<!--Field name-->
+	<name>DOCID</name>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>URL</name>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>DATE</name>
+	<!--The type of this field, allowable values: TEXT/UTF8_TEXT/KEYWORD/PRIMARY_KEY/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE-->
+	<type>DATETIME</type>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>TYPE</name>
+	<!--The type of this field-->
+	<type>KEYWORD</type>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>LENGTH</name>
+	<!--The type of this field-->
+	<type>INT64</type>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>MODIFIED</name>
+	<!--The type of this field-->
+	<type>DATETIME</type>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+
+      <field>
+	<!--Field name-->
+	<name>TITLE</name>
+	<!--The type of this field-->
+	<type>UTF8_TEXT</type>
+      </field>
+
+      <field>
+	<name>BODY</name>
+	<!--The type of this field-->
+	<type>UTF8_TEXT</type>
+      </field>
+    </fields>
+  </index_schema>
+</configure>

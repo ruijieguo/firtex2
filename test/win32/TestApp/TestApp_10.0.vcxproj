@@ -1,0 +1,395 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>TestApp</ProjectName>
+    <ProjectGuid>{36DC06AD-BFEF-4A7D-B337-45D327B9B62E}</ProjectGuid>
+    <RootNamespace>TestApp</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)D</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/TestApp.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/wd4290 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../cppunit/include;../..;../../../include;../../../extension/include;../../src;../../../src;../../../extension/include/firtex/extension/external;../../../external/libevent/include;../../../external/libevent/WIN32-Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;CPPUNIT_USE_TYPEINFO;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0500;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeaderOutputFile>.\Debug/TestApp.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x040c</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/fixed:no %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>../../lib/cppunitd.lib;../../lib/testrunnerd.lib;../../../lib/FirtexD.lib;../../../lib/FirteX-ExtD.lib;ws2_32.lib;../../../lib/SnowballD.lib;../../../lib/libeventD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Debug/TestApp.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug/TestApp.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/TestApp.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>../../cppunit/include;../..;../../../include;../../../extension/include;../../src;../../../src;../../../extension/include/firtex/extension/external;../../../external/libevent/WIN32-Code;../../../external/libevent/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;CPPUNIT_USE_TYPEINFO;NOMINMAX;_WIN32_WINNT=0x0500;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeaderOutputFile>.\Release/TestApp.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x040c</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>../../lib/cppunit.lib;../../lib/testrunner.lib;../../../lib/FirteX.lib;../../../lib/FirteX-Ext.lib;ws2_32.lib;../../../lib/Snowball.lib;../../../lib/libevent.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Release/TestApp.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release/TestApp.bsc</OutputFile>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\contrib\win32\highlighter_10.0.vcxproj">
+      <Project>{24c81039-0230-4630-9afa-666ec230258e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\contrib\win32\Snowball_10.0.vcxproj">
+      <Project>{abcf2dff-c680-497e-a81e-422646d6debb}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\extension\win32\FirteX-Extension_10.0.vcxproj">
+      <Project>{774cf74d-f4d3-4cd5-961a-734147ad9653}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\win32\FirteX_10.0.vcxproj">
+      <Project>{07e8622c-8e15-45f3-8360-5a58291af474}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\win32\FirteX_10.0.vcxproj">
+      <Project>{07e8622c-8e15-45f3-8360-5a58291af474}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\extension\win32\FirteX-Extension_10.0.vcxproj">
+      <Project>{774cf74d-f4d3-4cd5-961a-734147ad9653}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\contrib\win32\highlighter_10.0.vcxproj">
+      <Project>{24c81039-0230-4630-9afa-666ec230258e}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\contrib\win32\Snowball_10.0.vcxproj">
+      <Project>{abcf2dff-c680-497e-a81e-422646d6debb}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cppunit\src\cppunit\cppunit_10.0.vcxproj">
+      <Project>{bfaba1aa-460d-45ed-9b51-ca7a8137ad36}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cppunit\src\cppunit\cppunit_10.0.vcxproj">
+      <Project>{bfaba1aa-460d-45ed-9b51-ca7a8137ad36}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cppunit\src\msvc6\testrunner\TestRunner_10.0.vcxproj">
+      <Project>{a0c0a31b-e6eb-4edc-89a6-f05feec4f642}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cppunit\src\msvc6\testrunner\TestRunner_10.0.vcxproj">
+      <Project>{a0c0a31b-e6eb-4edc-89a6-f05feec4f642}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TestApp.h" />
+    <ClInclude Include="TestAppDlg.h" />
+    <ClInclude Include="..\..\src\TestHelper.h" />
+    <ClInclude Include="..\..\src\index\BarrelTermPositionIteratorTestCase.h" />
+    <ClInclude Include="..\..\src\index\BarrelTermPostingIteratorTestCase.h" />
+    <ClInclude Include="..\..\src\index\ByteSliceInputStreamTestCase.h" />
+    <ClInclude Include="..\..\src\index\ByteSliceOutputStreamTestCase.h" />
+    <ClInclude Include="..\..\src\index\DateTimeIndexTestCase.h" />
+    <ClInclude Include="..\..\src\index\DBTMergePolicyTestCase.h" />
+    <ClInclude Include="..\..\src\index\DocPostingDecoderTestCase.h" />
+    <ClInclude Include="..\..\src\index\DocPostingMergerTestCase.h" />
+    <ClInclude Include="..\..\src\index\DocSkipListReaderTestCase.h" />
+    <ClInclude Include="..\..\src\index\ForwardIndexTestCase.h" />
+    <ClInclude Include="..\..\src\index\IndexBuildHelper.h" />
+    <ClInclude Include="..\..\src\index\IndexMergerTestCase.h" />
+    <ClInclude Include="..\..\src\index\IndexTestCase.h" />
+    <ClInclude Include="..\..\src\index\KeywordIndexTestCase.h" />
+    <ClInclude Include="..\..\src\index\OptPFDPostingCodingTestCase.h" />
+    <ClInclude Include="..\..\src\index\OptPForDeltaCodingTestCase.h" />
+    <ClInclude Include="..\..\src\index\PosPostingDecoderTestCase.h" />
+    <ClInclude Include="..\..\src\index\PosPostingMergerTestCase.h" />
+    <ClInclude Include="..\..\src\index\PosSkipListReaderTestCase.h" />
+    <ClInclude Include="..\..\src\index\PrimaryKeyIndexTestCase.h" />
+    <ClInclude Include="..\..\src\index\S16CodingTestCase.h" />
+    <ClInclude Include="..\..\src\index\TextIndexMergerTestCase.h" />
+    <ClInclude Include="..\..\src\index\TextTermReaderTestCase.h" />
+    <ClInclude Include="..\..\src\index\TypedDictTestCase.h" />
+    <ClInclude Include="..\..\src\index\UnpackTestCase.h" />
+    <ClInclude Include="..\..\src\analyzer\SynonymFilterTestCase.h" />
+    <ClInclude Include="..\..\src\analyzer\SynonymMapTestCase.h" />
+    <ClInclude Include="..\..\src\search\ClauseTestCase.h" />
+    <ClInclude Include="..\..\src\search\DateTimeSearchTestCase.h" />
+    <ClInclude Include="..\..\src\search\FieldSelectClauseTestCase.h" />
+    <ClInclude Include="..\..\src\search\IndexSearcherTestCase.h" />
+    <ClInclude Include="..\..\src\search\StatementTestCase.h" />
+    <ClInclude Include="..\..\src\utility\BinaryFileTestCase.h" />
+    <ClInclude Include="..\..\src\utility\DirectoryIteratorTestCase.h" />
+    <ClInclude Include="..\..\src\utility\FileTestCase.h" />
+    <ClInclude Include="..\..\src\utility\HashMapTestCase.h" />
+    <ClInclude Include="..\..\src\utility\HashTestCase.h" />
+    <ClInclude Include="..\..\src\utility\KeyValueParserTestCase.h" />
+    <ClInclude Include="..\..\src\utility\MMapFileTestCase.h" />
+    <ClInclude Include="..\..\src\utility\NumberParserTestCase.h" />
+    <ClInclude Include="..\..\src\utility\PathTestCase.h" />
+    <ClInclude Include="..\..\src\utility\SlicedVectorTestCase.h" />
+    <ClInclude Include="..\..\src\utility\StringTokenizerTestCase.h" />
+    <ClInclude Include="..\..\src\utility\TextFileTestCase.h" />
+    <ClInclude Include="..\..\src\utility\XMLDocumentWrapperTestCase.h" />
+    <ClInclude Include="..\..\src\thread\ThreadTestCase.h" />
+    <ClInclude Include="..\..\extension\network\EvHttpServerTestCase.h" />
+    <ClInclude Include="..\..\extension\collection\CollectionConfigureTestCase.h" />
+    <ClInclude Include="..\..\extension\collection\DirCollectionTestCase.h" />
+    <ClInclude Include="..\..\extension\collection\StandardCollectionTestCase.h" />
+    <ClInclude Include="..\..\extension\util\OptionParserTestCase.h" />
+    <ClInclude Include="..\..\extension\processor\DocumentTemplateTestCase.h" />
+    <ClInclude Include="..\..\extension\processor\StandardDocumentProcessorTestCase.h" />
+    <ClInclude Include="..\..\extension\processor\TrecDocumentProcessorTestCase.h" />
+    <ClInclude Include="..\..\src\config\ConfiguratorTestCase.h" />
+    <ClInclude Include="..\..\src\config\XMLConfiguratorTestCase.h" />
+    <ClInclude Include="..\..\src\common\LoggerTestCase.h" />
+    <ClInclude Include="..\..\src\store\BlockFileInputStreamTestCase.h" />
+    <ClInclude Include="..\..\src\store\BlockFileOutputStreamTestCase.h" />
+    <ClInclude Include="..\..\src\store\BlockFileSystemTest.h" />
+    <ClInclude Include="..\..\src\store\InputStreamPoolTestCase.h" />
+    <ClInclude Include="..\..\src\document\DocumentSchemaTestCase.h" />
+    <ClInclude Include="..\..\src\queryparser\ExprParserTestCase.h" />
+    <ClInclude Include="..\..\src\queryparser\QueryExprBisonParserTestCase.h" />
+    <ClInclude Include="..\..\src\queryparser\QueryExprLexerTestCase.h" />
+    <ClInclude Include="..\..\src\queryparser\QueryParserTestCase.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="TestApp.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="TestAppDlg.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TestHelper.cpp" />
+    <ClCompile Include="..\..\src\index\BarrelTermPositionIteratorTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\BarrelTermPostingIteratorTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\ByteSliceInputStreamTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\ByteSliceOutputStreamTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\DateTimeIndexTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\DBTMergePolicyTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\DocPostingDecoderTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\DocPostingMergerTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\DocSkipListReaderTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\ForwardIndexTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\IndexBuildHelper.cpp" />
+    <ClCompile Include="..\..\src\index\IndexMergerTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\IndexTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\KeywordIndexTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\OptPFDPostingCodingTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\OptPForDeltaCodingTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\PosPostingDecoderTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\PosPostingMergerTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\PosSkipListReaderTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\PrimaryKeyIndexTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\S16CodingTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\TextIndexMergerTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\TextTermReaderTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\TypedDictTestCase.cpp" />
+    <ClCompile Include="..\..\src\index\UnpackTestCase.cpp" />
+    <ClCompile Include="..\..\src\analyzer\SynonymFilterTestCase.cpp" />
+    <ClCompile Include="..\..\src\analyzer\SynonymMapTestCase.cpp" />
+    <ClCompile Include="..\..\src\search\ClauseTestCase.cpp" />
+    <ClCompile Include="..\..\src\search\DateTimeSearchTestCase.cpp" />
+    <ClCompile Include="..\..\src\search\FieldSelectClauseTestCase.cpp" />
+    <ClCompile Include="..\..\src\search\IndexSearcherTestCase.cpp" />
+    <ClCompile Include="..\..\src\search\StatementTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\BinaryFileTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\DirectoryIteratorTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\FileTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\HashMapTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\HashTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\KeyValueParserTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\MMapFileTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\NumberParserTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\PathTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\SlicedVectorTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\StringTokenizerTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\TextFileTestCase.cpp" />
+    <ClCompile Include="..\..\src\utility\XMLDocumentWrapperTestCase.cpp" />
+    <ClCompile Include="..\..\src\thread\ThreadTestCase.cpp" />
+    <ClCompile Include="..\..\extension\network\EvHttpServerTestCase.cpp" />
+    <ClCompile Include="..\..\extension\collection\CollectionConfigureTestCase.cpp" />
+    <ClCompile Include="..\..\extension\collection\DirCollectionTestCase.cpp" />
+    <ClCompile Include="..\..\extension\collection\StandardCollectionTestCase.cpp" />
+    <ClCompile Include="..\..\extension\util\OptionParserTestCase.cpp" />
+    <ClCompile Include="..\..\extension\processor\DocumentTemplateTestCase.cpp" />
+    <ClCompile Include="..\..\extension\processor\StandardDocumentProcessorTestCase.cpp" />
+    <ClCompile Include="..\..\extension\processor\TrecDocumentProcessorTestCase.cpp" />
+    <ClCompile Include="..\..\src\config\ConfiguratorTestCase.cpp" />
+    <ClCompile Include="..\..\src\config\XMLConfiguratorTestCase.cpp" />
+    <ClCompile Include="..\..\src\common\LoggerTestCase.cpp" />
+    <ClCompile Include="..\..\src\store\BlockFileInputStreamTestCase.cpp" />
+    <ClCompile Include="..\..\src\store\BlockFileOutputStreamTestCase.cpp" />
+    <ClCompile Include="..\..\src\store\BlockFileSystemTest.cpp" />
+    <ClCompile Include="..\..\src\store\InputStreamPoolTestCase.cpp" />
+    <ClCompile Include="..\..\src\document\DocumentSchemaTestCase.cpp" />
+    <ClCompile Include="..\..\src\queryparser\ExprParserTestCase.cpp" />
+    <ClCompile Include="..\..\src\queryparser\QueryExprBisonParserTestCase.cpp" />
+    <ClCompile Include="..\..\src\queryparser\QueryExprLexerTestCase.cpp" />
+    <ClCompile Include="..\..\src\queryparser\QueryParserTestCase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TestApp.rc">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\TestApp.ico" />
+    <None Include="res\TestApp.rc2" />
+    <None Include="..\..\cppunittest\Makefile.am" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

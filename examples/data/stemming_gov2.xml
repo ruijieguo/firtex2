@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<configure>
+  <!--Global paramters-->
+  <global>
+    <general>
+      <!--Dictionary directory -->
+      <dictionary_path>../../bin/data</dictionary_path>
+    </general>
+
+    <!--Merge strategy parameters-->
+    <merge>
+      <!--Merge strategy name, allowable values: nomerge/optimize-->
+      <!--nomerge: best performance for building index-->
+      <!--optimize: best performance for searching-->
+      <strategy>nomerge</strategy>
+    </merge>
+
+    <build>
+      <!--Memory size(MB) for index building-->
+      <memory>64</memory>
+      <!-- Define index building thread count -->
+      <build_thread_count>1</build_thread_count>
+    </build>
+  </global>
+  
+  <collection>
+    <!--Collection name, allow empty-->
+    <name></name>
+    <!--Collection identifier, allowable values: collection.directory/trec/trec.gz/filelist-->
+    <identifier>collection.trec</identifier>
+
+    <!--source file path -->
+    <source>./gov2</source>
+    <!--target index path -->
+    <target>./gov2_index</target>
+
+    <!--Index build mode, allowable values: batch/append-->
+    <!--batch: build index from scratch -->
+    <!--append: build index increamentally-->
+    <build_mode>batch</build_mode>
+
+    <!--Document type, allowable values: txt/html/pdf/doc/ppt/xsl-->
+    <doc_types>html</doc_types>
+    <!-- Filter .svn  directory, and only process .gz files -->
+    <parameter>filter=.svn;file_extension=gz</parameter>
+    <!-- Define document processing therad count -->
+    <process_thread_count>1</process_thread_count>
+
+    <!--Define collection document template-->
+    <template>
+      <!--Define document root tag-->
+      <doc_tag>DOC</doc_tag> 
+
+      <!--The data between </DOCHDR> and </DOC> will map to BODY field-->
+      <embedded_field>BODY</embedded_field>
+
+      <!--Define document tags -->
+      <tags>
+	<tag>
+	  <!--The tag name in the TREC document-->
+	  <name>DOCNO</name>
+	  <!-- Which field this tag map to-->
+	  <field_name>DOCID</field_name>
+	</tag>
+	<tag>
+	  <name>DOCHDR</name>
+	</tag>
+      </tags>
+    </template>
+  </collection>
+
+  <!--Define index schema-->
+  <index_schema>
+    <type_define>
+      <!--Define index type for English text-->
+      <field_type>
+	<!--The index type name-->
+	<name>ENGLISH_TEXT</name>
+	<!--The type of field text, allowable values：TEXT/STRING/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE-->
+	<value_type>TEXT</value_type>
+	<!--Define indexer and analyzer paramter-->
+	<index_type>
+	  <!--Identifier of indexer-->
+	  <identifier>indexer.text</identifier>
+	  <!--Define analyzer of the field-->
+	  <analyzer>
+	    <!--Identifier of analyzer, format:ident,param=value,param=value....-->
+	    <identifier>analyzer.standard</identifier>
+	    <!--Select max forward segmenter for utf-8 text -->
+	    <parameter>encode=utf-8, algorithm=max_forward</parameter>
+	    <!--Define ante filter for analyzer, format: 
+		       ident, param=value, param=value...;ident, param=value, param=value...-->
+	    <ante_filter>filter.lowercase;filter.snowball</ante_filter>
+	  </analyzer>
+	</index_type>
+      </field_type>
+    </type_define>
+
+    <!--Define fields of document-->
+    <fields>
+      <field>
+	<!--Field name-->
+	<name>DOCID</name>
+	<!--Store this field in index database or not, allowable values: true/false-->
+	<store>true</store>
+      </field>
+
+      <field>
+	<name>BODY</name>
+	<!--The type of this field, allowable values: TEXT/UTF8_TEXT/KEYWORD/PRIMARY_KEY/INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE-->
+	<type>ENGLISH_TEXT</type>
+      </field>
+    </fields>
+  </index_schema>
+</configure>

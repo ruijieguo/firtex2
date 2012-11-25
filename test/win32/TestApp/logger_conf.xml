@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configure>
+  <appenders>
+    <appender>
+      <name>fileAppender</name>
+      <base>appender.file</base>
+      <flush>true</flush>
+      <layout>layout.pattern</layout>
+      <pattern>%d [%l] [%t] [%m] [%F,%f,%L]%n</pattern>
+      <path>./log.txt</path>
+      <!-- Log rotation, option: never/nK/nM -->
+      <rotation>1M</rotation>
+    </appender>
+    <appender>
+      <name>consoleAppender</name>
+      <base>appender.console</base>
+      <flush>true</flush>
+      <layout>layout.pattern</layout>
+      <pattern>%d [%l] [%t] [%m] [%F,%f]%n</pattern>
+    </appender>
+  </appenders>
+
+  <loggers>
+    <logger>
+      <name>/</name>
+      <appender>consoleAppender</appender>
+      <level>info</level>
+    </logger>
+    <logger>
+      <name>firtex.search.xxx1</name>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.network.EvHttpRequestContext1</name>
+      <appender>consoleAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.network.EvHttpRequestHandler1</name>
+      <appender>consoleAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.network.EvHttpServer1</name>
+      <appender>consoleAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.app.HTTPSearchReplica1</name>
+      <appender>consoleAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.index.AsyncDocumentConsumer.Task</name>
+      <appender>fileAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.index.AsyncDocumentConsumer.OnDiskUpdateTask</name>
+      <appender>fileAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.index.IndexBarrelWriter</name>
+      <appender>fileAppender</appender>
+      <level>trace</level>
+    </logger>
+    <logger>
+      <name>firtex.index.SyncCommitScheduler</name>
+      <appender>fileAppender</appender>
+      <level>trace</level>
+    </logger>
+  </loggers>
+</configure>

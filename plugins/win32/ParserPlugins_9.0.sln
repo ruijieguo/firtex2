@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSOfficeParserPlugin", "..\MSOfficeParserPlugin\win32\MSOfficeParserPlugin_9.0.vcproj", "{21B85D8C-58ED-4D42-B99D-5A1310E22467}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PDFParserPlugin", "..\PDFParserPlugin\PDFParserPlugin_9.0.vcproj", "{8506087D-1137-4B90-AFD4-E4E3435EEA3B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "com", "..\..\extension\win32\com_9.0.vcproj", "{D0213A01-50B3-4F78-AC70-4D04E603AF50}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21B85D8C-58ED-4D42-B99D-5A1310E22467}.Debug|Win32.ActiveCfg = Debug|Win32
+		{21B85D8C-58ED-4D42-B99D-5A1310E22467}.Debug|Win32.Build.0 = Debug|Win32
+		{21B85D8C-58ED-4D42-B99D-5A1310E22467}.Release|Win32.ActiveCfg = Release|Win32
+		{21B85D8C-58ED-4D42-B99D-5A1310E22467}.Release|Win32.Build.0 = Release|Win32
+		{8506087D-1137-4B90-AFD4-E4E3435EEA3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8506087D-1137-4B90-AFD4-E4E3435EEA3B}.Release|Win32.ActiveCfg = Release|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Debug|Win32.Build.0 = Debug|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Release|Win32.ActiveCfg = Release|Win32
+		{D0213A01-50B3-4F78-AC70-4D04E603AF50}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
