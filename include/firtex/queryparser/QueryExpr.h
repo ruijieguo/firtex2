@@ -112,6 +112,17 @@ protected:
     ModType m_modifier;
 };
 
+class AnyQueryExpr : public QueryExpr
+{
+public:
+    AnyQueryExpr();
+    ~AnyQueryExpr(); 
+
+public:
+    std::string toString() const;
+    FX_NS(search)::Query* accept(QueryBuilder& builder);
+};
+
 class PhraseQueryExpr : public TermQueryExpr
 {
 public:

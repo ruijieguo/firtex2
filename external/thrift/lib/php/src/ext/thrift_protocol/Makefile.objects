@@ -1,5 +1,5 @@
-php_thrift_protocol.lo: /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp
-	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp -o php_thrift_protocol.lo 
+php_thrift_protocol.lo: /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp
+	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp -o php_thrift_protocol.lo 
 $(phplibdir)/thrift_protocol.la: ./thrift_protocol.la
 	$(LIBTOOL) --mode=install cp ./thrift_protocol.la $(phplibdir)
 

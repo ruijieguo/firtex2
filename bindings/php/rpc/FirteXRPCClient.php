@@ -1,12 +1,24 @@
 <?php
-include_once dirname(__FILE__).'/../FirteXQueryResult.php';
 
-$GLOBALS['THRIFT_ROOT'] = dirname(__FILE__);
-include_once $GLOBALS['THRIFT_ROOT'].'/Thrift.php';
-require_once $GLOBALS['THRIFT_ROOT'].'/protocol/TBinaryProtocol.php';
-require_once $GLOBALS['THRIFT_ROOT'].'/transport/TSocket.php';
-require_once $GLOBALS['THRIFT_ROOT'].'/transport/TFramedTransport.php';
-require_once $GLOBALS['THRIFT_ROOT'].'/packages/SearchService/ThriftSearchService.php';
+require_once __DIR__.'/lib/Thrift/ClassLoader/ThriftClassLoader.php';
+
+use Thrift\ClassLoader\ThriftClassLoader;
+
+$GLOBALS['THRIFT_ROOT'] = dirname(__FILE__) . '/lib';
+
+$loader = new ThriftClassLoader();
+$loader->registerNamespace('Thrift', $GLOBALS['THRIFT_ROOT']);
+$loader->registerDefinition('shared', $GEN_DIR);
+$loader->register();
+
+require_once dirname(__FILE__).'/packages/firtex/ThriftSearchService.php';
+require_once dirname(__FILE__).'/packages/firtex/Types.php';
+require_once dirname(__FILE__).'/packages/firtex/FirteXQueryResult.php';
+
+use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Transport\TSocket;
+use Thrift\Transport\TFramedTransport;
+use firtex\ThriftSearchServiceClient;
 
 class FirteXRPCClient {
     public function __construct($host, $port) {
@@ -16,7 +28,7 @@ class FirteXRPCClient {
             $protocol = new TBinaryProtocol($transport);
             
             $transport->open();
-            $this->_searchService = new firtex_ThriftSearchServiceClient($protocol);
+            $this->_searchService = new ThriftSearchServiceClient($protocol);
         } catch(TException $tx) {
             throw FirteXException($tx->getMessage());
         }

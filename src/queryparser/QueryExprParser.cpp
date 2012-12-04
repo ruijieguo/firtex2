@@ -1,6 +1,6 @@
 #include "firtex/queryparser/QueryExprParser.h"
 #include "firtex/queryparser/QueryExprLexer.h"
-#include "QueryExprBisonParser.hh"
+#include "QueryExprBisonParser.h"
 
 using namespace std;
 using namespace fx_bison;

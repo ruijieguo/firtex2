@@ -64,9 +64,9 @@ FX_NS_USE(queryparser);
 %token <stringVal> 	TOK_SINGLE_QUOTED       "single quoted string"
 %token <stringVal> 	TOK_DOUBLE_QUOTED	"double quoted string"
 
-%token TOK_AND TOK_OR TOK_RANGE_TO TOK_EQ TOK_LE TOK_GE TOK_LESS TOK_GREATER TOK_MOD_NOT TOK_MOD_REQ TOK_BOOST TOK_PHRASE_SLOP
+%token TOK_AND TOK_OR TOK_RANGE_TO TOK_EQ TOK_LE TOK_GE TOK_LESS TOK_GREATER TOK_MOD_NOT TOK_MOD_REQ TOK_BOOST TOK_PHRASE_SLOP TOK_QUERY_ANY
 
-%type <queryExprVal> query_expr bool_expr expr and_expr or_expr
+%type <queryExprVal> query_expr bool_expr expr and_expr or_expr any_expr
 %type <queryExprVal> group_expr req_expr proh_expr group_term_expr term_list
 %type <termExprVal> atom_expr
 %type <stringVal> field_name range_val
@@ -74,7 +74,7 @@ FX_NS_USE(queryparser);
 
 %destructor {delete $$;} TOK_INT TOK_FLOAT
 %destructor {delete $$;} TOK_IDENT TOK_CJK  TOK_SINGLE_QUOTED TOK_DOUBLE_QUOTED
-%destructor {delete $$;} expr bool_expr and_expr or_expr
+%destructor {delete $$;} expr bool_expr and_expr or_expr any_expr
 %destructor {delete $$;} group_expr req_expr proh_expr
 %destructor {delete $$;} atom_expr
 %destructor {delete $$;} field_name range_val
@@ -113,6 +113,7 @@ bool_expr : expr
             }
 
 expr : atom_expr {$$ = $1;}
+     | any_expr
      | and_expr
      | or_expr
      | group_expr 
@@ -136,6 +137,11 @@ proh_expr: TOK_MOD_NOT expr
     $2->setProhibited(true);
     $$ = $2;
 }
+
+any_expr: TOK_QUERY_ANY
+          {
+              $$ = new AnyQueryExpr();
+          }
 
 and_expr : expr TOK_AND expr 
 {
@@ -164,30 +170,30 @@ term_list : expr
             }
 
 atom_expr : boost_term
-              {
-		  const std::string &defaultField = exprParser.getDefaultField();
-	          $1->setFieldName(defaultField);
-		  $$ = $1;
+            {
+                const std::string &defaultField = exprParser.getDefaultField();
+                $1->setFieldName(defaultField);
+                $$ = $1;
               }
           | field_name boost_term 
-              {
-		  std::string* fieldName = $1;
-		  $2->setFieldName(*fieldName);
-		  delete $1;
-		  $$ = $2;
-              }
+            {
+                std::string* fieldName = $1;
+                $2->setFieldName(*fieldName);
+                delete $1;
+                $$ = $2;
+            }
 
 boost_term : atom_term
              {
                  $$ = $1;
              }
-	    | atom_term TOK_BOOST TOK_INT
+            | atom_term TOK_BOOST TOK_INT
              {
                  $1->setBoost((float)$3->m_i64Val);
                  delete $3;
                  $$ = $1;
              }
-	    | atom_term TOK_BOOST TOK_FLOAT
+            | atom_term TOK_BOOST TOK_FLOAT
              {
                  $1->setBoost($3->m_fVal);
                  delete $3;

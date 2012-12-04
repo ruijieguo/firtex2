@@ -30,7 +30,7 @@ FX_NS_DEF(queryparser);
 class QueryExprLexer;
 FX_NS_END
 
-#include "queryparser/QueryExprBisonParser.hh"
+#include "queryparser/QueryExprBisonParser.h"
 
 FX_NS_DEF(queryparser);
 

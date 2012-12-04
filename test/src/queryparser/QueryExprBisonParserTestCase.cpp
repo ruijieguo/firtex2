@@ -153,6 +153,12 @@ void QueryExprBisonParserTestCase::testSingleQuotedExpr()
     CPPUNIT_ASSERT_EQUAL(string("field1: (1+1=2)?$#"), str);
 }
 
+void QueryExprBisonParserTestCase::testAnyQueryExpr()
+{
+    string str = parseExpr("*:*");
+    CPPUNIT_ASSERT_EQUAL(string("*:*"), str);
+}
+
 string QueryExprBisonParserTestCase::parseExpr(const string& exprStr)
 {
     QueryExprParser parser("def_field");

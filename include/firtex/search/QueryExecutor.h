@@ -58,12 +58,12 @@ public:
      * @return number of matched documents
      */   
     virtual size_t advance(MatchedDocSet& scoreDocs) = 0;
-	
+    
     /** 
-	 * Skip to document whose id is equal to or greater than <i>docId</i>.
-	 * @param docId docid to skip to
-	 * @return an docid whoese value is not less than <i>docId</i>
-	 */ 
+     * Skip to document whose id is equal to or greater than <i>docId</i>.
+     * @param docId docid to skip to
+     * @return an docid whoese value is not less than <i>docId</i>
+     */ 
     virtual docid_t skipTo(docid_t docId) = 0;
 
     /**

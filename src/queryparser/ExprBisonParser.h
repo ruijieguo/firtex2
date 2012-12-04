@@ -123,7 +123,7 @@ namespace fx_bison {
 #line 54 "ExprBisonParser.yy"
 
     int64_t intVal;
-    double   doubleVal;
+    double  doubleVal;
     int32_t funcIdx;
     int32_t nodeIdx;
     std::string* stringVal;
@@ -150,15 +150,16 @@ namespace fx_bison {
      TOK_QUOTED_STRING = 261,
      TOK_FUNC = 262,
      TOK_FUNC_IN = 263,
-     TOK_AND = 264,
-     TOK_OR = 265,
-     TOK_NOT = 266,
-     TOK_EQ = 267,
-     TOK_LTE = 268,
-     TOK_GTE = 269,
-     TOK_NE = 270,
-     TOK_NEG = 271,
-     TOK_CONST_LIST = 272
+     TOK_FUNC_DATE = 264,
+     TOK_AND = 265,
+     TOK_OR = 266,
+     TOK_NOT = 267,
+     TOK_EQ = 268,
+     TOK_LTE = 269,
+     TOK_GTE = 270,
+     TOK_NE = 271,
+     TOK_NEG = 272,
+     TOK_CONST_LIST = 273
    };
 
     };
@@ -336,7 +337,7 @@ namespace fx_bison {
 } // fx_bison
 
 /* Line 300 of lalr1.cc  */
-#line 340 "ExprBisonParser.h"
+#line 341 "ExprBisonParser.h"
 
 
 

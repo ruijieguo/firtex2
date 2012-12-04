@@ -21,7 +21,7 @@
 
 	<listitem>
 	  <para>短语(Phrase)由一个或多个词组成，在查询中精确匹配短语中所有词（所有词在同一篇文档中出现，并且位置依次相邻）的文档才算命中。短语检索使用双引号：
-	    <screen>query=“中国北京"</screen>
+	    <screen>query="中国北京"</screen>
 	  </para>
 	</listitem>
 
@@ -128,6 +128,12 @@
 	<screen>query="开源技术"^4 AND '搜索'</screen>
       </para>
       <para>默认boost值是1，词或短语的boost值必须大于0，允许小于1。</para>
+    </sect2>
+    <sect2>
+      <title>匹配所有结果</title>
+      <para>FirteX2支持扫描索引库中的所有文档并返回，该语法一般配合sort_by或者filter子句一起使用。</para>
+      <para>例如，获取所有文档并按时间戳排序：</para>
+      <screen>query=*:*;sort_by=TIMESTAMP</screen>
     </sect2>
   </sect1>
 

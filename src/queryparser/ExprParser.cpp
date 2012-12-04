@@ -2,7 +2,7 @@
 #include "firtex/queryparser/ExprLexer.h"
 #include "firtex/queryparser/DefaultExprEvaluatorBuilder.h"
 #include "firtex/queryparser/ExprOptimizer.h"
-#include "ExprBisonParser.hh"
+#include "ExprBisonParser.h"
 #include "firtex/index/IndexReader.h"
 #include "firtex/analyzer/DateTimeAnalyzer.h"
 

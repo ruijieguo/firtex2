@@ -84,6 +84,27 @@ Query* TermQueryExpr::accept(QueryBuilder& builder)
     return builder.createQuery(*this);
 }
 
+///AnyQueryExpr
+AnyQueryExpr::AnyQueryExpr()
+{
+}
+
+AnyQueryExpr::~AnyQueryExpr()
+{
+}
+
+std::string AnyQueryExpr::toString() const
+{
+    stringstream ss;
+    ss << "*:*";
+    return ss.str();
+}
+
+Query* AnyQueryExpr::accept(QueryBuilder& builder)
+{
+    return builder.createQuery(*this);
+}
+
 
 /////////////////////////////////////////
 //PhraseQueryExpr

@@ -42,8 +42,8 @@
 	  <orderedlist>
 	    <listitem>从<ulink url="http://www.sourceforge.net/projects/firtex">http://www.sourceforge.net/projects/firtex</ulink>获取最新发布源代码，解压缩并进入解压缩目录：
 	      <screen>
-$tar zxf firtex2-0.5.0.tar.gz
-$cd firtex2-0.5.0</screen>
+$tar zxf firtex2-0.5.1.tar.gz
+$cd firtex2-0.5.1</screen>
 	    </listitem>  
 	    <listitem>生成编译文件和脚本：
 	      <screen>$chmod +x ./bootstrap.sh &amp;&amp; ./bootstrap.sh</screen>
@@ -88,9 +88,13 @@ $make docbook</screen>
 	    <title>编译注意事项</title>
 	    <orderedlist>
 	      <listitem>
-		<para>使用低版本flex(版本号低于2.5.35)编译，解析器部分的代码可能编译不过，请更新flex版本，或者执行：
-		  <screen>make distclean</screen>
-		后重新编译。
+		<para>使用低版本flex(版本号低于2.5.35)和bison(版本号低于2.3)编译，src/analyzer和src/queryparser目录下的代码可能编译不过，请更新flex和bison版本，或者分别进入src/analyzer和src/queryparser目录执行：
+		  <screen>make rebuild</screen>
+		重新编译生成bison和flex代码。
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>多线程编译（例如 make -j 16）可能导致thrift相关代码编译错误，需要重复编译几次。这是因为thrift生成的代码有些是有编译依赖的，多线程编译可能导致被依赖的代码尚未编译生成。
 		</para>
 	      </listitem>
 	      <listitem>
@@ -181,9 +185,39 @@ $make docbook</screen>
 	    </row>
 
 	    <row>
-	      <entry>INT32/INT64/UINT32/UINT64/FLOAT/DOUBLE</entry>
+	      <entry>INT8/INT16/INT32/INT64/UINT8/UINT16/UINT32/UINT64/FLOAT/DOUBLE</entry>
 	      <entry>正排索引</entry>
-	      <entry>数值类型的正排索引，存储文档的一些数值属性，例如：时间戳，价格，类别等。</entry>
+	      <entry>数值类型的正排索引，存储文档的一些数值属性，例如：时间戳，价格，类别等，一般用于按属性过滤和排序。</entry>
+	    </row>
+
+	    <row>
+	      <entry>INT8_I/INT16_I/INT32_I/INT64_I/UINT8_I/UINT16_I/UINT32_I/UINT64_I</entry>
+	      <entry>数值类型的倒排索引</entry>
+	      <entry>数值类型的倒排索引，索引文档的一些数值属性，例如：时间戳，价格，类别等。</entry>
+	    </row>
+
+	    <row>
+	      <entry>INT8_IF/INT16_IF/INT32_IF/INT64_IF/UINT8_IF/UINT16_IF/UINT32_IF/UINT64_IF</entry>
+	      <entry>数值类型的倒排和正排索引</entry>
+	      <entry>存储和索引文档的一些数值属性，例如：时间戳，价格，类别等。</entry>
+	    </row>
+
+	    <row>
+	      <entry>DATETIME/DATETIME64</entry>
+	      <entry>时间日期的正排索引，DATETIME的精度是32位，DATETIME64的精度是64位</entry>
+	      <entry>存储文档的时间日期属性，一般用于支持按时间日期过滤和排序查询。</entry>
+	    </row>
+
+	    <row>
+	      <entry>DATETIME_I/DATETIME64_I</entry>
+	      <entry>时间日期的倒排索引，DATETIME_I的索引精度是32位，DATETIME64_I的索引精度是64位</entry>
+	      <entry>索引文档的时间日期属性，可用于支持按时间日期查询或与文本混合查询。</entry>
+	    </row>
+
+	    <row>
+	      <entry>DATETIME_IF</entry>
+	      <entry>时间日期的正排索引和倒排索引，精度为64位。</entry>
+	      <entry>同时索引和存储文档的时间日期属性。</entry>
 	    </row>
 
 	    <row>
@@ -410,8 +444,8 @@ field3=value23^^
 		<entry>analyzer.datetime</entry>
 		<entry>
 		  <para>将日期字段转换成int64的数值，支持格式：</para>
-		  <para>"1999-3-3 4:43:44"，"1999/3/3 4:43:44"，"1999年3月3日 4点43分44秒"，
-		  "1999年3月3日 4点43分"，"1999年3月3日 4点"，"1999年3月3日"，...等格式。
+		  <para>"2008-2-1 12:01:00"，"2008/2/1 12:01:00"，"2008年2月1日 12点01分00秒"，
+		  "2008-02-01T12:01:00Z"，"Sat, 1 Feb 2008 12:01:00 GMT"，"Sat Feb 01 12:01:00 2008"，...等格式。
 		  </para>
 		</entry>
 	      </row>

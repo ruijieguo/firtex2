@@ -33,15 +33,27 @@ void QueryExecutor::execute(HitCollectorPtr& pCollector,
     queryFeature.reserve(size());
     extractFeature(queryFeature);
 
-    pScorer->beginQuery(m_pFeatureProvider, queryFeature);
-    while (advance(machedDocs) > 0)
+    if (queryFeature.size() > 0)
     {
-        FX_TRACE("Matched doc count: [%u]", (uint32_t)machedDocs.size());
-        pScorer->score(machedDocs);
-        pCollector->collect(machedDocs);
-        machedDocs.reset();
+        pScorer->beginQuery(m_pFeatureProvider, queryFeature);
+        while (advance(machedDocs) > 0)
+        {
+            FX_TRACE("Matched doc count: [%u]", (uint32_t)machedDocs.size());
+            pScorer->score(machedDocs);
+            pCollector->collect(machedDocs);
+            machedDocs.reset();
+        }
+        pScorer->endQuery();
     }
-    pScorer->endQuery();
+    else 
+    {
+        while (advance(machedDocs) > 0)
+        {
+            FX_TRACE("Matched doc count: [%u]", (uint32_t)machedDocs.size());
+            pCollector->collect(machedDocs);
+            machedDocs.reset();
+        }
+    }
 }
 
 FX_NS_END

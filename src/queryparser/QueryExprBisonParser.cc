@@ -1,8 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+
+/* A Bison parser, made by GNU Bison 2.4.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +37,7 @@
 
 /* First part of user declarations.  */
 
-/* Line 293 of lalr1.cc  */
+/* Line 311 of lalr1.cc  */
 #line 1 "QueryExprBisonParser.yy"
 
 #include <stdio.h>
@@ -53,15 +55,15 @@ FX_NS_USE(queryparser);
 
 
 
-/* Line 293 of lalr1.cc  */
-#line 58 "QueryExprBisonParser.cc"
+/* Line 311 of lalr1.cc  */
+#line 60 "QueryExprBisonParser.cc"
 
 
-#include "QueryExprBisonParser.hh"
+#include "y.tab.h"
 
 /* User implementation prologue.  */
 
-/* Line 299 of lalr1.cc  */
+/* Line 317 of lalr1.cc  */
 #line 83 "QueryExprBisonParser.yy"
 
 #include "firtex/queryparser/QueryExprLexer.h"
@@ -76,11 +78,11 @@ FX_NS_USE(queryparser);
 #define yylex lexer.lex
 
 
-/* Line 299 of lalr1.cc  */
-#line 81 "QueryExprBisonParser.cc"
+/* Line 317 of lalr1.cc  */
+#line 83 "QueryExprBisonParser.cc"
 
 #ifndef YY_
-# if defined YYENABLE_NLS && YYENABLE_NLS
+# if YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* FIXME: INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -89,26 +91,6 @@ FX_NS_USE(queryparser);
 # ifndef YY_
 #  define YY_(msgid) msgid
 # endif
-#endif
-
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
- do                                                                    \
-   if (N)                                                              \
-     {                                                                 \
-       (Current).begin = YYRHSLOC (Rhs, 1).begin;                      \
-       (Current).end   = YYRHSLOC (Rhs, N).end;                        \
-     }                                                                 \
-   else                                                                \
-     {                                                                 \
-       (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;        \
-     }                                                                 \
- while (false)
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
@@ -160,10 +142,14 @@ do {					\
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 
+/* Line 380 of lalr1.cc  */
+#line 1 "[Bison:b4_percent_define_default]"
+
 namespace fx_bison {
 
-/* Line 382 of lalr1.cc  */
-#line 167 "QueryExprBisonParser.cc"
+/* Line 380 of lalr1.cc  */
+#line 152 "QueryExprBisonParser.cc"
+#if YYERROR_VERBOSE
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -202,6 +188,7 @@ namespace fx_bison {
     return yystr;
   }
 
+#endif
 
   /// Build a parser object.
   QueryExprBisonParser::QueryExprBisonParser (FX_NS(queryparser)::QueryExprLexer& lexer_yyarg, FX_NS(queryparser)::QueryExprParser& exprParser_yyarg)
@@ -269,7 +256,7 @@ namespace fx_bison {
 	{delete (yyvaluep->numberVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 273 "QueryExprBisonParser.cc"
+#line 260 "QueryExprBisonParser.cc"
 	break;
       case 4: /* "\"float\"" */
 
@@ -278,7 +265,7 @@ namespace fx_bison {
 	{delete (yyvaluep->numberVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 282 "QueryExprBisonParser.cc"
+#line 269 "QueryExprBisonParser.cc"
 	break;
       case 5: /* "\"identifier\"" */
 
@@ -287,7 +274,7 @@ namespace fx_bison {
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 291 "QueryExprBisonParser.cc"
+#line 278 "QueryExprBisonParser.cc"
 	break;
       case 6: /* "\"string NOT including symbols\"" */
 
@@ -296,7 +283,7 @@ namespace fx_bison {
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 300 "QueryExprBisonParser.cc"
+#line 287 "QueryExprBisonParser.cc"
 	break;
       case 7: /* "\"single quoted string\"" */
 
@@ -305,7 +292,7 @@ namespace fx_bison {
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 309 "QueryExprBisonParser.cc"
+#line 296 "QueryExprBisonParser.cc"
 	break;
       case 8: /* "\"double quoted string\"" */
 
@@ -314,142 +301,151 @@ namespace fx_bison {
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 318 "QueryExprBisonParser.cc"
+#line 305 "QueryExprBisonParser.cc"
 	break;
-      case 30: /* "bool_expr" */
+      case 31: /* "bool_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 77 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 327 "QueryExprBisonParser.cc"
+#line 314 "QueryExprBisonParser.cc"
 	break;
-      case 31: /* "expr" */
+      case 32: /* "expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 77 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 336 "QueryExprBisonParser.cc"
+#line 323 "QueryExprBisonParser.cc"
 	break;
-      case 32: /* "group_expr" */
+      case 33: /* "group_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 78 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 345 "QueryExprBisonParser.cc"
+#line 332 "QueryExprBisonParser.cc"
 	break;
-      case 33: /* "req_expr" */
+      case 34: /* "req_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 78 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 354 "QueryExprBisonParser.cc"
+#line 341 "QueryExprBisonParser.cc"
 	break;
-      case 34: /* "proh_expr" */
+      case 35: /* "proh_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 78 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 363 "QueryExprBisonParser.cc"
+#line 350 "QueryExprBisonParser.cc"
 	break;
-      case 35: /* "and_expr" */
+      case 36: /* "any_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 77 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 372 "QueryExprBisonParser.cc"
+#line 359 "QueryExprBisonParser.cc"
 	break;
-      case 36: /* "or_expr" */
+      case 37: /* "and_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 77 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->queryExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 381 "QueryExprBisonParser.cc"
+#line 368 "QueryExprBisonParser.cc"
 	break;
-      case 39: /* "atom_expr" */
+      case 38: /* "or_expr" */
+
+/* Line 480 of lalr1.cc  */
+#line 77 "QueryExprBisonParser.yy"
+	{delete (yyvaluep->queryExprVal);};
+
+/* Line 480 of lalr1.cc  */
+#line 377 "QueryExprBisonParser.cc"
+	break;
+      case 41: /* "atom_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 79 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 390 "QueryExprBisonParser.cc"
+#line 386 "QueryExprBisonParser.cc"
 	break;
-      case 40: /* "boost_term" */
+      case 42: /* "boost_term" */
 
 /* Line 480 of lalr1.cc  */
 #line 81 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 399 "QueryExprBisonParser.cc"
+#line 395 "QueryExprBisonParser.cc"
 	break;
-      case 41: /* "atom_term" */
+      case 43: /* "atom_term" */
 
 /* Line 480 of lalr1.cc  */
 #line 81 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 408 "QueryExprBisonParser.cc"
+#line 404 "QueryExprBisonParser.cc"
 	break;
-      case 42: /* "term_expr" */
+      case 44: /* "term_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 81 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 417 "QueryExprBisonParser.cc"
+#line 413 "QueryExprBisonParser.cc"
 	break;
-      case 43: /* "phrase_expr" */
+      case 45: /* "phrase_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 81 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 426 "QueryExprBisonParser.cc"
+#line 422 "QueryExprBisonParser.cc"
 	break;
-      case 44: /* "range_expr" */
+      case 46: /* "range_expr" */
 
 /* Line 480 of lalr1.cc  */
 #line 81 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->termExprVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 435 "QueryExprBisonParser.cc"
+#line 431 "QueryExprBisonParser.cc"
 	break;
-      case 45: /* "range_val" */
+      case 47: /* "range_val" */
 
 /* Line 480 of lalr1.cc  */
 #line 80 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 444 "QueryExprBisonParser.cc"
+#line 440 "QueryExprBisonParser.cc"
 	break;
-      case 46: /* "field_name" */
+      case 48: /* "field_name" */
 
 /* Line 480 of lalr1.cc  */
 #line 80 "QueryExprBisonParser.yy"
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
-#line 453 "QueryExprBisonParser.cc"
+#line 449 "QueryExprBisonParser.cc"
 	break;
 
 	default:
@@ -492,18 +488,6 @@ namespace fx_bison {
   }
 #endif
 
-  inline bool
-  QueryExprBisonParser::yy_pact_value_is_default_ (int yyvalue)
-  {
-    return yyvalue == yypact_ninf_;
-  }
-
-  inline bool
-  QueryExprBisonParser::yy_table_value_is_error_ (int yyvalue)
-  {
-    return yyvalue == yytable_ninf_;
-  }
-
   int
   QueryExprBisonParser::parse ()
   {
@@ -525,7 +509,7 @@ namespace fx_bison {
     /// Location of the lookahead.
     location_type yylloc;
     /// The locations where the error started and ended.
-    location_type yyerror_range[3];
+    location_type yyerror_range[2];
 
     /// $$.
     semantic_type yyval;
@@ -563,7 +547,7 @@ namespace fx_bison {
 
     /* Try to take a decision without lookahead.  */
     yyn = yypact_[yystate];
-    if (yy_pact_value_is_default_ (yyn))
+    if (yyn == yypact_ninf_)
       goto yydefault;
 
     /* Read a lookahead token.  */
@@ -596,8 +580,8 @@ namespace fx_bison {
     yyn = yytable_[yyn];
     if (yyn <= 0)
       {
-	if (yy_table_value_is_error_ (yyn))
-	  goto yyerrlab;
+	if (yyn == 0 || yyn == yytable_ninf_)
+	goto yyerrlab;
 	yyn = -yyn;
 	goto yyreduce;
       }
@@ -653,7 +637,7 @@ namespace fx_bison {
       {
 	  case 2:
 
-/* Line 690 of lalr1.cc  */
+/* Line 678 of lalr1.cc  */
 #line 104 "QueryExprBisonParser.yy"
     { 
     (yyval.queryExprVal) = (yysemantic_stack_[(2) - (1)].queryExprVal);
@@ -663,7 +647,7 @@ namespace fx_bison {
 
   case 4:
 
-/* Line 690 of lalr1.cc  */
+/* Line 678 of lalr1.cc  */
 #line 111 "QueryExprBisonParser.yy"
     {
                 (yyval.queryExprVal) = new BooleanQueryExpr((yysemantic_stack_[(2) - (1)].queryExprVal), (yysemantic_stack_[(2) - (2)].queryExprVal), exprParser.getDefaultOp()); 
@@ -672,62 +656,71 @@ namespace fx_bison {
 
   case 5:
 
-/* Line 690 of lalr1.cc  */
+/* Line 678 of lalr1.cc  */
 #line 115 "QueryExprBisonParser.yy"
     {(yyval.queryExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal);}
     break;
 
-  case 12:
+  case 13:
 
-/* Line 690 of lalr1.cc  */
-#line 124 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 125 "QueryExprBisonParser.yy"
     {
     (yyval.queryExprVal) = (yysemantic_stack_[(3) - (2)].queryExprVal);
 }
     break;
 
-  case 13:
+  case 14:
 
-/* Line 690 of lalr1.cc  */
-#line 129 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 130 "QueryExprBisonParser.yy"
     {
     (yysemantic_stack_[(2) - (2)].queryExprVal)->setRequired(true);
     (yyval.queryExprVal) = (yysemantic_stack_[(2) - (2)].queryExprVal);
 }
     break;
 
-  case 14:
+  case 15:
 
-/* Line 690 of lalr1.cc  */
-#line 135 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 136 "QueryExprBisonParser.yy"
     {
     (yysemantic_stack_[(2) - (2)].queryExprVal)->setProhibited(true);
     (yyval.queryExprVal) = (yysemantic_stack_[(2) - (2)].queryExprVal);
 }
     break;
 
-  case 15:
+  case 16:
 
-/* Line 690 of lalr1.cc  */
-#line 141 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 142 "QueryExprBisonParser.yy"
+    {
+              (yyval.queryExprVal) = new AnyQueryExpr();
+          }
+    break;
+
+  case 17:
+
+/* Line 678 of lalr1.cc  */
+#line 147 "QueryExprBisonParser.yy"
     {
     (yyval.queryExprVal) = new BooleanQueryExpr((yysemantic_stack_[(3) - (1)].queryExprVal), (yysemantic_stack_[(3) - (3)].queryExprVal), QueryExpr::OP_AND);
 }
     break;
 
-  case 16:
+  case 18:
 
-/* Line 690 of lalr1.cc  */
-#line 146 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 152 "QueryExprBisonParser.yy"
     {
     (yyval.queryExprVal) = new BooleanQueryExpr((yysemantic_stack_[(3) - (1)].queryExprVal), (yysemantic_stack_[(3) - (3)].queryExprVal), QueryExpr::OP_OR);
 }
     break;
 
-  case 17:
+  case 19:
 
-/* Line 690 of lalr1.cc  */
-#line 151 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 157 "QueryExprBisonParser.yy"
     {
                       (yysemantic_stack_[(4) - (3)].queryExprVal)->setFieldName(*(yysemantic_stack_[(4) - (1)].stringVal));
                       delete (yysemantic_stack_[(4) - (1)].stringVal);
@@ -735,60 +728,60 @@ namespace fx_bison {
                   }
     break;
 
-  case 18:
+  case 20:
 
-/* Line 690 of lalr1.cc  */
-#line 158 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 164 "QueryExprBisonParser.yy"
     {
                 (yyval.queryExprVal) = (yysemantic_stack_[(1) - (1)].queryExprVal);
             }
     break;
 
-  case 19:
+  case 21:
 
-/* Line 690 of lalr1.cc  */
-#line 162 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 168 "QueryExprBisonParser.yy"
     {
                 (yyval.queryExprVal) = new BooleanQueryExpr((yysemantic_stack_[(2) - (1)].queryExprVal), (yysemantic_stack_[(2) - (2)].queryExprVal), exprParser.getDefaultOp());
             }
     break;
 
-  case 20:
-
-/* Line 690 of lalr1.cc  */
-#line 167 "QueryExprBisonParser.yy"
-    {
-		  const std::string &defaultField = exprParser.getDefaultField();
-	          (yysemantic_stack_[(1) - (1)].termExprVal)->setFieldName(defaultField);
-		  (yyval.termExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal);
-              }
-    break;
-
-  case 21:
-
-/* Line 690 of lalr1.cc  */
-#line 173 "QueryExprBisonParser.yy"
-    {
-		  std::string* fieldName = (yysemantic_stack_[(2) - (1)].stringVal);
-		  (yysemantic_stack_[(2) - (2)].termExprVal)->setFieldName(*fieldName);
-		  delete (yysemantic_stack_[(2) - (1)].stringVal);
-		  (yyval.termExprVal) = (yysemantic_stack_[(2) - (2)].termExprVal);
-              }
-    break;
-
   case 22:
 
-/* Line 690 of lalr1.cc  */
-#line 181 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 173 "QueryExprBisonParser.yy"
+    {
+                const std::string &defaultField = exprParser.getDefaultField();
+                (yysemantic_stack_[(1) - (1)].termExprVal)->setFieldName(defaultField);
+                (yyval.termExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal);
+              }
+    break;
+
+  case 23:
+
+/* Line 678 of lalr1.cc  */
+#line 179 "QueryExprBisonParser.yy"
+    {
+                std::string* fieldName = (yysemantic_stack_[(2) - (1)].stringVal);
+                (yysemantic_stack_[(2) - (2)].termExprVal)->setFieldName(*fieldName);
+                delete (yysemantic_stack_[(2) - (1)].stringVal);
+                (yyval.termExprVal) = (yysemantic_stack_[(2) - (2)].termExprVal);
+            }
+    break;
+
+  case 24:
+
+/* Line 678 of lalr1.cc  */
+#line 187 "QueryExprBisonParser.yy"
     {
                  (yyval.termExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal);
              }
     break;
 
-  case 23:
+  case 25:
 
-/* Line 690 of lalr1.cc  */
-#line 185 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 191 "QueryExprBisonParser.yy"
     {
                  (yysemantic_stack_[(3) - (1)].termExprVal)->setBoost((float)(yysemantic_stack_[(3) - (3)].numberVal)->m_i64Val);
                  delete (yysemantic_stack_[(3) - (3)].numberVal);
@@ -796,10 +789,10 @@ namespace fx_bison {
              }
     break;
 
-  case 24:
+  case 26:
 
-/* Line 690 of lalr1.cc  */
-#line 191 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 197 "QueryExprBisonParser.yy"
     {
                  (yysemantic_stack_[(3) - (1)].termExprVal)->setBoost((yysemantic_stack_[(3) - (3)].numberVal)->m_fVal);
                  delete (yysemantic_stack_[(3) - (3)].numberVal);
@@ -807,177 +800,177 @@ namespace fx_bison {
              }
     break;
 
-  case 27:
-
-/* Line 690 of lalr1.cc  */
-#line 200 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal); }
-    break;
-
-  case 28:
-
-/* Line 690 of lalr1.cc  */
-#line 203 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); }
-    break;
-
   case 29:
 
-/* Line 690 of lalr1.cc  */
-#line 205 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); }
+/* Line 678 of lalr1.cc  */
+#line 206 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = (yysemantic_stack_[(1) - (1)].termExprVal); }
     break;
 
   case 30:
 
-/* Line 690 of lalr1.cc  */
-#line 207 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 209 "QueryExprBisonParser.yy"
     { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); }
     break;
 
   case 31:
 
-/* Line 690 of lalr1.cc  */
-#line 210 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 211 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); }
+    break;
+
+  case 32:
+
+/* Line 678 of lalr1.cc  */
+#line 213 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); }
+    break;
+
+  case 33:
+
+/* Line 678 of lalr1.cc  */
+#line 216 "QueryExprBisonParser.yy"
     {
                   (yyval.termExprVal) = new PhraseQueryExpr((yysemantic_stack_[(1) - (1)].stringVal)); 
               }
     break;
 
-  case 32:
+  case 34:
 
-/* Line 690 of lalr1.cc  */
-#line 214 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 220 "QueryExprBisonParser.yy"
     {
                 (yyval.termExprVal) = new PhraseQueryExpr((yysemantic_stack_[(3) - (1)].stringVal), (int32_t)(yysemantic_stack_[(3) - (3)].numberVal)->m_i64Val); 
                 delete (yysemantic_stack_[(3) - (3)].numberVal);
             }
     break;
 
-  case 33:
+  case 35:
 
-/* Line 690 of lalr1.cc  */
-#line 220 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 226 "QueryExprBisonParser.yy"
     { 
                   (yyval.termExprVal) = new TermQueryExpr(new std::string((yysemantic_stack_[(1) - (1)].numberVal)->m_sValue)); 
                   delete (yysemantic_stack_[(1) - (1)].numberVal);
               }
     break;
 
-  case 34:
+  case 36:
 
-/* Line 690 of lalr1.cc  */
-#line 225 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 231 "QueryExprBisonParser.yy"
     {
                   (yyval.termExprVal) = new TermQueryExpr(new std::string((yysemantic_stack_[(1) - (1)].numberVal)->m_sValue)); 
                   delete (yysemantic_stack_[(1) - (1)].numberVal);
               }
     break;
 
-  case 35:
-
-/* Line 690 of lalr1.cc  */
-#line 230 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(2) - (2)].stringVal)); }
-    break;
-
-  case 36:
-
-/* Line 690 of lalr1.cc  */
-#line 232 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new RangeQueryExpr(NULL, false, (yysemantic_stack_[(2) - (2)].stringVal), false);}
-    break;
-
   case 37:
 
-/* Line 690 of lalr1.cc  */
-#line 234 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new RangeQueryExpr(NULL, false, (yysemantic_stack_[(2) - (2)].stringVal), true);}
+/* Line 678 of lalr1.cc  */
+#line 236 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new TermQueryExpr((yysemantic_stack_[(2) - (2)].stringVal)); }
     break;
 
   case 38:
 
-/* Line 690 of lalr1.cc  */
-#line 236 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(2) - (2)].stringVal), false, NULL, false);}
+/* Line 678 of lalr1.cc  */
+#line 238 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new RangeQueryExpr(NULL, false, (yysemantic_stack_[(2) - (2)].stringVal), false);}
     break;
 
   case 39:
 
-/* Line 690 of lalr1.cc  */
-#line 238 "QueryExprBisonParser.yy"
-    { (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(2) - (2)].stringVal), true, NULL, false);}
+/* Line 678 of lalr1.cc  */
+#line 240 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new RangeQueryExpr(NULL, false, (yysemantic_stack_[(2) - (2)].stringVal), true);}
     break;
 
   case 40:
 
-/* Line 690 of lalr1.cc  */
-#line 240 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 242 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(2) - (2)].stringVal), false, NULL, false);}
+    break;
+
+  case 41:
+
+/* Line 678 of lalr1.cc  */
+#line 244 "QueryExprBisonParser.yy"
+    { (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(2) - (2)].stringVal), true, NULL, false);}
+    break;
+
+  case 42:
+
+/* Line 678 of lalr1.cc  */
+#line 246 "QueryExprBisonParser.yy"
     { 
                   (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(5) - (2)].stringVal), true, (yysemantic_stack_[(5) - (4)].stringVal), true);
               }
     break;
 
-  case 41:
+  case 43:
 
-/* Line 690 of lalr1.cc  */
-#line 244 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 250 "QueryExprBisonParser.yy"
     { 
                   (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(5) - (2)].stringVal), true, (yysemantic_stack_[(5) - (4)].stringVal), false);
               }
     break;
 
-  case 42:
+  case 44:
 
-/* Line 690 of lalr1.cc  */
-#line 248 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 254 "QueryExprBisonParser.yy"
     {
                   (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(5) - (2)].stringVal), false, (yysemantic_stack_[(5) - (4)].stringVal), false);
               }
     break;
 
-  case 43:
+  case 45:
 
-/* Line 690 of lalr1.cc  */
-#line 252 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 258 "QueryExprBisonParser.yy"
     { 
                   (yyval.termExprVal) = new RangeQueryExpr((yysemantic_stack_[(5) - (2)].stringVal), false, (yysemantic_stack_[(5) - (4)].stringVal), true);
               }
     break;
 
-  case 44:
+  case 46:
 
-/* Line 690 of lalr1.cc  */
-#line 257 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 263 "QueryExprBisonParser.yy"
     {
                   (yyval.stringVal) = new std::string((yysemantic_stack_[(1) - (1)].numberVal)->m_sValue);
                   delete (yysemantic_stack_[(1) - (1)].numberVal);
               }
     break;
 
-  case 45:
+  case 47:
 
-/* Line 690 of lalr1.cc  */
-#line 262 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 268 "QueryExprBisonParser.yy"
     {
                   (yyval.stringVal) = new std::string((yysemantic_stack_[(1) - (1)].numberVal)->m_sValue);
                   delete (yysemantic_stack_[(1) - (1)].numberVal);
               }
     break;
 
-  case 48:
+  case 50:
 
-/* Line 690 of lalr1.cc  */
-#line 269 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 275 "QueryExprBisonParser.yy"
     {
                   (yyval.stringVal) = (yysemantic_stack_[(1) - (1)].stringVal);
               }
     break;
 
-  case 49:
+  case 51:
 
-/* Line 690 of lalr1.cc  */
-#line 274 "QueryExprBisonParser.yy"
+/* Line 678 of lalr1.cc  */
+#line 280 "QueryExprBisonParser.yy"
     { 
                   (yyval.stringVal) = (yysemantic_stack_[(2) - (1)].stringVal);
               }
@@ -985,22 +978,11 @@ namespace fx_bison {
 
 
 
-/* Line 690 of lalr1.cc  */
-#line 990 "QueryExprBisonParser.cc"
+/* Line 678 of lalr1.cc  */
+#line 983 "QueryExprBisonParser.cc"
 	default:
           break;
       }
-    /* User semantic actions sometimes alter yychar, and that requires
-       that yytoken be updated with the new translation.  We take the
-       approach of translating immediately before every use of yytoken.
-       One alternative is translating here after every semantic action,
-       but that translation would be missed if the semantic action
-       invokes YYABORT, YYACCEPT, or YYERROR immediately after altering
-       yychar.  In the case of YYABORT or YYACCEPT, an incorrect
-       destructor might then be invoked immediately.  In the case of
-       YYERROR, subsequent parser actions might lead to an incorrect
-       destructor call or verbose syntax error message before the
-       lookahead is translated.  */
     YY_SYMBOL_PRINT ("-> $$ =", yyr1_[yyn], &yyval, &yyloc);
 
     yypop_ (yylen);
@@ -1024,20 +1006,14 @@ namespace fx_bison {
   | yyerrlab -- here on detecting error |
   `------------------------------------*/
   yyerrlab:
-    /* Make sure we have latest lookahead translation.  See comments at
-       user semantic actions for why this is necessary.  */
-    yytoken = yytranslate_ (yychar);
-
     /* If not already recovering from an error, report this error.  */
     if (!yyerrstatus_)
       {
 	++yynerrs_;
-	if (yychar == yyempty_)
-	  yytoken = yyempty_;
 	error (yylloc, yysyntax_error_ (yystate, yytoken));
       }
 
-    yyerror_range[1] = yylloc;
+    yyerror_range[0] = yylloc;
     if (yyerrstatus_ == 3)
       {
 	/* If just tried and failed to reuse lookahead token after an
@@ -1072,7 +1048,7 @@ namespace fx_bison {
     if (false)
       goto yyerrorlab;
 
-    yyerror_range[1] = yylocation_stack_[yylen - 1];
+    yyerror_range[0] = yylocation_stack_[yylen - 1];
     /* Do not reclaim the symbols of the rule which action triggered
        this YYERROR.  */
     yypop_ (yylen);
@@ -1089,7 +1065,7 @@ namespace fx_bison {
     for (;;)
       {
 	yyn = yypact_[yystate];
-	if (!yy_pact_value_is_default_ (yyn))
+	if (yyn != yypact_ninf_)
 	{
 	  yyn += yyterror_;
 	  if (0 <= yyn && yyn <= yylast_ && yycheck_[yyn] == yyterror_)
@@ -1104,7 +1080,7 @@ namespace fx_bison {
 	if (yystate_stack_.height () == 1)
 	YYABORT;
 
-	yyerror_range[1] = yylocation_stack_[0];
+	yyerror_range[0] = yylocation_stack_[0];
 	yydestruct_ ("Error: popping",
 		     yystos_[yystate],
 		     &yysemantic_stack_[0], &yylocation_stack_[0]);
@@ -1113,10 +1089,10 @@ namespace fx_bison {
 	YY_STACK_PRINT ();
       }
 
-    yyerror_range[2] = yylloc;
+    yyerror_range[1] = yylloc;
     // Using YYLLOC is tempting, but would change the location of
     // the lookahead.  YYLOC is available though.
-    YYLLOC_DEFAULT (yyloc, yyerror_range, 2);
+    YYLLOC_DEFAULT (yyloc, (yyerror_range - 1), 2);
     yysemantic_stack_.push (yylval);
     yylocation_stack_.push (yyloc);
 
@@ -1139,13 +1115,7 @@ namespace fx_bison {
 
   yyreturn:
     if (yychar != yyempty_)
-      {
-        /* Make sure we have latest lookahead translation.  See comments
-           at user semantic actions for why this is necessary.  */
-        yytoken = yytranslate_ (yychar);
-        yydestruct_ ("Cleanup: discarding lookahead", yytoken, &yylval,
-                     &yylloc);
-      }
+      yydestruct_ ("Cleanup: discarding lookahead", yytoken, &yylval, &yylloc);
 
     /* Do not reclaim the symbols of the rule which action triggered
        this YYABORT or YYACCEPT.  */
@@ -1164,193 +1134,149 @@ namespace fx_bison {
 
   // Generate an error message.
   std::string
-  QueryExprBisonParser::yysyntax_error_ (int yystate, int yytoken)
+  QueryExprBisonParser::yysyntax_error_ (int yystate, int tok)
   {
-    std::string yyres;
-    // Number of reported tokens (one for the "unexpected", one per
-    // "expected").
-    size_t yycount = 0;
-    // Its maximum.
-    enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-    // Arguments of yyformat.
-    char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-
-    /* There are many possibilities here to consider:
-       - If this state is a consistent state with a default action, then
-         the only way this function was invoked is if the default action
-         is an error action.  In that case, don't check for expected
-         tokens because there are none.
-       - The only way there can be no lookahead present (in yytoken) is
-         if this state is a consistent state with a default action.
-         Thus, detecting the absence of a lookahead is sufficient to
-         determine that there is no unexpected or expected token to
-         report.  In that case, just report a simple "syntax error".
-       - Don't assume there isn't a lookahead just because this state is
-         a consistent state with a default action.  There might have
-         been a previous inconsistent state, consistent state with a
-         non-default action, or user semantic action that manipulated
-         yychar.
-       - Of course, the expected token list depends on states to have
-         correct lookahead information, and it depends on the parser not
-         to perform extra reductions after fetching a lookahead from the
-         scanner and before detecting a syntax error.  Thus, state
-         merging (from LALR or IELR) and default reductions corrupt the
-         expected token list.  However, the list is correct for
-         canonical LR with one exception: it will still contain any
-         token that will not be accepted due to an error action in a
-         later state.
-    */
-    if (yytoken != yyempty_)
+    std::string res;
+    YYUSE (yystate);
+#if YYERROR_VERBOSE
+    int yyn = yypact_[yystate];
+    if (yypact_ninf_ < yyn && yyn <= yylast_)
       {
-        yyarg[yycount++] = yytname_[yytoken];
-        int yyn = yypact_[yystate];
-        if (!yy_pact_value_is_default_ (yyn))
-          {
-            /* Start YYX at -YYN if negative to avoid negative indexes in
-               YYCHECK.  In other words, skip the first -YYN actions for
-               this state because they are default actions.  */
-            int yyxbegin = yyn < 0 ? -yyn : 0;
-            /* Stay within bounds of both yycheck and yytname.  */
-            int yychecklim = yylast_ - yyn + 1;
-            int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
-            for (int yyx = yyxbegin; yyx < yyxend; ++yyx)
-              if (yycheck_[yyx + yyn] == yyx && yyx != yyterror_
-                  && !yy_table_value_is_error_ (yytable_[yyx + yyn]))
-                {
-                  if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-                    {
-                      yycount = 1;
-                      break;
-                    }
-                  else
-                    yyarg[yycount++] = yytname_[yyx];
-                }
-          }
-      }
+	/* Start YYX at -YYN if negative to avoid negative indexes in
+	   YYCHECK.  */
+	int yyxbegin = yyn < 0 ? -yyn : 0;
 
-    char const* yyformat = 0;
-    switch (yycount)
-      {
-#define YYCASE_(N, S)                         \
-        case N:                               \
-          yyformat = S;                       \
-        break
-        YYCASE_(0, YY_("syntax error"));
-        YYCASE_(1, YY_("syntax error, unexpected %s"));
-        YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-        YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-        YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-        YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
-#undef YYCASE_
-      }
+	/* Stay within bounds of both yycheck and yytname.  */
+	int yychecklim = yylast_ - yyn + 1;
+	int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
+	int count = 0;
+	for (int x = yyxbegin; x < yyxend; ++x)
+	  if (yycheck_[x + yyn] == x && x != yyterror_)
+	    ++count;
 
-    // Argument number.
-    size_t yyi = 0;
-    for (char const* yyp = yyformat; *yyp; ++yyp)
-      if (yyp[0] == '%' && yyp[1] == 's' && yyi < yycount)
-        {
-          yyres += yytnamerr_ (yyarg[yyi++]);
-          ++yyp;
-        }
-      else
-        yyres += *yyp;
-    return yyres;
+	// FIXME: This method of building the message is not compatible
+	// with internationalization.  It should work like yacc.c does it.
+	// That is, first build a string that looks like this:
+	// "syntax error, unexpected %s or %s or %s"
+	// Then, invoke YY_ on this string.
+	// Finally, use the string as a format to output
+	// yytname_[tok], etc.
+	// Until this gets fixed, this message appears in English only.
+	res = "syntax error, unexpected ";
+	res += yytnamerr_ (yytname_[tok]);
+	if (count < 5)
+	  {
+	    count = 0;
+	    for (int x = yyxbegin; x < yyxend; ++x)
+	      if (yycheck_[x + yyn] == x && x != yyterror_)
+		{
+		  res += (!count++) ? ", expecting " : " or ";
+		  res += yytnamerr_ (yytname_[x]);
+		}
+	  }
+      }
+    else
+#endif
+      res = YY_("syntax error");
+    return res;
   }
 
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char QueryExprBisonParser::yypact_ninf_ = -14;
+  const signed char QueryExprBisonParser::yypact_ninf_ = -13;
   const short int
   QueryExprBisonParser::yypact_[] =
   {
-       107,   -14,   -14,    -3,   -14,   -14,    12,    43,    43,    43,
-      43,    43,   107,   107,   107,    43,    43,    33,    13,    -7,
-     -14,   -14,   -14,   -14,   -14,   -14,   -14,   -14,    18,   -14,
-     -14,   -14,   131,   -14,    35,   -14,   -14,   -14,   -14,   -14,
-     -14,   -14,   -14,   -14,   -14,   -14,   -14,    59,    29,    32,
-     -14,   -14,    -7,   107,   107,     1,   -14,   107,   -14,   -14,
-     -14,    43,    43,   -14,    42,   -14,   -14,    -7,    83,   -13,
-      -2,   -14,    -7,   -14,   -14,   -14,   -14
+       112,   -13,   -13,     1,   -13,   -13,    21,    -1,    -1,    -1,
+      -1,    -1,   112,   112,   -13,   112,    -1,    -1,    38,    18,
+       3,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,
+      27,   -13,   -13,   -13,   137,   -13,    45,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,    62,
+      39,    40,   -13,   -13,     3,   112,   112,    11,   -13,   112,
+     -13,   -13,   -13,    -1,    -1,   -13,    43,   -13,   -13,     3,
+      87,    -6,     2,   -13,     3,   -13,   -13,   -13,   -13
   };
 
-  /* YYDEFACT[S] -- default reduction number in state S.  Performed when
-     YYTABLE doesn't specify something else to do.  Zero means the
-     default is an error.  */
+  /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
+     doesn't specify something else to do.  Zero means the default is an
+     error.  */
   const unsigned char
   QueryExprBisonParser::yydefact_[] =
   {
-         0,    33,    34,    28,    29,    30,    31,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     3,
-       8,     9,    10,     6,     7,    11,     5,    20,    22,    25,
-      26,    27,     0,    49,     0,    44,    45,    46,    47,    48,
-      35,    37,    39,    36,    38,    14,    13,     0,     0,     0,
-       1,     2,     4,     0,     0,     0,    28,     0,    21,    32,
-      12,     0,     0,    15,    16,    23,    24,    18,     0,     0,
-       0,    17,    19,    40,    41,    43,    42
+         0,    35,    36,    30,    31,    32,    33,     0,     0,     0,
+       0,     0,     0,     0,    16,     0,     0,     0,     0,     0,
+       3,     9,    10,    11,     6,     7,     8,    12,     5,    22,
+      24,    27,    28,    29,     0,    51,     0,    46,    47,    48,
+      49,    50,    37,    39,    41,    38,    40,    15,    14,     0,
+       0,     0,     1,     2,     4,     0,     0,     0,    30,     0,
+      23,    34,    13,     0,     0,    17,    18,    25,    26,    20,
+       0,     0,     0,    19,    21,    42,    43,    45,    44
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   QueryExprBisonParser::yypgoto_[] =
   {
-       -14,   -14,    30,   -12,   -14,   -14,   -14,   -14,   -14,   -14,
-     -14,   -14,    20,   -14,   -14,   -14,   -14,    -1,   -14
+       -13,   -13,    34,   -12,   -13,   -13,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,    19,   -13,   -13,   -13,   -13,     0,   -13
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   QueryExprBisonParser::yydefgoto_[] =
   {
-        -1,    17,    18,    19,    20,    21,    22,    23,    24,    25,
-      68,    26,    27,    28,    29,    30,    31,    40,    32
+        -1,    18,    19,    20,    21,    22,    23,    24,    25,    26,
+      27,    70,    28,    29,    30,    31,    32,    33,    42,    34
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule which
-     number is the opposite.  If YYTABLE_NINF_, syntax error.  */
+     number is the opposite.  If zero, do what YYDEFACT says.  */
   const signed char QueryExprBisonParser::yytable_ninf_ = -1;
   const unsigned char
   QueryExprBisonParser::yytable_[] =
   {
-        45,    46,    53,    54,    65,    66,    52,    41,    42,    43,
-      44,    73,    74,    51,    48,    49,     1,     2,     3,     4,
-       5,     6,    75,    76,    33,     7,     8,     9,    10,    11,
-      12,    13,    34,    50,    14,    52,    15,    55,    59,    16,
-      61,    63,    64,    62,    47,    67,    35,    36,    37,    38,
-      39,    53,    58,     0,     0,     0,    72,     0,     0,     0,
-      69,    70,     1,     2,     3,     4,     5,     6,     0,     0,
-       0,     7,     8,     9,    10,    11,    12,    13,     0,     0,
-      14,    60,    15,     0,     0,    16,     1,     2,     3,     4,
-       5,     6,     0,     0,     0,     7,     8,     9,    10,    11,
-      12,    13,     0,     0,    14,    71,    15,     0,     0,    16,
+        47,    48,    37,    38,    39,    40,    41,    54,    43,    44,
+      45,    46,    55,    56,    67,    68,    50,    51,    53,    75,
+      76,     1,     2,     3,     4,     5,     6,    77,    78,    35,
+       7,     8,     9,    10,    11,    12,    13,    54,    52,    14,
+      15,    36,    16,    65,    66,    17,    57,    69,    61,    49,
+      63,    64,    55,    60,     0,     0,     0,     0,    74,     0,
+       0,     0,     0,    71,    72,     1,     2,     3,     4,     5,
+       6,     0,     0,     0,     7,     8,     9,    10,    11,    12,
+      13,     0,     0,    14,    15,    62,    16,     0,     0,    17,
        1,     2,     3,     4,     5,     6,     0,     0,     0,     7,
-       8,     9,    10,    11,    12,    13,     0,     0,    14,     0,
-      15,     0,     0,    16,     1,     2,    56,     4,     5,     6,
-       0,     0,     0,     7,     8,     9,    10,    11,     0,     0,
-       0,     0,    57,     0,    15,     0,     0,    16
+       8,     9,    10,    11,    12,    13,     0,     0,    14,    15,
+      73,    16,     0,     0,    17,     1,     2,     3,     4,     5,
+       6,     0,     0,     0,     7,     8,     9,    10,    11,    12,
+      13,     0,     0,    14,    15,     0,    16,     0,     0,    17,
+       1,     2,    58,     4,     5,     6,     0,     0,     0,     7,
+       8,     9,    10,    11,     0,     0,     0,     0,     0,    59,
+       0,    16,     0,     0,    17
   };
 
   /* YYCHECK.  */
   const signed char
   QueryExprBisonParser::yycheck_[] =
   {
-        12,    13,     9,    10,     3,     4,    18,     8,     9,    10,
-      11,    24,    25,     0,    15,    16,     3,     4,     5,     6,
-       7,     8,    24,    25,    27,    12,    13,    14,    15,    16,
-      17,    18,    20,     0,    21,    47,    23,    19,     3,    26,
-      11,    53,    54,    11,    14,    57,     3,     4,     5,     6,
-       7,     9,    32,    -1,    -1,    -1,    68,    -1,    -1,    -1,
-      61,    62,     3,     4,     5,     6,     7,     8,    -1,    -1,
-      -1,    12,    13,    14,    15,    16,    17,    18,    -1,    -1,
-      21,    22,    23,    -1,    -1,    26,     3,     4,     5,     6,
-       7,     8,    -1,    -1,    -1,    12,    13,    14,    15,    16,
-      17,    18,    -1,    -1,    21,    22,    23,    -1,    -1,    26,
+        12,    13,     3,     4,     5,     6,     7,    19,     8,     9,
+      10,    11,     9,    10,     3,     4,    16,    17,     0,    25,
+      26,     3,     4,     5,     6,     7,     8,    25,    26,    28,
+      12,    13,    14,    15,    16,    17,    18,    49,     0,    21,
+      22,    20,    24,    55,    56,    27,    19,    59,     3,    15,
+      11,    11,     9,    34,    -1,    -1,    -1,    -1,    70,    -1,
+      -1,    -1,    -1,    63,    64,     3,     4,     5,     6,     7,
+       8,    -1,    -1,    -1,    12,    13,    14,    15,    16,    17,
+      18,    -1,    -1,    21,    22,    23,    24,    -1,    -1,    27,
        3,     4,     5,     6,     7,     8,    -1,    -1,    -1,    12,
-      13,    14,    15,    16,    17,    18,    -1,    -1,    21,    -1,
-      23,    -1,    -1,    26,     3,     4,     5,     6,     7,     8,
-      -1,    -1,    -1,    12,    13,    14,    15,    16,    -1,    -1,
-      -1,    -1,    21,    -1,    23,    -1,    -1,    26
+      13,    14,    15,    16,    17,    18,    -1,    -1,    21,    22,
+      23,    24,    -1,    -1,    27,     3,     4,     5,     6,     7,
+       8,    -1,    -1,    -1,    12,    13,    14,    15,    16,    17,
+      18,    -1,    -1,    21,    22,    -1,    24,    -1,    -1,    27,
+       3,     4,     5,     6,     7,     8,    -1,    -1,    -1,    12,
+      13,    14,    15,    16,    -1,    -1,    -1,    -1,    -1,    22,
+      -1,    24,    -1,    -1,    27
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -1359,13 +1285,13 @@ namespace fx_bison {
   QueryExprBisonParser::yystos_[] =
   {
          0,     3,     4,     5,     6,     7,     8,    12,    13,    14,
-      15,    16,    17,    18,    21,    23,    26,    29,    30,    31,
-      32,    33,    34,    35,    36,    37,    39,    40,    41,    42,
-      43,    44,    46,    27,    20,     3,     4,     5,     6,     7,
-      45,    45,    45,    45,    45,    31,    31,    30,    45,    45,
-       0,     0,    31,     9,    10,    19,     5,    21,    40,     3,
-      22,    11,    11,    31,    31,     3,     4,    31,    38,    45,
-      45,    22,    31,    24,    25,    24,    25
+      15,    16,    17,    18,    21,    22,    24,    27,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    41,    42,
+      43,    44,    45,    46,    48,    28,    20,     3,     4,     5,
+       6,     7,    47,    47,    47,    47,    47,    32,    32,    31,
+      47,    47,     0,     0,    32,     9,    10,    19,     5,    22,
+      42,     3,    23,    11,    11,    32,    32,     3,     4,    32,
+      40,    47,    47,    23,    32,    25,    26,    25,    26
   };
 
 #if YYDEBUG
@@ -1376,7 +1302,7 @@ namespace fx_bison {
   {
          0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,    40,    41,    91,    93,   125,   123,    58
+     275,   276,    40,    41,    91,    93,   125,   123,    58
   };
 #endif
 
@@ -1384,11 +1310,12 @@ namespace fx_bison {
   const unsigned char
   QueryExprBisonParser::yyr1_[] =
   {
-         0,    28,    29,    30,    30,    31,    31,    31,    31,    31,
-      31,    31,    32,    33,    34,    35,    36,    37,    38,    38,
-      39,    39,    40,    40,    40,    41,    41,    41,    42,    42,
-      42,    43,    43,    44,    44,    44,    44,    44,    44,    44,
-      44,    44,    44,    44,    45,    45,    45,    45,    45,    46
+         0,    29,    30,    31,    31,    32,    32,    32,    32,    32,
+      32,    32,    32,    33,    34,    35,    36,    37,    38,    39,
+      40,    40,    41,    41,    42,    42,    42,    43,    43,    43,
+      44,    44,    44,    45,    45,    46,    46,    46,    46,    46,
+      46,    46,    46,    46,    46,    46,    47,    47,    47,    47,
+      47,    48
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -1396,10 +1323,11 @@ namespace fx_bison {
   QueryExprBisonParser::yyr2_[] =
   {
          0,     2,     2,     1,     2,     1,     1,     1,     1,     1,
-       1,     1,     3,     2,     2,     3,     3,     4,     1,     2,
-       1,     2,     1,     3,     3,     1,     1,     1,     1,     1,
-       1,     1,     3,     1,     1,     2,     2,     2,     2,     2,
-       5,     5,     5,     5,     1,     1,     1,     1,     1,     2
+       1,     1,     1,     3,     2,     2,     1,     3,     3,     4,
+       1,     2,     1,     2,     1,     3,     3,     1,     1,     1,
+       1,     1,     1,     1,     3,     1,     1,     2,     2,     2,
+       2,     2,     5,     5,     5,     5,     1,     1,     1,     1,
+       1,     2
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -1413,11 +1341,11 @@ namespace fx_bison {
   "\"single quoted string\"", "\"double quoted string\"", "TOK_AND",
   "TOK_OR", "TOK_RANGE_TO", "TOK_EQ", "TOK_LE", "TOK_GE", "TOK_LESS",
   "TOK_GREATER", "TOK_MOD_NOT", "TOK_MOD_REQ", "TOK_BOOST",
-  "TOK_PHRASE_SLOP", "'('", "')'", "'['", "']'", "'}'", "'{'", "':'",
-  "$accept", "query_expr", "bool_expr", "expr", "group_expr", "req_expr",
-  "proh_expr", "and_expr", "or_expr", "group_term_expr", "term_list",
-  "atom_expr", "boost_term", "atom_term", "term_expr", "phrase_expr",
-  "range_expr", "range_val", "field_name", 0
+  "TOK_PHRASE_SLOP", "TOK_QUERY_ANY", "'('", "')'", "'['", "']'", "'}'",
+  "'{'", "':'", "$accept", "query_expr", "bool_expr", "expr", "group_expr",
+  "req_expr", "proh_expr", "any_expr", "and_expr", "or_expr",
+  "group_term_expr", "term_list", "atom_expr", "boost_term", "atom_term",
+  "term_expr", "phrase_expr", "range_expr", "range_val", "field_name", 0
   };
 #endif
 
@@ -1426,21 +1354,21 @@ namespace fx_bison {
   const QueryExprBisonParser::rhs_number_type
   QueryExprBisonParser::yyrhs_[] =
   {
-        29,     0,    -1,    30,     0,    -1,    31,    -1,    30,    31,
-      -1,    39,    -1,    35,    -1,    36,    -1,    32,    -1,    33,
-      -1,    34,    -1,    37,    -1,    21,    30,    22,    -1,    18,
-      31,    -1,    17,    31,    -1,    31,     9,    31,    -1,    31,
-      10,    31,    -1,    46,    21,    38,    22,    -1,    31,    -1,
-      38,    31,    -1,    40,    -1,    46,    40,    -1,    41,    -1,
-      41,    19,     3,    -1,    41,    19,     4,    -1,    42,    -1,
-      43,    -1,    44,    -1,     5,    -1,     6,    -1,     7,    -1,
-       8,    -1,     8,    20,     3,    -1,     3,    -1,     4,    -1,
-      12,    45,    -1,    15,    45,    -1,    13,    45,    -1,    16,
-      45,    -1,    14,    45,    -1,    23,    45,    11,    45,    24,
-      -1,    23,    45,    11,    45,    25,    -1,    26,    45,    11,
-      45,    25,    -1,    26,    45,    11,    45,    24,    -1,     3,
-      -1,     4,    -1,     5,    -1,     6,    -1,     7,    -1,     5,
-      27,    -1
+        30,     0,    -1,    31,     0,    -1,    32,    -1,    31,    32,
+      -1,    41,    -1,    36,    -1,    37,    -1,    38,    -1,    33,
+      -1,    34,    -1,    35,    -1,    39,    -1,    22,    31,    23,
+      -1,    18,    32,    -1,    17,    32,    -1,    21,    -1,    32,
+       9,    32,    -1,    32,    10,    32,    -1,    48,    22,    40,
+      23,    -1,    32,    -1,    40,    32,    -1,    42,    -1,    48,
+      42,    -1,    43,    -1,    43,    19,     3,    -1,    43,    19,
+       4,    -1,    44,    -1,    45,    -1,    46,    -1,     5,    -1,
+       6,    -1,     7,    -1,     8,    -1,     8,    20,     3,    -1,
+       3,    -1,     4,    -1,    12,    47,    -1,    15,    47,    -1,
+      13,    47,    -1,    16,    47,    -1,    14,    47,    -1,    24,
+      47,    11,    47,    25,    -1,    24,    47,    11,    47,    26,
+      -1,    27,    47,    11,    47,    26,    -1,    27,    47,    11,
+      47,    25,    -1,     3,    -1,     4,    -1,     5,    -1,     6,
+      -1,     7,    -1,     5,    28,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1449,10 +1377,11 @@ namespace fx_bison {
   QueryExprBisonParser::yyprhs_[] =
   {
          0,     0,     3,     6,     8,    11,    13,    15,    17,    19,
-      21,    23,    25,    29,    32,    35,    39,    43,    48,    50,
-      53,    55,    58,    60,    64,    68,    70,    72,    74,    76,
-      78,    80,    82,    86,    88,    90,    93,    96,    99,   102,
-     105,   111,   117,   123,   129,   131,   133,   135,   137,   139
+      21,    23,    25,    27,    31,    34,    37,    39,    43,    47,
+      52,    54,    57,    59,    62,    64,    68,    72,    74,    76,
+      78,    80,    82,    84,    86,    90,    92,    94,    97,   100,
+     103,   106,   109,   115,   121,   127,   133,   135,   137,   139,
+     141,   143
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
@@ -1460,10 +1389,11 @@ namespace fx_bison {
   QueryExprBisonParser::yyrline_[] =
   {
          0,   103,   103,   109,   110,   115,   116,   117,   118,   119,
-     120,   121,   123,   128,   134,   140,   145,   150,   157,   161,
-     166,   172,   180,   184,   190,   197,   198,   199,   202,   204,
-     206,   209,   213,   219,   224,   229,   231,   233,   235,   237,
-     239,   243,   247,   251,   256,   261,   266,   267,   268,   273
+     120,   121,   122,   124,   129,   135,   141,   146,   151,   156,
+     163,   167,   172,   178,   186,   190,   196,   203,   204,   205,
+     208,   210,   212,   215,   219,   225,   230,   235,   237,   239,
+     241,   243,   245,   249,   253,   257,   262,   267,   272,   273,
+     274,   279
   };
 
   // Print the state stack on the debug stream.
@@ -1507,15 +1437,15 @@ namespace fx_bison {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      21,    22,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    27,     2,
+      22,    23,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    28,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    23,     2,    24,     2,     2,     2,     2,     2,     2,
+       2,    24,     2,    25,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    26,     2,    25,     2,     2,     2,     2,
+       2,     2,     2,    27,     2,    26,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1530,7 +1460,7 @@ namespace fx_bison {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20
+      15,    16,    17,    18,    19,    20,    21
     };
     if ((unsigned int) t <= yyuser_token_number_max_)
       return translate_table[t];
@@ -1539,26 +1469,29 @@ namespace fx_bison {
   }
 
   const int QueryExprBisonParser::yyeof_ = 0;
-  const int QueryExprBisonParser::yylast_ = 157;
-  const int QueryExprBisonParser::yynnts_ = 19;
+  const int QueryExprBisonParser::yylast_ = 164;
+  const int QueryExprBisonParser::yynnts_ = 20;
   const int QueryExprBisonParser::yyempty_ = -2;
-  const int QueryExprBisonParser::yyfinal_ = 50;
+  const int QueryExprBisonParser::yyfinal_ = 52;
   const int QueryExprBisonParser::yyterror_ = 1;
   const int QueryExprBisonParser::yyerrcode_ = 256;
-  const int QueryExprBisonParser::yyntokens_ = 28;
+  const int QueryExprBisonParser::yyntokens_ = 29;
 
-  const unsigned int QueryExprBisonParser::yyuser_token_number_max_ = 275;
+  const unsigned int QueryExprBisonParser::yyuser_token_number_max_ = 276;
   const QueryExprBisonParser::token_number_type QueryExprBisonParser::yyundef_token_ = 2;
 
 
+/* Line 1054 of lalr1.cc  */
+#line 1 "[Bison:b4_percent_define_default]"
+
 } // fx_bison
 
-/* Line 1136 of lalr1.cc  */
-#line 1558 "QueryExprBisonParser.cc"
+/* Line 1054 of lalr1.cc  */
+#line 1491 "QueryExprBisonParser.cc"
 
 
-/* Line 1138 of lalr1.cc  */
-#line 278 "QueryExprBisonParser.yy"
+/* Line 1056 of lalr1.cc  */
+#line 284 "QueryExprBisonParser.yy"
  
 
 /** Additional Code */

@@ -36,6 +36,14 @@ public:
     virtual FX_NS(search)::Query* createQuery(const TermQueryExpr& expr) = 0;
 
     /**
+     * Create any query object from any query expression
+     * Derived class implements this method to process 
+     * any query expression
+     * @param expr any query expression
+     */
+    virtual FX_NS(search)::Query* createQuery(const AnyQueryExpr& expr) = 0;
+
+    /**
      * Create phrase query from phrase query expression
      * Derived class implements this method to process 
      * phrase query expression

@@ -9,10 +9,10 @@
 //
 // Author	: Ruijie Guo
 // Email	: ruijieguo@gmail.com
-// Created	: 2010-07-09 20:35:40
+// Created	: 2012-11-30 20:35:40
 
-#ifndef __FX_TERMQUERY_H
-#define __FX_TERMQUERY_H
+#ifndef __FX_ANYQUERY_H
+#define __FX_ANYQUERY_H
 
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
@@ -21,18 +21,18 @@
 
 FX_NS_DEF(search);
 
-class TermQuery : public Query
+class AnyQuery : public Query
 {
 public:
-    TermQuery(const FX_NS(index)::TermPtr& pTerm);
-    TermQuery(const TermQuery& src);
-    ~TermQuery();
+    AnyQuery();
+    AnyQuery(const AnyQuery& src);
+    ~AnyQuery();
 
 public:
     /**
      * Get identifier of query
      */
-    string getIdentifier() const;
+    std::string getIdentifier() const;
 
     /**
      *  Get number of queries
@@ -58,32 +58,20 @@ public:
     /**
      * Convert the query to readable string
      */
-    string toString() const;
+    std::string toString() const;
 
     /**
      * Return all terms of this query
      */   
-    void terms(TermVector& terms) const;
-
-public:
-    inline FX_NS(index)::TermPtr getTerm() const;
-
-protected:
-    FX_NS(index)::TermPtr m_pTerm;
+    void terms(TermVector& terms) const {}
 
 private:
     DECLARE_STREAM_LOGGER();
 };
 
-DEFINE_TYPED_PTR(TermQuery);
+DEFINE_TYPED_PTR(AnyQuery);
 
-//////////////////////////////////////////////////////////////
-// 
-inline FX_NS(index)::TermPtr TermQuery::getTerm() const
-{
-    return m_pTerm;
-}
 
 FX_NS_END
 
-#endif //__FX_TERMQUERY_H
+#endif //__FX_ANYQUERY_H

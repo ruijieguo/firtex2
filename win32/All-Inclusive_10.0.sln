@@ -30,8 +30,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lexibuilder", "..\app\lexib
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "watchdog", "..\app\watchdog\win32\watchdog_10.0.vcxproj", "{66DEF941-FBE0-45C2-8B7F-295C3784F9F4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirteX", "FirteX_10.0.vcxproj", "{07E8622C-8E15-45F3-8360-5A58291AF474}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fxist4c", "fxist4c_10.0.vcxproj", "{F70220DF-7A95-420D-BA2A-BD7F4BA56FA9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libevent", "libevent_10.0.vcxproj", "{4F1B4128-3633-4597-A120-E4A7B9C62B70}"
@@ -39,6 +37,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirteX-Extension", "..\extension\win32\FirteX-Extension_10.0.vcxproj", "{774CF74D-F4D3-4CD5-961A-734147AD9653}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApp", "..\test\win32\TestApp\TestApp_10.0.vcxproj", "{36DC06AD-BFEF-4A7D-B337-45D327B9B62E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirteX", "FirteX_10.0.vcxproj", "{07E8622C-8E15-45F3-8360-5A58291AF474}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,12 +125,6 @@ Global
 		{66DEF941-FBE0-45C2-8B7F-295C3784F9F4}.Release|Win32.Build.0 = Release|Win32
 		{66DEF941-FBE0-45C2-8B7F-295C3784F9F4}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{66DEF941-FBE0-45C2-8B7F-295C3784F9F4}.Unicode Debug|Win32.Build.0 = Debug|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Debug|Win32.ActiveCfg = Debug|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Debug|Win32.Build.0 = Debug|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Release|Win32.ActiveCfg = Release|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Release|Win32.Build.0 = Release|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
-		{07E8622C-8E15-45F3-8360-5A58291AF474}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
 		{F70220DF-7A95-420D-BA2A-BD7F4BA56FA9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F70220DF-7A95-420D-BA2A-BD7F4BA56FA9}.Debug|Win32.Build.0 = Debug|Win32
 		{F70220DF-7A95-420D-BA2A-BD7F4BA56FA9}.Release|Win32.ActiveCfg = Release|Win32
@@ -155,6 +149,12 @@ Global
 		{36DC06AD-BFEF-4A7D-B337-45D327B9B62E}.Release|Win32.Build.0 = Release|Win32
 		{36DC06AD-BFEF-4A7D-B337-45D327B9B62E}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{36DC06AD-BFEF-4A7D-B337-45D327B9B62E}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Debug|Win32.Build.0 = Debug|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Release|Win32.ActiveCfg = Release|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Release|Win32.Build.0 = Release|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{07E8622C-8E15-45F3-8360-5A58291AF474}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

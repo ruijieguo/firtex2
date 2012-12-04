@@ -107,9 +107,9 @@ public:
 
     /**
      * Return max document number, if no deleted documents,
-     * getMaxDocs() is equal to ReturnNumDocs()
+     * getMaxDocs() is equal to getDocCount()
      */
-    df_t getMaxDocs()const;
+    df_t getMaxDocs() const;
 
     /**
      * Create stored fields reader 

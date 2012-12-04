@@ -28,6 +28,7 @@ class QueryExprBisonParserTestCase : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST(testPhraseExpr);
     CPPUNIT_TEST(testPhraseExprWithSlop);
     CPPUNIT_TEST(testSingleQuotedExpr);
+    CPPUNIT_TEST(testAnyQueryExpr);
     CPPUNIT_TEST_SUITE_END();
 public:
     QueryExprBisonParserTestCase();
@@ -55,6 +56,7 @@ protected:
     void testPhraseExpr();
     void testPhraseExprWithSlop();
     void testSingleQuotedExpr();
+    void testAnyQueryExpr();
 
 private:
     DECLARE_STREAM_LOGGER();

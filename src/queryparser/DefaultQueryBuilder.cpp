@@ -73,6 +73,11 @@ Query* DefaultQueryBuilder::createQuery(const TermQueryExpr& expr)
     return pQuery.release();
 }
 
+Query* DefaultQueryBuilder::createQuery(const AnyQueryExpr& expr)
+{
+    return new AnyQuery();
+}
+
 Query* DefaultQueryBuilder::createQuery(const PhraseQueryExpr& expr)
 {
     const string& sField = GET_FIELD_NAME(expr);

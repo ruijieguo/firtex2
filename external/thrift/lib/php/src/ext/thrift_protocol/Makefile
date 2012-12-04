@@ -1,11 +1,11 @@
-srcdir = /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol
-builddir = /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol
-top_srcdir = /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol
-top_builddir = /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol
+srcdir = /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol
+builddir = /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol
+top_srcdir = /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol
+top_builddir = /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol
 EGREP = /bin/grep -E
 SED = /bin/sed
-CONFIGURE_COMMAND = './configure' '--disable-option-checking' '--prefix=/usr/local' '--with-boost=/home/guorj/svn/firtex2/external'
-CONFIGURE_OPTIONS = '--disable-option-checking' '--prefix=/usr/local' '--with-boost=/home/guorj/svn/firtex2/external'
+CONFIGURE_COMMAND = './configure' '--disable-option-checking' '--prefix=/usr/local' '--with-boost=/home/guorj/svn/tmp/trunk/external'
+CONFIGURE_OPTIONS = '--disable-option-checking' '--prefix=/usr/local' '--with-boost=/home/guorj/svn/tmp/trunk/external'
 SHLIB_SUFFIX_NAME = so
 SHLIB_DL_SUFFIX_NAME = so
 ZEND_EXT_TYPE = zend_extension
@@ -22,13 +22,13 @@ prefix = /usr
 exec_prefix = $(prefix)
 libdir = ${exec_prefix}/lib
 prefix = /usr
-phplibdir = /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol/modules
+phplibdir = /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol/modules
 phpincludedir = /usr/include/php
 CC = cc
 CFLAGS = -g -O2
 CFLAGS_CLEAN = $(CFLAGS)
 CPP = cc -E
-CPPFLAGS = -I/home/guorj/svn/firtex2/external/libevent -I/home/guorj/svn/firtex2/external/libevent/include -I/home/guorj/svn/firtex2/external/libevent/include/event2 -I/home/guorj/svn/firtex2/external -I/usr/local -DHAVE_CONFIG_H
+CPPFLAGS = -I/home/guorj/svn/tmp/trunk/external/libevent -I/home/guorj/svn/tmp/trunk/external/libevent/include -I/home/guorj/svn/tmp/trunk/external/libevent/include/event2 -I/home/guorj/svn/tmp/trunk/external -I/usr/local -DHAVE_CONFIG_H
 CXX = g++
 CXXFLAGS = -g -O2
 CXXFLAGS_CLEAN = $(CXXFLAGS)
@@ -38,7 +38,7 @@ EXTRA_LDFLAGS =
 EXTRA_LIBS =
 INCLUDES = -I/usr/include/php -I/usr/include/php/main -I/usr/include/php/TSRM -I/usr/include/php/Zend -I/usr/include/php/ext -I/usr/include/php/ext/date/lib
 LFLAGS =
-LDFLAGS = -L/home/guorj/svn/firtex2/external/libevent/.libs
+LDFLAGS = -L/home/guorj/svn/tmp/trunk/external/libevent/.libs
 SHARED_LIBTOOL =
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 SHELL = /bin/sh
@@ -162,8 +162,8 @@ distclean: clean
 
 .PHONY: all clean install distclean test
 .NOEXPORT:
-php_thrift_protocol.lo: /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp
-	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/guorj/svn/firtex2/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp -o php_thrift_protocol.lo 
+php_thrift_protocol.lo: /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp
+	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/guorj/svn/tmp/trunk/external/thrift/lib/php/src/ext/thrift_protocol/php_thrift_protocol.cpp -o php_thrift_protocol.lo 
 $(phplibdir)/thrift_protocol.la: ./thrift_protocol.la
 	$(LIBTOOL) --mode=install cp ./thrift_protocol.la $(phplibdir)
 

@@ -92,6 +92,24 @@ void IndexSearcherTestCase::testSearchPhraseQuery()
     CPPUNIT_ASSERT_EQUAL((uint64_t)1, pHits->getTotalHits());
 }
 
+void IndexSearcherTestCase::testSearchAnyQuery()
+{
+    DocumentSchema schema;
+    schema.addUnIndexedField("docid");
+    schema.addTextField("CONTENT");
+
+    buildIndex(schema, "docid1, hello world; docid2, this is a smoke test");
+
+    QueryPtr pQuery = parseQuery("*:*");
+    CPPUNIT_ASSERT(pQuery.isNotNull());
+    QueryTracerPtr pNullTracer;
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            pNullTracer, 0, 10);
+    CPPUNIT_ASSERT(pHits.isNotNull());
+    CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
+    CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
+}
+
 void IndexSearcherTestCase::testSearchPhraseQueryAfterMerge()
 {
     DocumentSchema schema;

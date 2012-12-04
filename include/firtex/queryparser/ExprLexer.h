@@ -35,7 +35,7 @@ FX_NS_END
 // #undef PARSER_HEADER_H
 // #endif
 
-#include "queryparser/ExprBisonParser.hh"
+#include "queryparser/ExprBisonParser.h"
 
 FX_NS_DEF(queryparser);
 

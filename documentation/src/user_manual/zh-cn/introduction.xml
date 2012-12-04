@@ -30,7 +30,7 @@
   </sect1>
   <sect1 id="intro_new_version">
     <title>如何获取Firtex2最新版本</title>
-    <para>请从<ulink url="http://www.sourceforge.net/projects/firtex">Firtex2的sourceforge项目首页</ulink>获取，目前最新版本为firtex2-0.5.0。
+    <para>请从<ulink url="http://www.sourceforge.net/projects/firtex">Firtex2的sourceforge项目首页</ulink>或者从<ulink url="https://github.com/ruijieguo/firtex2">GitHub</ulink>获取，目前最新版本为firtex2-0.5.1。
     </para>
   </sect1>
   <sect1 id="intro_licenses">

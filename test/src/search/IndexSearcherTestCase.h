@@ -17,6 +17,7 @@ class IndexSearcherTestCase : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST_SUITE(IndexSearcherTestCase);
     CPPUNIT_TEST(testSearchTermQuery);
     CPPUNIT_TEST(testSearchPhraseQuery);
+    CPPUNIT_TEST(testSearchAnyQuery);
     CPPUNIT_TEST(testSearchPhraseQueryAfterMerge);
     CPPUNIT_TEST(testSearchPhraseQueryOfSWTEXT);
     CPPUNIT_TEST(testSearchPhraseQueryWithSlop);
@@ -42,6 +43,7 @@ public:
 protected:
     void testSearchTermQuery();
     void testSearchPhraseQuery();
+    void testSearchAnyQuery();
     void testSearchPhraseQueryAfterMerge();
     void testSearchPhraseQueryOfSWTEXT();
     void testSearchPhraseQueryWithSlop();

@@ -16,6 +16,10 @@ libanalyzer_la_SOURCES = \
 	DateTimeLexer.ll\
 	GBKTokenLexer.ll\
 	UTF8TokenLexer.ll\
+	y.tab.h\
+	location.hh\
+	position.hh\
+	stack.hh\
 	Analyzer.cpp\
 	AnalyzerFactory.cpp\
 	DateTimeAnalyzer.cpp\
@@ -38,5 +42,7 @@ libanalyzer_la_SOURCES = \
 	MaxForwardSegmenter.cpp\
 	UnigramSegmenter.cpp
 
-distclean:
-	$(RM) *.cc *.hh
+extraclean:
+	$(RM) -f DateTimeBisonParser.h DateTimeBisonParser.cc
+
+rebuild: clean extraclean all

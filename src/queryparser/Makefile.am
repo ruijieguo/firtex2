@@ -12,6 +12,10 @@ libqueryparser_la_SOURCES = \
 	ExprBisonParser.yy\
 	QueryExprLexer.ll\
 	ExprLexer.ll\
+	y.tab.h\
+	location.hh\
+	position.hh\
+	stack.hh\
 	QueryExpr.cpp\
 	QueryExprParser.cpp\
 	ExprParser.cpp\
@@ -20,7 +24,8 @@ libqueryparser_la_SOURCES = \
 	DefaultExprEvaluatorBuilder.cpp\
 	QueryParser.cpp
 
-distclean:
-	$(RM) *.cc *.hh
+extraclean:
+	$(RM) -f ExprBisonParser.cc  QueryExprBisonParser.cc ExprBisonParser.h QueryExprBisonParser.h
 
-#EXTRA_DIST += 	
+rebuild: clean extraclean all
+

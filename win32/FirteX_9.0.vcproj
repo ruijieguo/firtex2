@@ -942,6 +942,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\search\AnyQueryExecutor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\search\AnyQuery.cpp"
+					>
+				</File>
+
+				<File
 					RelativePath="..\src\search\ArgListExprEvaluator.cpp"
 					>
 				</File>
@@ -2925,6 +2934,14 @@
 				>
 				<File
 					RelativePath="..\include\firtex\search\AndQueryExecutor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\firtex\search\AnyQueryExecutor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\firtex\search\AndQuery.h"
 					>
 				</File>
 				<File

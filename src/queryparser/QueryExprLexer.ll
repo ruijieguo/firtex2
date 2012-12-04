@@ -105,6 +105,11 @@ OR {
     return token::TOK_PHRASE_SLOP;
 }
 
+"*:*" {
+    FX_TRACE("*:*: QUERY_ANY");
+    return token::TOK_QUERY_ANY;
+}
+
 [:\]\[(),{}] {
     FX_TRACE("[%s]: SYMBOL]", YYText());
     return static_cast<token_type>(*YYText());

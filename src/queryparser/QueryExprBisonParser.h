@@ -160,7 +160,8 @@ namespace fx_bison {
      TOK_MOD_NOT = 272,
      TOK_MOD_REQ = 273,
      TOK_BOOST = 274,
-     TOK_PHRASE_SLOP = 275
+     TOK_PHRASE_SLOP = 275,
+     TOK_QUERY_ANY = 276
    };
 
     };
@@ -338,7 +339,7 @@ namespace fx_bison {
 } // fx_bison
 
 /* Line 300 of lalr1.cc  */
-#line 342 "QueryExprBisonParser.h"
+#line 343 "QueryExprBisonParser.h"
 
 
 

@@ -24,9 +24,9 @@ TermQuery::~TermQuery()
 {
 }
 
-tstring TermQuery::getIdentifier() const
+string TermQuery::getIdentifier() const
 {
-    return _T("TermQuery");
+    return "TermQuery";
 }
 
 size_t TermQuery::size() const
@@ -55,15 +55,15 @@ Query* TermQuery::clone() const
     return new TermQuery(*this);
 }
 
-tstring TermQuery::toString() const
+string TermQuery::toString() const
 {
     stringstream ss;
-    ss << _T("TermQuery: [");
+    ss << "TermQuery: [";
     if (m_pTerm.isNotNull())
     {
         ss << m_pTerm->toString();
     }
-    ss << _T("]");
+    ss << "]";
     return ss.str();
 }
 

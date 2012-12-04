@@ -23,6 +23,7 @@
 #include "firtex/search/TermQuery.h"
 #include "firtex/search/PhraseQuery.h"
 #include "firtex/search/BooleanQuery.h"
+#include "firtex/search/AnyQuery.h"
 #include <list>
 
 FX_NS_DEF(queryparser);
@@ -43,6 +44,14 @@ public:
      * @param expr term query expression
      */
     FX_NS(search)::Query* createQuery(const TermQueryExpr& expr);
+
+    /**
+     * Create any query object from any query expression
+     * Derived class implements this method to process 
+     * any query expression
+     * @param expr any query expression
+     */
+    FX_NS(search)::Query* createQuery(const AnyQueryExpr& expr);
 
     /**
      * Create phrase query from phrase query expression

@@ -34,7 +34,9 @@ libsearch_la_SOURCES = AndQueryExecutor.cpp\
 	MatchComparator.cpp\
 	SortedHitCollector.cpp\
 	TermQuery.cpp\
+	AnyQuery.cpp\
 	TermQueryExecutor.cpp\
+	AnyQueryExecutor.cpp\
 	BM25Scorer.cpp\
 	Statement.cpp\
 	QueryClause.cpp\

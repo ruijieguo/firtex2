@@ -10,7 +10,7 @@ echo '===test search';
 $client = new FirteXRPCClient('localhost', '19801');
 $vals = array('query' => 'BODY:2',
               'fieldSelect' => array(0 => 'BODY:snippet'));
-$cmd = new firtex_QueryCommand($vals);
+$cmd = new firtex\QueryCommand($vals);
 $result = $client->search($cmd);
 print_r($result);
 ?>
