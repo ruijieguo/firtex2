@@ -2,8 +2,6 @@ h1. FirteX2
 
 h2. A Distributed, Full-featured, High Performance Search Engine
 
-h3. "http://firtex.sourceforge.net":http://firtex.sourceforge.net
-
 Features include:
 
 * Distributed and Highly Available Search Engine.
@@ -31,5 +29,5 @@ Features include:
 
 h2. Getting Started
 
-h3. "http://firtex.sourceforge.net":http://firtex.sourceforge.net
+h3. "User Manual":http://firtex.sourceforge.net
 TBD
