@@ -29,5 +29,5 @@ Features include:
 
 h2. Getting Started
 
-h3. "User Manual":http://firtex2.ruijieguo.com/ft2_user_manual
+h3. "User Manual":http://firtex2.guoruijie.com/ft2_user_manual
 TBD
