@@ -17,7 +17,6 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
-#include "firtex/search/Similarity.h"
 #include "firtex/search/IndexFeature.h"
 #include "firtex/search/QueryFeature.h"
 
@@ -33,8 +32,7 @@ public:
     /**
      * Initialize
      */
-    void init(const FX_NS(index)::IndexReaderPtr& pIndexReader,
-              const Similarity* pSimilarity);
+    void init(const FX_NS(index)::IndexReaderPtr& pIndexReader);
 
     /**
      * Return index feature
@@ -43,7 +41,6 @@ public:
 
 protected:
     IndexFeature m_indexFeature;
-    const Similarity* m_pSimilarity;
 
 private:
     DECLARE_STREAM_LOGGER();
@@ -58,7 +55,7 @@ inline const IndexFeature& FeatureProvider::getIndexFeature() const
     return m_indexFeature;
 }
 
-typedef FX_NS(common)::SharedPtr<FeatureProvider> FeatureProviderPtr;
+DEFINE_TYPED_PTR(FeatureProvider);
 
 FX_NS_END
 

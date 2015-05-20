@@ -214,6 +214,13 @@
 	  </para>
 	</listitem>
 
+	<listitem>
+	  <para>排序子句支持地理位置距离函数：DIST(lat1, long1, lat2, long2)，例如：</para>
+	  <screen>sort_by=DIST(GEO_LAT, GEO_LON, 101.176579, 53.051879)</screen>
+	  <para>根据距离经度为101.176579，维度为53.051879的点的距离排序，其中GEO_LAT是存储经度的正排索引字段名称，GEO_LON是存储维度的正排索引名称。</para>
+	  <para>函数DIST()的参数单位为弧度，返回值单位为米。</para>
+	</listitem>
+
       </itemizedlist>
     </sect2>
     <para>上述三种表达式可以混合多重使用，实现复杂的查询结果后排序功能。</para>
@@ -249,16 +256,23 @@
 	</listitem>
 
 	<listitem>
-	  <para>排序子句支持如下数学运算函数：abs()/ceil()/floor()/sin()/cos()/ln()/log2()/log10()/exp()/sqrt()/pow()/min()/max()，例如：</para>
+	  <para>过滤子句支持如下数学运算函数：ABS()/CEIL()/FLOOR()/SIN()/COS()/LN()/LOG2()/LOG10()/EXP()/SQRT()/POW()/MIN()/MAX()，例如：</para>
 	  <screen>filter=SQRT(PRICE) + POW(DELIVER, 3.0) >= 10.0</screen>
 	</listitem>
 
 	<listitem>
-	  <para>排序子句支持如下函数：IF(va1, val2, val3)/IN(val1, val2, val3...)，例如：</para>
+	  <para>过滤子句支持如下函数：IF(va1, val2, val3)/IN(val1, val2, val3...)，例如：</para>
 	  <screen>filter=IF(USER_RANK > 5,PRICE,DELIVER)>=10.0</screen>
 	如果USER_RANK大于5，则PRICE大于等于10.0的文档将返回，否则DELIVER大于等于10.0的文档将返回。
 	  <screen>filter=IF(IN(USER_RANK,3,4,5),PRICE,DELIVER)>=10.0</screen>
 	如果USER_RANK等于3或者4或者5，则PRICE大于等于10.0的文档将返回，否则DELIVER大于等于10.0的文档将返回。
+	</listitem>
+
+	<listitem>
+	  <para>过滤子句支持地理位置距离函数：DIST(lat1, long1, lat2, long2)，例如：</para>
+	  <screen>filter=DIST(GEO_LAT, GEO_LON, 101.176579, 53.051879)&lt;10.0</screen>
+	  <para>距离经度为101.176579，维度为53.051879的点距离小于10米的文档将返回，其中GEO_LAT是存储经度的正排索引字段名称，GEO_LON是存储维度的正排索引名称。</para>
+	  <para>函数DIST()的参数单位为弧度，返回值单位为米。</para>
 	</listitem>
 
       </itemizedlist>

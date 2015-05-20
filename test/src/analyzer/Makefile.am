@@ -7,7 +7,8 @@ test_srcdir = $(top_srcdir)/test/src/
 analyzer_test_srcdir = $(test_srcdir)/analyzer
 
 analyzer_test_sources = \
-	$(analyzer_test_srcdir)/DateTimeAnalyzerTestCase.cpp
+	$(analyzer_test_srcdir)/StandardAnalyzerTestCase.cpp\
+	$(analyzer_test_srcdir)/DateTimeAnalyzerTestCase.cpp\
 	$(analyzer_test_srcdir)/DoubleArrayTestCase.cpp\
 	$(analyzer_test_srcdir)/StandardTokenizerTestCase.cpp\
 	$(analyzer_test_srcdir)/StandardAnalyzerTestCase.cpp\

@@ -40,28 +40,28 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    float evaluateFloat(const ScoredDoc& scoredDoc);
+    float evaluateFloat(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    double evaluateDouble(const ScoredDoc& scoredDoc);
+    double evaluateDouble(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int32_t evaluateInt32(const ScoredDoc& scoredDoc);
+    int32_t evaluateInt32(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int64_t evaluateInt64(const ScoredDoc& scoredDoc);
+    int64_t evaluateInt64(const ScoreDoc& scoredDoc);
 
 private:
     OpType m_operator;
@@ -89,28 +89,28 @@ BinaryExprEvaluator<EvalOp>::~BinaryExprEvaluator()
 }
 
 template<typename EvalOp>
-float BinaryExprEvaluator<EvalOp>::evaluateFloat(const ScoredDoc& scoredDoc)
+float BinaryExprEvaluator<EvalOp>::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pLeftEval->evaluateFloat(scoredDoc),
                       m_pRightEval->evaluateFloat(scoredDoc));
 }
 
 template<typename EvalOp>
-double BinaryExprEvaluator<EvalOp>::evaluateDouble(const ScoredDoc& scoredDoc)
+double BinaryExprEvaluator<EvalOp>::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pLeftEval->evaluateDouble(scoredDoc),
                       m_pRightEval->evaluateDouble(scoredDoc));
 }
 
 template<typename EvalOp>
-int32_t BinaryExprEvaluator<EvalOp>::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t BinaryExprEvaluator<EvalOp>::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pLeftEval->evaluateInt32(scoredDoc),
                       m_pRightEval->evaluateInt32(scoredDoc));
 }
 
 template<typename EvalOp>
-int64_t BinaryExprEvaluator<EvalOp>::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t BinaryExprEvaluator<EvalOp>::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pLeftEval->evaluateInt64(scoredDoc),
                       m_pRightEval->evaluateInt64(scoredDoc));

@@ -40,28 +40,28 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    float evaluateFloat(const ScoredDoc& scoredDoc);
+    float evaluateFloat(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    double evaluateDouble(const ScoredDoc& scoredDoc);
+    double evaluateDouble(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int32_t evaluateInt32(const ScoredDoc& scoredDoc);
+    int32_t evaluateInt32(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int64_t evaluateInt64(const ScoredDoc& scoredDoc);
+    int64_t evaluateInt64(const ScoreDoc& scoredDoc);
 
 private:
     OpType m_operator;
@@ -94,7 +94,7 @@ TernaryExprEvaluator<EvalOp>::~TernaryExprEvaluator()
 }
 
 template<typename EvalOp>
-float TernaryExprEvaluator<EvalOp>::evaluateFloat(const ScoredDoc& scoredDoc)
+float TernaryExprEvaluator<EvalOp>::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pExprEval1->evaluateFloat(scoredDoc), 
                       m_pExprEval2->evaluateFloat(scoredDoc), 
@@ -102,7 +102,7 @@ float TernaryExprEvaluator<EvalOp>::evaluateFloat(const ScoredDoc& scoredDoc)
 }
 
 template<typename EvalOp>
-double TernaryExprEvaluator<EvalOp>::evaluateDouble(const ScoredDoc& scoredDoc)
+double TernaryExprEvaluator<EvalOp>::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pExprEval1->evaluateDouble(scoredDoc), 
                       m_pExprEval2->evaluateDouble(scoredDoc), 
@@ -110,7 +110,7 @@ double TernaryExprEvaluator<EvalOp>::evaluateDouble(const ScoredDoc& scoredDoc)
 }
 
 template<typename EvalOp>
-int32_t TernaryExprEvaluator<EvalOp>::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t TernaryExprEvaluator<EvalOp>::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pExprEval1->evaluateInt32(scoredDoc), 
                       m_pExprEval2->evaluateInt32(scoredDoc), 
@@ -118,7 +118,7 @@ int32_t TernaryExprEvaluator<EvalOp>::evaluateInt32(const ScoredDoc& scoredDoc)
 }
 
 template<typename EvalOp>
-int64_t TernaryExprEvaluator<EvalOp>::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t TernaryExprEvaluator<EvalOp>::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     return m_operator(m_pExprEval1->evaluateInt64(scoredDoc), 
                       m_pExprEval2->evaluateInt64(scoredDoc), 

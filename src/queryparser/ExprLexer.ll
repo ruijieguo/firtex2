@@ -245,6 +245,13 @@ SIGNED_CHAR      [+-]
     return token::TOK_FUNC_IN; 
 }
 
+"DIST" {
+    FX_TRACE("DIST");
+    yylval->funcIdx = ExprParser::getFuncIdx(YYText());
+    return token::TOK_FUNC; 
+}
+
+
 {ID} {
     FX_TRACE("[%s]: TOK_IDENT", YYText());
     yylval->stringVal = new std::string(YYText(), YYLeng());

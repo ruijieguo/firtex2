@@ -3,7 +3,7 @@
 #include "firtex/search/ScoredDoc.h"
 #include "firtex/index/IndexReader.h"
 #include "firtex/analyzer/DateTimeAnalyzer.h"
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -193,6 +193,45 @@ void ExprParserTestCase::testParseDateExpr()
     strDateExpr = "NOW() > DATE(\'" + str + "\')";    
     parseAndAssertInt64(strDateExpr, 1);
 }
+
+#define MY_SQR(v) (v)*(v)
+
+
+static float calcDistance(float fLat1, float fLon1,
+        float fLat2, float fLon2)
+{
+    static const double R = 6384000;
+    double dLat = (double)(fLat1 - fLon2);
+    double dLon = (double)(fLon1 - fLon2);
+    double a = MY_SQR(std::sin(dLat/2)) + std::cos(fLat1) * 
+               std::cos(fLat2) * MY_SQR(std::sin(dLon/2));
+    double c = 2 * asin(MIN(1, sqrt(a)));
+    return (float)(R*c);
+}
+
+#undef MYSQR
+
+void ExprParserTestCase::testParseDistExpr()
+{
+    string str = "DIST(1.0, 2.0, 3.0, 4.0)";
+    parseAndAssertDouble(str, calcDistance(1.0, 2.0, 3.0, 4.0));
+}
+
+void ExprParserTestCase::testParseIFExpr()
+{
+    string str = "IF(1 > 2, 0, 1)";
+    parseAndAssertInt32(str, 1);
+}
+
+void ExprParserTestCase::testParseTernaryExpr()
+{
+    string str = "MADD(2, 2, 1)";
+    parseAndAssertInt32(str, 5);
+
+    str = "MUL3(2, 3, 4)";
+    parseAndAssertInt32(str, 24);
+}
+
 
 FX_NS_END
 

@@ -65,7 +65,7 @@ FX_NS_USE(queryparser);
 /* User implementation prologue.  */
 
 /* Line 317 of lalr1.cc  */
-#line 82 "ExprBisonParser.yy"
+#line 83 "ExprBisonParser.yy"
 
 #include "firtex/queryparser/ExprLexer.h"
 #include "firtex/queryparser/ExprParser.h"
@@ -253,7 +253,7 @@ namespace fx_bison {
         case 5: /* "\"identifier\"" */
 
 /* Line 480 of lalr1.cc  */
-#line 80 "ExprBisonParser.yy"
+#line 81 "ExprBisonParser.yy"
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
@@ -262,7 +262,7 @@ namespace fx_bison {
       case 6: /* "\"double quoted string\"" */
 
 /* Line 480 of lalr1.cc  */
-#line 80 "ExprBisonParser.yy"
+#line 81 "ExprBisonParser.yy"
 	{delete (yyvaluep->stringVal);};
 
 /* Line 480 of lalr1.cc  */
@@ -459,7 +459,7 @@ namespace fx_bison {
 	  case 2:
 
 /* Line 678 of lalr1.cc  */
-#line 109 "ExprBisonParser.yy"
+#line 110 "ExprBisonParser.yy"
     { 
               (yyval.nodeIdx) = (yysemantic_stack_[(2) - (1)].nodeIdx);              
               exprParser.finalize((yysemantic_stack_[(2) - (1)].nodeIdx)); 
@@ -469,7 +469,7 @@ namespace fx_bison {
   case 3:
 
 /* Line 678 of lalr1.cc  */
-#line 115 "ExprBisonParser.yy"
+#line 116 "ExprBisonParser.yy"
     {
             (yyval.nodeIdx) = exprParser.addAttrNode(*(yysemantic_stack_[(1) - (1)].stringVal)); 
             delete (yysemantic_stack_[(1) - (1)].stringVal);
@@ -483,7 +483,7 @@ namespace fx_bison {
   case 4:
 
 /* Line 678 of lalr1.cc  */
-#line 124 "ExprBisonParser.yy"
+#line 125 "ExprBisonParser.yy"
     {
               (yyval.nodeIdx) = exprParser.addAttrNode(*(yysemantic_stack_[(1) - (1)].stringVal)); 
               delete (yysemantic_stack_[(1) - (1)].stringVal);
@@ -494,31 +494,31 @@ namespace fx_bison {
           }
     break;
 
-  case 7:
-
-/* Line 678 of lalr1.cc  */
-#line 137 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addIntNode((yysemantic_stack_[(1) - (1)].intVal)); }
-    break;
-
   case 8:
 
 /* Line 678 of lalr1.cc  */
-#line 138 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addFloatNode((yysemantic_stack_[(1) - (1)].doubleVal)); }
+#line 139 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addIntNode((yysemantic_stack_[(1) - (1)].intVal)); }
     break;
 
   case 9:
 
 /* Line 678 of lalr1.cc  */
-#line 139 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_NEG, (yysemantic_stack_[(2) - (2)].nodeIdx), -1); }
+#line 140 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addFloatNode((yysemantic_stack_[(1) - (1)].doubleVal)); }
     break;
 
   case 10:
 
 /* Line 678 of lalr1.cc  */
 #line 141 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_NEG, (yysemantic_stack_[(2) - (2)].nodeIdx), -1); }
+    break;
+
+  case 11:
+
+/* Line 678 of lalr1.cc  */
+#line 143 "ExprBisonParser.yy"
     {
               (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_NOT, (yysemantic_stack_[(2) - (2)].nodeIdx), -1);
               if ((yyval.nodeIdx) < 0) 
@@ -528,157 +528,171 @@ namespace fx_bison {
           }
     break;
 
-  case 11:
-
-/* Line 678 of lalr1.cc  */
-#line 148 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_PLUS, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
-    break;
-
   case 12:
 
 /* Line 678 of lalr1.cc  */
-#line 149 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_MINUS, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 150 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_PLUS, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 13:
 
 /* Line 678 of lalr1.cc  */
-#line 150 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_MUL, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 151 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_MINUS, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 14:
 
 /* Line 678 of lalr1.cc  */
-#line 151 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_DIV, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 152 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_MUL, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 15:
 
 /* Line 678 of lalr1.cc  */
-#line 152 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_LE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 153 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_DIV, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 16:
 
 /* Line 678 of lalr1.cc  */
-#line 153 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_GR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 154 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_LE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 17:
 
 /* Line 678 of lalr1.cc  */
-#line 154 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_BIT_AND, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 155 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_GR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 18:
 
 /* Line 678 of lalr1.cc  */
-#line 155 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_BIT_OR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 156 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_BIT_AND, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 19:
 
 /* Line 678 of lalr1.cc  */
-#line 156 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_LTE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 157 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_BIT_OR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 20:
 
 /* Line 678 of lalr1.cc  */
-#line 157 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_GTE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 158 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_LTE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 21:
 
 /* Line 678 of lalr1.cc  */
-#line 158 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_EQ, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 159 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_GTE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 22:
 
 /* Line 678 of lalr1.cc  */
-#line 159 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_NE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
+#line 160 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_EQ, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 23:
 
 /* Line 678 of lalr1.cc  */
-#line 160 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_AND, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
+#line 161 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_NE, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx) ); }
     break;
 
   case 24:
 
 /* Line 678 of lalr1.cc  */
-#line 161 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_OR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
+#line 162 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_AND, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
     break;
 
   case 25:
 
 /* Line 678 of lalr1.cc  */
-#line 162 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = (yysemantic_stack_[(3) - (2)].nodeIdx); }
+#line 163 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_OR, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
     break;
 
   case 26:
 
 /* Line 678 of lalr1.cc  */
-#line 166 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = (yysemantic_stack_[(1) - (1)].nodeIdx); }
+#line 164 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = (yysemantic_stack_[(3) - (2)].nodeIdx); }
     break;
 
   case 27:
 
 /* Line 678 of lalr1.cc  */
-#line 167 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_COMMA, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
+#line 168 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = (yysemantic_stack_[(1) - (1)].nodeIdx); }
     break;
 
   case 28:
 
 /* Line 678 of lalr1.cc  */
-#line 171 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addConstListNode((yysemantic_stack_[(1) - (1)].intVal)); }
+#line 169 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addOpNode(ExprNode::TOK_COMMA, (yysemantic_stack_[(3) - (1)].nodeIdx), (yysemantic_stack_[(3) - (3)].nodeIdx)); }
     break;
 
   case 29:
 
 /* Line 678 of lalr1.cc  */
-#line 172 "ExprBisonParser.yy"
-    { (yyval.nodeIdx) = exprParser.addConstListNode((yysemantic_stack_[(1) - (1)].doubleVal)); }
+#line 173 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addConstListNode((yysemantic_stack_[(1) - (1)].intVal)); }
     break;
 
   case 30:
 
 /* Line 678 of lalr1.cc  */
-#line 173 "ExprBisonParser.yy"
-    { exprParser.appendToConstList((yyval.nodeIdx), (yysemantic_stack_[(3) - (3)].intVal)); }
+#line 174 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addConstListNode((yysemantic_stack_[(1) - (1)].doubleVal)); }
     break;
 
   case 31:
 
 /* Line 678 of lalr1.cc  */
-#line 174 "ExprBisonParser.yy"
-    { exprParser.appendToConstList((yyval.nodeIdx), (yysemantic_stack_[(3) - (3)].doubleVal)); }
+#line 175 "ExprBisonParser.yy"
+    { (yyval.nodeIdx) = exprParser.addConstListNode(*(yysemantic_stack_[(1) - (1)].stringVal)); delete (yysemantic_stack_[(1) - (1)].stringVal);}
     break;
 
   case 32:
 
 /* Line 678 of lalr1.cc  */
-#line 179 "ExprBisonParser.yy"
+#line 176 "ExprBisonParser.yy"
+    { exprParser.appendToConstList((yyval.nodeIdx), (yysemantic_stack_[(3) - (3)].intVal)); }
+    break;
+
+  case 33:
+
+/* Line 678 of lalr1.cc  */
+#line 177 "ExprBisonParser.yy"
+    { exprParser.appendToConstList((yyval.nodeIdx), (yysemantic_stack_[(3) - (3)].doubleVal)); }
+    break;
+
+  case 34:
+
+/* Line 678 of lalr1.cc  */
+#line 178 "ExprBisonParser.yy"
+    { exprParser.appendToConstList((yyval.nodeIdx), *(yysemantic_stack_[(3) - (3)].stringVal)); delete (yysemantic_stack_[(3) - (3)].stringVal);}
+    break;
+
+  case 35:
+
+/* Line 678 of lalr1.cc  */
+#line 183 "ExprBisonParser.yy"
     { 
               (yyval.nodeIdx) = exprParser.addFuncNode((yysemantic_stack_[(4) - (1)].funcIdx), (yysemantic_stack_[(4) - (3)].nodeIdx));
               if ((yyval.nodeIdx)<0)
@@ -688,10 +702,10 @@ namespace fx_bison {
           }
     break;
 
-  case 33:
+  case 36:
 
 /* Line 678 of lalr1.cc  */
-#line 187 "ExprBisonParser.yy"
+#line 191 "ExprBisonParser.yy"
     {
               (yyval.nodeIdx) = exprParser.addFuncNode((yysemantic_stack_[(3) - (1)].funcIdx), -1); 
               if ((yyval.nodeIdx) < 0)
@@ -701,37 +715,80 @@ namespace fx_bison {
           }
     break;
 
-  case 34:
+  case 37:
 
 /* Line 678 of lalr1.cc  */
-#line 195 "ExprBisonParser.yy"
+#line 199 "ExprBisonParser.yy"
     {
               (yyval.nodeIdx) = exprParser.addFuncNode((yysemantic_stack_[(6) - (1)].funcIdx), (yysemantic_stack_[(6) - (3)].nodeIdx), (yysemantic_stack_[(6) - (5)].nodeIdx));
           }
     break;
 
-  case 35:
-
-/* Line 678 of lalr1.cc  */
-#line 199 "ExprBisonParser.yy"
-    {
-              (yyval.nodeIdx) = exprParser.addDateFuncNode((yysemantic_stack_[(4) - (1)].funcIdx), *(yysemantic_stack_[(4) - (3)].stringVal));
-          }
-    break;
-
-  case 36:
+  case 38:
 
 /* Line 678 of lalr1.cc  */
 #line 203 "ExprBisonParser.yy"
     {
               (yyval.nodeIdx) = exprParser.addDateFuncNode((yysemantic_stack_[(4) - (1)].funcIdx), *(yysemantic_stack_[(4) - (3)].stringVal));
+              delete (yysemantic_stack_[(4) - (3)].stringVal);
+          }
+    break;
+
+  case 39:
+
+/* Line 678 of lalr1.cc  */
+#line 208 "ExprBisonParser.yy"
+    {
+              (yyval.nodeIdx) = exprParser.addDateFuncNode((yysemantic_stack_[(4) - (1)].funcIdx), *(yysemantic_stack_[(4) - (3)].stringVal));
+          }
+    break;
+
+  case 40:
+
+/* Line 678 of lalr1.cc  */
+#line 215 "ExprBisonParser.yy"
+    { 
+              (yyval.nodeIdx) = exprParser.addFeatureNode(*(yysemantic_stack_[(5) - (2)].stringVal), (yysemantic_stack_[(5) - (4)].nodeIdx));
+              delete (yysemantic_stack_[(5) - (2)].stringVal);
+              if ((yyval.nodeIdx)<0)
+              {
+                  YYERROR; 
+              }
+          }
+    break;
+
+  case 41:
+
+/* Line 678 of lalr1.cc  */
+#line 224 "ExprBisonParser.yy"
+    {
+              (yyval.nodeIdx) = exprParser.addFeatureNode(*(yysemantic_stack_[(4) - (2)].stringVal), -1); 
+              delete (yysemantic_stack_[(4) - (2)].stringVal);
+              if ((yyval.nodeIdx) < 0)
+              {
+                  YYERROR;
+              }
+          }
+    break;
+
+  case 42:
+
+/* Line 678 of lalr1.cc  */
+#line 233 "ExprBisonParser.yy"
+    {
+              (yyval.nodeIdx) = exprParser.addFeatureNode(*(yysemantic_stack_[(2) - (2)].stringVal), -1); 
+              delete (yysemantic_stack_[(2) - (2)].stringVal);
+              if ((yyval.nodeIdx) < 0)
+              {
+                  YYERROR;
+              }
           }
     break;
 
 
 
 /* Line 678 of lalr1.cc  */
-#line 735 "ExprBisonParser.cc"
+#line 792 "ExprBisonParser.cc"
 	default:
           break;
       }
@@ -936,18 +993,18 @@ namespace fx_bison {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char ExprBisonParser::yypact_ninf_ = -21;
+  const signed char ExprBisonParser::yypact_ninf_ = -23;
   const short int
   ExprBisonParser::yypact_[] =
   {
-        67,   -21,   -21,   -21,   -21,   -13,     7,    18,    67,    67,
-      67,    50,   -21,    33,   -21,    57,     3,     5,   -21,   -21,
-      82,   -21,   -21,    67,    67,    67,    67,    67,    67,    67,
-      67,    67,    67,    67,    67,    67,    67,   -21,   101,   -16,
-      51,    60,    61,   -21,    16,   118,   159,   -20,   -20,   159,
-     132,   146,   -20,   -20,    42,    42,   -21,   -21,   -21,    67,
-      74,   -21,   -21,   101,   -21,   -21,    54,   -21,    83,   -21,
-     -21
+        75,   -23,   -23,   -23,   -23,    33,    35,    39,    75,    75,
+      75,    20,    76,   -23,    93,   -23,   -23,    37,    10,    42,
+     -23,   -23,   110,    64,   -23,   -23,    75,    75,    75,    75,
+      75,    75,    75,    75,    75,    75,    75,    75,    75,    75,
+     -23,   129,    29,    59,    66,    67,   -23,    47,    -2,   146,
+     187,   -22,   -22,   187,   160,   174,   -22,   -22,    60,    60,
+     -23,   -23,   -23,    75,     2,   -23,   -23,   -23,    44,   129,
+     -23,   -23,   -23,    61,   -23,   -23,    65,   -23,   -23,   -23
   };
 
   /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
@@ -956,28 +1013,28 @@ namespace fx_bison {
   const unsigned char
   ExprBisonParser::yydefact_[] =
   {
-         0,     7,     8,     3,     4,     0,     0,     0,     0,     0,
-       0,     0,     5,     0,     6,     0,     0,     0,    10,     9,
-       0,     1,     2,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    33,    26,     0,
-       0,     0,     0,    25,    23,    24,    21,    19,    20,    22,
-      18,    17,    15,    16,    11,    12,    13,    14,    32,     0,
-       0,    35,    36,    27,    28,    29,     0,    34,     0,    30,
-      31
+         0,     8,     9,     3,     4,     0,     0,     0,     0,     0,
+       0,     0,     0,     5,     0,     6,     7,     0,     0,     0,
+      11,    10,     0,    42,     1,     2,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      36,    27,     0,     0,     0,     0,    26,     0,    24,    25,
+      22,    20,    21,    23,    19,    18,    16,    17,    12,    13,
+      14,    15,    35,     0,     0,    38,    39,    41,     0,    28,
+      29,    30,    31,     0,    40,    37,     0,    32,    33,    34
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   ExprBisonParser::yypgoto_[] =
   {
-       -21,   -21,    84,    -8,   -21,   -21,   -21
+       -23,   -23,    74,     0,    49,   -23,   -23,   -23
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   ExprBisonParser::yydefgoto_[] =
   {
-        -1,    11,    12,    13,    39,    66,    14
+        -1,    12,    13,    41,    42,    73,    15,    16
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -987,50 +1044,56 @@ namespace fx_bison {
   const unsigned char
   ExprBisonParser::yytable_[] =
   {
-        18,    19,    20,    33,    34,    35,    36,    38,     3,     4,
-      41,    42,    58,    59,    15,    44,    45,    46,    47,    48,
-      49,    50,    51,    52,    53,    54,    55,    56,    57,    25,
-      26,    27,    28,    22,    16,    29,    30,    31,    32,    33,
-      34,    35,    36,    23,    24,    17,    25,    26,    27,    28,
-      21,    63,    29,    30,    31,    32,    33,    34,    35,    36,
-       1,     2,     3,     4,     5,     6,     7,    35,    36,     8,
-       1,     2,     3,     4,     5,     6,     7,    64,    65,     8,
-      60,     9,    67,    68,    10,    37,    69,    70,    61,    62,
-       0,     9,    23,    24,    10,    25,    26,    27,    28,     0,
-      40,    29,    30,    31,    32,    33,    34,    35,    36,     0,
-      43,    23,    24,     0,    25,    26,    27,    28,     0,     0,
-      29,    30,    31,    32,    33,    34,    35,    36,    23,     0,
-       0,    25,    26,    27,    28,     0,     0,    29,    30,    31,
-      32,    33,    34,    35,    36,    25,    26,    27,    28,     0,
-       0,     0,    30,    31,    32,    33,    34,    35,    36,    25,
-      26,    27,    28,     0,     0,     0,     0,    31,    32,    33,
-      34,    35,    36,    26,    27,     0,     0,     0,     0,     0,
-      31,    32,    33,    34,    35,    36
+        14,    36,    37,    38,    39,    70,    71,    72,    20,    21,
+      22,    28,    29,    30,    31,     3,     4,    32,    33,    34,
+      35,    36,    37,    38,    39,    23,    48,    49,    50,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+       1,     2,     3,     4,     5,     6,     7,    44,    45,     8,
+       1,     2,     3,     4,     5,     6,     7,    62,    63,     8,
+      17,     9,    18,    69,    10,    40,    19,    11,    77,    78,
+      79,     9,    74,    63,    10,    67,    24,    11,     1,     2,
+       3,     4,     5,     6,     7,    38,    39,     8,    64,    75,
+      76,    47,    43,    25,    65,    66,    68,     0,     0,     9,
+       0,     0,    10,    26,    27,    11,    28,    29,    30,    31,
+       0,     0,    32,    33,    34,    35,    36,    37,    38,    39,
+      26,    27,     0,    28,    29,    30,    31,     0,     0,    32,
+      33,    34,    35,    36,    37,    38,    39,     0,    46,    26,
+      27,     0,    28,    29,    30,    31,     0,     0,    32,    33,
+      34,    35,    36,    37,    38,    39,    26,     0,     0,    28,
+      29,    30,    31,     0,     0,    32,    33,    34,    35,    36,
+      37,    38,    39,    28,    29,    30,    31,     0,     0,     0,
+      33,    34,    35,    36,    37,    38,    39,    28,    29,    30,
+      31,     0,     0,     0,     0,    34,    35,    36,    37,    38,
+      39,    29,    30,     0,     0,     0,     0,     0,    34,    35,
+      36,    37,    38,    39
   };
 
   /* YYCHECK.  */
   const signed char
   ExprBisonParser::yycheck_[] =
   {
-         8,     9,    10,    23,    24,    25,    26,    15,     5,     6,
-       5,     6,    28,    29,    27,    23,    24,    25,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    36,    13,
-      14,    15,    16,     0,    27,    19,    20,    21,    22,    23,
-      24,    25,    26,    10,    11,    27,    13,    14,    15,    16,
-       0,    59,    19,    20,    21,    22,    23,    24,    25,    26,
-       3,     4,     5,     6,     7,     8,     9,    25,    26,    12,
-       3,     4,     5,     6,     7,     8,     9,     3,     4,    12,
-      29,    24,    28,    29,    27,    28,     3,     4,    28,    28,
-      -1,    24,    10,    11,    27,    13,    14,    15,    16,    -1,
-      16,    19,    20,    21,    22,    23,    24,    25,    26,    -1,
-      28,    10,    11,    -1,    13,    14,    15,    16,    -1,    -1,
-      19,    20,    21,    22,    23,    24,    25,    26,    10,    -1,
-      -1,    13,    14,    15,    16,    -1,    -1,    19,    20,    21,
-      22,    23,    24,    25,    26,    13,    14,    15,    16,    -1,
-      -1,    -1,    20,    21,    22,    23,    24,    25,    26,    13,
-      14,    15,    16,    -1,    -1,    -1,    -1,    21,    22,    23,
-      24,    25,    26,    14,    15,    -1,    -1,    -1,    -1,    -1,
-      21,    22,    23,    24,    25,    26
+         0,    23,    24,    25,    26,     3,     4,     5,     8,     9,
+      10,    13,    14,    15,    16,     5,     6,    19,    20,    21,
+      22,    23,    24,    25,    26,     5,    26,    27,    28,    29,
+      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
+       3,     4,     5,     6,     7,     8,     9,     5,     6,    12,
+       3,     4,     5,     6,     7,     8,     9,    28,    29,    12,
+      27,    24,    27,    63,    27,    28,    27,    30,     3,     4,
+       5,    24,    28,    29,    27,    28,     0,    30,     3,     4,
+       5,     6,     7,     8,     9,    25,    26,    12,    29,    28,
+      29,    27,    18,     0,    28,    28,    47,    -1,    -1,    24,
+      -1,    -1,    27,    10,    11,    30,    13,    14,    15,    16,
+      -1,    -1,    19,    20,    21,    22,    23,    24,    25,    26,
+      10,    11,    -1,    13,    14,    15,    16,    -1,    -1,    19,
+      20,    21,    22,    23,    24,    25,    26,    -1,    28,    10,
+      11,    -1,    13,    14,    15,    16,    -1,    -1,    19,    20,
+      21,    22,    23,    24,    25,    26,    10,    -1,    -1,    13,
+      14,    15,    16,    -1,    -1,    19,    20,    21,    22,    23,
+      24,    25,    26,    13,    14,    15,    16,    -1,    -1,    -1,
+      20,    21,    22,    23,    24,    25,    26,    13,    14,    15,
+      16,    -1,    -1,    -1,    -1,    21,    22,    23,    24,    25,
+      26,    14,    15,    -1,    -1,    -1,    -1,    -1,    21,    22,
+      23,    24,    25,    26
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -1039,13 +1102,13 @@ namespace fx_bison {
   ExprBisonParser::yystos_[] =
   {
          0,     3,     4,     5,     6,     7,     8,     9,    12,    24,
-      27,    31,    32,    33,    36,    27,    27,    27,    33,    33,
-      33,     0,     0,    10,    11,    13,    14,    15,    16,    19,
-      20,    21,    22,    23,    24,    25,    26,    28,    33,    34,
-      32,     5,     6,    28,    33,    33,    33,    33,    33,    33,
-      33,    33,    33,    33,    33,    33,    33,    33,    28,    29,
-      29,    28,    28,    33,     3,     4,    35,    28,    29,     3,
-       4
+      27,    30,    32,    33,    34,    37,    38,    27,    27,    27,
+      34,    34,    34,     5,     0,     0,    10,    11,    13,    14,
+      15,    16,    19,    20,    21,    22,    23,    24,    25,    26,
+      28,    34,    35,    33,     5,     6,    28,    27,    34,    34,
+      34,    34,    34,    34,    34,    34,    34,    34,    34,    34,
+      34,    34,    28,    29,    29,    28,    28,    28,    35,    34,
+       3,     4,     5,    36,    28,    28,    29,     3,     4,     5
   };
 
 #if YYDEBUG
@@ -1056,7 +1119,8 @@ namespace fx_bison {
   {
          0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   124,
-      38,    60,    62,    43,    45,    42,    47,    40,    41,    44
+      38,    60,    62,    43,    45,    42,    47,    40,    41,    44,
+      64
   };
 #endif
 
@@ -1064,20 +1128,22 @@ namespace fx_bison {
   const unsigned char
   ExprBisonParser::yyr1_[] =
   {
-         0,    30,    31,    32,    32,    33,    33,    33,    33,    33,
-      33,    33,    33,    33,    33,    33,    33,    33,    33,    33,
-      33,    33,    33,    33,    33,    33,    34,    34,    35,    35,
-      35,    35,    36,    36,    36,    36,    36
+         0,    31,    32,    33,    33,    34,    34,    34,    34,    34,
+      34,    34,    34,    34,    34,    34,    34,    34,    34,    34,
+      34,    34,    34,    34,    34,    34,    34,    35,    35,    36,
+      36,    36,    36,    36,    36,    37,    37,    37,    37,    37,
+      38,    38,    38
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
   const unsigned char
   ExprBisonParser::yyr2_[] =
   {
-         0,     2,     2,     1,     1,     1,     1,     1,     1,     2,
-       2,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     1,     3,     1,     1,
-       3,     3,     4,     3,     6,     4,     4
+         0,     2,     2,     1,     1,     1,     1,     1,     1,     1,
+       2,     2,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     1,     3,     1,
+       1,     1,     3,     3,     3,     4,     3,     6,     4,     4,
+       5,     4,     2
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -1090,8 +1156,9 @@ namespace fx_bison {
   "\"identifier\"", "\"double quoted string\"", "TOK_FUNC", "TOK_FUNC_IN",
   "TOK_FUNC_DATE", "TOK_AND", "TOK_OR", "TOK_NOT", "TOK_EQ", "TOK_LTE",
   "TOK_GTE", "TOK_NE", "TOK_NEG", "TOK_CONST_LIST", "'|'", "'&'", "'<'",
-  "'>'", "'+'", "'-'", "'*'", "'/'", "'('", "')'", "','", "$accept",
-  "exprline", "attr", "expr", "arglist", "constlist", "function", 0
+  "'>'", "'+'", "'-'", "'*'", "'/'", "'('", "')'", "','", "'@'", "$accept",
+  "exprline", "attr", "expr", "arglist", "constlist", "function",
+  "feature", 0
   };
 #endif
 
@@ -1100,19 +1167,21 @@ namespace fx_bison {
   const ExprBisonParser::rhs_number_type
   ExprBisonParser::yyrhs_[] =
   {
-        31,     0,    -1,    33,     0,    -1,     5,    -1,     6,    -1,
-      32,    -1,    36,    -1,     3,    -1,     4,    -1,    24,    33,
-      -1,    12,    33,    -1,    33,    23,    33,    -1,    33,    24,
-      33,    -1,    33,    25,    33,    -1,    33,    26,    33,    -1,
-      33,    21,    33,    -1,    33,    22,    33,    -1,    33,    20,
-      33,    -1,    33,    19,    33,    -1,    33,    14,    33,    -1,
-      33,    15,    33,    -1,    33,    13,    33,    -1,    33,    16,
-      33,    -1,    33,    10,    33,    -1,    33,    11,    33,    -1,
-      27,    33,    28,    -1,    33,    -1,    34,    29,    33,    -1,
-       3,    -1,     4,    -1,    35,    29,     3,    -1,    35,    29,
-       4,    -1,     7,    27,    34,    28,    -1,     7,    27,    28,
-      -1,     8,    27,    32,    29,    35,    28,    -1,     9,    27,
-       5,    28,    -1,     9,    27,     6,    28,    -1
+        32,     0,    -1,    34,     0,    -1,     5,    -1,     6,    -1,
+      33,    -1,    37,    -1,    38,    -1,     3,    -1,     4,    -1,
+      24,    34,    -1,    12,    34,    -1,    34,    23,    34,    -1,
+      34,    24,    34,    -1,    34,    25,    34,    -1,    34,    26,
+      34,    -1,    34,    21,    34,    -1,    34,    22,    34,    -1,
+      34,    20,    34,    -1,    34,    19,    34,    -1,    34,    14,
+      34,    -1,    34,    15,    34,    -1,    34,    13,    34,    -1,
+      34,    16,    34,    -1,    34,    10,    34,    -1,    34,    11,
+      34,    -1,    27,    34,    28,    -1,    34,    -1,    35,    29,
+      34,    -1,     3,    -1,     4,    -1,     5,    -1,    36,    29,
+       3,    -1,    36,    29,     4,    -1,    36,    29,     5,    -1,
+       7,    27,    35,    28,    -1,     7,    27,    28,    -1,     8,
+      27,    33,    29,    36,    28,    -1,     9,    27,     5,    28,
+      -1,     9,    27,     6,    28,    -1,    30,     5,    27,    35,
+      28,    -1,    30,     5,    27,    28,    -1,    30,     5,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1121,19 +1190,21 @@ namespace fx_bison {
   ExprBisonParser::yyprhs_[] =
   {
          0,     0,     3,     6,     8,    10,    12,    14,    16,    18,
-      21,    24,    28,    32,    36,    40,    44,    48,    52,    56,
-      60,    64,    68,    72,    76,    80,    84,    86,    90,    92,
-      94,    98,   102,   107,   111,   118,   123
+      20,    23,    26,    30,    34,    38,    42,    46,    50,    54,
+      58,    62,    66,    70,    74,    78,    82,    86,    88,    92,
+      94,    96,    98,   102,   106,   110,   115,   119,   126,   131,
+     136,   142,   147
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
   const unsigned char
   ExprBisonParser::yyrline_[] =
   {
-         0,   108,   108,   114,   123,   135,   136,   137,   138,   139,
-     140,   148,   149,   150,   151,   152,   153,   154,   155,   156,
-     157,   158,   159,   160,   161,   162,   166,   167,   171,   172,
-     173,   174,   178,   186,   194,   198,   202
+         0,   109,   109,   115,   124,   136,   137,   138,   139,   140,
+     141,   142,   150,   151,   152,   153,   154,   155,   156,   157,
+     158,   159,   160,   161,   162,   163,   164,   168,   169,   173,
+     174,   175,   176,   177,   178,   182,   190,   198,   202,   207,
+     214,   223,   232
   };
 
   // Print the state stack on the debug stream.
@@ -1179,7 +1250,7 @@ namespace fx_bison {
        2,     2,     2,     2,     2,     2,     2,     2,    20,     2,
       27,    28,    25,    23,    29,    24,     2,    26,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      21,     2,    22,     2,     2,     2,     2,     2,     2,     2,
+      21,     2,    22,     2,    30,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1209,13 +1280,13 @@ namespace fx_bison {
   }
 
   const int ExprBisonParser::yyeof_ = 0;
-  const int ExprBisonParser::yylast_ = 185;
-  const int ExprBisonParser::yynnts_ = 7;
+  const int ExprBisonParser::yylast_ = 213;
+  const int ExprBisonParser::yynnts_ = 8;
   const int ExprBisonParser::yyempty_ = -2;
-  const int ExprBisonParser::yyfinal_ = 21;
+  const int ExprBisonParser::yyfinal_ = 24;
   const int ExprBisonParser::yyterror_ = 1;
   const int ExprBisonParser::yyerrcode_ = 256;
-  const int ExprBisonParser::yyntokens_ = 30;
+  const int ExprBisonParser::yyntokens_ = 31;
 
   const unsigned int ExprBisonParser::yyuser_token_number_max_ = 273;
   const ExprBisonParser::token_number_type ExprBisonParser::yyundef_token_ = 2;
@@ -1227,11 +1298,11 @@ namespace fx_bison {
 } // fx_bison
 
 /* Line 1054 of lalr1.cc  */
-#line 1231 "ExprBisonParser.cc"
+#line 1302 "ExprBisonParser.cc"
 
 
 /* Line 1056 of lalr1.cc  */
-#line 208 "ExprBisonParser.yy"
+#line 243 "ExprBisonParser.yy"
  
 
 /** Additional Code */

@@ -59,31 +59,31 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    float evaluateFloat(const ScoredDoc& scoredDoc);
+    float evaluateFloat(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    double evaluateDouble(const ScoredDoc& scoredDoc);
+    double evaluateDouble(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int32_t evaluateInt32(const ScoredDoc& scoredDoc);
+    int32_t evaluateInt32(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int64_t evaluateInt64(const ScoredDoc& scoredDoc);
+    int64_t evaluateInt64(const ScoreDoc& scoredDoc);
 
 private:
-    ValueType evaluate(const ScoredDoc& scoredDoc);
+    ValueType evaluate(const ScoreDoc& scoredDoc);
 
 private:
     IterPtrType m_pAttrIter;
@@ -114,32 +114,32 @@ AttrExprEvaluator<T, Traits>::~AttrExprEvaluator()
 }
 
 template<typename T, typename Traits>
-float AttrExprEvaluator<T, Traits>::evaluateFloat(const ScoredDoc& scoredDoc)
+float AttrExprEvaluator<T, Traits>::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     return (float)this->evaluate(scoredDoc);
 }
 
 template<typename T, typename Traits>
-double AttrExprEvaluator<T, Traits>::evaluateDouble(const ScoredDoc& scoredDoc)
+double AttrExprEvaluator<T, Traits>::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     return (double)evaluate(scoredDoc);
 }
 
 template<typename T, typename Traits>
-int32_t AttrExprEvaluator<T, Traits>::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t AttrExprEvaluator<T, Traits>::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     return (int32_t)evaluate(scoredDoc);
 }
 
 template<typename T, typename Traits>
-int64_t AttrExprEvaluator<T, Traits>::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t AttrExprEvaluator<T, Traits>::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     return (int64_t)evaluate(scoredDoc);
 }
 
 template<typename T, typename Traits>
 inline typename AttrExprEvaluator<T, Traits>::ValueType 
-AttrExprEvaluator<T, Traits>::evaluate(const ScoredDoc& scoredDoc)
+AttrExprEvaluator<T, Traits>::evaluate(const ScoreDoc& scoredDoc)
 {
     IterValueType value = EMPTY_VALUE;
     bool ret = m_pAttrIter->seek(scoredDoc.getDocId(), value);

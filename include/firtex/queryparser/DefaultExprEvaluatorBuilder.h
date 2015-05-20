@@ -25,6 +25,10 @@ class IndexReader;
 DEFINE_TYPED_PTR(IndexReader);
 FX_NS_END
 
+FX_NS_DEF(search);
+class FeatureContext;
+FX_NS_END
+
 FX_NS_DEF(queryparser);
 
 class ExprParser;
@@ -32,7 +36,8 @@ class DefaultExprEvaluatorBuilder : public ExprEvaluatorBuilder
 {
 public:
     DefaultExprEvaluatorBuilder(ExprParser& parser, 
-                                const FX_NS(index)::IndexReaderPtr& pIndexReader);
+                                const FX_NS(index)::IndexReaderPtr& pIndexReader,
+                                FX_NS(search)::FeatureContext* pFeatureCtx = NULL);
     ~DefaultExprEvaluatorBuilder();
 
 public:
@@ -43,23 +48,80 @@ public:
     FX_NS(search)::ExprEvaluator* createExpr(const ExprNode& exprNode);
     
 protected:
-    static void swapArglist(FX_NS(search)::ExprEvaluator* pLeftEva, 
+    static void swapArglist(FX_NS(search)::ExprEvaluator*& pLeftEva, 
                             FX_NS(search)::ArgListExprEvaluator::ArgVector& args);
 
 protected:
     FX_NS(search)::ExprEvaluator* createFuncExprEvaluator(
             const ExprNode& exprNode, FX_NS(search)::ExprEvaluator* pLeftEva);
+    FX_NS(search)::ExprEvaluator* createFeatureExprEvaluator(
+            const ExprNode& exprNode, FX_NS(search)::ExprEvaluator* pLeftEva);
     FX_NS(search)::ExprEvaluator* createAttrEvaluator(
             const ExprNode& exprNode);
-    FX_NS(search)::ExprEvaluator* createInNode(const ExprNode& exprNode);
+    FX_NS(search)::ExprEvaluator* createInEvaluator(const ExprNode& exprNode);
+
+private:
+    template <typename T>
+    static bool getValueFromConstList(T& value, const ExprNode& exprNode) {return false;}
 
 private:
     ExprParser& m_parser;
     FX_NS(index)::IndexReaderPtr m_pIndexReader;
+    FX_NS(search)::FeatureContext* m_pFeatureCtx;
 
 private:
     DECLARE_STREAM_LOGGER();
 };
+
+////////////////////////////
+template <>
+inline bool DefaultExprEvaluatorBuilder::getValueFromConstList(int64_t& value, const ExprNode& node)
+{
+    if (node.tokenType != ExprNode::TOK_CONST_LIST)
+    {
+        FX_LOG(ERROR, "The arguments must be constants.");
+        return false;
+    }
+    const ConstList* pConstList = node.constList;
+    FIRTEX_ASSERT2(pConstList);
+    const ConstList::IntVector& list = pConstList->getIntList();
+    FIRTEX_ASSERT2(list.size() > 0);
+    value = list[0];
+    return true;
+}
+
+template <>
+inline bool DefaultExprEvaluatorBuilder::getValueFromConstList(double& value, const ExprNode& node)
+{
+    if (node.tokenType != ExprNode::TOK_CONST_LIST)
+    {
+        FX_LOG(ERROR, "The arguments must be constants.");
+        return false;
+    }
+    const ConstList* pConstList = node.constList;
+    FIRTEX_ASSERT2(pConstList);
+    const ConstList::DoubleVector& list = pConstList->getDoubleList();
+    FIRTEX_ASSERT2(list.size() > 0);
+    value = list[0];
+    return true;
+}
+
+template <>
+inline bool DefaultExprEvaluatorBuilder::getValueFromConstList(
+        std::string& value, const ExprNode& node)
+{
+    if (node.tokenType != ExprNode::TOK_CONST_LIST)
+    {
+        FX_LOG(ERROR, "The arguments must be constants.");
+        return false;
+    }
+    const ConstList* pConstList = node.constList;
+    FIRTEX_ASSERT2(pConstList);
+    const ConstList::StringVector& list = pConstList->getStringList();
+    FIRTEX_ASSERT2(list.size() > 0);
+    value = list[0];
+    return true;
+}
 
 FX_NS_END
 

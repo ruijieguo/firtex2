@@ -26,7 +26,7 @@ FX_NS_DEF(search);
 class IndexFeature
 {
 public:
-    typedef std::map<tstring, uint32_t> AvgLengthMap;
+    typedef std::map<std::string, uint32_t> AvgLengthMap;
 
 public:
     IndexFeature();
@@ -41,12 +41,12 @@ public:
     /**
      * Return field length(number of terms) of specified field
      */
-    FX_NS(index)::LengthNormIteratorPtr lengthNorm(const tstring& sFieldName) const;
+    FX_NS(index)::LengthNormIteratorPtr lengthNorm(const std::string& sFieldName) const;
     
     /**
      * Return average field length of specified field
      */
-    uint32_t getAverageFieldLength(const tstring& sFieldName) const;
+    uint32_t getAverageFieldLength(const std::string& sFieldName) const;
 
     /**
      * Return average document length
@@ -57,6 +57,11 @@ public:
      * Return total number of documents
      */
     uint64_t getDocCount() const;
+
+    /**
+     * Return index reader
+     */
+    FX_NS(index)::IndexReaderPtr getIndexReader() const;
 
 protected:
     FX_NS(index)::IndexReaderPtr m_pIndexReader;
@@ -70,12 +75,12 @@ private:
 
 //////////////////////////////////////////////////////
 inline FX_NS(index)::LengthNormIteratorPtr IndexFeature::lengthNorm(
-        const tstring& sFieldName) const
+        const std::string& sFieldName) const
 {
     return m_pIndexReader->lengthNorm(sFieldName);
 }
 
-inline uint32_t IndexFeature::getAverageFieldLength(const tstring& sFieldName) const
+inline uint32_t IndexFeature::getAverageFieldLength(const std::string& sFieldName) const
 {
     AvgLengthMap::const_iterator it = m_fieldsAvgLength.find(sFieldName);
     if (it != m_fieldsAvgLength.end())
@@ -93,6 +98,11 @@ inline uint32_t IndexFeature::getAverageDocLength() const
 inline uint64_t IndexFeature::getDocCount() const
 {
     return m_nTotalDocCount;
+}
+
+inline FX_NS(index)::IndexReaderPtr IndexFeature::getIndexReader() const
+{
+    return m_pIndexReader;
 }
 
 FX_NS_END

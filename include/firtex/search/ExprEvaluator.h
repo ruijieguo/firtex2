@@ -17,7 +17,7 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
-#include "firtex/search/ScoredDoc.h"
+#include "firtex/search/ScoreDoc.h"
 #include "firtex/queryparser/ExprNode.h"
 
 FX_NS_DEF(search);
@@ -40,28 +40,28 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    virtual float evaluateFloat(const ScoredDoc& scoredDoc) = 0;
+    virtual float evaluateFloat(const ScoreDoc& scoredDoc) = 0;
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    virtual double evaluateDouble(const ScoredDoc& scoredDoc) = 0;
+    virtual double evaluateDouble(const ScoreDoc& scoredDoc) = 0;
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    virtual int32_t evaluateInt32(const ScoredDoc& scoredDoc) = 0;
+    virtual int32_t evaluateInt32(const ScoreDoc& scoredDoc) = 0;
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    virtual int64_t evaluateInt64(const ScoredDoc& scoredDoc) = 0;
+    virtual int64_t evaluateInt64(const ScoreDoc& scoredDoc) = 0;
 
 public:
     /**
@@ -73,7 +73,7 @@ private:
     ValueType m_type;
 
 private:
-	DECLARE_STREAM_LOGGER();
+    DECLARE_STREAM_LOGGER();
 };
 
 DEFINE_TYPED_PTR(ExprEvaluator);

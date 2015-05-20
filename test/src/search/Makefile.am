@@ -10,6 +10,7 @@ search_test_sources = \
 	$(search_test_srcdir)/DateTimeSearchTestCase.cpp\
 	$(search_test_srcdir)/ClauseTestCase.cpp\
 	$(search_test_srcdir)/FieldSelectClauseTestCase.cpp\
+	$(search_test_srcdir)/ScorerProfileClauseTestCase.cpp\
 	$(search_test_srcdir)/IndexSearcherTestCase.cpp\
 	$(search_test_srcdir)/StatementTestCase.cpp
 

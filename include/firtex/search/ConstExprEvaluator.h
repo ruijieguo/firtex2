@@ -37,28 +37,28 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    float evaluateFloat(const ScoredDoc& scoredDoc);
+    float evaluateFloat(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    double evaluateDouble(const ScoredDoc& scoredDoc);
+    double evaluateDouble(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int32_t evaluateInt32(const ScoredDoc& scoredDoc);
+    int32_t evaluateInt32(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int64_t evaluateInt64(const ScoredDoc& scoredDoc);
+    int64_t evaluateInt64(const ScoreDoc& scoredDoc);
 
 private:
     ValueType m_value;
@@ -79,25 +79,25 @@ ConstExprEvaluator<T>::~ConstExprEvaluator()
 }
 
 template<typename T>
-float ConstExprEvaluator<T>::evaluateFloat(const ScoredDoc& scoredDoc)
+float ConstExprEvaluator<T>::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     return (float)m_value;
 }
 
 template<typename T>
-double ConstExprEvaluator<T>::evaluateDouble(const ScoredDoc& scoredDoc)
+double ConstExprEvaluator<T>::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     return (double)m_value;
 }
 
 template<typename T>
-int32_t ConstExprEvaluator<T>::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t ConstExprEvaluator<T>::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     return (int32_t)m_value;
 }
 
 template<typename T>
-int64_t ConstExprEvaluator<T>::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t ConstExprEvaluator<T>::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     return (int64_t)m_value;
 }

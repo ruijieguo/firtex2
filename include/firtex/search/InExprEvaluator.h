@@ -40,28 +40,28 @@ public:
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    float evaluateFloat(const ScoredDoc& scoredDoc);
+    float evaluateFloat(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the double value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    double evaluateDouble(const ScoredDoc& scoredDoc);
+    double evaluateDouble(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int32 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int32_t evaluateInt32(const ScoredDoc& scoredDoc);
+    int32_t evaluateInt32(const ScoreDoc& scoredDoc);
 
     /**
      * Evaluate the int64 value of expression
      * @param scoredDoc scored doc to evaluate
      * @return result value
      */
-    int64_t evaluateInt64(const ScoredDoc& scoredDoc);
+    int64_t evaluateInt64(const ScoreDoc& scoredDoc);
 
 protected:
     ExprEvaluator* m_pLeftEval;
@@ -114,7 +114,7 @@ InExprEvaluator<T>::~InExprEvaluator()
 }
 
 template<typename T>
-float InExprEvaluator<T>::evaluateFloat(const ScoredDoc& scoredDoc)
+float InExprEvaluator<T>::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     float val = m_pLeftEval->evaluateFloat(scoredDoc);
     bool ret = std::binary_search(m_values.begin(), m_values.end(),
@@ -123,7 +123,7 @@ float InExprEvaluator<T>::evaluateFloat(const ScoredDoc& scoredDoc)
 }
 
 template<typename T>
-double InExprEvaluator<T>::evaluateDouble(const ScoredDoc& scoredDoc)
+double InExprEvaluator<T>::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     double val = m_pLeftEval->evaluateDouble(scoredDoc);
     bool ret = std::binary_search(m_values.begin(), m_values.end(),
@@ -132,7 +132,7 @@ double InExprEvaluator<T>::evaluateDouble(const ScoredDoc& scoredDoc)
 }
 
 template<typename T>
-int32_t InExprEvaluator<T>::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t InExprEvaluator<T>::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     int32_t val = m_pLeftEval->evaluateInt32(scoredDoc);
     bool ret = std::binary_search(m_values.begin(), m_values.end(),
@@ -141,7 +141,7 @@ int32_t InExprEvaluator<T>::evaluateInt32(const ScoredDoc& scoredDoc)
 }
 
 template<typename T>
-int64_t InExprEvaluator<T>::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t InExprEvaluator<T>::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     int64_t val = m_pLeftEval->evaluateInt64(scoredDoc);
     bool ret = std::binary_search(m_values.begin(), m_values.end(),

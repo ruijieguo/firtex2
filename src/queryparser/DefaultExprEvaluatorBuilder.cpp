@@ -5,8 +5,15 @@
 #include "firtex/search/BinaryExprEvaluator.h"
 #include "firtex/search/UnaryExprEvaluator.h"
 #include "firtex/search/TernaryExprEvaluator.h"
+#include "firtex/search/DistExprEvaluator.h"
 #include "firtex/search/AttrExprEvaluator.h"
 #include "firtex/search/InExprEvaluator.h"
+#include "firtex/search/ConstFeatureEvaluator.h"
+#include "firtex/search/FieldLengthFeatureEvaluator.h"
+#include "firtex/search/BM25FeatureEvaluator.h"
+#include "firtex/search/QueryWordCountFeatureEvaluator.h"
+#include "firtex/search/QueryHitCountFeatureEvaluator.h"
+#include "firtex/search/FeatureProvider.h"
 #include "firtex/index/IndexReader.h"
 #include "firtex/index/forwardindex/PrimitiveTypeForwardIndexIterator.h"
 
@@ -18,9 +25,10 @@ FX_NS_DEF(queryparser);
 SETUP_STREAM_LOGGER(queryparser, DefaultExprEvaluatorBuilder);
 
 DefaultExprEvaluatorBuilder::DefaultExprEvaluatorBuilder(ExprParser& parser,
-        const IndexReaderPtr& pIndexReader) 
+        const IndexReaderPtr& pIndexReader, FeatureContext* pFeatureCtx) 
     : m_parser(parser)
     , m_pIndexReader(pIndexReader)
+    , m_pFeatureCtx(pFeatureCtx)
 {
 }
 
@@ -30,22 +38,14 @@ DefaultExprEvaluatorBuilder::~DefaultExprEvaluatorBuilder()
 
 ExprEvaluator* DefaultExprEvaluatorBuilder::createExpr(const ExprNode& exprNode)
 {
-#define CASE_CREATE_EVALUATOR(prefix)                                   \
-    if (exprNode.argType == ExprNode::VALUE_INT32) return new prefix##Int32ExprEvaluator(pLeft, pRight); \
-    else if (exprNode.argType == ExprNode::VALUE_INT64) return new prefix##Int64ExprEvaluator(pLeft, pRight); \
-    else return new prefix##FloatExprEvaluator(pLeft, pRight);
-
     bool bSkipLeft = false;
     bool bSkipRight = false;
     if (exprNode.tokenType == ExprNode::TOK_FUNC)
     {
         ExprParser::FuncType eFunc = ExprParser::getFunc(exprNode.funcIdx).funcType;
-        if (eFunc == ExprParser::FUNC_GEODIST || eFunc == ExprParser::FUNC_IN)
-        {
-            bSkipLeft = true;
-        }
         if (eFunc == ExprParser::FUNC_IN)
         {
+            bSkipLeft = true;
             bSkipRight = true;
         }
     }
@@ -132,6 +132,8 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createExpr(const ExprNode& exprNode)
 
     case ExprNode::TOK_FUNC:
         return createFuncExprEvaluator(exprNode, pLeft); break;
+    case ExprNode::TOK_FEATURE:
+        return createFeatureExprEvaluator(exprNode, pLeft); break;
 
     default:
         FIRTEX_ASSERT2(0);//unhandled token type
@@ -151,6 +153,10 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createFuncExprEvaluator(
     if (pLeftEva)
     {
         swapArglist(pLeftEva, args);
+        if (pLeftEva)
+        {
+            delete pLeftEva;
+        }
     }
 
     ExprParser::FuncType eFunc =
@@ -204,32 +210,120 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createFuncExprEvaluator(
     case ExprParser::FUNC_MUL3:
         return new Mul3ExprEvaluator(exprNode.retType, args[0], args[1], args[2]); 
     case ExprParser::FUNC_IN:
-        return createInNode(exprNode);
+        return createInEvaluator(exprNode);
+    case ExprParser::FUNC_DIST:
+        return new DistExprEvaluator(args[0], args[1], args[2], args[3]);
     default:
         FIRTEX_ASSERT2(false); break;
     }
         
     return NULL;
-
-#undef CASE_CREATE_EVALUATOR
 }
 
+#define FX_EXTRACT_FIELD(str)                                           \
+    if (!getValueFromConstList(sField, exprNode))                       \
+    {                                                                   \
+    FX_LOG(ERROR, "Create FieldAvgLengthFeatureEvaluator FAILED: "      \
+           "get value from const list failed.");                        \
+    return NULL;                                                        \
+    }
+
+
+ExprEvaluator* DefaultExprEvaluatorBuilder::createFeatureExprEvaluator(
+        const ExprNode& exprNode, ExprEvaluator* pLeftEva)
+{
+    FIRTEX_ASSERT2(m_pFeatureCtx);
+
+    ArgListExprEvaluator::ArgVector args;
+    if (pLeftEva)
+    {
+        swapArglist(pLeftEva, args);
+        if (pLeftEva)
+        {
+            delete pLeftEva;
+        }
+    }
+
+    const IndexFeature& indexFeature = m_pFeatureCtx->featureProvider->getIndexFeature();
+    
+    ExprParser::FuncType eFunc =
+        ExprParser::getFunc(exprNode.funcIdx).funcType;
+    switch (eFunc)
+    {
+    case ExprParser::FEATURE_FIELD_LENGTH:
+    {
+        string sField;
+        FX_EXTRACT_FIELD(sField);
+        return new FieldLengthFeatureEvaluator(
+                m_pFeatureCtx->featureProvider->getIndexFeature().lengthNorm(sField));
+    }
+    case ExprParser::FEATURE_FIELD_AVG_LENGTH:
+    {
+        string sField;
+        FX_EXTRACT_FIELD(sField);
+        return new FieldAvgLengthFeatureEvaluator(
+                indexFeature.getAverageFieldLength(sField));
+    }
+    case ExprParser::FEATURE_DOC_AVG_LENGTH:
+        return new DocAvgLengthFeatureEvaluator(
+                indexFeature.getAverageDocLength());
+    case ExprParser::FEATURE_DOC_COUNT:
+        return new DocCountFeatureEvaluator(indexFeature.getDocCount());
+    case ExprParser::FEATURE_QUERY_WORD_COUNT:
+        return new QueryWordCountFeatureEvaluator(
+                *(m_pFeatureCtx->queryFeature));
+    case ExprParser::FEATURE_QUERY_HIT_COUNT:
+        return new QueryHitCountFeatureEvaluator(m_pFeatureCtx);
+    case ExprParser::FEATURE_BM25:
+        return new BM25FeatureEvaluator(m_pFeatureCtx, "");
+    case ExprParser::FEATURE_FIELD_BM25:
+    {
+        string sField;
+        FX_EXTRACT_FIELD(sField);
+        return new BM25FeatureEvaluator(m_pFeatureCtx, sField);
+    }
+    default:
+        FIRTEX_ASSERT2(false); break;
+    }
+        
+    return NULL;
+}
+
+#undef FX_EXTRACT_FIELD
+
+
 //static 
-void DefaultExprEvaluatorBuilder::swapArglist(ExprEvaluator* pLeftEva, 
+void DefaultExprEvaluatorBuilder::swapArglist(ExprEvaluator*& pLeftEva, 
         ArgListExprEvaluator::ArgVector& args)
 {
     if (!pLeftEva || !pLeftEva->isArgList() )
     {
         args.push_back(pLeftEva);
+        pLeftEva = NULL;
         return;
     }
 
     ArgListExprEvaluator* pArgEva =
         dynamic_cast<ArgListExprEvaluator*>(pLeftEva);
     FIRTEX_ASSERT2(pArgEva);
-    swap(args, pArgEva->getArgList());
-
-    delete pLeftEva;
+    ArgListExprEvaluator::ArgVector& evaArgList = pArgEva->getArgList();
+    for (size_t i = 0; i < evaArgList.size(); ++i)
+    {
+        ExprEvaluator* pEva = evaArgList[i];
+        if (pEva->isArgList())
+        {
+            swapArglist(pEva, args);
+            if (pEva)
+            {
+                delete pEva;
+            }
+        }
+        else 
+        {
+            args.push_back(pEva);
+        }
+    }
+    evaArgList.clear();
 }
 
 ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
@@ -313,13 +407,13 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
     return NULL;
 }
 
-ExprEvaluator* DefaultExprEvaluatorBuilder::createInNode(
+ExprEvaluator* DefaultExprEvaluatorBuilder::createInEvaluator(
         const ExprNode& exprNode)
 {
     const ExprNode& rightNode = m_parser.getExprNode(exprNode.rightNodeIdx);
     if (rightNode.tokenType != ExprNode::TOK_CONST_LIST)
     {
-        FX_LOG(ERROR, "IN() arguments must be constants except the first onde");
+        FX_LOG(ERROR, "IN() arguments must be constants except the first node");
         return NULL;
     }
     const ConstList* pConstList = rightNode.constList;

@@ -17,6 +17,7 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
+#include "firtex/search/ScoreDoc.h"
 
 FX_NS_DEF(search);
 
@@ -26,19 +27,17 @@ FX_NS_DEF(search);
  * @class ScoredDoc
  * @brief Represent scored document with score value
  */
-class ScoredDoc
+class ScoredDoc : public ScoreDoc
 {
 public:
-    ScoredDoc(docid_t docId, float score)
-        : m_docId(docId)
-        , m_fScore(score)
+    ScoredDoc(docid_t docId, score_t score)
+        : ScoreDoc(docId, score)
         , m_uDataSize(0)
     {
     }
 
-    ScoredDoc(docid_t docId, float score, uint32_t uDataSize)
-        : m_docId(docId)
-        , m_fScore(score)
+    ScoredDoc(docid_t docId, score_t score, uint32_t uDataSize)
+        : ScoreDoc(docId, score)
         , m_uDataSize(uDataSize)
     {
     }
@@ -48,20 +47,12 @@ public:
     }
 
 public:
-    inline docid_t getDocId() const {return m_docId;}
-    inline float getScore() const {return m_fScore;}
-
-    inline void setDocId(docid_t docId) {m_docId = docId;}
-    inline void setScore(float s) {m_fScore = s;}
-
     template<typename T>
     inline T& getCustomValue(uint32_t uValIdx);
     template<typename T>
     inline const T& getCustomValue(uint32_t uValIdx) const;
 
-public:
-    docid_t m_docId;
-    float m_fScore;
+private:
     uint32_t m_uDataSize;
     uint8_t m_customData[1];
 };

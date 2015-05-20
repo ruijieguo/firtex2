@@ -48,46 +48,6 @@ void ExprOptimizer::optimize(int32_t iNodeIdx)
         }
     }
 
-    // madd, mul3
-    // if ((pRoot->tokenType == ExprNode::TOK_PLUS || pRoot->tokenType == ExprNode::TOK_MUL)
-    //     && (pLeft->tokenType == ExprNode::TOK_MUL || pRight->tokenType == ExprNode::TOK_MUL))
-    // {
-    //     if (pLeft->tokenType != ExprNode::TOK_MUL)
-    //     {
-    //         swap(pRoot->leftNodeIdx, pRoot->rightNodeIdx);
-    //         swap(*pLeft, *pRight);
-    //     }
-
-    //     pLeft->tokenType = ExprNode::TOK_COMMA;
-
-    //     int32_t iLeft = pRoot->leftNodeIdx;
-    //     int32_t iRight = pRoot->rightNodeIdx;
-
-    //     pRoot->funcIdx = (pRoot->tokenType == ExprNode::TOK_PLUS) ?
-    //                      ExprParser::FUNC_MADD : ExprParser::FUNC_MUL3;
-    //     pRoot->tokenType = ExprNode::TOK_FUNC;
-    //     size_t size = m_nodes.size();
-    //     pRoot->leftNodeIdx = size;
-    //     pRoot->rightNodeIdx = -1;
-
-    //     FIRTEX_ASSERT2(ExprParser::getFunc(pRoot->funcIdx).funcType == pRoot->funcIdx);
-        
-    //     // This may invalidate all pointers
-    //     m_nodes.resize(size + 1);
-    //     pRoot = &m_nodes[iNodeIdx];
-    //     pLeft = (pRoot->leftNodeIdx >= 0) ?
-    //             &m_nodes[pRoot->leftNodeIdx] : NULL;
-    //     pRight = (pRoot->rightNodeIdx >= 0) ?
-    //              &m_nodes[pRoot->rightNodeIdx] : NULL;
-        
-    //     ExprNode& argNode = m_nodes[size];
-    //     argNode.tokenType = ExprNode::TOK_COMMA;
-    //     argNode.leftNodeIdx = iLeft;
-    //     argNode.rightNodeIdx = iRight;
-    //     FX_TRACE("Optimized: [%s]", ExprParser::toString(iNodeIdx, m_nodes).c_str());
-    //     return;
-    // }
-
     // division by a constant optimize to  multiplication by inverse
     if (pRoot->tokenType == ExprNode::TOK_DIV 
         && pRight->tokenType == ExprNode::TOK_DOUBLE)
@@ -184,18 +144,7 @@ void ExprOptimizer::optimize(int32_t iNodeIdx)
         return;
     }
 
-        
     FX_TRACE("Optimized: [%s]", ExprParser::toString(iNodeIdx, m_nodes).c_str());
-
-    // case of INT32(int - attr)
-    // if (pRoot->tokenType == ExprNode::TOK_FUNC
-    //     && pRoot->funcIdx == ExprParser::FUNC_INT32
-    //     && (pLeft->tokenType == ExprNode::TOK_ATTR_INT 
-    //         || pLeft->tokenType == ExprNode::TOK_ATTR_BITS))
-    // {
-    //     pRoot->tokenType = ExprNode::TOK_ATTR_SINT;
-    //     pRoot->m_tLocator = pLeft->m_tLocator;
-    // }   
 }
 
 bool ExprOptimizer::optimizeArithmetic(ExprNode* pRoot,

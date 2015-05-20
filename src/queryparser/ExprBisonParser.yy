@@ -75,6 +75,7 @@ FX_NS_USE(queryparser);
 %type <nodeIdx>		arglist
 %type <nodeIdx>		constlist
 %type <nodeIdx>		function
+%type <nodeIdx>		feature
 %type <nodeIdx>		exprline
 
 %destructor {delete $$;} TOK_IDENT TOK_QUOTED_STRING
@@ -111,8 +112,8 @@ exprline: expr END
               exprParser.finalize($1); 
           }
 
-attr: TOK_IDENT			
-        {
+attr: TOK_IDENT
+       {
             $$ = exprParser.addAttrNode(*$1); 
             delete $1;
             if ($$ < 0)
@@ -120,7 +121,7 @@ attr: TOK_IDENT
                 YYERROR;
             }
         }
-	| TOK_QUOTED_STRING
+       | TOK_QUOTED_STRING
           {
               $$ = exprParser.addAttrNode(*$1); 
               delete $1;
@@ -129,15 +130,16 @@ attr: TOK_IDENT
                   YYERROR;
               }
           }
-	;
+        ;
 
 expr:
-	attr
-	| function
-	| TOK_INT			{ $$ = exprParser.addIntNode($1); }
-        | TOK_DOUBLE		        { $$ = exprParser.addFloatNode($1); }
-        | '-' expr %prec TOK_NEG	{ $$ = exprParser.addOpNode(ExprNode::TOK_NEG, $2, -1); }
-	| TOK_NOT expr
+        attr
+        | function
+        | feature
+        | TOK_INT                       { $$ = exprParser.addIntNode($1); }
+        | TOK_DOUBLE                    { $$ = exprParser.addFloatNode($1); }
+        | '-' expr %prec TOK_NEG        { $$ = exprParser.addOpNode(ExprNode::TOK_NEG, $2, -1); }
+        | TOK_NOT expr
           {
               $$ = exprParser.addOpNode(ExprNode::TOK_NOT, $2, -1);
               if ($$ < 0) 
@@ -145,37 +147,39 @@ expr:
                   YYERROR; 
               }
           }
-        | expr '+' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_PLUS, $1, $3 ); }
-	| expr '-' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_MINUS, $1, $3 ); }
-	| expr '*' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_MUL, $1, $3 ); }
-	| expr '/' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_DIV, $1, $3 ); }
-	| expr '<' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_LE, $1, $3 ); }
-	| expr '>' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_GR, $1, $3 ); }
-	| expr '&' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_BIT_AND, $1, $3 ); }
-	| expr '|' expr			{ $$ = exprParser.addOpNode(ExprNode::TOK_BIT_OR, $1, $3 ); }
-        | expr TOK_LTE expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_LTE, $1, $3 ); }
-        | expr TOK_GTE expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_GTE, $1, $3 ); }
-	| expr TOK_EQ expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_EQ, $1, $3 ); }
-	| expr TOK_NE expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_NE, $1, $3 ); }
-	| expr TOK_AND expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_AND, $1, $3); }
-	| expr TOK_OR expr              { $$ = exprParser.addOpNode(ExprNode::TOK_OR, $1, $3); }
-	| '(' expr ')'			{ $$ = $2; }
-	;
+        | expr '+' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_PLUS, $1, $3 ); }
+        | expr '-' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_MINUS, $1, $3 ); }
+        | expr '*' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_MUL, $1, $3 ); }
+        | expr '/' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_DIV, $1, $3 ); }
+        | expr '<' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_LE, $1, $3 ); }
+        | expr '>' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_GR, $1, $3 ); }
+        | expr '&' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_BIT_AND, $1, $3 ); }
+        | expr '|' expr                 { $$ = exprParser.addOpNode(ExprNode::TOK_BIT_OR, $1, $3 ); }
+        | expr TOK_LTE expr             { $$ = exprParser.addOpNode(ExprNode::TOK_LTE, $1, $3 ); }
+        | expr TOK_GTE expr             { $$ = exprParser.addOpNode(ExprNode::TOK_GTE, $1, $3 ); }
+        | expr TOK_EQ expr              { $$ = exprParser.addOpNode(ExprNode::TOK_EQ, $1, $3 ); }
+        | expr TOK_NE expr              { $$ = exprParser.addOpNode(ExprNode::TOK_NE, $1, $3 ); }
+        | expr TOK_AND expr             { $$ = exprParser.addOpNode(ExprNode::TOK_AND, $1, $3); }
+        | expr TOK_OR expr              { $$ = exprParser.addOpNode(ExprNode::TOK_OR, $1, $3); }
+        | '(' expr ')'                  { $$ = $2; }
+        ;
 
 arglist:
-	expr				{ $$ = $1; }
-        | arglist ',' expr		{ $$ = exprParser.addOpNode(ExprNode::TOK_COMMA, $1, $3); }
-	;
+        expr                            { $$ = $1; }
+        | arglist ',' expr              { $$ = exprParser.addOpNode(ExprNode::TOK_COMMA, $1, $3); }
+        ;
 
 constlist:
-	TOK_INT			        { $$ = exprParser.addConstListNode($1); }
-        | TOK_DOUBLE		        { $$ = exprParser.addConstListNode($1); }
-	| constlist ',' TOK_INT	        { exprParser.appendToConstList($$, $3); }
-        | constlist ',' TOK_DOUBLE	{ exprParser.appendToConstList($$, $3); }
-	;
+        TOK_INT                         { $$ = exprParser.addConstListNode($1); }
+        | TOK_DOUBLE                    { $$ = exprParser.addConstListNode($1); }
+        | TOK_IDENT                     { $$ = exprParser.addConstListNode(*$1); delete $1;}
+        | constlist ',' TOK_INT         { exprParser.appendToConstList($$, $3); }
+        | constlist ',' TOK_DOUBLE      { exprParser.appendToConstList($$, $3); }
+        | constlist ',' TOK_IDENT       { exprParser.appendToConstList($$, *$3); delete $3;}
+        ;
 
 function:
-	TOK_FUNC '(' arglist ')'
+        TOK_FUNC '(' arglist ')'
           { 
               $$ = exprParser.addFuncNode($1, $3);
               if ($$<0)
@@ -183,7 +187,7 @@ function:
                   YYERROR; 
               }
           }
-	| TOK_FUNC '(' ')'	
+        | TOK_FUNC '(' ')'
           {
               $$ = exprParser.addFuncNode($1, -1); 
               if ($$ < 0)
@@ -191,19 +195,50 @@ function:
                   YYERROR;
               }
           }
-	| TOK_FUNC_IN '(' attr ',' constlist ')'
-	  {
+        | TOK_FUNC_IN '(' attr ',' constlist ')'
+          {
               $$ = exprParser.addFuncNode($1, $3, $5);
           }
-	| TOK_FUNC_DATE '(' TOK_IDENT ')'
-	  {
+        | TOK_FUNC_DATE '(' TOK_IDENT ')'
+          {
+              $$ = exprParser.addDateFuncNode($1, *$3);
+              delete $3;
+          }
+        | TOK_FUNC_DATE '(' TOK_QUOTED_STRING ')'
+          {
               $$ = exprParser.addDateFuncNode($1, *$3);
           }
-	| TOK_FUNC_DATE '(' TOK_QUOTED_STRING ')'
-	  {
-              $$ = exprParser.addDateFuncNode($1, *$3);
+        ;
+
+feature:
+        '@' TOK_IDENT '(' arglist ')'
+          { 
+              $$ = exprParser.addFeatureNode(*$2, $4);
+              delete $2;
+              if ($$<0)
+              {
+                  YYERROR; 
+              }
           }
-	;
+        | '@' TOK_IDENT '(' ')'
+          {
+              $$ = exprParser.addFeatureNode(*$2, -1); 
+              delete $2;
+              if ($$ < 0)
+              {
+                  YYERROR;
+              }
+          }
+        | '@' TOK_IDENT
+          {
+              $$ = exprParser.addFeatureNode(*$2, -1); 
+              delete $2;
+              if ($$ < 0)
+              {
+                  YYERROR;
+              }
+          }
+        ;
 
 %% 
 

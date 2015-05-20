@@ -32,10 +32,8 @@ IndexSearcher::~IndexSearcher()
 
 void IndexSearcher::initFeatureProvider()
 {
-    const ScorerProfile* pScorerProf =
-        ScorerProfileFactory::instance()->getProfile();
     m_pFeatureProvider = new FeatureProvider();
-    m_pFeatureProvider->init(m_pIndexReader, pScorerProf->getSimilarity());
+    m_pFeatureProvider->init(m_pIndexReader);
 }
 
 QueryHitsPtr IndexSearcher::search(const string& sStatements,
@@ -58,6 +56,7 @@ QueryHitsPtr IndexSearcher::search(const Statement& statement,
     SortClausePtr pSortClause = statement.getSortClause();
     QueryClausePtr pQueryClause = statement.getQueryClause();
     FilterClausePtr pFilterClause = statement.getFilterClause();
+    ScorerProfileClausePtr pProfileClause = statement.getScorerProfileClause();
     QueryTracerPtr pTracer;
     if (pParamClause.isNotNull())
     {
@@ -70,7 +69,7 @@ QueryHitsPtr IndexSearcher::search(const Statement& statement,
             || (pParamClause->getQueryPhase() == PHASE_RETRIEVE_DOCID))
         {
             return doSearch(pQueryClause, pSortClause, pFilterClause, 
-                            pParamClause, pTracer, queryParser);
+                            pParamClause, pProfileClause, pTracer, queryParser);
         }
         else if (pParamClause->getQueryPhase() == PHASE_RETRIEVE_DOC)
         {
@@ -88,13 +87,14 @@ QueryHitsPtr IndexSearcher::search(const Statement& statement,
     else 
     {
         return doSearch(pQueryClause, pSortClause, pFilterClause, 
-                        pParamClause, pTracer, queryParser);
+                        pParamClause, pProfileClause, pTracer, queryParser);
     }
 }
 
 QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
                                    const SorterPtr& pSort,
                                    const FilterPtr& pFilter,
+                                   const ScorerProfile* pScorerProfile,
                                    QueryTracerPtr& pTracer,
                                    size_t nStart, size_t nTopDocs,
                                    phase_t phase)
@@ -128,8 +128,6 @@ QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
         pHitCollector->setFilter(pFilter);
     }
 
-    const ScorerProfile* pScorerProfile = 
-        ScorerProfileFactory::instance()->getProfile("");
     ScorerPtr pScorer = pScorerProfile->createScorer();
     pQueryExecutor->execute(pHitCollector, pScorer, pTracer);
     size_t nTotalHits = pHitCollector->totalHits();
@@ -182,6 +180,7 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
                                      const SortClausePtr& pSortClause, 
                                      const FilterClausePtr& pFilterClause, 
                                      const ParameterClausePtr& pParamClause, 
+                                     const ScorerProfileClausePtr& pScorerProfileClause, 
                                      QueryTracerPtr& pTracer,
                                      QueryParser& queryParser)
 {
@@ -229,8 +228,13 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
                 return QueryHitsPtr();
             }
         }
-        return search(pQuery, pSort, pFilter, pTracer, nStart, nTop, 
-                      pParamClause.isNull() ? PHASE_RETRIEVE_ALL 
+        string sProfile = pScorerProfileClause.isNull() ? "default" : 
+                          pScorerProfileClause->getProfileName();
+        const ScorerProfile* pScorerProfile =
+            ScorerProfileFactory::instance()->getProfile(sProfile);
+
+        return search(pQuery, pSort, pFilter, pScorerProfile, pTracer, nStart,
+                      nTop, pParamClause.isNull() ? PHASE_RETRIEVE_ALL 
                       : pParamClause->getQueryPhase());
     }
     catch (const FirteXException& e)

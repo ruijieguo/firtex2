@@ -22,6 +22,7 @@
 #include "firtex/search/Query.h"
 #include "firtex/search/Statement.h"
 #include "firtex/search/QueryTracer.h"
+#include "firtex/search/ScorerProfile.h"
 #include "firtex/utility/Pool.h"
 
 FX_NS_DEF(queryparser);
@@ -70,7 +71,8 @@ public:
      * @param pQuery the query to execute
      * @param pSort custom sorter
      * @param pFilter custom filter
-     * @param pFilter pTracer query tracer
+     * @param pScorerProfile scorer profile
+     * @param pTrace pTracer query tracer
      * @param nStart start doc to retrieval in hits
      * @param nTopDocs max number of documents to return
      * @param phase search phase
@@ -81,6 +83,7 @@ public:
     QueryHitsPtr search(const QueryPtr& pQuery,
                         const SorterPtr& pSort,
                         const FilterPtr& pFilter,
+                        const ScorerProfile* pScorerProfile,
                         QueryTracerPtr& pTracer,
                         size_t nStart, size_t nTopDocs,
                         phase_t phase = PHASE_RETRIEVE_ALL);
@@ -105,6 +108,7 @@ protected:
                           const SortClausePtr& pSortClause,
                           const FilterClausePtr& pFilterClause,
                           const ParameterClausePtr& pParamClause, 
+                          const ScorerProfileClausePtr& pScorerProfileClause,
                           QueryTracerPtr& pTracer,
                           FX_NS(queryparser)::QueryParser& queryParser);
 

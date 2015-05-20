@@ -17,6 +17,7 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
+#include "firtex/search/ScoreDoc.h"
 #include "firtex/search/DocScoreFeature.h"
 
 FX_NS_DEF(search);
@@ -25,43 +26,31 @@ FX_NS_DEF(search);
  * @class MatchedDoc
  * @brief Represent a matched doc of a query
  */
-class MatchedDoc
+class MatchedDoc : public ScoreDoc
 {
 public:
     MatchedDoc(docid_t docId, score_t score, size_t nMaxNumTerms)
-        : m_docId(docId)
-        , m_fScore(score)
+        : ScoreDoc(docId, score)
         , m_scoreFeature((uint32_t)nMaxNumTerms)
     {
     }
 
     MatchedDoc(size_t nMaxNumTerms)
-        : m_docId(INVALID_DOCID)
-        , m_fScore(0.0)
-        , m_scoreFeature((uint32_t)nMaxNumTerms)
+        : m_scoreFeature((uint32_t)nMaxNumTerms)
     {
     }
 
     ~MatchedDoc(void)
     {
-    }		
+    }
 
 public:
     inline void reset();
-    inline docid_t getDocId() const {return m_docId;}
-    inline score_t getScore() const {return m_fScore;}
-
-    inline void setDocId(docid_t docId) {m_docId = docId;}
-    inline void setScore(score_t s) {m_fScore = s;}
-    inline void addScore(score_t s) {m_fScore += s;}
     
     inline DocScoreFeature& scoreFeature();
     inline const DocScoreFeature& scoreFeature() const;
 
 protected:
-    docid_t m_docId;	///global document id
-    score_t m_fScore;	///score of document
-    
     DocScoreFeature m_scoreFeature;    
 };
 
@@ -69,8 +58,7 @@ protected:
 //
 inline void MatchedDoc::reset()
 {
-    m_docId = INVALID_DOCID;
-    m_fScore = 0.0f;
+    ScoreDoc::reset();
     m_scoreFeature.reset();
 }
 

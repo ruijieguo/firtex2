@@ -28,25 +28,25 @@ void ArgListExprEvaluator::addArg(ExprEvaluator* pExprEval)
     m_arguments.push_back(pExprEval);
 }
 
-float ArgListExprEvaluator::evaluateFloat(const ScoredDoc& scoredDoc)
+float ArgListExprEvaluator::evaluateFloat(const ScoreDoc& scoredDoc)
 {
     FIRTEX_ASSERT2(false);
     return 0.0f;
 }
 
-double ArgListExprEvaluator::evaluateDouble(const ScoredDoc& scoredDoc)
+double ArgListExprEvaluator::evaluateDouble(const ScoreDoc& scoredDoc)
 {
     FIRTEX_ASSERT2(false);
     return 0.0f;
 }
 
-int32_t ArgListExprEvaluator::evaluateInt32(const ScoredDoc& scoredDoc)
+int32_t ArgListExprEvaluator::evaluateInt32(const ScoreDoc& scoredDoc)
 {
     FIRTEX_ASSERT2(false);
     return -1;
 }
 
-int64_t ArgListExprEvaluator::evaluateInt64(const ScoredDoc& scoredDoc)
+int64_t ArgListExprEvaluator::evaluateInt64(const ScoreDoc& scoredDoc)
 {
     FIRTEX_ASSERT2(false);
     return -1;

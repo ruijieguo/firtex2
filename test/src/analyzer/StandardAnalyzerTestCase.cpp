@@ -106,6 +106,36 @@ void StandardAnalyzerTestCase::testTokenizeWithUnigram()
     }
 }
 
+void StandardAnalyzerTestCase::testTokenizeWithUnigram2()
+{
+    string str = "月经期和服药期可以吃象西瓜，苹果等水果吗";
+    StandardAnalyzer sa;
+    sa.setParam("encode=utf-8;algorithm=unigram");
+    sa.init();
+
+    TokenViewPtr pTokenView = sa.tokenize(str.c_str());
+    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    
+    const static size_t NUM_TOKENS = 9;
+    string answer[NUM_TOKENS] = {"中国", "北京", "上海", "广州", "firtex", "Open", 
+                                 "source", "激情", "ruijieguo@gmail.com"};
+    int32_t posInc[NUM_TOKENS] = {1, 1, 1, 1, 3, 1, 1, 1, 1};
+    int32_t startOff[NUM_TOKENS] = {0, 6, 12, 18, 28, 35, 40, 46, 52};
+    int32_t endOff[NUM_TOKENS] = {6, 12, 18, 24, 34, 39, 46, 52, 71};
+    TokenView::Iterator it = pTokenView->iterator();
+    //CPPUNIT_ASSERT_EQUAL(NUM_TOKENS, it.size());
+
+    size_t i = 0;
+    while (it.hasNext())
+    {
+        const Token& token = it.next();
+         cout << token.getTextValue() << std::endl;
+         cout << token.getPosIncrement() << ", " << 
+             token.getStartOffset() << ", " << token.getEndOffset() << std::endl;
+        ++i;
+    }
+}
+
 void StandardAnalyzerTestCase::testTokenizeWithTwoTokens()
 {
     StandardAnalyzer sa;

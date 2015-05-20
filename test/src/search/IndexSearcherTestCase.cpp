@@ -5,6 +5,7 @@
 #include "firtex/utility/File.h"
 #include "firtex/utility/Path.h"
 #include "firtex/index/OptimizeMergePolicy.h"
+#include "firtex/search/ScorerProfileFactory.h"
 #include "../index/IndexBuildHelper.h"
 
 using namespace std;
@@ -61,7 +62,7 @@ void IndexSearcherTestCase::testSearchTermQuery()
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
     QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
-            pNullTracer, 0, 1);
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 1);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
 }
@@ -78,7 +79,7 @@ void IndexSearcherTestCase::testSearchPhraseQuery()
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
     QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
-            pNullTracer, 0, 10);
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)1, pHits->getTotalHits());
@@ -86,6 +87,7 @@ void IndexSearcherTestCase::testSearchPhraseQuery()
     pQuery = parseQuery("\"this is a smoke\"");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), 
             pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
@@ -104,6 +106,7 @@ void IndexSearcherTestCase::testSearchAnyQuery()
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
     QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(),
             pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
@@ -142,7 +145,7 @@ void IndexSearcherTestCase::testSearchPhraseQueryAfterMerge()
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
     QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
-            pNullTracer, 0, 10);
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)1, pHits->getTotalHits());
@@ -150,6 +153,7 @@ void IndexSearcherTestCase::testSearchPhraseQueryAfterMerge()
     pQuery = parseQuery("\"e f\"");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), 
             pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
@@ -169,6 +173,7 @@ void IndexSearcherTestCase::testSearchPhraseQueryOfSWTEXT()
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
     QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), 
             pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
@@ -187,8 +192,9 @@ void IndexSearcherTestCase::testSearchPhraseQueryWithSlop()
     QueryPtr pQuery = parseQuery("\"hello world\"~2");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, 
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(),
+            pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
@@ -214,8 +220,8 @@ void IndexSearcherTestCase::testSearchAndQuery()
     QueryPtr pQuery = parseQuery("hello AND world");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, 
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
@@ -241,8 +247,8 @@ void IndexSearcherTestCase::testSearchAndQueryWithoutResult()
     QueryPtr pQuery = parseQuery("hello AND worlldd");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery,
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNull());
 }
 
@@ -258,8 +264,8 @@ void IndexSearcherTestCase::testSearchOrQuery()
     QueryPtr pQuery = parseQuery("hello OR world");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery,
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
@@ -285,8 +291,8 @@ void IndexSearcherTestCase::testSearchNotQuery()
     QueryPtr pQuery = parseQuery("hello NOT world");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, 
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
@@ -312,8 +318,8 @@ void IndexSearcherTestCase::testSearchReqOptQuery()
     QueryPtr pQuery = parseQuery("+hello OR world");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery,
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());
@@ -339,8 +345,8 @@ void IndexSearcherTestCase::testSearchMixedAndOrQuery()
     QueryPtr pQuery = parseQuery("(hello AND world) OR smoke");
     CPPUNIT_ASSERT(pQuery.isNotNull());
     QueryTracerPtr pNullTracer;
-    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery,
-            NULL, NULL, pNullTracer, 0, 10);
+    QueryHitsPtr pHits = m_pIndexSearcher->search(pQuery, NULL, NULL,
+            ScorerProfileFactory::instance()->getProfile(), pNullTracer, 0, 10);
     CPPUNIT_ASSERT(pHits.isNotNull());
     CPPUNIT_ASSERT_EQUAL((size_t)2, pHits->size());
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, pHits->getTotalHits());

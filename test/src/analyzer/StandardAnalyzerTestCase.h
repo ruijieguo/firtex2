@@ -23,13 +23,14 @@ FX_NS_DEF(analyzer);
 class StandardAnalyzerTestCase : public CPPUNIT_NS::TestFixture
 {
     CPPUNIT_TEST_SUITE( StandardAnalyzerTestCase );
-    CPPUNIT_TEST(testTokenize);
-    CPPUNIT_TEST(testTokenizeWithUnigram);
-    CPPUNIT_TEST(testTokenizeWithTwoTokens);
-    CPPUNIT_TEST(testTokenizeStrict);
-    CPPUNIT_TEST(testUnigramAlgorithm);
-    CPPUNIT_TEST(testTokenizeGBKFile);
-    CPPUNIT_TEST(testTokenizeUTF8File);
+//    CPPUNIT_TEST(testTokenize);
+//    CPPUNIT_TEST(testTokenizeWithUnigram);
+    CPPUNIT_TEST(testTokenizeWithUnigram2);
+//    CPPUNIT_TEST(testTokenizeWithTwoTokens);
+//    CPPUNIT_TEST(testTokenizeStrict);
+//    CPPUNIT_TEST(testUnigramAlgorithm);
+//    CPPUNIT_TEST(testTokenizeGBKFile);
+//    CPPUNIT_TEST(testTokenizeUTF8File);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -39,6 +40,7 @@ public:
 public:
     void testTokenize();
     void testTokenizeWithUnigram();
+    void testTokenizeWithUnigram2();
     void testTokenizeWithTwoTokens();
     void testTokenizeStrict();
     void testUnigramAlgorithm();

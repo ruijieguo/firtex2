@@ -64,7 +64,7 @@ if test x$FX_BUILTIN_THRIFT = xyes; then
     export LDFLAGS="$THRIFT_LDFLAGS"
     ${SHELL} ./configure --disable-option-checking --with-boost=$FX_BOOST_HOME
     echo "Compiling in directory"`pwd`
-    make -j2
+    make
     echo "Leaving directory "`pwd`
     export CPPFLAGS=$OLD_CPPFLAGS
     export LDFLAGS=$OLD_LDFLAGS

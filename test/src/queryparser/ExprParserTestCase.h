@@ -16,6 +16,9 @@ class ExprParserTestCase : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST(testParseFloatUnaryExpr);
     CPPUNIT_TEST(testComplexExpr);
     CPPUNIT_TEST(testParseDateExpr);
+    CPPUNIT_TEST(testParseDistExpr);
+    CPPUNIT_TEST(testParseIFExpr);
+    CPPUNIT_TEST(testParseTernaryExpr);
     CPPUNIT_TEST_SUITE_END();
 public:
     ExprParserTestCase();
@@ -30,6 +33,9 @@ protected:
     void testParseFloatUnaryExpr();
     void testComplexExpr();
     void testParseDateExpr();
+    void testParseDistExpr();
+    void testParseIFExpr();
+    void testParseTernaryExpr();
 
 protected:
     void parseAndAssertInt32(const std::string& sExpr, int32_t iExpectVal);

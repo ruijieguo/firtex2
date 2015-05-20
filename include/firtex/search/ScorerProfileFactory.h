@@ -29,13 +29,30 @@ protected:
     ~ScorerProfileFactory();
 
 public:
-    const ScorerProfile* getProfile(const tstring& sProfileName = _T(""));
+    /**
+     * Register scorer profile
+     * 
+     * @param pProfile the scorer profile instance
+     */
+    void registerProfile(ScorerProfile* pProfile);
 
-protected:
+    /**
+     * Return profile by profile name
+     */
+    const ScorerProfile* getProfile(const std::string& sProfileName = "default");
 
 private:
-	DECLARE_LAZY_SINGLETON(ScorerProfileFactory);
+    void doRegisterProfile(std::string sProfile, ScorerProfile* pProfile);
 
+private:
+    typedef std::map<std::string, ScorerProfile*> ProfileMap;
+
+    ProfileMap m_profiles;
+
+private:
+    DECLARE_LAZY_SINGLETON(ScorerProfileFactory);
+
+private:
     DECLARE_STREAM_LOGGER();
 };
 

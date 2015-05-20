@@ -49,10 +49,14 @@ public:
      */
     virtual void endQuery() = 0;
 
-protected:
+public:
+    /**
+     * Set parameter
+     */
+    virtual void setParameter(const std::string& sParam) {}
 };
 
-typedef FX_NS(common)::SharedPtr<Scorer> ScorerPtr;
+DEFINE_TYPED_PTR(Scorer);
 
 FX_NS_END
 

@@ -27,6 +27,8 @@ libsearch_la_SOURCES = AndQueryExecutor.cpp\
 	ReqProhQueryExecutor.cpp\
 	ScorerProfile.cpp\
 	ScorerProfileFactory.cpp\
+	BM25ScorerProfile.cpp\
+	FormulaScorerProfile.cpp\
 	Similarity.cpp\
 	SimpleHitCollector.cpp\
 	Sorter.cpp\
@@ -38,6 +40,10 @@ libsearch_la_SOURCES = AndQueryExecutor.cpp\
 	TermQueryExecutor.cpp\
 	AnyQueryExecutor.cpp\
 	BM25Scorer.cpp\
+	BM25TermScorer.cpp\
+	BM25DocScorer.cpp\
+	BM25Weight.cpp\
+	FormulaScorer.cpp\
 	Statement.cpp\
 	QueryClause.cpp\
 	ParameterClause.cpp\
@@ -45,7 +51,13 @@ libsearch_la_SOURCES = AndQueryExecutor.cpp\
 	FilterClause.cpp\
 	FieldSelectClause.cpp\
 	DocSelectClause.cpp\
+	ScorerProfileClause.cpp\
 	ArgListExprEvaluator.cpp\
+	DistExprEvaluator.cpp\
+	FieldLengthFeatureEvaluator.cpp\
+	QueryWordCountFeatureEvaluator.cpp\
+	QueryHitCountFeatureEvaluator.cpp\
+	BM25FeatureEvaluator.cpp\
 	QueryTracerAppender.cpp\
 	QueryTracer.cpp
 

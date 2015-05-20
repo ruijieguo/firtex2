@@ -4,6 +4,7 @@ nobase_include_HEADERS = \
   firtex/analyzer/Analyzer.h \
   firtex/analyzer/AnalyzerMapper.h \
   firtex/analyzer/DateTimeAnalyzer.h \
+  firtex/analyzer/DateTimeLexer.h \
   firtex/analyzer/DoubleArrayTrie.h \
   firtex/analyzer/FilterFactory.h \
   firtex/analyzer/GBKTokenLexer.h \
@@ -31,6 +32,9 @@ nobase_include_HEADERS = \
   firtex/common/Appender.h \
   firtex/common/BasicLoggingLayout.h \
   firtex/common/Common.h \
+  firtex/common/Compiler_GCC.h \
+  firtex/common/Compiler_IC.h \
+  firtex/common/Compiler_VC.h \
   firtex/common/ConsoleAppender.h \
   firtex/common/FileAppender.h \
   firtex/common/IndexDefines.h \
@@ -81,9 +85,17 @@ nobase_include_HEADERS = \
   firtex/index/ByteSlice.h \
   firtex/index/ByteSliceInputStream.h \
   firtex/index/ByteSliceOutputStream.h \
+  firtex/index/CommitCondition.h \
   firtex/index/CommitList.h \
   firtex/index/CommitScheduler.h \
   firtex/index/Committable.h \
+  firtex/index/common/IndexKeyHasher.h \
+  firtex/index/common/PostingTraits.h \
+  firtex/index/common/TypedIndexer.h \
+  firtex/index/common/TypedInMemTermIterator.h \
+  firtex/index/common/TypedInMemTermReader.h \
+  firtex/index/common/TypedTermIterator.h \
+  firtex/index/common/TypedTermReader.h \
   firtex/index/ComponentBuilder.h \
   firtex/index/ComponentCreatorFactory.h \
   firtex/index/compress/Coding.h \
@@ -92,9 +104,13 @@ nobase_include_HEADERS = \
   firtex/index/compress/S16Coding.h \
   firtex/index/compress/Unpack.h \
   firtex/index/ConcurrentMergeScheduler.h \
+  firtex/index/datetime/DateTimeComponentCreator.h \
   firtex/index/datetime/DateTimeIndexer.h \
+  firtex/index/datetime/DateTimeIndexMerger.h \
   firtex/index/datetime/DateTimeTermIterator.h \
   firtex/index/datetime/DateTimeTermReader.h \
+  firtex/index/datetime/InMemDateTimeTermIterator.h \
+  firtex/index/datetime/InMemDateTimeTermReader.h \
   firtex/index/DBTMergePolicy.h \
   firtex/index/DeletedDocumentFilter.h \
   firtex/index/DictLoader.h \
@@ -107,8 +123,10 @@ nobase_include_HEADERS = \
   firtex/index/DocSkipPoint.h \
   firtex/index/DocumentConsumer.h \
   firtex/index/FieldComponentCreator.h \
+  firtex/index/FieldFilter.h \
   firtex/index/FieldIndexer.h \
   firtex/index/FieldMerger.h \
+  firtex/index/FieldSelector.h \
   firtex/index/ForwardIndexCreator.h \
   firtex/index/ForwardIndexFactory.h \
   firtex/index/ForwardIndexIterator.h \
@@ -168,6 +186,14 @@ nobase_include_HEADERS = \
   firtex/index/MultiTermPostingIterator.h \
   firtex/index/MultiTermReader.h \
   firtex/index/NoMergePolicy.h \
+  firtex/index/numeric/InMemSimpleNumericTermIterator.h \
+  firtex/index/numeric/InMemSimpleNumericTermReader.h \
+  firtex/index/numeric/NumericHasher.h \
+  firtex/index/numeric/SimpleNumericComponentCreator.h \
+  firtex/index/numeric/SimpleNumericIndexer.h \
+  firtex/index/numeric/SimpleNumericIndexMerger.h \
+  firtex/index/numeric/SimpleNumericTermIterator.h \
+  firtex/index/numeric/SimpleNumericTermReader.h \
   firtex/index/OptimizeMergePolicy.h \
   firtex/index/OptPFDPostingCoding.h \
   firtex/index/PosPostingDecoder.h \
@@ -189,6 +215,7 @@ nobase_include_HEADERS = \
   firtex/index/primarykey/PrimaryKeyPostingIterator.h \
   firtex/index/primarykey/PrimaryKeyTermIterator.h \
   firtex/index/primarykey/PrimaryKeyTermReader.h \
+  firtex/index/ResultDoc.h \
   firtex/index/SequenceMergeScheduler.h \
   firtex/index/SingleIndexBarrelReader.h \
   firtex/index/StoredFieldsMerger.h \
@@ -231,6 +258,8 @@ nobase_include_HEADERS = \
   firtex/queryparser/QueryExprParser.h \
   firtex/queryparser/QueryParser.h \
   firtex/search/AndQueryExecutor.h \
+  firtex/search/AnyQueryExecutor.h \
+  firtex/search/AnyQuery.h \
   firtex/search/ArgListExprEvaluator.h \
   firtex/search/AttrExprEvaluator.h \
   firtex/search/BinaryExprEvaluator.h \
@@ -240,14 +269,16 @@ nobase_include_HEADERS = \
   firtex/search/Clause.h \
   firtex/search/ConstExprEvaluator.h \
   firtex/search/DefaultSimilarity.h \
+  firtex/search/DistExprEvaluator.h \
   firtex/search/DocScoreFeature.h \
+  firtex/search/DocSelectClause.h \
   firtex/search/ExprEvaluator.h \
   firtex/search/FeatureProvider.h \
+  firtex/search/FieldSelectClause.h \
   firtex/search/FilterClause.h \
   firtex/search/Filter.h \
   firtex/search/HitCollector.h \
   firtex/search/HitQueue.h \
-  firtex/search/ResultFormatter.h \
   firtex/search/IndexFeature.h \
   firtex/search/IndexSearcher.h \
   firtex/search/InExprEvaluator.h \
@@ -263,9 +294,16 @@ nobase_include_HEADERS = \
   firtex/search/QueryFeature.h \
   firtex/search/Query.h \
   firtex/search/QueryHits.h \
+  firtex/search/QueryResult.h \
+  firtex/search/QueryTracerAppender.h \
+  firtex/search/QueryTracer.h \
   firtex/search/RangeQuery.h \
   firtex/search/ReqOptQueryExecutor.h \
   firtex/search/ReqProhQueryExecutor.h \
+  firtex/search/ResultCollector.h \
+  firtex/search/ResultCollectorImpl.h \
+  firtex/search/ResultFormatter.h \
+  firtex/search/ResultParser.h \
   firtex/search/ScoredDoc.h \
   firtex/search/Scorer.h \
   firtex/search/ScorerProfileFactory.h \
@@ -283,6 +321,7 @@ nobase_include_HEADERS = \
   firtex/search/TernaryExprEvaluator.h \
   firtex/search/UnaryExprEvaluator.h \
   firtex/search/XMLResultFormatter.h \
+  firtex/search/XMLResultParser.h \
   firtex/store/BlockFileInputStream.h \
   firtex/store/BlockFileOutputStream.h \
   firtex/store/BlockFileSystem.h \
@@ -294,12 +333,47 @@ nobase_include_HEADERS = \
   firtex/store/MMapFileInputStream.h \
   firtex/store/MMapFileSystem.h \
   firtex/store/OutputStream.h \
+  firtex/thread/atomic/Atomic_GCC_IA64.h \
+  firtex/thread/atomic/Atomic_GCC_PPC64.h \
+  firtex/thread/atomic/Atomic_GCC_SPARC.h \
+  firtex/thread/atomic/Atomic_GCC_X86_64.h \
+  firtex/thread/atomic/Atomic_GCC_X86_atomic_bool.h \
+  firtex/thread/atomic/Atomic_GCC_X86_cas32.h \
+  firtex/thread/atomic/Atomic_GCC_X86_fence.h \
+  firtex/thread/atomic/Atomic_GCC_X86.h \
+  firtex/thread/atomic/Atomic_GCC_X86_load32.h \
+  firtex/thread/atomic/Atomic_GCC_X86_loadptr.h \
+  firtex/thread/atomic/Atomic_GCC_X86_spinlock.h \
+  firtex/thread/atomic/Atomic_GCC_X86_store32.h \
+  firtex/thread/atomic/Atomic_GCC_X86_storeptr.h \
+  firtex/thread/atomic/Atomic_GCC_X86_xadd32.h \
+  firtex/thread/atomic/Atomic_GCC_X86_xchg32.h \
+  firtex/thread/atomic/AtomicImpl.h \
+  firtex/thread/atomic/AtomicIntegrals.h \
+  firtex/thread/atomic/AtomicInt.h \
+  firtex/thread/atomic/AtomicOperations.h \
+  firtex/thread/atomic/AtomicTypedOps.h \
+  firtex/thread/atomic/Atomic_VC_X86_64.h \
+  firtex/thread/atomic/Atomic_VC_X86.h \
+  firtex/thread/atomic/Barrier_GCC.h \
+  firtex/thread/atomic/Barrier.h \
+  firtex/thread/atomic/Barrier_VC.h \
+  firtex/thread/AtomicCount_GCC.h \
+  firtex/thread/AtomicCount_GCC_X86.h \
+  firtex/thread/AtomicCount.h \
+  firtex/thread/AtomicCount_PTHREADS.h \
+  firtex/thread/AtomicCount_SYNC.h \
+  firtex/thread/AtomicCount_WIN32.h \
+  firtex/thread/Atomic.h \
+  firtex/thread/atomic/IsAligned.h \
+  firtex/thread/atomic/MemoryOrder.h \
   firtex/thread/Condition.h \
   firtex/thread/Event.h \
   firtex/thread/Event_POSIX.h \
   firtex/thread/Event_WIN32.h \
   firtex/thread/FastMutex.h \
   firtex/thread/FastMutex_POSIX.h \
+  firtex/thread/HPSMR.h \
   firtex/thread/interlocked.h \
   firtex/thread/Mutex.h \
   firtex/thread/Mutex_POSIX.h \
@@ -313,6 +387,7 @@ nobase_include_HEADERS = \
   firtex/thread/StoppableObject.h \
   firtex/thread/SynchronizedObject.h \
   firtex/thread/Thread.h \
+  firtex/thread/ThreadLocal.h \
   firtex/thread/ThreadPool.h \
   firtex/thread/Thread_POSIX.h \
   firtex/thread/Thread_WIN32.h \
@@ -329,6 +404,8 @@ nobase_include_HEADERS = \
   firtex/utility/BoundedConcurrentHashMap.h \
   firtex/utility/BoundedConcurrentQueue.h \
   firtex/utility/Charset.h \
+  firtex/utility/ConcurrentLinkedQueue.h \
+  firtex/utility/ConcurrentList.h \
   firtex/utility/DateTime.h \
   firtex/utility/DirectoryIterator.h \
   firtex/utility/DirectoryIterator_POSIX.h \
@@ -340,11 +417,13 @@ nobase_include_HEADERS = \
   firtex/utility/File.h \
   firtex/utility/File_LINUX.h \
   firtex/utility/File_WIN32.h \
+  firtex/utility/HashComparator.h \
   firtex/utility/Hash.h \
   firtex/utility/HashMap.h \
   firtex/utility/IconvWrapper.h \
   firtex/utility/Iterator.h \
   firtex/utility/KeyValueParser.h \
+  firtex/utility/LinkedHashMap.h \
   firtex/utility/LooseBoundedPool.h \
   firtex/utility/MiscUtil.h \
   firtex/utility/MMapFile.h \
@@ -381,4 +460,4 @@ nobase_include_HEADERS = \
   firtex/utility/URLDecoder.h \
   firtex/utility/XMLDocumentWrapper.h \
   firtex/utility/ZIPFile.h \
-  firtex/utility/ZLib.h 
+  firtex/utility/ZLib.h

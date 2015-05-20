@@ -48,6 +48,19 @@ ExprParser::FuncDecs ExprParser::FUNCTIONS[] =
     { "MUL3",	3, FUNC_MUL3,    VALUE_NONE},        
 
     { "IN",    -1, FUNC_IN,      VALUE_INT32},
+
+    { "DIST",   4, FUNC_DIST,    VALUE_FLOAT},
+
+    //feature functions
+    {"field_length", 1, FEATURE_FIELD_LENGTH, VALUE_INT32},
+    {"field_avg_length", 1, FEATURE_FIELD_AVG_LENGTH, VALUE_INT32},    
+    {"doc_avg_length", 0, FEATURE_DOC_AVG_LENGTH, VALUE_INT32},    
+    {"doc_count", 0, FEATURE_DOC_COUNT, VALUE_INT32},    
+    
+    {"query_word_count", 0, FEATURE_QUERY_WORD_COUNT, VALUE_INT32},
+    {"query_hit_count", 0, FEATURE_QUERY_HIT_COUNT, VALUE_INT32},
+    {"bm25", 0, FEATURE_BM25, VALUE_FLOAT},    
+    {"field_bm25", 1, FEATURE_FIELD_BM25, VALUE_FLOAT},    
 };
 
 ValueType ExprParser::RET_TYPES[ExprNode::TOK_TYPE_MAX] = 
@@ -133,11 +146,9 @@ ExprParser::~ExprParser()
 {
 }
 
-ExprEvaluatorPtr ExprParser::parse(std::istream& input,
-                                   const std::string& sName)
+ExprEvaluatorPtr ExprParser::parse(std::istream& input, 
+                                   ExprEvaluatorBuilder* pExprBuilder)
 {
-    m_sStreamName = sName;
-
     ostringstream oss;
     ExprLexer lexer(&input, &oss);
     lexer.set_debug(m_bTraceScanning);
@@ -153,15 +164,22 @@ ExprEvaluatorPtr ExprParser::parse(std::istream& input,
     ExprOptimizer optimizer(m_nodes);
     optimizer.optimize(m_iRootNode);
     FX_TRACE("After optimize: [%s]", toString().c_str());
-    DefaultExprEvaluatorBuilder builder(*this, m_pIndexReader);
-    return builder.createExpr(m_nodes[m_iRootNode]);
+    if (pExprBuilder)
+    {
+        return pExprBuilder->createExpr(m_nodes[m_iRootNode]);
+    }
+    else 
+    {
+        DefaultExprEvaluatorBuilder builder(*this, m_pIndexReader);
+        return builder.createExpr(m_nodes[m_iRootNode]);
+    }
 }
 
-ExprEvaluatorPtr ExprParser::parse(const std::string& input,
-                                   const std::string& sName)
+ExprEvaluatorPtr ExprParser::parse(const std::string& input, 
+                                   ExprEvaluatorBuilder* pExprBuilder)
 {
     istringstream iss(input);
-    return parse(iss, sName);
+    return parse(iss, pExprBuilder);
 }
 
 int32_t ExprParser::addIntNode(int64_t iValue)
@@ -296,7 +314,20 @@ int32_t ExprParser::addOpNode(TokenType iOp, int32_t iLeft, int32_t iRight)
     return (int32_t)size;
 }
 
-int32_t ExprParser::addFuncNode(int32_t iFunc, int32_t iLeft, int32_t iRight)
+int32_t ExprParser::addFeatureNode(const string& sFuncName, 
+                                   int32_t iLeft, int32_t iRight)
+{
+    int32_t idx = getFuncIdx(sFuncName);
+    if (idx == -1)
+    {
+        FX_LOG(ERROR, "Function: [%s] is not supported", sFuncName.c_str());
+        return -1;
+    }
+    return addFuncNode(idx, iLeft, iRight, ExprNode::TOK_FEATURE);
+}
+
+int32_t ExprParser::addFuncNode(int32_t iFunc, int32_t iLeft, int32_t iRight, 
+                                ExprNode::TokenType tokenType)
 {
     FX_TRACE("Add func node: funcIdx[%d], left[%d], right[%d]", iFunc, iLeft, iRight);
 
@@ -333,7 +364,7 @@ int32_t ExprParser::addFuncNode(int32_t iFunc, int32_t iLeft, int32_t iRight)
     size_t size = m_nodes.size();
     m_nodes.resize(size + 1);
     ExprNode & node = m_nodes[size];
-    node.tokenType = ExprNode::TOK_FUNC;
+    node.tokenType = tokenType;
     node.funcIdx = iFunc;
     node.leftNodeIdx = iLeft;
     node.rightNodeIdx = iRight;
@@ -402,6 +433,20 @@ int32_t ExprParser::addConstListNode(double dbValue)
     return (int32_t)size;
 }
 
+int32_t ExprParser::addConstListNode(const string& strValue)
+{
+    FX_TRACE("Add const list node: %s", strValue.c_str());
+    size_t size = m_nodes.size();
+    m_nodes.resize(size + 1);
+
+    ExprNode& node = m_nodes[size];
+    node.tokenType = ExprNode::TOK_CONST_LIST;
+    node.constList = new ConstList();
+    node.constList->add(strValue);
+
+    return (int32_t)size;
+}
+
 void ExprParser::appendToConstList(int32_t iNode, int64_t iValue)
 {
     FX_TRACE("Append to const list: node[%d], value[%lld]", iNode, iValue);
@@ -412,6 +457,13 @@ void ExprParser::appendToConstList(int32_t iNode, double dbValue)
 {
     FX_TRACE("Append to const list: node[%d], value[%f]", iNode, dbValue);
     m_nodes[iNode].constList->add(dbValue);    
+}
+
+void ExprParser::appendToConstList(int32_t iNode, const string& strValue)
+{
+    FX_TRACE("Append to const list: node[%d], value[%s]", 
+             iNode, strValue.c_str());
+    m_nodes[iNode].constList->add(strValue);
 }
 
 void ExprParser::fail(const class location& l, const std::string& m)

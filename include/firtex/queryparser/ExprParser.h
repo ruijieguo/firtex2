@@ -19,6 +19,7 @@
 #include "firtex/common/SharedPtr.h"
 #include "firtex/search/ExprEvaluator.h"
 #include "firtex/queryparser/ExprNode.h"
+#include "firtex/queryparser/ExprEvaluatorBuilder.h"
 #include <sstream>
 
 namespace fx_bison
@@ -66,17 +67,29 @@ public:
 	FUNC_MIN,
 	FUNC_MAX,
 	FUNC_POW,
-	FUNC_IDIV,
+        FUNC_IDIV,
 
-	FUNC_IF,
-	FUNC_MADD,
-	FUNC_MUL3,
+        FUNC_IF,
+        FUNC_MADD,
+        FUNC_MUL3,
 
-	FUNC_INTERVAL,
-	FUNC_IN,
-	FUNC_BITDOT,
+        FUNC_INTERVAL,
+        FUNC_IN,
+        FUNC_BITDOT,
 
-	FUNC_GEODIST,
+        FUNC_DIST,
+
+        //feature functions
+        FEATURE_FIELD_LENGTH,
+        FEATURE_FIELD_AVG_LENGTH,
+        FEATURE_DOC_AVG_LENGTH,
+        FEATURE_DOC_COUNT,
+
+        FEATURE_QUERY_WORD_COUNT,
+        FEATURE_QUERY_HIT_COUNT,
+        FEATURE_BM25,
+        FEATURE_FIELD_BM25,
+        MAX_FUNCTIONS,
     };
 
     struct FuncDecs
@@ -95,20 +108,20 @@ public:
     /** 
      * Invoke the scanner and parser for a stream.
      * @param input input stream
-     * @param sName stream name for error messages
+     * @param pExprBuilder expression evaluator builder
      * @return expression evaluator if successfully parsed
      */
     FX_NS(search)::ExprEvaluatorPtr parse(std::istream& input,
-            const std::string& sName = "StreamInput");
+            ExprEvaluatorBuilder* pExprBuilder = NULL);
 
     /** 
      * Invoke the scanner and parser on an input string.
      * @param input input string
-     * @param sName stream name for error messages
+     * @param pExprBuilder expression evaluator builder
      * @return expression evaluator if successfully parsed
      */
     FX_NS(search)::ExprEvaluatorPtr parse(const std::string& input,
-            const std::string& sName = "StringInput");
+            ExprEvaluatorBuilder* pExprBuilder = NULL);
 
     /**
      * Clear parsed result
@@ -164,11 +177,16 @@ public:
     int32_t addFloatNode(double fValue);
     int32_t addAttrNode(const std::string& sAttrName);
     int32_t addOpNode(TokenType iOp, int32_t iLeft, int32_t iRight);
-    int32_t addFuncNode(int32_t iFunc, int32_t iLeft, int32_t iRight = -1);
+    int32_t addFuncNode(int32_t iFunc, int32_t iLeft, int32_t iRight = -1, 
+                        ExprNode::TokenType tokenType = ExprNode::TOK_FUNC);
+    int32_t addFeatureNode(const std::string& sFuncName, int32_t iLeft, 
+                           int32_t iRight = -1);
     int32_t addConstListNode(int64_t iValue);
     int32_t addConstListNode(double dbValue);
+    int32_t addConstListNode(const std::string& strValue);
     void appendToConstList(int32_t iNode, int64_t iValue);
     void appendToConstList(int32_t iNode, double iValue);
+    void appendToConstList(int32_t iNode, const std::string& strValue);
     int32_t addDateFuncNode(int32_t iFunc, const std::string& sDateStr);
 
     /** 
@@ -198,7 +216,6 @@ private:
     NodeVector m_nodes;
     int32_t m_iRootNode;
     std::string m_sErrorMsg;
-    std::string m_sStreamName;
 
     bool m_bTraceScanning;
     bool m_bTraceParsing;
@@ -223,9 +240,8 @@ private:
     static ValueType RET_TYPES[ExprNode::TOK_TYPE_MAX];
     static RetAndArgType RET_AND_ARG_TYPES[VALUE_TYPE_MAX][VALUE_TYPE_MAX];
 
-    static const size_t MAX_FUNCTIONS = 24;
     static FuncDecs FUNCTIONS[MAX_FUNCTIONS];
-    
+
 private:
     DECLARE_STREAM_LOGGER();
 };

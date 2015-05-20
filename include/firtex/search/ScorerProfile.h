@@ -18,30 +18,35 @@
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
 #include "firtex/search/Scorer.h"
+#include <map>
 
 FX_NS_DEF(search);
 
 class ScorerProfile
 {
 public:
+    typedef std::map<std::string, std::string> KeyValueMap;
+
+public:
     ScorerProfile();
     virtual ~ScorerProfile();
 
 public:
     /**
-     * Create scorer for specified query
+     * Return the name of the profile name
      */
-    ScorerPtr createScorer() const;
+    virtual std::string getProfileName() const = 0;
 
     /**
-     * Get similarity of this profile
+     * Create scorer for specified query
      */
-    const Similarity* getSimilarity() const;
+    virtual ScorerPtr createScorer() const = 0;
 
-protected:
-
-private:
-    DECLARE_STREAM_LOGGER();
+    /**
+     * Set parameters
+     * @param params parameters
+     */
+    virtual void setParameters(const KeyValueMap& params) {}
 };
 
 FX_NS_END

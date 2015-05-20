@@ -23,6 +23,7 @@
 #include "firtex/search/FilterClause.h"
 #include "firtex/search/FieldSelectClause.h"
 #include "firtex/search/DocSelectClause.h"
+#include "firtex/search/ScorerProfileClause.h"
 #include <map>
 #include <vector>
 
@@ -94,6 +95,7 @@ public:
     FilterClausePtr getFilterClause() const;
     FieldSelectClausePtr getFieldSelectClause() const;
     DocSelectClausePtr getDocSelectClause() const;
+    ScorerProfileClausePtr getScorerProfileClause() const;
     
     ClausePtr getClause(const std::string& sClauseName) const;
 
@@ -119,6 +121,7 @@ protected:
     FilterClausePtr m_pFilterClause;
     FieldSelectClausePtr m_pFieldSelectClause;
     DocSelectClausePtr m_pDocSelectClause;
+    ScorerProfileClausePtr m_pScorerProfileClause;
 
 private:
     DECLARE_LOGGER();
@@ -153,6 +156,11 @@ inline FieldSelectClausePtr Statement::getFieldSelectClause() const
 inline DocSelectClausePtr Statement::getDocSelectClause() const
 {
     return m_pDocSelectClause;
+}
+
+inline ScorerProfileClausePtr Statement::getScorerProfileClause() const
+{
+    return m_pScorerProfileClause;
 }
 
 inline ClausePtr Statement::getClause(const std::string& sClauseName) const

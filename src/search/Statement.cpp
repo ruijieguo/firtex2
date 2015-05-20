@@ -22,6 +22,7 @@ Statement::Statement()
     registerClause(FilterClause::PREFIX, new FilterClause::Creator);
     registerClause(FieldSelectClause::PREFIX, new FieldSelectClause::Creator);
     registerClause(DocSelectClause::PREFIX, new DocSelectClause::Creator);
+    registerClause(ScorerProfileClause::PREFIX, new ScorerProfileClause::Creator);
 }
 
 Statement::~Statement() 
@@ -154,11 +155,16 @@ void Statement::extractBuiltInClause(bool bOverride)
 
     ClauseMap::const_iterator cIt;
     FX_ADD_CONDITION(QueryClause::PREFIX, m_pQueryClause, QueryClause, bOverride);
-    FX_ADD_CONDITION(ParameterClause::PREFIX, m_pParamClause, ParameterClause, bOverride);
+    FX_ADD_CONDITION(ParameterClause::PREFIX, m_pParamClause,
+                     ParameterClause, bOverride);
     FX_ADD_CONDITION(SortClause::PREFIX, m_pSortClause, SortClause, bOverride);
     FX_ADD_CONDITION(FilterClause::PREFIX, m_pFilterClause, FilterClause, bOverride);
-    FX_ADD_CONDITION(FieldSelectClause::PREFIX, m_pFieldSelectClause, FieldSelectClause, bOverride);
-    FX_ADD_CONDITION(DocSelectClause::PREFIX, m_pDocSelectClause, DocSelectClause, bOverride);
+    FX_ADD_CONDITION(FieldSelectClause::PREFIX, m_pFieldSelectClause,
+                     FieldSelectClause, bOverride);
+    FX_ADD_CONDITION(DocSelectClause::PREFIX, m_pDocSelectClause,
+                     DocSelectClause, bOverride);
+    FX_ADD_CONDITION(ScorerProfileClause::PREFIX, m_pScorerProfileClause,
+                     ScorerProfileClause, bOverride);
 #undef FX_ADD_CONDITION
 }
 
@@ -244,6 +250,7 @@ void Statement::clearClauses()
     m_pFilterClause.reset();
     m_pFieldSelectClause.reset();
     m_pDocSelectClause.reset();
+    m_pScorerProfileClause.reset();
 }
 
 FX_NS_END
