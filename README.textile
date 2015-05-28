@@ -29,5 +29,5 @@ Features include:
 
 h2. Getting Started
 
-h3. "User Manual":https://github.com/ruijieguo/firtex2/wiki
+h3. "User Manual":http://123.57.255.117/ft
 TBD
