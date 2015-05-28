@@ -3,7 +3,6 @@ INCLUDES= -I $(top_srcdir)/include \
 	-I $(top_srcdir)/extension/include \
 	-I $(top_srcdir)/test/cppunit/include
 
-test_srcdir = $(top_srcdir)/test/extension
 
 collection_test_sources = \
 	CollectionConfigureTestCase.cpp\
@@ -15,9 +14,7 @@ EXTRA_DIST =
 check_PROGRAMS  = ext_collection_test
 
 ext_collection_test_SOURCES = \
-	$(collection_test_sources)\
-	$(top_srcdir)/test/src/main.cpp\
-	$(top_srcdir)/test/src/TestHelper.cpp
+	$(collection_test_sources)
 
 ext_collection_test_LDADD= \
 	$(top_builddir)/extension/src/collection/libfirtexext_collection.la \
@@ -25,6 +22,7 @@ ext_collection_test_LDADD= \
 	$(top_builddir)/extension/src/plugin/libfirtexext_plugin.la \
 	$(top_builddir)/extension/src/com/libfirtexext_com.la \
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	 -lpthread -ldl
 

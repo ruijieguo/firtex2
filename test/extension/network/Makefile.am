@@ -5,25 +5,17 @@ INCLUDES= -I $(top_srcdir)/include \
 	-I $(top_srcdir)/test/cppunit/include\
 	-I@FX_LIBEVENT_HOME@/include
 
-test_srcdir = $(top_srcdir)/test/extension
-
-network_test_srcdir = $(test_srcdir)/network
-
-network_test_sources = \
-	$(network_test_srcdir)/EvHttpServerTestCase.cpp
-
 EXTRA_DIST = \
-	$(network_test_srcdir)/EvHttpServerTestCase.cpp
+	EvHttpServerTestCase.cpp
 
 check_PROGRAMS  = ext_network_test
 
 ext_network_test_SOURCES = \
-	$(network_test_sources)\
-	$(top_srcdir)/test/src/main.cpp\
-	$(top_srcdir)/test/src/TestHelper.cpp
+	EvHttpServerTestCase.cpp
 
 ext_network_test_LDADD = $(top_builddir)/extension/src/network/libfirtexext_network.la\
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

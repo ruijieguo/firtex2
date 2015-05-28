@@ -3,9 +3,6 @@ INCLUDES = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/test/cppunit/include\
 	-I $(top_srcdir)/test/src
 
-test_srcdir = $(top_srcdir)/test/src/
-index_test_srcdir = $(test_srcdir)/index
-
 index_test_sources = \
 	IndexBuildHelper.cpp\
 	BarrelTermPositionIteratorTestCase.cpp\
@@ -47,13 +44,11 @@ EXTRA_DIST = \
 
 check_PROGRAMS  = index_test
 
-index_test_SOURCES = \
-	$(index_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp
+index_test_SOURCES = $(index_test_sources)
 
 index_test_LDADD= \
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

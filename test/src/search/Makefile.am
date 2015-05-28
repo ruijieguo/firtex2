@@ -3,31 +3,28 @@ INCLUDES = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/test/cppunit/include\
 	-I $(top_srcdir)/test/src
 
-test_srcdir = $(top_srcdir)/test/src/
-search_test_srcdir = $(test_srcdir)/search
-
-search_test_sources = \
-	$(search_test_srcdir)/DateTimeSearchTestCase.cpp\
-	$(search_test_srcdir)/ClauseTestCase.cpp\
-	$(search_test_srcdir)/FieldSelectClauseTestCase.cpp\
-	$(search_test_srcdir)/ScorerProfileClauseTestCase.cpp\
-	$(search_test_srcdir)/IndexSearcherTestCase.cpp\
-	$(search_test_srcdir)/StatementTestCase.cpp
-
-EXTRA_DIST = \
-	$(search_test_srcdir)/IndexSearcherTestCase.h\
-	$(search_test_srcdir)/DateTimeSearchTestCase.h
-
 check_PROGRAMS  = search_test
 
 search_test_SOURCES = \
-	$(search_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp\
-	$(test_srcdir)/index/IndexBuildHelper.cpp
+	DateTimeSearchTestCase.cpp\
+	ClauseTestCase.cpp\
+	FieldSelectClauseTestCase.cpp\
+	ScorerProfileClauseTestCase.cpp\
+	IndexSearcherTestCase.cpp\
+	StatementTestCase.cpp\
+	../index/IndexBuildHelper.cpp
+
+EXTRA_DIST = \
+	DateTimeSearchTestCase.h\
+	ClauseTestCase.h\
+	FieldSelectClauseTestCase.h\
+	ScorerProfileClauseTestCase.h\
+	IndexSearcherTestCase.h\
+	StatementTestCase.h
 
 search_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

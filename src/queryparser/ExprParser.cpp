@@ -47,7 +47,7 @@ ExprParser::FuncDecs ExprParser::FUNCTIONS[] =
     { "MADD",	3, FUNC_MADD,    VALUE_NONE},
     { "MUL3",	3, FUNC_MUL3,    VALUE_NONE},        
 
-    { "IN",    -1, FUNC_IN,      VALUE_INT32},
+    { "IN",     (unsigned int)-1, FUNC_IN,      VALUE_INT32},
 
     { "DIST",   4, FUNC_DIST,    VALUE_FLOAT},
 

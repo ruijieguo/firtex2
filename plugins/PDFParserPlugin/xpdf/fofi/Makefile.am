@@ -1,10 +1,10 @@
 fofi_srcdir = $(xpdf_srcdir)/fofi
 
-fofi_sources = $(fofi_srcdir)/FoFiBase.cc\
-	$(fofi_srcdir)/FoFiEncodings.cc\
-	$(fofi_srcdir)/FoFiTrueType.cc\
-	$(fofi_srcdir)/FoFiType1.cc\
-	$(fofi_srcdir)/FoFiType1C.cc
+fofi_sources = xpdf/fofi/FoFiBase.cc\
+	xpdf/fofi/FoFiEncodings.cc\
+	xpdf/fofi/FoFiTrueType.cc\
+	xpdf/fofi/FoFiType1.cc\
+	xpdf/fofi/FoFiType1C.cc
 
 EXTRA_DIST += $(fofi_srcdir)/FoFiBase.h\
 	$(fofi_srcdir)/FoFiEncodings.h\

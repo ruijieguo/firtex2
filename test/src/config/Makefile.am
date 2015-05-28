@@ -6,23 +6,20 @@ INCLUDES = -I $(top_srcdir)/include\
 test_srcdir = $(top_srcdir)/test/src/
 config_test_srcdir = $(test_srcdir)/config
 
-config_test_sources = \
-	$(config_test_srcdir)/ConfiguratorTestCase.cpp\
-	$(config_test_srcdir)/XMLConfiguratorTestCase.cpp
 
 EXTRA_DIST = \
-	$(config_test_srcdir)/ConfiguratorTestCase.h\
-	$(config_test_srcdir)/XMLConfiguratorTestCase.h
+	ConfiguratorTestCase.h\
+	XMLConfiguratorTestCase.h
 
 check_PROGRAMS  = config_test
 
 config_test_SOURCES = \
-	$(config_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp
+	ConfiguratorTestCase.cpp\
+	XMLConfiguratorTestCase.cpp
 
 config_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

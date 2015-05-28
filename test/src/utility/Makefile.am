@@ -3,11 +3,9 @@ INCLUDES = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/test/cppunit/include\
 	-I $(top_srcdir)/test/src
 
-test_srcdir = $(top_srcdir)/test/src/
+check_PROGRAMS  = utility_test
 
-#BoundedConcurrentHashMapTestCase.cpp
-
-utility_test_sources = \
+utility_test_SOURCES = \
 	BinaryFileTestCase.cpp\
 	DirectoryIteratorTestCase.cpp\
 	FileTestCase.cpp\
@@ -39,15 +37,10 @@ EXTRA_DIST = \
 	TextFileTestCase.h\
 	LooseBoundedPoolTestCase.h
 
-check_PROGRAMS  = utility_test
-
-utility_test_SOURCES = \
-	$(utility_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp
 
 utility_test_LDADD= $(top_builddir)/extension/src/.libs/libfirtexext.la\
 	$(top_builddir)/src/.libs/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

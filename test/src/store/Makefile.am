@@ -7,24 +7,22 @@ test_srcdir = $(top_srcdir)/test/src/
 store_test_srcdir = $(test_srcdir)/store
 
 store_test_sources = \
-	$(store_test_srcdir)/BlockFileSystemTest.cpp\
-	$(store_test_srcdir)/BlockFileInputStreamTestCase.cpp\
-	$(store_test_srcdir)/BlockFileOutputStreamTestCase.cpp
+	BlockFileSystemTest.cpp\
+	BlockFileInputStreamTestCase.cpp\
+	BlockFileOutputStreamTestCase.cpp
 
 EXTRA_DIST = \
-	$(store_test_srcdir)/BlockFileSystemTest.h\
-	$(store_test_srcdir)/BlockFileInputStreamTestCase.h\
-	$(store_test_srcdir)/BlockFileOutputStreamTestCase.h
+	BlockFileSystemTest.h\
+	BlockFileInputStreamTestCase.h\
+	BlockFileOutputStreamTestCase.h
 
 check_PROGRAMS  = store_test
 
-store_test_SOURCES = \
-	$(store_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp
+store_test_SOURCES = $(store_test_sources)
 
 store_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

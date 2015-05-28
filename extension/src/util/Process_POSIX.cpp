@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 using namespace std;
 FX_NS_USE(utility);

@@ -3,24 +3,16 @@ INCLUDES= -I $(top_srcdir)/include \
 	-I $(top_srcdir)/extension/include \
 	-I $(top_srcdir)/test/cppunit/include
 
-test_srcdir = $(top_srcdir)/test/extension
-
-util_test_srcdir = $(test_srcdir)/util
-
-util_test_sources = \
-	$(util_test_srcdir)/OptionParserTestCase.cpp
-
-EXTRA_DIST = $(util_test_srcdir)/OptionParserTestCase.h
+EXTRA_DIST = OptionParserTestCase.h
 
 check_PROGRAMS  = ext_util_test
 
 ext_util_test_SOURCES = \
-	$(util_test_sources)\
-	$(top_srcdir)/test/src/main.cpp\
-	$(top_srcdir)/test/src/TestHelper.cpp
+	OptionParserTestCase.cpp
 
 ext_util_test_LDADD= $(top_builddir)/extension/src/util/libfirtexext_util.la \
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	$(top_builddir)/extension/src/com/libfirtexext_com.la \
 	 -lpthread -ldl

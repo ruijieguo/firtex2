@@ -1,6 +1,9 @@
-AC_INIT
+AC_INIT([firtex-contrib], [0.5.1])
 AM_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(firtex-contrib, 2.0.0)
+AM_INIT_AUTOMAKE(firtex-contrib, [0.5.1])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
+
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_LANG_CPLUSPLUS

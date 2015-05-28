@@ -14,8 +14,7 @@ libthread_la_SOURCES = Event.cpp\
 	RWLock.cpp\
 	Condition.cpp\
 	StoppableObject.cpp\
-	ThreadPool.cpp\
-	HPSMR.cpp
+	ThreadPool.cpp
 
 
 EXTRA_DIST = \

@@ -74,8 +74,7 @@ public:
         }
 
         TypedTraversalCallback(const TypedTraversalCallback& cb)
-            : TypedTraversalCallback(cb)
-            , m_pObject(cb.m_pObject)
+            : m_pObject(cb.m_pObject)
             , m_fnMethod(cb.m_fnMethod)
         {
         }

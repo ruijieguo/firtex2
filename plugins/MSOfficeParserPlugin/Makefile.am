@@ -27,7 +27,6 @@ msofficeparserplugin_so_SOURCES = \
 	Substmap.cpp\
 	Writer.cpp\
 	XLSParse.cpp\
-	$(top_srcdir)/extension/src/plugin/FirteXCOM.cpp\
 	main.cpp
 
 EXTRA_DIST = \
@@ -59,7 +58,8 @@ EXTRA_DIST = \
 	win32/rint.h\
 	win32/win32.c
 
-msofficeparserplugin_so_LDADD   = $(top_builddir)/extension/src/com/.libs/libfirtexext_com.la -ldl -lpthread
+msofficeparserplugin_so_LDADD   = $(top_builddir)/extension/src/com/.libs/libfirtexext_com.la \
+	$(top_builddir)/extension/src/plugin/.libs/libfirtexext_plugin_firtexcom.la -ldl -lpthread
 msofficeparserplugin_so_LDFLAGS = $(LINKER_OPTIONS) -fPIC -shared -rdynamic
 msofficeparserplugin_so_CXXFLAGS = @CXXFLAGS@ -fPIC
 msofficeparserplugin_so_CFLAGS = @CFLAGS@ -fPIC

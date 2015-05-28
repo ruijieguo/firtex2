@@ -21,6 +21,9 @@
 
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 
 #include "firtex/utility/BinaryFile_POSIX.h"
 #include "firtex/utility/File.h"

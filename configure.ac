@@ -1,19 +1,21 @@
-AC_INIT
 
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-
-FIRTEX2_MAJOR_VERSION=0
-FIRTEX2_MINOR_VERSION=5
-FIRTEX2_MICRO_VERSION=0
-FIRTEX2_VERSION=$FIRTEX2_MAJOR_VERSION.$FIRTEX2_MINOR_VERSION.$FIRTEX2_MICRO_VERSION
-AC_SUBST(FIRTEX2_MAJOR_VERSION)
-AC_SUBST(FIRTEX2_MINOR_VERSION)
-AC_SUBST(FIRTEX2_MICRO_VERSION)
-AC_SUBST(FIRTEX2_VERSION)
-
+AC_INIT(firtex, [0.5.1])
 AM_CONFIG_HEADER(include/firtex/config.h)
-AM_INIT_AUTOMAKE(firtex, $FIRTEX2_VERSION)
+AM_INIT_AUTOMAKE([subdir-objects]) 
+
+AC_CANONICAL_TARGET
+AC_CANONICAL_HOST
+AC_CANONICAL_BUILD
+
+AC_LANG([C++])
+
+AC_CONFIG_MACRO_DIR([m4])
+
+LT_PREREQ([2.2])
+LT_INIT
+LT_LANG([C++])
+LT_OUTPUT
+
 
 AC_PROG_CXX
 AC_PROG_CC
@@ -22,12 +24,18 @@ AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_LIBTOOL_DLOPEN
-AC_PROG_LIBTOOL
+_LT_SET_OPTION([LT_INIT],[dlopen])
+AC_DIAGNOSE([obsolete],[_LT_SET_OPTION([LT_INIT],[dlopen])
+AC_DIAGNOSE([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+put the `dlopen' option into LT_INIT's first parameter.])
+: Remove this warning and the call to _LT_SET_OPTION when you
+put the `dlopen' option into LT_INIT's first parameter.])
+
+LT_INIT
 AC_PROG_YACC
 AC_PROG_LEX
 AM_PROG_LEX
-AC_LANG_CPLUSPLUS 
+AC_LANG([C++]) 
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
@@ -57,24 +65,24 @@ esac
 
 dnl Set debug compilation flags
 AC_ARG_WITH([debug], 
-	AC_HELP_STRING([--with-debug], [compile debug version (default is disabled)]),
+	AS_HELP_STRING([--with-debug],[compile debug version (default is disabled)]),
 	[ac_cv_use_debug=$withval], [ac_cv_use_debug=no])
 
 AC_MSG_CHECKING([whether to compile debug version])
 		
 if test x$ac_cv_use_debug != xno; then
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_DEBUG -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -msse2"
+   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_DEBUG -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -Wno-unused-local-typedefs -Wno-parentheses -msse2"
    REQUIRED_OPTIONS="-D_DEBUG -D_FILE_OFFSET_BITS=64"
    AC_MSG_RESULT([yes])
 else
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_FILE_OFFSET_BITS=64 -O3 -DNDEBUG -fno-strict-aliasing -msse2"
+   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_FILE_OFFSET_BITS=64 -O3 -DNDEBUG -fno-strict-aliasing -Wno-unused-local-typedefs -Wno-parentheses -msse2"
    REQUIRED_OPTIONS="-DNDEBUG -D_FILE_OFFSET_BITS=64"
    AC_MSG_RESULT([no])
 fi
 
 dnl Set profile compilation flags
 AC_ARG_WITH([profile], 
-	AC_HELP_STRING([--with-profile], [compile profile version (default is disabled)]),
+	AS_HELP_STRING([--with-profile],[compile profile version (default is disabled)]),
 	[ac_cv_use_profile=$withval], [ac_cv_use_profile=no])
 
 AC_MSG_CHECKING([whether to compile profile version])
@@ -89,7 +97,7 @@ fi
 dnl Set tcmalloc compilation flags
 FX_TCMALLOC_HOME=/usr/lib
 AC_ARG_WITH([tcmalloc], 
-	AC_HELP_STRING([--with-tcmalloc], [compile tcmalloc version (default is disabled)]),
+	AS_HELP_STRING([--with-tcmalloc],[compile tcmalloc version (default is disabled)]),
 	[ac_cv_use_tcmalloc=$withval], [ac_cv_use_tcmalloc=no])
 
 AC_MSG_CHECKING([whether to compile with tcmalloc for heap checking])
@@ -108,7 +116,7 @@ AM_CONDITIONAL([HAVE_TCMALLOC], [test x$ac_cv_use_tcmalloc != xno])
 
 dnl Set snowball compilation flags
 AC_ARG_WITH([snowball], 
-	AC_HELP_STRING([--with-snowball], [compile version with snowball stemmer (default is disabled)]),
+	AS_HELP_STRING([--with-snowball],[compile version with snowball stemmer (default is disabled)]),
 	[ac_cv_use_snowball=yes], [ac_cv_use_snowball=no])
 
 AC_MSG_CHECKING([whether to compile snowball version])
@@ -125,7 +133,7 @@ AM_CONDITIONAL([HAVE_SNOWBALL], [test x$ac_cv_use_snowball != xno])
 
 dnl Set highlighter compilation flags
 AC_ARG_WITH([highlighter], 
-	AC_HELP_STRING([--without-highlighter], [compile version without highlighter (default is enable)]),
+	AS_HELP_STRING([--without-highlighter],[compile version without highlighter (default is enable)]),
 	[ac_cv_use_highlighter=no], [ac_cv_use_highlighter=yes])
 
 AC_MSG_CHECKING([whether to compile highlighter version])
@@ -143,7 +151,7 @@ AM_CONDITIONAL([HAVE_HIGHLIGHTER], [test x$ac_cv_use_highlighter != xno])
 dnl Set user specified boost path
 FX_BOOST_HOME=`pwd`/external
 AC_ARG_WITH([boost], 
-	AC_HELP_STRING([--with-boost], [specify boost home path (default using the built-in mini boost)]),
+	AS_HELP_STRING([--with-boost],[specify boost home path (default using the built-in mini boost)]),
 	[ac_cv_use_boost=$withval], [ac_cv_use_boost=no])
 
 AC_MSG_CHECKING([whether to compile with user specified boost])
@@ -160,7 +168,7 @@ AC_SUBST(FX_BOOST_HOME)
 dnl Set user specified libevent path
 FX_LIBEVENT_HOME=`pwd`/external/libevent
 AC_ARG_WITH([libevent], 
-	AC_HELP_STRING([--with-libevent], [specify libevent home path (default using the built-in libevent)]),
+	AS_HELP_STRING([--with-libevent],[specify libevent home path (default using the built-in libevent)]),
 	[ac_cv_use_libevent=$withval], [ac_cv_use_libevent=yes])
 
 AC_MSG_CHECKING([whether to compile with libevent])
@@ -183,7 +191,7 @@ AC_SUBST(FX_LIBEVENT_DIR)
 dnl Set user specified libevent path
 FX_ZOOKEEPER_C_HOME=`pwd`/external/zookeeper_c
 AC_ARG_WITH([zookeeper], 
-	AC_HELP_STRING([--with-zookeeper], [specify zookeeper home path (default using the built-in zookeeper)]),
+	AS_HELP_STRING([--with-zookeeper],[specify zookeeper home path (default using the built-in zookeeper)]),
 	[ac_cv_use_zookeeper=$withval], [ac_cv_use_zookeeper=yes])
 
 AC_MSG_CHECKING([whether to compile with zookeeper])
@@ -208,7 +216,7 @@ AC_SUBST(FX_ZOOKEEPER_C_DIR)
 dnl Set user specified thrift path
 FX_THRIFT_HOME=`pwd`/external/thrift
 AC_ARG_WITH([thrift], 
-	AC_HELP_STRING([--with-thrift], [specify thrift home path (default using the built-in thrift)]),
+	AS_HELP_STRING([--with-thrift],[specify thrift home path (default using the built-in thrift)]),
 	[ac_cv_use_thrift=$withval], [ac_cv_use_thrift=yes])
 
 AC_MSG_CHECKING([whether to compile with thrift])
@@ -284,16 +292,16 @@ AC_SUBST(enable_dot)
 
 AC_CONFIG_SUBDIRS([contrib])
 
-dnl if test x$ac_cv_use_libevent != xno; then
-dnl   AC_CONFIG_SUBDIRS([external/libevent])
-dnl fi   
+if test x$ac_cv_use_libevent != xno; then
+   AC_CONFIG_SUBDIRS([external/libevent])
+fi   
 
 dnl if test x$ac_cv_use_zookeeper != xno; then
 dnl   AC_CONFIG_SUBDIRS([external/zookeeper_c])
 dnl fi   
 
 if test x$ac_cv_use_thrift = xyes; then
-dnl   AC_CONFIG_SUBDIRS([external/thrift])
+   AC_CONFIG_SUBDIRS([external/thrift])
 
 dnl hack solution
     thrift_cppflags="CPPFLAGS=-I$FX_LIBEVENT_HOME -I$FX_LIBEVENT_HOME/include -I$FX_LIBEVENT_HOME/include/event2 -I$FX_BOOST_HOME -I/usr/local"

@@ -122,7 +122,7 @@ template<int x> struct static_assert_test{};
 #define BOOST_STATIC_ASSERT( B ) \
    typedef ::boost::static_assert_test<\
       sizeof(::boost::STATIC_ASSERTION_FAILURE< BOOST_STATIC_ASSERT_BOOL_CAST( B ) >)>\
-         BOOST_JOIN(boost_static_assert_typedef_, __LINE__)
+   BOOST_JOIN(oost_static_assert_typedef_, __LINE__) __attribute__((unused))
 #endif
 
 #else

@@ -80,9 +80,6 @@ private:
 /////////////////////////////////////////////
 inline void BM25TermScorer::score(MatchedDocSet& matchedDocs)
 {
-    score_t K1 = K1;
-    score_t B = B;
-
     FX_TRACE("Begin score:");
     size_t size = matchedDocs.size();
     for (size_t i = 0; i < size; ++i)

@@ -24,23 +24,22 @@ appcommon_test_sources =
 if HAVE_THRIFT
 appcommon_test_sources +=\
 	$(appcommon_thrift_gen_cpp)\
-	$(appcommon_test_srcdir)/RPCServerTestCase.cpp
+	RPCServerTestCase.cpp
 endif
 
 EXTRA_DIST = \
-        $(appcommon_test_srcdir)/RPCServerTestCase.h\
+        RPCServerTestCase.h\
 	EchoService.thrift
 
 check_PROGRAMS  = appcommon_test
 
 appcommon_test_SOURCES = \
-        $(appcommon_test_sources)\
-        $(test_srcdir)/main.cpp\
-        $(test_srcdir)/TestHelper.cpp
+        $(appcommon_test_sources)
 
 appcommon_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
         $(top_builddir)/src/libfirtex.la\
         $(top_builddir)/app/common/libappcommon.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
         $(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

@@ -10,21 +10,20 @@ test_srcdir = $(top_srcdir)/test/src
 watchdog_test_srcdir = $(top_srcdir)/test/app/watchdog
 
 watchdog_test_sources = \
-        $(watchdog_test_srcdir)/WatchdogServiceBaseTestCase.cpp
+        WatchdogServiceBaseTestCase.cpp
 
 EXTRA_DIST = \
-        $(watchdog_test_srcdir)/WatchdogServiceBaseTestCase.h
+        WatchdogServiceBaseTestCase.h
 
 check_PROGRAMS  = watchdog_test
 
 watchdog_test_SOURCES = \
         $(watchdog_test_sources)\
-        $(test_srcdir)/main.cpp\
-        $(test_srcdir)/TestHelper.cpp\
-        $(top_srcdir)/app/watchdog/WatchdogServiceBase.cpp
+        ../../../app/watchdog/WatchdogServiceBase.cpp
 
 watchdog_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
         $(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
         $(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\

@@ -1,6 +1,5 @@
 SUBDIRS = .
-pdfparserplugin_srcdir = $(top_srcdir)/plugins/PDFParserPlugin
-xpdf_srcdir = $(top_srcdir)/plugins/PDFParserPlugin/xpdf
+xpdf_srcdir = xpdf
 
 INCLUDES = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/extension/include\
@@ -15,11 +14,11 @@ bindir = ${exec_prefix}/firtex2/plugins
 bin_PROGRAMS = pdfparserplugin.so
 
 
-pdfparserplugin_so_SOURCES = $(pdfparserplugin_srcdir)/PDFDocReader.cpp\
-	$(pdfparserplugin_srcdir)/PDFParserPlugin.cpp\
-	$(pdfparserplugin_srcdir)/PDFParserPluginFactory.cpp\
-	$(top_srcdir)/extension/src/plugin/FirteXCOM.cpp\
-	$(pdfparserplugin_srcdir)/main.cpp
+pdfparserplugin_so_SOURCES = PDFDocReader.cpp\
+	PDFParserPlugin.cpp\
+	PDFParserPluginFactory.cpp\
+	../../extension/src/plugin/FirteXCOM.cpp\
+	main.cpp
 
 EXTRA_DIST = \
 	PDFParserPlugin_8.0.vcproj\

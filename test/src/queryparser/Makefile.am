@@ -5,25 +5,27 @@ INCLUDES = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/test/src
 
 test_srcdir = $(top_srcdir)/test/src/
-queryparser_test_srcdir = $(test_srcdir)/queryparser
 
 queryparser_test_sources = \
-	$(queryparser_test_srcdir)/QueryExprLexerTestCase.cpp\
-	$(queryparser_test_srcdir)/QueryExprBisonParserTestCase.cpp\
-	$(queryparser_test_srcdir)/QueryParserTestCase.cpp\
-	$(queryparser_test_srcdir)/ExprParserTestCase.cpp
+	QueryExprLexerTestCase.cpp\
+	QueryExprBisonParserTestCase.cpp\
+	QueryParserTestCase.cpp\
+	ExprParserTestCase.cpp
 
-EXTRA_DIST = 
+EXTRA_DIST = \
+	QueryExprLexerTestCase.h\
+	QueryExprBisonParserTestCase.h\
+	QueryParserTestCase.h\
+	ExprParserTestCase.h
+
 
 check_PROGRAMS  = queryparser_test
 
-queryparser_test_SOURCES = \
-	$(queryparser_test_sources)\
-	$(test_srcdir)/main.cpp\
-	$(test_srcdir)/TestHelper.cpp
+queryparser_test_SOURCES = $(queryparser_test_sources)
 
 queryparser_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
 	$(top_builddir)/src/libfirtex.la\
+	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	@FX_LIBEVENT_HOME@/libevent.la\
 	@FX_LIBEVENT_HOME@/libevent_pthreads.la\
