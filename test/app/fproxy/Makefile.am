@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include\
+AM_CPPFLAGS = -I $(top_srcdir)/include\
         -I $(top_srcdir)/extension/include\
         -I $(top_srcdir)/test/cppunit/include\
         -I $(top_srcdir)/test/app/fproxy\

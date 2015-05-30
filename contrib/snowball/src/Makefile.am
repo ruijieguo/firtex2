@@ -1,4 +1,4 @@
-INCLUDES = -I../../../include -I../include
+AM_CPPFLAGS = -I../../../include -I../include
 # -I../src/stemmer
 
 lib_LTLIBRARIES = libfirtex_snowball.la

@@ -1,7 +1,7 @@
 SUBDIRS = .
 xpdf_srcdir = xpdf
 
-INCLUDES = -I $(top_srcdir)/include\
+AM_CPPFLAGS = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/extension/include\
 	-I $(top_srcdir)/plugins/PDFParserPlugin/xpdf\
 	-I $(top_srcdir)/plugins/PDFParserPlugin/xpdf/xpdf\

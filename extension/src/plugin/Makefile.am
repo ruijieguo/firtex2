@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include
 
 noinst_LTLIBRARIES = libfirtexext_plugin.la libfirtexext_plugin_firtexcom.la
 

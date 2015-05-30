@@ -1,5 +1,5 @@
 SUBDIRS = include src win32 .
-INCLUDES = -I $(top_srcdir)/extension/include \
+AM_CPPFLAGS = -I $(top_srcdir)/extension/include \
 	-I $(top_srcdir)/extension/include/network \
 	-I $(top_srcdir)/include \
 	-I $(top_srcdir)/src/external

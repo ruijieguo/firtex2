@@ -1,4 +1,4 @@
-INCLUDES= -I $(top_srcdir)/include \
+AM_CPPFLAGS = -I $(top_srcdir)/include \
 	-I $(top_srcdir)/test/src\
 	-I $(top_srcdir)/extension/include \
 	-I $(top_srcdir)/extension/include/firtex/extension/external\

@@ -1,5 +1,5 @@
 SUBDIRS = .
-INCLUDES = -I $(top_srcdir)/test/cppunit/include
+AM_CPPFLAGS = -I $(top_srcdir)/test/cppunit/include
 
 noinst_LTLIBRARIES = libcppunit.la
 

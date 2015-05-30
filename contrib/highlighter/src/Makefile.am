@@ -1,4 +1,4 @@
-INCLUDES = -I../../../include -I../include
+AM_CPPFLAGS = -I../../../include -I../include
 
 lib_LTLIBRARIES	= libfirtex_highlighter.la
 

@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include -I $(top_srcdir)/contrib/highlighter/include
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/contrib/highlighter/include
 
 noinst_LTLIBRARIES = libsearch.la
 

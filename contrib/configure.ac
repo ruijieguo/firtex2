@@ -1,7 +1,6 @@
 AC_INIT([firtex-contrib], [0.5.1])
 AM_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(firtex-contrib, [0.5.1])
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([subdir-objects])
 
 AC_CONFIG_MACRO_DIR([m4])
 

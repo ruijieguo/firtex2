@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include -I $(top_srcdir)/src/external -I $(top_srcdir)/src/external/iconv
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/src/external -I $(top_srcdir)/src/external/iconv
 
 noinst_LTLIBRARIES = libexternal_iconv.la
 

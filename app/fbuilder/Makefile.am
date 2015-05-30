@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include
 appsrcdir = $(top_srcdir)/app/fbuilder
 
 bindir = ${exec_prefix}/firtex2/bin

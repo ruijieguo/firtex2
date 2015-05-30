@@ -1,4 +1,4 @@
-INCLUDES = -I $(top_srcdir)/include \
+AM_CPPFLAGS = -I $(top_srcdir)/include \
 	-I $(top_srcdir)/contrib \
 	-I $(top_srcdir)/src \
 	-I $(top_srcdir)/contrib/snowball/include \

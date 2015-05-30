@@ -1,13 +1,12 @@
-INCLUDES = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/app
-appsrcdir = $(top_srcdir)/app/lexibuilder
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/app
 
 bindir = ${exec_prefix}/firtex2/bin
 
 bin_PROGRAMS = lexibuilder
 
 lexibuilder_SOURCES = \
-	$(appsrcdir)/main.cpp\
-	$(appsrcdir)/LexiconBuilderAppRunner.cpp
+	main.cpp\
+	LexiconBuilderAppRunner.cpp
 
 LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\

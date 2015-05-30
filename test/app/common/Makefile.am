@@ -1,5 +1,5 @@
 THRIFT_BIN = @FX_THRIFT_HOME@/compiler/cpp/thrift
-INCLUDES = -I $(top_srcdir)/include\
+AM_CPPFLAGS = -I $(top_srcdir)/include\
         -I $(top_srcdir)/extension/include\
         -I $(top_srcdir)/test/cppunit/include\
         -I $(top_srcdir)/test/app/common\

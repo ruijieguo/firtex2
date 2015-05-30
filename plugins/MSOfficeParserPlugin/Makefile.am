@@ -1,7 +1,7 @@
 SUBDIRS = .
 msofficeparserplugin_srcdir = $(top_srcdir)/plugins/MSOfficeParserPlugin
 
-INCLUDES = -I $(top_srcdir)/include\
+AM_CPPFLAGS = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/extension/include\
 	-I $(top_srcdir)/plugins/MSOfficeParserPlugin
 
