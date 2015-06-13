@@ -175,11 +175,13 @@ bool TFramedTransport::readFrame() {
   // We can't use readAll(&sz, sizeof(sz)), since that always throws an
   // exception on EOF.  We want to throw an exception only if EOF occurs after
   // partial size data.
-  int32_t sz;
+  int32_t sz = -1;
   uint32_t size_bytes_read = 0;
   while (size_bytes_read < sizeof(sz)) {
     uint8_t* szp = reinterpret_cast<uint8_t*>(&sz) + size_bytes_read;
-    uint32_t bytes_read = transport_->read(szp, sizeof(sz) - size_bytes_read);
+    uint32_t bytes_read = transport_->read(
+      szp,
+      static_cast<uint32_t>(sizeof(sz)) - size_bytes_read);
     if (bytes_read == 0) {
       if (size_bytes_read == 0) {
         // EOF before any data was read.
@@ -259,11 +261,24 @@ void TFramedTransport::flush()  {
     wBase_ = wBuf_.get() + sizeof(sz_nbo);
 
     // Write size and frame body.
-    transport_->write(wBuf_.get(), sizeof(sz_nbo)+sz_hbo);
+    transport_->write(
+      wBuf_.get(),
+      static_cast<uint32_t>(sizeof(sz_nbo))+sz_hbo);
   }
 
   // Flush the underlying transport.
   transport_->flush();
+
+  // reclaim write buffer
+  if (wBufSize_ > bufReclaimThresh_) {
+    wBufSize_ = DEFAULT_BUFFER_SIZE;
+    wBuf_.reset(new uint8_t[wBufSize_]);
+    setWriteBuffer(wBuf_.get(), wBufSize_);
+
+    // reset wBase_ with a pad for the frame size
+    int32_t pad = 0;
+    wBase_ = wBuf_.get() + sizeof(pad);
+  }
 }
 
 uint32_t TFramedTransport::writeEnd() {
@@ -281,7 +296,15 @@ const uint8_t* TFramedTransport::borrowSlow(uint8_t* buf, uint32_t* len) {
 
 uint32_t TFramedTransport::readEnd() {
   // include framing bytes
-  return static_cast<uint32_t>(rBound_ - rBuf_.get() + sizeof(uint32_t));
+  uint32_t bytes_read = static_cast<uint32_t>(rBound_ - rBuf_.get() + sizeof(uint32_t));
+
+  if (rBufSize_ > bufReclaimThresh_) {
+      rBufSize_ = 0;
+      rBuf_.reset();
+      setReadBuffer(rBuf_.get(), rBufSize_);
+  }
+
+  return bytes_read;
 }
 
 void TMemoryBuffer::computeRead(uint32_t len, uint8_t** out_start, uint32_t* out_give) {

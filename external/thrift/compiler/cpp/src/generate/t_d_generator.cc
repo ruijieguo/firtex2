@@ -34,8 +34,16 @@
 
 #include "platform.h"
 #include "t_oop_generator.h"
-using namespace std;
 
+using std::map;
+using std::ofstream;
+using std::ostream;
+using std::ostringstream;
+using std::set;
+using std::string;
+using std::vector;
+
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /**
  * D code generator.
@@ -180,9 +188,7 @@ class t_d_generator : public t_oop_generator {
         f_types_ << "," << endl;
       }
       indent(f_types_) << (*c_iter)->get_name();
-      if ((*c_iter)->has_value()) {
-        f_types_ << " = " << (*c_iter)->get_value();
-      }
+      f_types_ << " = " << (*c_iter)->get_value();
     }
 
     f_types_ << endl;
@@ -732,7 +738,12 @@ class t_d_generator : public t_oop_generator {
     case t_field::T_REQUIRED:
       return "TReq.REQUIRED";
     default:
-      throw "Compiler error: Invalid requirement level: " + req;
+      {
+        std::stringstream ss;
+        ss << "Compiler error: Invalid requirement level " << req;
+        throw ss.str();
+      }
+    
     }
   }
 

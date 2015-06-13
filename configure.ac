@@ -4,6 +4,16 @@ AC_CANONICAL_TARGET
 AM_CONFIG_HEADER(include/firtex/config.h)
 AM_INIT_AUTOMAKE([subdir-objects]) 
 
+# gruard against pre defined config.h
+AH_TOP([
+#ifndef __CONFIG_H
+#define __CONFIG_H
+])
+AH_BOTTOM([
+#endif
+])
+
+
 AC_CANONICAL_HOST
 AC_CANONICAL_BUILD
 
@@ -308,7 +318,7 @@ dnl hack solution
    if test x$ac_cv_use_debug != xno; then
       thrift_cppflags="$thrift_cppflags -g -D_DEBUG"
    fi
-   ac_configure_args="$ac_configure_args --with-boost=$FX_BOOST_HOME '$thrift_cppflags' 'LDFLAGS=-L$FX_LIBEVENT_HOME/.libs' 'LD_LIBRARY_PATH=$FX_LIBEVENT_HOME/.libs'"
+   ac_configure_args="$ac_configure_args --enable-tests=no --with-boost=$FX_BOOST_HOME '$thrift_cppflags' 'LDFLAGS=-L$FX_LIBEVENT_HOME/.libs' 'LD_LIBRARY_PATH=$FX_LIBEVENT_HOME/.libs'"
 fi  
 
 AC_CONFIG_FILES([Makefile                

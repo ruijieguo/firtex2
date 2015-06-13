@@ -30,8 +30,14 @@
 #include "platform.h"
 #include "version.h"
 
-using namespace std;
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::string;
+using std::stringstream;
+using std::vector;
 
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /**
  * PERL code generator.
@@ -1155,7 +1161,9 @@ void t_perl_generator::generate_service_client(t_service* tservice) {
 
     // Serialize the request header
     f_service_ <<
-      indent() << "$self->{output}->writeMessageBegin('" << (*f_iter)->get_name() << "', TMessageType::CALL, $self->{seqid});" << endl;
+      indent() << "$self->{output}->writeMessageBegin('" << (*f_iter)->get_name() << "', " <<
+      ((*f_iter)->is_oneway() ? "TMessageType::ONEWAY" : "TMessageType::CALL") << 
+      ", $self->{seqid});" << endl;
 
     f_service_ <<
       indent() << "my $args = new " << argsname << "();" << endl;

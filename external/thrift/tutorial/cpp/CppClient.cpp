@@ -17,9 +17,7 @@
  * under the License.
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/time.h>
+#include <iostream>
 
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TSocket.h>
@@ -35,22 +33,19 @@ using namespace apache::thrift::transport;
 using namespace tutorial;
 using namespace shared;
 
-using namespace boost;
-
 int main(int argc, char** argv) {
-  shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
-  shared_ptr<TTransport> transport(new TBufferedTransport(socket));
-  shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
+  boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
+  boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+  boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
   CalculatorClient client(protocol);
 
   try {
     transport->open();
 
     client.ping();
-    printf("ping()\n");
+    cout << "ping()" << endl;
 
-    int32_t sum = client.add(1,1);
-    printf("1+1=%d\n", sum);
+    cout << "1 + 1 = " << client.add(1, 1) << endl;
 
     Work work;
     work.op = Operation::DIVIDE;
@@ -58,27 +53,28 @@ int main(int argc, char** argv) {
     work.num2 = 0;
 
     try {
-      int32_t quotient = client.calculate(1, work);
-      printf("Whoa? We can divide by zero!\n");
-    } catch (InvalidOperation &io) {
-      printf("InvalidOperation: %s\n", io.why.c_str());
+      client.calculate(1, work);
+      cout << "Whoa? We can divide by zero!" << endl;
+    } catch (InvalidOperation& io) {
+      cout << "InvalidOperation: " << io.why << endl;
+      // or using generated operator<<: cout << io << endl;
     }
 
     work.op = Operation::SUBTRACT;
     work.num1 = 15;
     work.num2 = 10;
     int32_t diff = client.calculate(1, work);
-    printf("15-10=%d\n", diff);
+    cout << "15 - 10 = " << diff << endl;
 
     // Note that C++ uses return by reference for complex types to avoid
     // costly copy construction
     SharedStruct ss;
     client.getStruct(ss, 1);
-    printf("Check log: %s\n", ss.value.c_str());
+    cout << "Received log: " << ss << endl;
 
     transport->close();
-  } catch (TException &tx) {
-    printf("ERROR: %s\n", tx.what());
+  } catch (TException& tx) {
+    cout << "ERROR: " << tx.what() << endl;
   }
 
 }

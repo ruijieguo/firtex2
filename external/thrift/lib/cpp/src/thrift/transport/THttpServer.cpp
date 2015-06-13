@@ -49,6 +49,8 @@ void THttpServer::parseHeader(char* header) {
   } else if (strncmp(header, "Content-Length", sz) == 0) {
     chunked_ = false;
     contentLength_ = atoi(value);
+  } else if (strncmp(header, "X-Forwarded-For", sz) == 0) {
+    origin_ = value;
   }
 }
 
@@ -71,6 +73,34 @@ bool THttpServer::parseStatusLine(char* status) {
 
   if (strcmp(method, "POST") == 0) {
     // POST method ok, looking for content.
+    return true;
+  }
+  else if (strcmp(method, "OPTIONS") == 0) {
+    // preflight OPTIONS method, we don't need further content.
+    // how to graciously close connection?
+    uint8_t* buf;
+    uint32_t len;
+    writeBuffer_.getBuffer(&buf, &len);
+
+    // Construct the HTTP header
+    std::ostringstream h;
+    h <<
+      "HTTP/1.1 200 OK" << CRLF <<
+      "Date: " << getTimeRFC1123() << CRLF <<
+      "Access-Control-Allow-Origin: *" << CRLF <<
+      "Access-Control-Allow-Methods: POST, OPTIONS" << CRLF <<
+      "Access-Control-Allow-Headers: Content-Type" << CRLF <<
+      CRLF;
+    string header = h.str();
+
+    // Write the header, then the data, then flush
+    transport_->write((const uint8_t*)header.c_str(), static_cast<uint32_t>(header.size()));
+    transport_->write(buf, len);
+    transport_->flush();
+
+    // Reset the buffer and header variables
+    writeBuffer_.resetBuffer();
+    readHeaders_ = true;
     return true;
   }
   throw TTransportException(string("Bad Status (unsupported method): ") + status);

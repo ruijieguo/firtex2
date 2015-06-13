@@ -18,12 +18,12 @@
 #
 
 THRIFT = ../../compiler/cpp/thrift
-THRIFT_FILES = $(wildcard ../../test/*.thrift) \
-			   $(wildcard test/*.thrift)
+THRIFT_FILES = $(wildcard test/*.thrift) \
+		  ../../test/ThriftTest.thrift
 
 .generated: $(THRIFT_FILES)
 	for f in $(THRIFT_FILES) ; do \
-	  $(THRIFT) --gen erl -out test $$f ; \
+	  $(THRIFT) --gen erl -o test $$f ; \
 	done ; \
 	touch .generated
 
@@ -32,7 +32,7 @@ all: .generated
 	./rebar compile
 
 check: .generated
-	./rebar eunit
+	./rebar skip_deps=true eunit
 
 install: all
 	mkdir -p $(DESTDIR)$(ERLANG_INSTALL_LIB_DIR_thrift) ; \
@@ -47,37 +47,19 @@ uninstall:
 	rm -rf $(DESTDIR)$(ERLANG_INSTALL_LIB_DIR_thrift)
 
 clean:
-	./rebar clean
-	rm .generated
-	rm -f test/secondService_* \
-		  test/aService_* \
-		  test/serviceForExceptionWithAMap_* \
-		  test/annotationTest_* \
-		  test/service_* \
-		  test/constantsDemo_* \
-		  test/smallService_* \
-		  test/smallTest_* \
-		  test/debugProtoTest_* \
-		  test/srv_* \
-		  test/denseLinkingTest_* \
-		  test/stressTest_* \
-		  test/docTest_* \
-		  test/emptyService_* \
-		  test/inherited_* \
-		  test/javaBeansTest_* \
-		  test/thrift1151_* \
-		  test/javaBeansTest_* \
-		  test/manyTypedefs_* \
-		  test/thriftTest_* \
-		  test/optionalRequiredTest_* \
-		  test/yowza_* \
-		  test/reverseOrderService_* \
-		  test/manyOptionals_*
+	rm -f .generated
+	rm -rf test/gen-erl/
 	./rebar clean
 
 maintainer-clean-local:
 	rm -rf ebin
 
-EXTRA_DIST = include src rebar rebar.config test
+EXTRA_DIST = \
+	include \
+	src \
+	rebar \
+	rebar.config \
+	test \
+	README.md
 
 MAINTAINERCLEANFILES = Makefile.in

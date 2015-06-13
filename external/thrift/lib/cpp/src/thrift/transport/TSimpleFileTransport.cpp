@@ -17,10 +17,9 @@
  * under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include "TSimpleFileTransport.h"
+#include <thrift/thrift-config.h>
+
+#include <thrift/transport/TSimpleFileTransport.h>
 
 #include <sys/types.h>
 #ifdef HAVE_SYS_STAT_H
@@ -55,7 +54,7 @@ TSimpleFileTransport(const std::string& path, bool read, bool write)
 #else
   int mode = _S_IREAD | _S_IWRITE;
 #endif
-  int fd = ::open(path.c_str(),
+  int fd = ::THRIFT_OPEN(path.c_str(),
                   flags,
                   mode);
   if (fd < 0) {

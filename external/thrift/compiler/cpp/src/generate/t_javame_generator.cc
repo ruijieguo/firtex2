@@ -29,8 +29,15 @@
 
 #include "platform.h"
 #include "t_oop_generator.h"
-using namespace std;
 
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::string;
+using std::stringstream;
+using std::vector;
+
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /**
  * Java code generator.
@@ -407,7 +414,7 @@ void t_javame_generator::generate_consts(std::vector<t_const*> consts) {
     return;
   }
 
-  string f_consts_name = package_dir_+"/Constants.java";
+  string f_consts_name = package_dir_+ "/" + program_name_ +  "Constants.java";
   ofstream f_consts;
   f_consts.open(f_consts_name.c_str());
 
@@ -418,7 +425,7 @@ void t_javame_generator::generate_consts(std::vector<t_const*> consts) {
     java_type_imports();
 
   f_consts <<
-    "public class Constants {" << endl <<
+    "public class " << program_name_ << "Constants {" << endl <<
     endl;
   indent_up();
   vector<t_const*>::iterator c_iter;
@@ -2102,7 +2109,9 @@ void t_javame_generator::generate_service_client(t_service* tservice) {
 
     // Serialize the request
     f_service_ <<
-      indent() << "oprot_.writeMessageBegin(new TMessage(\"" << funname << "\", TMessageType.CALL, ++seqid_));" << endl <<
+      indent() << "oprot_.writeMessageBegin(new TMessage(\"" << funname << "\", " <<
+      ((*f_iter)->is_oneway() ? "TMessageType.ONEWAY" : "TMessageType.CALL") <<
+      ", ++seqid_));" << endl <<
       indent() << argsname << " args = new " << argsname << "();" << endl;
 
     for (fld_iter = fields.begin(); fld_iter != fields.end(); ++fld_iter) {
@@ -2946,7 +2955,7 @@ string t_javame_generator::base_type_name(t_base_type* type,
   case t_base_type::TYPE_DOUBLE:
     return (in_container ? "Double" : "double");
   default:
-    throw "compiler error: no C++ name for base type " + t_base_type::t_base_name(tbase);
+    throw "compiler error: no Java name for base type " + t_base_type::t_base_name(tbase);
   }
 }
 

@@ -43,6 +43,8 @@ class TSSLSocket(TSocket.TSocket):
                port=9090,
                validate=True,
                ca_certs=None,
+               keyfile=None,
+               certfile=None,
                unix_socket=None):
     """Create SSL TSocket
 
@@ -52,7 +54,11 @@ class TSSLSocket(TSocket.TSocket):
     file downloaded from: http://curl.haxx.se/ca/cacert.pem  This is passed to
     the ssl_wrap function as the 'ca_certs' parameter.
     @type ca_certs: str
-
+    @param keyfile: The private key
+    @type keyfile: str
+    @param certfile: The cert file
+    @type certfile: str
+    
     Raises an IOError exception if validate is True and the ca_certs file is
     None, not present or unreadable.
     """
@@ -64,6 +70,8 @@ class TSSLSocket(TSocket.TSocket):
     else:
       self.cert_reqs = ssl.CERT_REQUIRED
     self.ca_certs = ca_certs
+    self.keyfile = keyfile
+    self.certfile = certfile
     if validate:
       if ca_certs is None or not os.access(ca_certs, os.R_OK):
         raise IOError('Certificate Authority ca_certs file "%s" '
@@ -82,21 +90,24 @@ class TSSLSocket(TSocket.TSocket):
                                       ssl_version=self.SSL_VERSION,
                                       do_handshake_on_connect=True,
                                       ca_certs=self.ca_certs,
+                                      keyfile=self.keyfile,
+                                      certfile=self.certfile,
                                       cert_reqs=self.cert_reqs)
         self.handle.settimeout(self._timeout)
         try:
           self.handle.connect(ip_port)
-        except socket.error as e:
+        except socket.error, e:
           if res is not res0[-1]:
             continue
           else:
             raise e
         break
-    except socket.error as e:
+    except socket.error, e:
       if self._unix_socket:
-        message = 'Could not connect to secure socket %s' % self._unix_socket
+        message = 'Could not connect to secure socket %s: %s' \
+                % (self._unix_socket, e)
       else:
-        message = 'Could not connect to %s:%d' % (self.host, self.port)
+        message = 'Could not connect to %s:%d: %s' % (self.host, self.port, e)
       raise TTransportException(type=TTransportException.NOT_OPEN,
                                 message=message)
     if self.validate:
@@ -128,6 +139,7 @@ class TSSLSocket(TSocket.TSocket):
       if cert_key != 'commonName':
         continue
       certhost = cert_value
+      # this check should be performed by some sort of Access Manager
       if certhost == self.host:
         # success, cert commonName matches desired hostname
         self.is_valid = True
@@ -188,7 +200,7 @@ class TSSLServerSocket(TSocket.TServerSocket):
     try:
       client = ssl.wrap_socket(plain_client, certfile=self.certfile,
                       server_side=True, ssl_version=self.SSL_VERSION)
-    except ssl.SSLError as ssl_exc:
+    except ssl.SSLError, ssl_exc:
       # failed handshake/ssl wrap, close socket to client
       plain_client.close()
       # raise ssl_exc

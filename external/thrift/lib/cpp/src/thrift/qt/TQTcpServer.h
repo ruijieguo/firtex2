@@ -55,8 +55,8 @@ class TQTcpServer : public QObject {
  private:
   TQTcpServer(const TQTcpServer&);
   TQTcpServer& operator=(const TQTcpServer&);
-  
-  class ConnectionContext;
+
+  struct ConnectionContext;
 
   void finish(boost::shared_ptr<ConnectionContext> ctx, bool healthy);
 

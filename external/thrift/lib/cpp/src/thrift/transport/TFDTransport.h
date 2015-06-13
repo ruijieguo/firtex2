@@ -25,8 +25,8 @@
 #include <sys/time.h>
 #endif
 
-#include "TTransport.h"
-#include "TVirtualTransport.h"
+#include <thrift/transport/TTransport.h>
+#include <thrift/transport/TVirtualTransport.h>
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -48,7 +48,12 @@ class TFDTransport : public TVirtualTransport<TFDTransport> {
 
   ~TFDTransport() {
     if (close_policy_ == CLOSE_ON_DESTROY) {
-      close();
+      try {
+        close();
+      } catch(TTransportException& ex) {
+        GlobalOutput.printf("~TFDTransport TTransportException: '%s'",
+                            ex.what());
+      }
     }
   }
 

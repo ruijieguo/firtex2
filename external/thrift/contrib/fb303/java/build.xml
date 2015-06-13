@@ -132,9 +132,9 @@
       <remoteRepository refid="central"/>
       <remoteRepository refid="apache"/>
       <license name="The Apache Software License, Version 2.0" url="${license}"/>
-      <scm connection="scm:svn:http://svn.apache.org/repos/asf/thrift/trunk/" 
-      developerConnection="scm:svn:http://svn.apache.org/repos/asf/thrift/trunk/"
-      url="http://svn.apache.org/viewcvs.cgi/thrift"
+      <scm connection="scm:git:https://git-wip-us.apache.org/repos/asf/thrift.git" 
+      developerConnection="scm:git:https://git-wip-us.apache.org/repos/asf/thrift.git"
+      url="https://git-wip-us.apache.org/repos/asf?p=thrift.git"
     />
       <!-- Thrift Developers -->
       <developer id="mcslee" name="Mark Slee"/>
@@ -153,6 +153,8 @@
       <developer id="molinaro" name="Anthony Molinaro"/>
       <developer id="roger" name="Roger Meier"/>
       <developer id="jfarrell" name="Jake Farrell"/>
+      <developer id="jensg" name="Jens Geyer"/>
+      <developer id="carl" name="Carl Yeksigian"/>
 
       <!-- Thrift dependencies list -->
       <dependency groupId="org.apache.thrift" artifactId="libthrift" version="${version}"/>

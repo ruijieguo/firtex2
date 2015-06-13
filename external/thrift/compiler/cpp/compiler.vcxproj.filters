@@ -71,7 +71,7 @@
       <Filter>parse</Filter>
     </ClInclude>
     <ClInclude Include="src\platform.h" />
-    <ClInclude Include="src\thrifty.h" />
+    <ClInclude Include="src\thrifty.hh" />
     <ClInclude Include="src\windows\config.h">
       <Filter>windows</Filter>
     </ClInclude>
@@ -121,6 +121,9 @@
     <ClCompile Include="src\generate\t_go_generator.cc">
       <Filter>generate</Filter>
     </ClCompile>
+    <ClCompile Include="src\generate\t_gv_generator.cc">
+      <Filter>generate</Filter>
+    </ClCompile>
     <ClCompile Include="src\generate\t_hs_generator.cc">
       <Filter>generate</Filter>
     </ClCompile>
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="src\thriftl.cc" />
     <ClCompile Include="src\thrifty.cc" />
+    <ClCompile Include="src\parse\t_typedef.cc">
+      <Filter>parse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\thriftl.ll" />

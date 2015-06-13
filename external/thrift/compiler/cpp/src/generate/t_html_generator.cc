@@ -29,8 +29,18 @@
 #include "t_generator.h"
 #include "t_html_generator.h"
 #include "platform.h"
-using namespace std;
 
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::pair;
+using std::string;
+using std::stringstream;
+using std::vector;
+
+static const string endl = "\n";  // avoid ostream << std::endl flushes
+
+enum input_type { INPUT_UNKNOWN, INPUT_UTF8, INPUT_PLAIN };
 
 /**
  * HTML code generator
@@ -48,12 +58,20 @@ class t_html_generator : public t_generator {
     (void) parsed_options;
     (void) option_string;  
     out_dir_base_ = "gen-html";
+    input_type_ = INPUT_UNKNOWN;
+    
+    std::map<std::string, std::string>::const_iterator iter;
+    iter = parsed_options.find("standalone");
+    standalone_ = (iter != parsed_options.end());
+    
     escape_.clear();
     escape_['&']  = "&amp;";
     escape_['<']  = "&lt;";
     escape_['>']  = "&gt;";
     escape_['"']  = "&quot;";
     escape_['\''] = "&apos;";
+
+    init_allowed__markup();
   }
 
   void generate_program();
@@ -62,8 +80,16 @@ class t_html_generator : public t_generator {
   void generate_program_toc_rows(t_program* tprog,
          std::vector<t_program*>& finished);
   void generate_index();
+  std::string escape_html(std::string const & str);
+  std::string escape_html_tags(std::string const & str);
   void generate_css();
-
+  void generate_css_content(std::ofstream & f_target);
+  void generate_style_tag();
+  std::string make_file_link( std::string name);
+  bool is_utf8_sequence(std::string const & str, size_t firstpos);
+  void detect_input_encoding(std::string const & str, size_t firstpos);
+  void init_allowed__markup();
+  
   /**
    * Program-level generation functions
    */
@@ -77,11 +103,17 @@ class t_html_generator : public t_generator {
 
   void print_doc        (t_doc* tdoc);
   int  print_type       (t_type* ttype);
-  void print_const_value(t_const_value* tvalue);
+  void print_const_value(t_type* type, t_const_value* tvalue);
   void print_fn_args_doc(t_function* tfunction);
 
+ private:
   std::ofstream f_out_;
+  std::string  current_file_;
+  input_type input_type_;
+  std::map<std::string, int> allowed_markup; 
+  bool standalone_; 
 };
+
 
 /**
  * Emits the Table of Contents links at the top of the module's page
@@ -127,7 +159,7 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
     vector<t_service*>::iterator sv_iter;
     for (sv_iter = services.begin(); sv_iter != services.end(); ++sv_iter) {
       string name = get_service_name(*sv_iter);
-      f_out_ << "<a href=\"" << fname << "#Svc_" << name << "\">" << name
+      f_out_ << "<a href=\"" << make_file_link(fname) << "#Svc_" << name << "\">" << name
         << "</a><br/>" << endl;
       f_out_ << "<ul>" << endl;
       map<string,string> fn_html;
@@ -135,7 +167,7 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
       vector<t_function*>::iterator fn_iter;
       for (fn_iter = functions.begin(); fn_iter != functions.end(); ++fn_iter) {
         string fn_name = (*fn_iter)->get_name();
-        string html = "<li><a href=\"" + fname + "#Fn_" + name + "_" +
+        string html = "<li><a href=\"" + make_file_link(fname) + "#Fn_" + name + "_" +
           fn_name + "\">" + fn_name + "</a></li>";
         fn_html.insert(pair<string,string>(fn_name, html));
       }
@@ -153,9 +185,9 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
     vector<t_enum*>::iterator en_iter;
     for (en_iter = enums.begin(); en_iter != enums.end(); ++en_iter) {
       string name = (*en_iter)->get_name();
-      // f_out_ << "<a href=\"" << fname << "#Enum_" << name << "\">" << name
+      // f_out_ << "<a href=\"" << make_file_link(fname) << "#Enum_" << name << "\">" << name
       // <<  "</a><br/>" << endl;
-      string html = "<a href=\"" + fname + "#Enum_" + name + "\">" + name +
+      string html = "<a href=\"" + make_file_link(fname) + "#Enum_" + name + "\">" + name +
         "</a>";
       data_types.insert(pair<string,string>(name, html));
     }
@@ -165,9 +197,9 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
     vector<t_typedef*>::iterator td_iter;
     for (td_iter = typedefs.begin(); td_iter != typedefs.end(); ++td_iter) {
       string name = (*td_iter)->get_symbolic();
-      // f_out_ << "<a href=\"" << fname << "#Typedef_" << name << "\">" << name
+      // f_out_ << "<a href=\"" << make_file_link(fname) << "#Typedef_" << name << "\">" << name
       // << "</a><br/>" << endl;
-      string html = "<a href=\"" + fname + "#Typedef_" + name + "\">" + name +
+      string html = "<a href=\"" + make_file_link(fname) + "#Typedef_" + name + "\">" + name +
         "</a>";
       data_types.insert(pair<string,string>(name, html));
     }
@@ -177,9 +209,9 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
     vector<t_struct*>::iterator o_iter;
     for (o_iter = objects.begin(); o_iter != objects.end(); ++o_iter) {
       string name = (*o_iter)->get_name();
-      //f_out_ << "<a href=\"" << fname << "#Struct_" << name << "\">" << name
+      //f_out_ << "<a href=\"" << make_file_link(fname) << "#Struct_" << name << "\">" << name
       //<< "</a><br/>" << endl;
-      string html = "<a href=\"" + fname + "#Struct_" + name + "\">" + name +
+      string html = "<a href=\"" + make_file_link(fname) + "#Struct_" + name + "\">" + name +
         "</a>";
       data_types.insert(pair<string,string>(name, html));
     }
@@ -195,7 +227,7 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
     vector<t_const*>::iterator con_iter;
     for (con_iter = consts.begin(); con_iter != consts.end(); ++con_iter) {
       string name = (*con_iter)->get_name();
-      string html ="<code><a href=\"" + fname + "#Const_" + name +
+      string html ="<code><a href=\"" + make_file_link(fname) + "#Const_" + name +
         "\">" + name + "</a></code>";
       const_html.insert(pair<string,string>(name, html));
     }
@@ -214,14 +246,15 @@ void t_html_generator::generate_program_toc_row(t_program* tprog) {
 void t_html_generator::generate_program() {
   // Make output directory
   MKDIR(get_out_dir().c_str());
-  string fname = get_out_dir() + program_->get_name() + ".html";
+  current_file_ =  program_->get_name() + ".html";
+  string fname = get_out_dir() + current_file_;
   f_out_.open(fname.c_str());
   f_out_ << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"" << endl;
   f_out_ << "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" << endl;
   f_out_ << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
   f_out_ << "<head>" << endl;
   f_out_ << "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />" << endl;
-  f_out_ << "<link href=\"style.css\" rel=\"stylesheet\" type=\"text/css\"/>" << endl;
+  generate_style_tag();
   f_out_ << "<title>Thrift module: " << program_->get_name()
    << "</title></head><body>" << endl
    << "<div class=\"container-fluid\">" << endl
@@ -288,20 +321,21 @@ void t_html_generator::generate_program() {
 
   f_out_ << "</div></body></html>" << endl;
   f_out_.close();
-
+  
   generate_index();
   generate_css();
 }
+
 
 /**
  * Emits the index.html file for the recursive set of Thrift programs
  */
 void t_html_generator::generate_index() {
-  string index_fname = get_out_dir() + "index.html";
+  current_file_ = "index.html";
+  string index_fname = get_out_dir() + current_file_;
   f_out_.open(index_fname.c_str());
   f_out_ << "<html><head>" << endl;
-  f_out_ << "<link href=\"style.css\" rel=\"stylesheet\" type=\"text/css\"/>"
-   << endl;
+  generate_style_tag();
   f_out_ << "<title>All Thrift declarations</title></head><body>"
    << endl << "<div class=\"container-fluid\">"
    << endl << "<h1>All Thrift declarations</h1>" << endl;
@@ -315,18 +349,48 @@ void t_html_generator::generate_index() {
 }
 
 void t_html_generator::generate_css() {
-  string css_fname = get_out_dir() + "style.css";
-  f_out_.open(css_fname.c_str());
-  f_out_ << BOOTSTRAP_CSS() << endl;
-  f_out_ << "/* Auto-generated CSS for generated Thrift docs */" << endl;
-  f_out_ << "h3, h4 { margin-bottom: 6px; }" << endl;
-  f_out_ << "div.definition { border: 1px solid #CCC; margin-bottom: 10px; padding: 10px; }" << endl;
-  f_out_ << "div.extends { margin: -0.5em 0 1em 5em }" << endl;
-  f_out_ << "td { vertical-align: top; }" << endl;
-  f_out_ << "table { empty-cells: show; }" << endl;
-  f_out_ << "code { line-height: 20px; }" << endl;
-  f_out_ << ".table-bordered th, .table-bordered td { border-bottom: 1px solid #DDDDDD; }" << endl;
-  f_out_.close();
+  if( ! standalone_) {
+    current_file_ = "style.css";
+    string css_fname = get_out_dir() + current_file_;
+    f_out_.open(css_fname.c_str());
+    generate_css_content( f_out_);
+    f_out_.close();
+  }
+}
+
+
+void t_html_generator::generate_css_content(std::ofstream & f_target) {
+  f_target << BOOTSTRAP_CSS() << endl;
+  f_target << "/* Auto-generated CSS for generated Thrift docs */" << endl;
+  f_target << "h3, h4 { margin-bottom: 6px; }" << endl;
+  f_target << "div.definition { border: 1px solid #CCC; margin-bottom: 10px; padding: 10px; }" << endl;
+  f_target << "div.extends { margin: -0.5em 0 1em 5em }" << endl;
+  f_target << "td { vertical-align: top; }" << endl;
+  f_target << "table { empty-cells: show; }" << endl;
+  f_target << "code { line-height: 20px; }" << endl;
+  f_target << ".table-bordered th, .table-bordered td { border-bottom: 1px solid #DDDDDD; }" << endl;
+}
+
+/**
+ * Generates the CSS tag. 
+ * Depending on "standalone", either a CSS file link (default), or the entire CSS is embedded inline.
+ */
+void t_html_generator::generate_style_tag() {
+  if( ! standalone_) {
+    f_out_ << "<link href=\"style.css\" rel=\"stylesheet\" type=\"text/css\"/>" << endl;
+  } else {
+    f_out_ << "<style type=\"text/css\"/><!--" << endl;
+    generate_css_content( f_out_);
+    f_out_ << "--></style>" << endl;
+  } 
+}
+
+/**
+ * Returns the target file for a <a href> link 
+ * The returned string is empty, whenever filename refers to the current file.
+ */
+std::string t_html_generator::make_file_link( std::string filename) {
+  return (current_file_.compare(filename) != 0)  ?  filename  :  "";
 }
 
 /**
@@ -335,22 +399,270 @@ void t_html_generator::generate_css() {
  */
 void t_html_generator::print_doc(t_doc* tdoc) {
   if (tdoc->has_doc()) {
-    string doc = tdoc->get_doc();
-    size_t index;
-    while ((index = doc.find_first_of("\r\n")) != string::npos) {
-      if (index == 0) {
-  f_out_ << "<p/>" << endl;
-      } else {
-  f_out_ << doc.substr(0, index) << endl;
-      }
-      if (index + 1 < doc.size() && doc.at(index) != doc.at(index + 1) &&
-    (doc.at(index + 1) == '\r' || doc.at(index + 1) == '\n')) {
-  index++;
-      }
-      doc = doc.substr(index + 1);
-    }
-    f_out_ << doc << "<br/>";
+    f_out_ << escape_html(tdoc->get_doc()) << "<br/>";
   }
+}
+
+bool t_html_generator::is_utf8_sequence(std::string const & str, size_t firstpos) {
+  // leading char determines the length of the sequence
+  unsigned char c = str.at(firstpos);
+  int count = 0;
+  if(        (c & 0xE0) == 0xC0) {
+    count = 1;
+  } else if( (c & 0xF0) == 0xE0) {
+    count = 2;
+  } else if( (c & 0xF8) == 0xF0) {
+    count = 3;
+  } else if( (c & 0xFC) == 0xF8) {
+    count = 4;
+  } else if( (c & 0xFE) == 0xFC) {
+    count = 5;
+  } else {
+    //pdebug("UTF-8 test: char '%c' (%d) is not a valid UTF-8 leading byte", c, int(c));
+    return false;  // no UTF-8
+  }
+
+  // following chars
+  size_t pos = firstpos + 1;
+  while( (pos < str.length()) && (0 < count))
+  {
+    c = str.at(pos);
+    if( (c & 0xC0) !=  0x80) {
+      //pdebug("UTF-8 test: char '%c' (%d) is not a valid UTF-8 following byte", c, int(c));
+      return false;  // no UTF-8
+    }    
+    --count;
+    ++pos;
+  }
+  
+  // true if the sequence is complete
+  return (0 == count);
+}
+
+void t_html_generator::detect_input_encoding(std::string const & str, size_t firstpos) {
+  if( is_utf8_sequence(str,firstpos))
+  {
+    pdebug( "Input seems to be already UTF-8 encoded");
+    input_type_ = INPUT_UTF8;
+    return;
+  }
+
+  // fallback 
+  pwarning( 1, "Input is not UTF-8, treating as plain ANSI");
+  input_type_ = INPUT_PLAIN;
+}
+
+void t_html_generator::init_allowed__markup() {
+  allowed_markup.clear();
+  // standalone tags
+  allowed_markup["br"] = 1;
+  allowed_markup["br/"] = 1;
+  allowed_markup["img"] = 1;
+  // paired tags
+  allowed_markup["b"] = 1;
+  allowed_markup["/b"] = 1;
+  allowed_markup["u"] = 1;
+  allowed_markup["/u"] = 1;
+  allowed_markup["i"] = 1;
+  allowed_markup["/i"] = 1;
+  allowed_markup["s"] = 1;
+  allowed_markup["/s"] = 1;
+  allowed_markup["big"] = 1;
+  allowed_markup["/big"] = 1;
+  allowed_markup["small"] = 1;
+  allowed_markup["/small"] = 1;
+  allowed_markup["sup"] = 1;
+  allowed_markup["/sup"] = 1;
+  allowed_markup["sub"] = 1;
+  allowed_markup["/sub"] = 1;
+  allowed_markup["pre"] = 1;
+  allowed_markup["/pre"] = 1;
+  allowed_markup["tt"] = 1;
+  allowed_markup["/tt"] = 1;
+  allowed_markup["ul"] = 1;
+  allowed_markup["/ul"] = 1;
+  allowed_markup["ol"] = 1;
+  allowed_markup["/ol"] = 1;
+  allowed_markup["li"] = 1;
+  allowed_markup["/li"] = 1;
+  allowed_markup["a"] = 1;
+  allowed_markup["/a"] = 1;
+  allowed_markup["p"] = 1;
+  allowed_markup["/p"] = 1;
+  allowed_markup["code"] = 1;
+  allowed_markup["/code"] = 1;
+  allowed_markup["dl"] = 1;
+  allowed_markup["/dl"] = 1;
+  allowed_markup["dt"] = 1;
+  allowed_markup["/dt"] = 1;
+  allowed_markup["dd"] = 1;
+  allowed_markup["/dd"] = 1;
+  allowed_markup["h1"] = 1;
+  allowed_markup["/h1"] = 1;
+  allowed_markup["h2"] = 1;
+  allowed_markup["/h2"] = 1;
+  allowed_markup["h3"] = 1;
+  allowed_markup["/h3"] = 1;
+  allowed_markup["h4"] = 1;
+  allowed_markup["/h4"] = 1;
+  allowed_markup["h5"] = 1;
+  allowed_markup["/h5"] = 1;
+  allowed_markup["h6"] = 1;
+  allowed_markup["/h6"] = 1;
+}
+  
+std::string t_html_generator::escape_html_tags(std::string const & str) {
+  std::ostringstream result;
+
+  unsigned char c = '?';
+  size_t lastpos;
+  size_t firstpos = 0;
+  while( firstpos < str.length()) {
+
+    // look for non-ASCII char  
+    lastpos = firstpos;    
+    while( lastpos < str.length()) {
+      c = str.at(lastpos);
+      if( ('<' == c) || ('>' == c)) {
+        break;
+      }
+      ++lastpos;
+    }
+    
+    // copy what we got so far    
+    if( lastpos > firstpos) {
+      result << str.substr( firstpos, lastpos-firstpos);
+      firstpos = lastpos;
+    }
+    
+    // reached the end?
+    if( firstpos >= str.length()) {
+      break;
+    }
+
+    // tag end without corresponding begin
+    ++firstpos;
+    if( '>' == c) {
+      result << "&gt;";
+      continue;
+    }
+
+    // extract the tag
+    std::ostringstream tagstream;
+    while( firstpos < str.length()) {
+      c = str.at(firstpos);
+      ++firstpos;
+      if('<'==c) {
+        tagstream << "&lt;"; // nested begin?
+      } else if('>'==c) {
+        break;
+      } else {
+        tagstream << c;  // not very efficient, but tags should be quite short
+      }
+    }
+
+    // we allow for several markup in docstrings, all else will become escaped
+    string tag_content = tagstream.str();
+    string tag_key = tag_content;
+    size_t first_white = tag_key.find_first_of(" \t\f\v\n\r");
+    if( first_white != string::npos) {
+      tag_key.erase(first_white);
+    }
+    for (std::string::size_type i=0; i<tag_key.length(); ++i) {
+      tag_key[i] = tolower(tag_key[i]);
+    }
+    if( allowed_markup.find(tag_key) != allowed_markup.end()) {
+      result << "<" << tag_content << ">"; 
+    } else {
+      result << "&lt;" << tagstream.str() << "&gt;"; 
+      pverbose("illegal markup <%s> in doc-comment\n", tag_key.c_str());
+    }
+  }
+  
+  return result.str();
+}
+
+std::string t_html_generator::escape_html(std::string const & str) {
+  // the generated HTML header says it is UTF-8 encoded
+  // if UTF-8 input has been detected before, we don't need to change anything
+  if( input_type_ == INPUT_UTF8) {
+    return escape_html_tags(str);
+  }
+  
+  // convert unsafe chars to their &#<num>; equivalent
+  std::ostringstream result;
+  unsigned char c = '?';
+  unsigned int ic = 0;
+  size_t lastpos;
+  size_t firstpos = 0;
+  while( firstpos < str.length()) {
+
+    // look for non-ASCII char  
+    lastpos = firstpos;    
+    while( lastpos < str.length()) {
+      c = str.at(lastpos);
+      ic = c;
+      if( (32 > ic) || (127 < ic)) {
+        break;
+      }
+      ++lastpos;
+    }
+    
+    // copy what we got so far    
+    if( lastpos > firstpos) {
+      result << str.substr( firstpos, lastpos-firstpos);
+      firstpos = lastpos;
+    }
+
+    // reached the end?
+    if( firstpos >= str.length()) {
+      break;
+    }
+
+    // some control code?
+    if(ic <= 31)
+    {
+      switch( c)
+      {
+        case '\r' :  
+        case '\n' :  
+        case '\t' :
+          result << c;
+          break;
+        default: // silently consume all other ctrl chars
+          break;
+      }
+      ++firstpos;
+      continue;        
+    }
+    
+    // reached the end?
+    if( firstpos >= str.length()) {
+      break;
+    }
+
+    // try to detect input encoding
+    if( input_type_ == INPUT_UNKNOWN) {
+      detect_input_encoding(str,firstpos);
+      if( input_type_ == INPUT_UTF8) {
+        lastpos = str.length();
+        result << str.substr( firstpos, lastpos-firstpos);
+        break;
+      }
+    }
+    
+    // convert the character to something useful based on the detected encoding
+    switch( input_type_) {
+      case INPUT_PLAIN: 
+        result << "&#" << ic << ";";  
+        ++firstpos;
+        break;
+      default:
+        throw "Unexpected or unrecognized input encoding";
+    }
+  }
+  
+  return escape_html_tags(result.str());
 }
 
 /**
@@ -406,53 +718,120 @@ int t_html_generator::print_type(t_type* ttype) {
 /**
  * Prints out an HTML representation of the provided constant value
  */
-void t_html_generator::print_const_value(t_const_value* tvalue) {
+void t_html_generator::print_const_value(t_type* type, t_const_value* tvalue) {
+
+  // if tvalue is an indentifier, the constant content is already shown elsewhere
+  if (tvalue->get_type() == t_const_value::CV_IDENTIFIER) {
+    string fname = program_->get_name() + ".html";
+    string name = escape_html( tvalue->get_identifier());
+    f_out_ << "<code><a href=\"" + make_file_link(fname) + "#Const_" + name +"\">" + name + "</a></code>";
+    return;
+  }
+  
+  t_type* truetype = type;
+  while (truetype->is_typedef()) {
+    truetype = ((t_typedef*)truetype)->get_type();
+  }
+  
   bool first = true;
-  switch (tvalue->get_type()) {
-  case t_const_value::CV_INTEGER:
-    f_out_ << tvalue->get_integer();
-    break;
-  case t_const_value::CV_DOUBLE:
-    f_out_ << tvalue->get_double();
-    break;
-  case t_const_value::CV_STRING:
-    f_out_ << '"' << get_escaped_string(tvalue) << '"';
-    break;
-  case t_const_value::CV_MAP:
-    {
-      f_out_ << "{ ";
-      map<t_const_value*, t_const_value*> map_elems = tvalue->get_map();
-      map<t_const_value*, t_const_value*>::iterator map_iter;
-      for (map_iter = map_elems.begin(); map_iter != map_elems.end(); map_iter++) {
-        if (!first) {
-          f_out_ << ", ";
+  if (truetype->is_base_type()) {
+    t_base_type::t_base tbase = ((t_base_type*)truetype)->get_base();
+    switch (tbase) {
+      case t_base_type::TYPE_STRING:
+        f_out_ << '"' << escape_html( get_escaped_string(tvalue)) << '"';
+        break;
+      case t_base_type::TYPE_BOOL:
+        f_out_ << ((tvalue->get_integer() != 0) ? "true" : "false");
+        break;
+      case t_base_type::TYPE_BYTE:
+        f_out_ << tvalue->get_integer();
+        break;
+      case t_base_type::TYPE_I16:
+        f_out_ << tvalue->get_integer();
+        break;
+      case t_base_type::TYPE_I32:
+        f_out_ << tvalue->get_integer();
+        break;
+      case t_base_type::TYPE_I64:
+        f_out_ << tvalue->get_integer();
+        break;
+      case t_base_type::TYPE_DOUBLE:
+        if (tvalue->get_type() == t_const_value::CV_INTEGER) {
+          f_out_ << tvalue->get_integer();
+        } else {
+          f_out_ << tvalue->get_double();
         }
-        first = false;
-        print_const_value(map_iter->first);
-        f_out_ << " = ";
-        print_const_value(map_iter->second);
-      }
-      f_out_ << " }";
+        break;
+      default:
+          f_out_ << "UNKNOWN BASE TYPE";
+          break;
     }
-    break;
-  case t_const_value::CV_LIST:
-    {
-      f_out_ << "{ ";
-      vector<t_const_value*> list_elems = tvalue->get_list();;
-      vector<t_const_value*>::iterator list_iter;
-      for (list_iter = list_elems.begin(); list_iter != list_elems.end(); list_iter++) {
-        if (!first) {
-          f_out_ << ", ";
+  } else if (truetype->is_enum()) {
+    f_out_ << escape_html(truetype->get_name()) << "." << escape_html(tvalue->get_identifier_name());
+  } else if (truetype->is_struct() || truetype->is_xception()) {
+    f_out_ << "{ ";
+    const vector<t_field*>& fields = ((t_struct*)truetype)->get_members();
+    vector<t_field*>::const_iterator f_iter;
+    const map<t_const_value*, t_const_value*>& val = tvalue->get_map();
+    map<t_const_value*, t_const_value*>::const_iterator v_iter;
+    for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
+      t_type* field_type = NULL;
+      for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
+        if ((*f_iter)->get_name() == v_iter->first->get_string()) {
+          field_type = (*f_iter)->get_type();
         }
-        first = false;
-        print_const_value(*list_iter);
       }
-      f_out_ << " }";
+      if (field_type == NULL) {
+        throw "type error: " + truetype->get_name() + " has no field " + v_iter->first->get_string();
+      }
+      if (!first) {
+        f_out_ << ", ";
+      }
+      first = false;
+      f_out_ << escape_html( v_iter->first->get_string()) << " = ";
+      print_const_value( field_type, v_iter->second);
     }
-    break;
-  default:
-    f_out_ << "UNKNOWN";
-    break;
+    f_out_ << " }";
+  } else if (truetype->is_map()) {
+    f_out_ << "{ ";
+    map<t_const_value*, t_const_value*> map_elems = tvalue->get_map();
+    map<t_const_value*, t_const_value*>::iterator map_iter;
+    for (map_iter = map_elems.begin(); map_iter != map_elems.end(); map_iter++) {
+      if (!first) {
+        f_out_ << ", ";
+      }
+      first = false;
+      print_const_value( ((t_map*)truetype)->get_key_type(), map_iter->first);
+      f_out_ << " = ";
+      print_const_value( ((t_map*)truetype)->get_val_type(), map_iter->second);
+    }
+    f_out_ << " }";
+  } else if (truetype->is_list()) {
+    f_out_ << "{ ";
+    vector<t_const_value*> list_elems = tvalue->get_list();;
+    vector<t_const_value*>::iterator list_iter;
+    for (list_iter = list_elems.begin(); list_iter != list_elems.end(); list_iter++) {
+      if (!first) {
+        f_out_ << ", ";
+      }
+      first = false;
+      print_const_value( ((t_list*)truetype)->get_elem_type(), *list_iter);
+    }
+    f_out_ << " }";
+  } else if (truetype->is_set()) {
+    f_out_ << "{ ";
+    vector<t_const_value*> list_elems = tvalue->get_list();;
+    vector<t_const_value*>::iterator list_iter;
+    for (list_iter = list_elems.begin(); list_iter != list_elems.end(); list_iter++) {
+      if (!first) {
+        f_out_ << ", ";
+      }
+      first = false;
+      print_const_value( ((t_set*)truetype)->get_elem_type(), *list_iter);
+    }
+    f_out_ << " }";
+  } else {
+    f_out_ << "UNKNOWN TYPE";
   }
 }
 
@@ -477,7 +856,7 @@ void t_html_generator::print_fn_args_doc(t_function* tfunction) {
       for ( ; arg_iter != args.end(); arg_iter++) {
         f_out_ << "<tr><td>" << (*arg_iter)->get_name();
         f_out_ << "</td><td>";
-        f_out_ << (*arg_iter)->get_doc();
+        f_out_ << escape_html( (*arg_iter)->get_doc());
         f_out_ << "</td></tr>" << endl;
       }
       f_out_ << "</table>";
@@ -501,7 +880,7 @@ void t_html_generator::print_fn_args_doc(t_function* tfunction) {
       for ( ; ex_iter != excepts.end(); ex_iter++) {
         f_out_ << "<tr><td>" << (*ex_iter)->get_type()->get_name();
         f_out_ << "</td><td>";
-        f_out_ << (*ex_iter)->get_doc();
+        f_out_ << escape_html( (*ex_iter)->get_doc());
         f_out_ << "</td></tr>" << endl;
       }
       f_out_ << "</table>";
@@ -545,7 +924,9 @@ void t_html_generator::generate_enum(t_enum* tenum) {
     f_out_ << (*val_iter)->get_name();
     f_out_ << "</code></td><td><code>";
     f_out_ << (*val_iter)->get_value();
-    f_out_ << "</code></td></tr>" << endl;
+    f_out_ << "</code></td><td>" << endl;
+    print_doc((*val_iter));
+    f_out_ << "</td></tr>" << endl;
   }
   f_out_ << "</table></div>" << endl;
 }
@@ -559,7 +940,7 @@ void t_html_generator::generate_const(t_const* tconst) {
    << "</code></td><td>";
   print_type(tconst->get_type());
   f_out_ << "</td><td><code>";
-  print_const_value(tconst->get_value());
+  print_const_value(tconst->get_type(), tconst->get_value());
   f_out_ << "</code></td></tr>";
   if (tconst->has_doc()) {
     f_out_ << "<tr><td colspan=\"3\"><blockquote>";
@@ -579,6 +960,8 @@ void t_html_generator::generate_struct(t_struct* tstruct) {
   f_out_ << "<h3 id=\"Struct_" << name << "\">";
   if (tstruct->is_xception()) {
     f_out_ << "Exception: ";
+  } else if (tstruct->is_union()) {
+    f_out_ << "Union: ";
   } else {
     f_out_ << "Struct: ";
   }
@@ -594,7 +977,7 @@ void t_html_generator::generate_struct(t_struct* tstruct) {
     f_out_ << "</td><td>";
     print_type((*mem_iter)->get_type());
     f_out_ << "</td><td>";
-    f_out_ << (*mem_iter)->get_doc();
+    f_out_ << escape_html( (*mem_iter)->get_doc());
     f_out_ << "</td><td>";
     if ((*mem_iter)->get_req() == t_field::T_OPTIONAL) {
       f_out_ << "optional";
@@ -606,7 +989,9 @@ void t_html_generator::generate_struct(t_struct* tstruct) {
     f_out_ << "</td><td>";
     t_const_value* default_val = (*mem_iter)->get_value();
     if (default_val != NULL) {
-      print_const_value(default_val);
+      f_out_ << "<code>";
+      print_const_value((*mem_iter)->get_type(), default_val);
+      f_out_ << "</code>";
     }
     f_out_ << "</td></tr>" << endl;
   }
@@ -666,7 +1051,7 @@ void t_html_generator::generate_service(t_service* tservice) {
       f_out_ << " " << (*arg_iter)->get_name();
       if ((*arg_iter)->get_value() != NULL) {
         f_out_ << " = ";
-        print_const_value((*arg_iter)->get_value());
+        print_const_value((*arg_iter)->get_type(), (*arg_iter)->get_value());
       }
     }
     f_out_ << ")" << endl;
@@ -691,5 +1076,7 @@ void t_html_generator::generate_service(t_service* tservice) {
   }
 }
 
-THRIFT_REGISTER_GENERATOR(html, "HTML", "")
-
+THRIFT_REGISTER_GENERATOR(html, "HTML",
+"    standalone:      Self-contained mode, includes all CSS in the HTML files.\n"
+"                     Generates no style.css file, but HTML files will be larger.\n"
+)

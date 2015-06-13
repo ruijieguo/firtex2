@@ -31,10 +31,18 @@
 #include "platform.h"
 #include "t_oop_generator.h"
 
-using namespace std;
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::string;
+using std::stringstream;
+using std::vector;
+
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /* forward declarations */
 string initial_caps_to_underscores(string name);
+string underscores_to_initial_caps(string name);
 string to_upper_case(string name);
 string to_lower_case(string name);
 
@@ -117,8 +125,10 @@ class t_c_glib_generator : public t_oop_generator {
   /* helper functions */
   bool is_complex_type(t_type *ttype);
   string type_name(t_type* ttype, bool in_typedef=false, bool is_const=false);
+  string property_type_name(t_type* ttype, bool in_typedef=false, bool is_const=false);
   string base_type_name(t_base_type *type);
   string type_to_enum(t_type *type);
+  string constant_literal(t_type *type, t_const_value *value);
   string constant_value(string name, t_type *type, t_const_value *value);
   string function_signature(t_function *tfunction);
   string argument_list(t_struct *tstruct);
@@ -128,7 +138,10 @@ class t_c_glib_generator : public t_oop_generator {
 
   /* generation functions */
   void generate_const_initializer(string name, t_type *type, t_const_value *value);
+  void generate_service_helpers(t_service *tservice);
   void generate_service_client(t_service *tservice);
+  void generate_service_handler(t_service *tservice);
+  void generate_service_processor(t_service *tservice);
   void generate_service_server(t_service *tservice);
   void generate_object(t_struct *tstruct);
   void generate_struct_writer(ofstream &out, t_struct *tstruct, string this_name, string this_get="", bool is_function=true);
@@ -190,8 +203,8 @@ void t_c_glib_generator::init_generator() {
   f_types_ <<
     "/* base includes */" << endl <<
     "#include <glib-object.h>" << endl <<
-    "#include <thrift/thrift_struct.h>" << endl <<
-    "#include <thrift/protocol/thrift_protocol.h>" << endl;
+    "#include <thrift/c_glib/thrift_struct.h>" << endl <<
+    "#include <thrift/c_glib/protocol/thrift_protocol.h>" << endl;
 
   /* include other thrift includes */
   const vector<t_program *> &includes = program_->get_includes();
@@ -217,12 +230,18 @@ void t_c_glib_generator::init_generator() {
   }
   f_types_ << endl;
 
+  /* include math.h (for "INFINITY") in the implementation file, in case we
+     encounter a struct with a member of type double */
+  f_types_impl_ <<
+    endl <<
+    "#include <math.h>" << endl;
+
   // include the types file
   f_types_impl_ <<
     endl <<
     "#include \"" << this->nspace_lc << program_name_u << 
         "_types.h\"" << endl <<
-    "#include <thrift/thrift.h>" << endl <<
+    "#include <thrift/c_glib/thrift.h>" << endl <<
     endl;
 
   f_types_ <<
@@ -300,10 +319,8 @@ void t_c_glib_generator::generate_enum(t_enum *tenum) {
 
     f_types_ <<
       indent() << this->nspace_uc << name_uc << "_" << (*c_iter)->get_name();
-    if ((*c_iter)->has_value()) {
-      f_types_ <<
-        " = " << (*c_iter)->get_value();
-    }
+    f_types_ <<
+      " = " << (*c_iter)->get_value();
   }
 
   indent_down();
@@ -312,6 +329,24 @@ void t_c_glib_generator::generate_enum(t_enum *tenum) {
     "};" << endl <<
     "typedef enum _" << this->nspace << name << " " << this->nspace << name << ";" << endl <<
     endl;
+
+  f_types_ << "/* return the name of the constant */" << endl;
+  f_types_ << "const char *" << endl;
+  f_types_ << "toString_"<<name<<"(int value); "<<endl<<endl;;
+  f_types_impl_ << "/* return the name of the constant */" << endl;
+  f_types_impl_ << "const char *" << endl;
+  f_types_impl_ << "toString_"<<name<<"(int value) "<<endl;
+  f_types_impl_ << "{" << endl;
+  f_types_impl_ << "  static __thread char buf[16] = {0};" << endl;
+  f_types_impl_ << "  switch(value) {" << endl;
+  for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
+    f_types_impl_ << "  case " << this->nspace_uc << name_uc << "_" << (*c_iter)->get_name()
+        << ":" << "return \"" << this->nspace_uc << name_uc << "_" << (*c_iter)->get_name()
+        << "\";"<<endl;
+  }
+  f_types_impl_ << "  default: g_snprintf(buf, 16, \"%d\", value); return buf;" << endl;
+  f_types_impl_ << "  }" << endl;
+  f_types_impl_ << "}" << endl << endl;
 }
 
 /**
@@ -394,6 +429,9 @@ void t_c_glib_generator::generate_service (t_service *tservice) {
 
   // add standard includes
   f_header_ <<
+    "#include <thrift/c_glib/processor/thrift_dispatch_processor.h>" << endl <<
+    endl;
+  f_header_ <<
     "#include \"" << this->nspace_lc << program_name_lc << "_types.h\"" << endl;
 
   // if we are inheriting from another service, include its header
@@ -415,10 +453,13 @@ void t_c_glib_generator::generate_service (t_service *tservice) {
   // include the headers
   f_service_ <<
     "#include <string.h>" << endl <<
-    "#include <thrift/thrift.h>" << endl <<
-    "#include <thrift/thrift_application_exception.h>" << endl <<
+    "#include <thrift/c_glib/thrift.h>" << endl <<
+    "#include <thrift/c_glib/thrift_application_exception.h>" << endl <<
     "#include \"" << filename << ".h\"" << endl <<
     endl;
+
+  // generate the service-helper classes
+  generate_service_helpers (tservice);
 
   // generate the client objects
   generate_service_client (tservice);
@@ -483,10 +524,7 @@ bool t_c_glib_generator::is_complex_type(t_type *ttype) {
 
   return ttype->is_container()
          || ttype->is_struct()
-         || ttype->is_xception()
-         || (ttype->is_base_type()
-             && (((t_base_type *) ttype)->get_base()
-                  == t_base_type::TYPE_STRING));
+         || ttype->is_xception();
 }
 
 
@@ -563,6 +601,41 @@ string t_c_glib_generator::type_name (t_type* ttype, bool in_typedef, bool is_co
   } else {
     return pname;
   }
+}
+
+/**
+ * Maps a Thrift primitive to the type needed to hold its value when used as an
+ * object property.
+ *
+ * This method is needed because all integer properties of width less than 64
+ * bits map to the same type, gint, as opposed to their width-specific type
+ * (gint8, gint16 or gint32).
+ */
+string t_c_glib_generator::property_type_name (t_type* ttype,
+                                               bool in_typedef,
+                                               bool is_const) {
+  string result;
+
+  if (ttype->is_base_type()) {
+    switch (((t_base_type *) ttype)->get_base()) {
+      case t_base_type::TYPE_BYTE:
+      case t_base_type::TYPE_I16:
+      case t_base_type::TYPE_I32:
+        if (is_const) {
+          result = "const gint";
+        } else {
+          result = "gint";
+        }
+        break;
+
+      default:
+        result = type_name(ttype, in_typedef, is_const);
+    }
+  } else {
+    result = type_name(ttype, in_typedef, is_const);
+  }
+
+  return result;
 }
 
 /**
@@ -643,6 +716,70 @@ string t_c_glib_generator::type_to_enum (t_type *type) {
   throw "INVALID TYPE IN type_to_enum: " + type->get_name();
 }
 
+
+/**
+ * Returns a Thrift constant formatted as a literal for inclusion in C code.
+ */
+string t_c_glib_generator::constant_literal(t_type *type, t_const_value *value) {
+  ostringstream render;
+
+  if (type->is_base_type()) {
+    /* primitives */
+    t_base_type::t_base tbase = ((t_base_type *) type)->get_base();
+
+    switch (tbase) {
+      case t_base_type::TYPE_STRING:
+        render << "\"" + value->get_string() + "\"";
+        break;
+      case t_base_type::TYPE_BOOL:
+        render << ((value->get_integer() != 0) ? "TRUE" : "FALSE");
+        break;
+      case t_base_type::TYPE_BYTE:
+      case t_base_type::TYPE_I16:
+      case t_base_type::TYPE_I32:
+      case t_base_type::TYPE_I64:
+        render << value->get_integer();
+        break;
+      case t_base_type::TYPE_DOUBLE:
+        render << value->get_double();
+        break;
+      default:
+        throw "compiler error: no const of base type "
+              + t_base_type::t_base_name (tbase);
+    }
+  } else {
+    t_const_value::t_const_value_type value_type = value->get_type();
+
+    switch (value_type) {
+      case t_const_value::CV_IDENTIFIER:
+        render << value->get_integer();
+        break;
+      case t_const_value::CV_LIST:
+        render << "{ ";
+        {
+          t_type *elem_type = ((t_list *) type)->get_elem_type();
+          const vector<t_const_value *> &list = value->get_list();
+          vector<t_const_value *>::const_iterator list_iter;
+
+          if (list.size() > 0) {
+            list_iter = list.begin();
+            render << constant_literal(elem_type, *list_iter);
+
+            while (++list_iter != list.end()) {
+              render << ", " << constant_literal(elem_type, *list_iter);
+            }
+          }
+        }
+        render << " }";
+        break;
+      case t_const_value::CV_MAP:
+      default:
+        render << "NULL /* not supported */";
+    }
+  }
+
+  return render.str();
+}
 
 /**
  * Returns C code that represents a Thrift constant.
@@ -1017,12 +1154,101 @@ void t_c_glib_generator::generate_const_initializer(string name, t_type *type, t
 }
 
 /**
+ * Generates helper classes for a service, consisting of a ThriftStruct subclass
+ * for the arguments to and the result from each method.
+ *
+ * @param tservice The service for which to generate helper classes
+ */
+void t_c_glib_generator::generate_service_helpers(t_service *tservice) {
+  vector<t_function*> functions = tservice->get_functions();
+  vector<t_function*>::iterator function_iter;
+
+  // Iterate through the service's methods
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string function_name = (*function_iter)->get_name();
+    t_struct *arg_list = (*function_iter)->get_arglist();
+    string arg_list_name_orig = arg_list->get_name();
+
+    // Generate the arguments class
+    arg_list->set_name(tservice->get_name() +
+                       underscores_to_initial_caps(function_name) +
+                       "Args");
+    generate_struct(arg_list);
+
+    arg_list->set_name(arg_list_name_orig);
+
+    // Generate the result class
+    if (!(*function_iter)->is_oneway()) {
+      t_struct result(program_,
+                      tservice->get_name() +
+                      underscores_to_initial_caps(function_name) +
+                      "Result");
+      t_field success((*function_iter)->get_returntype(), "success", 0);
+      success.set_req(t_field::T_OPTIONAL);
+      if (!(*function_iter)->get_returntype()->is_void()) {
+        result.append(&success);
+      }
+
+      t_struct* xs = (*function_iter)->get_xceptions();
+      const vector<t_field*>& fields = xs->get_members();
+      vector<t_field*>::const_iterator field_iter;
+      for (field_iter = fields.begin();
+           field_iter != fields.end();
+           ++field_iter) {
+        (*field_iter)->set_req(t_field::T_OPTIONAL);
+        result.append(*field_iter);
+      }
+
+      generate_struct(&result);
+    }
+  }
+}
+
+/**
  * Generates C code that represents a Thrift service client.
  */
 void t_c_glib_generator::generate_service_client(t_service *tservice) {
   /* get some C friendly service names */
   string service_name_lc = to_lower_case(initial_caps_to_underscores(service_name_));
   string service_name_uc = to_upper_case(service_name_lc);
+
+  string parent_service_name;
+  string parent_service_name_lc;
+  string parent_service_name_uc;
+
+  string parent_class_name = "GObject";
+  string parent_type_name = "G_TYPE_OBJECT";
+
+  // The service this service extends, or NULL if it extends no
+  // service
+  t_service *extends_service = tservice->get_extends();
+  if (extends_service) {
+    // The name of the parent service
+    parent_service_name = extends_service->get_name();
+    parent_service_name_lc =
+      to_lower_case(initial_caps_to_underscores(parent_service_name));
+    parent_service_name_uc = to_upper_case(parent_service_name_lc);
+
+    // The names of the client class' parent class and type
+    parent_class_name = this->nspace + parent_service_name + "Client";
+    parent_type_name =
+      this->nspace_uc + "TYPE_" + parent_service_name_uc + "_CLIENT";
+  }
+
+  // The base service (the topmost in the "extends" hierarchy), on
+  // whose client class the "input_protocol" and "output_protocol"
+  // properties are defined
+  t_service *base_service = tservice;
+  while (base_service->get_extends()) {
+    base_service = base_service->get_extends();
+  }
+
+  string base_service_name = base_service->get_name();
+  string base_service_name_lc =
+    to_lower_case(initial_caps_to_underscores(base_service_name));
+  string base_service_name_uc = to_upper_case(base_service_name_lc);
 
   // Generate the client interface dummy object in the header.
   f_header_ <<
@@ -1082,7 +1308,7 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
         this->nspace_uc << "TYPE_" << service_name_uc << "_IF, " <<
         this->nspace << service_name_ << "If))" << endl <<
     "#define " << this->nspace_uc << "IS_" << service_name_uc << "_IF(obj) " <<
-        "(G_TYPE_CHECK_INSTANCE_TYPE ((obj, " <<
+        "(G_TYPE_CHECK_INSTANCE_TYPE ((obj), " <<
         this->nspace_uc << "TYPE_" << service_name_uc << "_IF))" << endl <<
     "#define " << this->nspace_uc << service_name_uc <<
         "_IF_GET_INTERFACE(inst) (G_TYPE_INSTANCE_GET_INTERFACE ((inst), " <<
@@ -1117,10 +1343,17 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
     "/* " << service_name_ << " service client */" << endl <<
     "struct _" << this->nspace << service_name_ << "Client" << endl <<
     "{" << endl <<
-    "  GObject parent;" << endl <<
-    endl <<
-    "  ThriftProtocol *input_protocol;" << endl <<
-    "  ThriftProtocol *output_protocol;" << endl <<
+    "  " << parent_class_name << " parent;" << endl;
+  if (!extends_service) {
+    // Define "input_protocol" and "output_protocol" properties only
+    // for base services; child service-client classes will inherit
+    // these
+    f_header_ <<
+      endl <<
+      "  ThriftProtocol *input_protocol;" << endl <<
+      "  ThriftProtocol *output_protocol;" << endl;
+  }
+  f_header_ <<
     "};" << endl <<
     "typedef struct _" << this->nspace << service_name_ << "Client " <<
       this->nspace << service_name_ << "Client;" << endl <<
@@ -1130,7 +1363,7 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
   f_header_ <<
     "struct _" << this->nspace << service_name_ << "ClientClass" << endl <<
     "{" << endl <<
-    "  GObjectClass parent;" << endl <<
+    "  " << parent_class_name << "Class parent;" << endl <<
     "};" << endl <<
     "typedef struct _" << this->nspace << service_name_ << "ClientClass " <<
       this->nspace << service_name_ << "ClientClass;" << endl <<
@@ -1192,6 +1425,10 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
       indent(f_header_) << function_signature (&recv_function) << ";" << endl;
     }
   }
+
+  /* write out the get/set function prototypes */
+  f_header_ << "void " + service_name_lc + "_client_set_property (GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);" << endl;
+  f_header_ << "void " + service_name_lc + "_client_get_property (GObject *object, guint property_id, GValue *value, GParamSpec *pspec);" << endl;
 
   f_header_ << endl;
   // end of header code
@@ -1255,7 +1492,14 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
     "      sizeof (" << this->nspace << service_name_ << "IfInterface)," <<
         endl <<
     "      NULL,  /* base_init */" << endl <<
-    "      NULL  /* base_finalize */" << endl <<
+    "      NULL,  /* base_finalize */" << endl <<
+    "      NULL,  /* class_init */" << endl <<
+    "      NULL,  /* class_finalize */" << endl <<
+    "      NULL,  /* class_data */" << endl <<
+    "      0,     /* instance_size */" << endl <<
+    "      0,     /* n_preallocs */" << endl <<
+    "      NULL,  /* instance_init */" << endl <<
+    "      NULL   /* value_table */" << endl <<
     "    };" << endl <<
     "    type = g_type_register_static (G_TYPE_INTERFACE," << endl <<
     "                                   \"" << this->nspace << service_name_ <<
@@ -1275,79 +1519,83 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
     endl <<
     "G_DEFINE_TYPE_WITH_CODE (" << this->nspace << service_name_ <<
       "Client, " << this->nspace_lc << service_name_lc << "_client," << endl <<
-      "                       G_TYPE_OBJECT, " << endl <<
+    "                         " << parent_type_name << ", " << endl <<
     "                         G_IMPLEMENT_INTERFACE (" <<
         this->nspace_uc << "TYPE_" << service_name_uc << "_IF," << endl <<
     "                                                " <<
         this->nspace_lc << service_name_lc << "_if_interface_init));" << endl <<
     endl;
 
-  // Generate client properties
-  f_service_ <<
-    "enum _" << this->nspace << service_name_ << "ClientProperties" << endl <<
-    "{" << endl <<
-    "  PROP_0," << endl <<
-    "  PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_INPUT_PROTOCOL," <<
-        endl <<
-    "  PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_OUTPUT_PROTOCOL" <<
-        endl <<
-    "};" << endl <<
-  endl;
+  // Generate property-related code only for base services---child
+  // service-client classes have only properties inherited from their
+  // parent class
+  if (!extends_service) {
+    // Generate client properties
+    f_service_ <<
+      "enum _" << this->nspace << service_name_ << "ClientProperties" << endl <<
+      "{" << endl <<
+      "  PROP_0," << endl <<
+      "  PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_INPUT_PROTOCOL," <<
+          endl <<
+      "  PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_OUTPUT_PROTOCOL" <<
+          endl <<
+      "};" << endl <<
+    endl;
 
-  // generate property setter
-  f_service_ <<
-    "void" << endl <<
-    this->nspace_lc << service_name_lc << "_client_set_property (" <<
-        "GObject *object, guint property_id, const GValue *value, " <<
-        "GParamSpec *pspec)" << endl <<
-    "{" << endl <<
-    "  " << this->nspace << service_name_ << "Client *client = " <<
-        this->nspace_uc << service_name_uc << "_CLIENT (object);" << endl <<
-    endl <<
-    "  THRIFT_UNUSED_VAR (pspec);" << endl <<
-    endl <<
-    "  switch (property_id)" << endl <<
-    "  {" << endl <<
-    "    case PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_INPUT_PROTOCOL:" << endl <<
-    "      client->input_protocol = g_value_get_object (value);" << endl <<
-    "      break;" << endl <<
-    "    case PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_OUTPUT_PROTOCOL:" << endl <<
-    "      client->output_protocol = g_value_get_object (value);" << endl <<
-    "      break;" << endl <<
-    "  }" << endl <<
-    "}" << endl <<
-  endl;
+    // generate property setter
+    f_service_ <<
+      "void" << endl <<
+      this->nspace_lc << service_name_lc << "_client_set_property (" <<
+          "GObject *object, guint property_id, const GValue *value, " <<
+          "GParamSpec *pspec)" << endl <<
+      "{" << endl <<
+      "  " << this->nspace << service_name_ << "Client *client = " <<
+          this->nspace_uc << service_name_uc << "_CLIENT (object);" << endl <<
+      endl <<
+      "  THRIFT_UNUSED_VAR (pspec);" << endl <<
+      endl <<
+      "  switch (property_id)" << endl <<
+      "  {" << endl <<
+      "    case PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_INPUT_PROTOCOL:" << endl <<
+      "      client->input_protocol = g_value_get_object (value);" << endl <<
+      "      break;" << endl <<
+      "    case PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_OUTPUT_PROTOCOL:" << endl <<
+      "      client->output_protocol = g_value_get_object (value);" << endl <<
+      "      break;" << endl <<
+      "  }" << endl <<
+      "}" << endl <<
+    endl;
 
-  // generate property getter
-  f_service_ <<
-    "void" << endl <<
-    this->nspace_lc << service_name_lc << "_client_get_property (" <<
-        "GObject *object, guint property_id, GValue *value, " <<
-        "GParamSpec *pspec)" << endl <<
-    "{" << endl <<
-    "  " << this->nspace << service_name_ << "Client *client = " <<
-        this->nspace_uc << service_name_uc << "_CLIENT (object);" << endl <<
-    endl <<
-    "  THRIFT_UNUSED_VAR (pspec);" << endl <<
-    endl <<
-    "  switch (property_id)" << endl <<
-    "  {" << endl <<
-    "    case PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_INPUT_PROTOCOL:" << endl <<
-    "      g_value_set_object (value, client->input_protocol);" << endl <<
-    "      break;" << endl <<
-    "    case PROP_" << this->nspace_uc << service_name_uc <<
-        "_CLIENT_OUTPUT_PROTOCOL:" << endl <<
-    "      g_value_set_object (value, client->output_protocol);" << endl <<
-    "      break;" << endl <<
-    "  }" << endl <<
-    "}" << endl <<
-  endl;
-
+    // generate property getter
+    f_service_ <<
+      "void" << endl <<
+      this->nspace_lc << service_name_lc << "_client_get_property (" <<
+          "GObject *object, guint property_id, GValue *value, " <<
+          "GParamSpec *pspec)" << endl <<
+      "{" << endl <<
+      "  " << this->nspace << service_name_ << "Client *client = " <<
+          this->nspace_uc << service_name_uc << "_CLIENT (object);" << endl <<
+      endl <<
+      "  THRIFT_UNUSED_VAR (pspec);" << endl <<
+      endl <<
+      "  switch (property_id)" << endl <<
+      "  {" << endl <<
+      "    case PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_INPUT_PROTOCOL:" << endl <<
+      "      g_value_set_object (value, client->input_protocol);" << endl <<
+      "      break;" << endl <<
+      "    case PROP_" << this->nspace_uc << service_name_uc <<
+          "_CLIENT_OUTPUT_PROTOCOL:" << endl <<
+      "      g_value_set_object (value, client->output_protocol);" << endl <<
+      "      break;" << endl <<
+      "  }" << endl <<
+      "}" << endl <<
+    endl;
+  }
 
   // Generate client method implementations
   for (f_iter = functions.begin(); f_iter != functions.end(); ++f_iter) {
@@ -1368,15 +1616,17 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
       function_signature (&send_function) << endl;
     scope_up(f_service_);
 
+    string reqType = (*f_iter)->is_oneway() ? "T_ONEWAY" : "T_CALL";
+
     // Serialize the request
     f_service_ <<
       indent() << "gint32 cseqid = 0;" << endl <<
       indent() << "ThriftProtocol * protocol = " << 
-        this->nspace_uc << service_name_uc << 
+        this->nspace_uc << base_service_name_uc <<
         "_CLIENT (iface)->output_protocol;" << endl <<
       endl <<
-      indent() << "if (thrift_protocol_write_message_begin (protocol, \"" <<
-        name << "\", T_CALL, cseqid, error) < 0)" << endl <<
+      indent() << "if (thrift_protocol_write_message_begin (protocol, \""
+               << name << "\", " << reqType << ", cseqid, error) < 0)" << endl <<
       indent() << "  return FALSE;" << endl <<
       endl;
 
@@ -1418,10 +1668,10 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
 
       f_service_ << endl <<
         indent() << "gint32 rseqid;" << endl <<
-        indent() << "gchar * fname;" << endl <<
+        indent() << "gchar * fname = NULL;" << endl <<
         indent() << "ThriftMessageType mtype;" << endl <<
         indent() << "ThriftProtocol * protocol = " << 
-                      this->nspace_uc << service_name_uc <<
+                      this->nspace_uc << base_service_name_uc <<
                       "_CLIENT (iface)->input_protocol;" << endl <<
         endl <<
         indent() << "if (thrift_protocol_read_message_begin " << 
@@ -1587,9 +1837,13 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
     "static void" << endl <<
     this->nspace_lc << service_name_lc << "_client_init (" <<
         this->nspace << service_name_ << "Client *client)" << endl <<
-    "{" << endl <<
-    "  client->input_protocol = NULL;" << endl <<
-    "  client->output_protocol = NULL;" << endl <<
+    "{" << endl;
+  if(!extends_service) {
+    f_service_ <<
+      "  client->input_protocol = NULL;" << endl <<
+      "  client->output_protocol = NULL;" << endl;
+  }
+  f_service_ <<
     "}" << endl <<
     endl;
 
@@ -1598,38 +1852,1162 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
     "static void" << endl <<
     this->nspace_lc << service_name_lc << "_client_class_init (" <<
         this->nspace << service_name_ << "ClientClass *cls)" << endl <<
-    "{" << endl <<
-    "  GObjectClass *gobject_class = G_OBJECT_CLASS (cls);" << endl <<
-    "  GParamSpec *param_spec;" << endl <<
-    endl <<
-    "  gobject_class->set_property = " << this->nspace_lc <<
-        service_name_lc << "_client_set_property;" << endl <<
-    "  gobject_class->get_property = " << this->nspace_lc <<
-        service_name_lc << "_client_get_property;" << endl <<
-    endl <<
-    "  param_spec = g_param_spec_object (\"input_protocol\"," << endl <<
-    "                                    \"input protocol (construct)\"," <<
-        endl <<
-    "                                    \"Set the client input protocol\"," <<
-        endl <<
-    "                                    THRIFT_TYPE_PROTOCOL," << endl <<
-    "                                    G_PARAM_READWRITE);" << endl <<
-    "  g_object_class_install_property (gobject_class," << endl <<
-    "                                   PROP_" << this->nspace_uc <<
-        service_name_uc << "_CLIENT_INPUT_PROTOCOL, param_spec);" << endl <<
-    endl <<
-    "  param_spec = g_param_spec_object (\"output_protocol\"," << endl <<
-    "                                    \"output protocol (construct)\"," <<
-        endl <<
-    "                                    \"Set the client output protocol\"," <<
-        endl <<
-    "                                    THRIFT_TYPE_PROTOCOL," << endl <<
-    "                                    G_PARAM_READWRITE);" << endl <<
-    "  g_object_class_install_property (gobject_class," << endl <<
-    "                                   PROP_" << this->nspace_uc <<
-        service_name_uc << "_CLIENT_OUTPUT_PROTOCOL, param_spec);" << endl <<
+    "{" << endl;
+  if (!extends_service) {
+    f_service_ <<
+      "  GObjectClass *gobject_class = G_OBJECT_CLASS (cls);" << endl <<
+      "  GParamSpec *param_spec;" << endl <<
+      endl <<
+      "  gobject_class->set_property = " << this->nspace_lc <<
+          service_name_lc << "_client_set_property;" << endl <<
+      "  gobject_class->get_property = " << this->nspace_lc <<
+          service_name_lc << "_client_get_property;" << endl <<
+      endl <<
+      "  param_spec = g_param_spec_object (\"input_protocol\"," << endl <<
+      "                                    \"input protocol (construct)\"," <<
+          endl <<
+      "                                    \"Set the client input protocol\"," <<
+          endl <<
+      "                                    THRIFT_TYPE_PROTOCOL," << endl <<
+      "                                    G_PARAM_READWRITE);" << endl <<
+      "  g_object_class_install_property (gobject_class," << endl <<
+      "                                   PROP_" << this->nspace_uc <<
+          service_name_uc << "_CLIENT_INPUT_PROTOCOL, param_spec);" << endl <<
+      endl <<
+      "  param_spec = g_param_spec_object (\"output_protocol\"," << endl <<
+      "                                    \"output protocol (construct)\"," <<
+          endl <<
+      "                                    \"Set the client output protocol\"," <<
+          endl <<
+      "                                    THRIFT_TYPE_PROTOCOL," << endl <<
+      "                                    G_PARAM_READWRITE);" << endl <<
+      "  g_object_class_install_property (gobject_class," << endl <<
+      "                                   PROP_" << this->nspace_uc <<
+        service_name_uc << "_CLIENT_OUTPUT_PROTOCOL, param_spec);" << endl;
+  }
+  f_service_ <<
     "}" << endl <<
     endl;
+}
+
+/**
+ * Generates C code that represents a Thrift service handler.
+ *
+ * @param tservice The service for which to generate a handler.
+ */
+void t_c_glib_generator::generate_service_handler(t_service *tservice) {
+  vector<t_function*> functions = tservice->get_functions();
+  vector<t_function*>::const_iterator function_iter;
+
+  string service_name_lc =
+    to_lower_case(initial_caps_to_underscores(service_name_));
+  string service_name_uc = to_upper_case(service_name_lc);
+
+  string class_name = this->nspace + service_name_ + "Handler";
+  string class_name_lc =
+    to_lower_case(initial_caps_to_underscores(class_name));
+  string class_name_uc = to_upper_case(class_name_lc);
+
+  string parent_class_name;
+  string parent_type_name;
+
+  string args_indent;
+
+  // The service this service extends, or NULL if it extends no service
+  t_service *extends_service = tservice->get_extends();
+
+  // Determine the name of our parent service (if any) and the handler class'
+  // parent class name and type
+  if (extends_service) {
+    string parent_service_name = extends_service->get_name();
+    string parent_service_name_lc =
+      to_lower_case(initial_caps_to_underscores(parent_service_name));
+    string parent_service_name_uc = to_upper_case(parent_service_name_lc);
+
+    parent_class_name =
+      this->nspace + parent_service_name + "Handler";
+    parent_type_name =
+      this->nspace_uc + "TYPE_" + parent_service_name_uc + "_HANDLER";
+  }
+  else {
+    parent_class_name = "GObject";
+    parent_type_name = "G_TYPE_OBJECT";
+  }
+
+  // Generate the handler class' definition in the header file
+
+  // Generate the handler instance definition
+  f_header_ <<
+    "/* " << service_name_ << " handler (abstract base class) */" << endl <<
+    "struct _" << class_name << endl <<
+    "{" << endl;
+  indent_up();
+  f_header_ <<
+    indent() << parent_class_name << " parent;" << endl;
+  indent_down();
+  f_header_ <<
+    "};" << endl <<
+    "typedef struct _" << class_name << " " << class_name << ";" << endl <<
+    endl;
+
+  // Generate the handler class definition, including its class members
+  // (methods)
+  f_header_ <<
+    "struct _" << class_name << "Class" << endl <<
+    "{" << endl;
+  indent_up();
+  f_header_ <<
+    indent() << parent_class_name << "Class parent;" << endl <<
+    endl;
+
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string method_name =
+      initial_caps_to_underscores((*function_iter)->get_name());
+    t_type *return_type = (*function_iter)->get_returntype();
+    t_struct *arg_list = (*function_iter)->get_arglist();
+    t_struct *x_list = (*function_iter)->get_xceptions();
+    bool has_return = !return_type->is_void();
+    bool has_args = arg_list->get_members().size() == 0;
+    bool has_xceptions = x_list->get_members().size() == 0;
+
+    string params = "(" + this->nspace + service_name_ + "If *iface"
+      + (has_return ? ", " + type_name (return_type) + "* _return" : "")
+      + (has_args ? "" : (", " + argument_list (arg_list)))
+      + (has_xceptions ? "" : (", " + xception_list (x_list)))
+      + ", GError **error)";
+
+    indent(f_header_) << "gboolean (*" << method_name << ") " << params << ";" <<
+      endl;
+  }
+  indent_down();
+
+  f_header_ <<
+    "};" << endl <<
+    "typedef struct _" << class_name << "Class " << class_name << "Class;" << endl <<
+    endl;
+
+  // Generate the remaining header boilerplate
+  f_header_ <<
+    "GType " << class_name_lc << "_get_type (void);" << endl <<
+    "#define " << this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER " <<
+        "(" << class_name_lc << "_get_type())" << endl <<
+    "#define " << class_name_uc << "(obj) " <<
+        "(G_TYPE_CHECK_INSTANCE_CAST ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER, " <<
+        class_name << "))" << endl <<
+    "#define " << this->nspace_uc << "IS_" << service_name_uc << "_HANDLER(obj) " <<
+        "(G_TYPE_CHECK_INSTANCE_TYPE ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER))" << endl <<
+    "#define " << class_name_uc << "_CLASS(c) (G_TYPE_CHECK_CLASS_CAST ((c), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER, " <<
+        class_name << "Class))" << endl <<
+    "#define " << this->nspace_uc << "IS_" << service_name_uc <<
+        "_HANDLER_CLASS(c) " << "(G_TYPE_CHECK_CLASS_TYPE ((c), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER))" << endl <<
+    "#define " << this->nspace_uc << service_name_uc <<
+        "_HANDLER_GET_CLASS(obj) " << "(G_TYPE_INSTANCE_GET_CLASS ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_HANDLER, " <<
+        class_name << "Class))" << endl <<
+    endl;
+
+  // Generate the handler class' method definitions
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string method_name =
+      initial_caps_to_underscores((*function_iter)->get_name());
+    t_type *return_type = (*function_iter)->get_returntype();
+    t_struct *arg_list = (*function_iter)->get_arglist();
+    t_struct *x_list = (*function_iter)->get_xceptions();
+    bool has_return = !return_type->is_void();
+    bool has_args = arg_list->get_members().size() == 0;
+    bool has_xceptions = x_list->get_members().size() == 0;
+
+    string params = "(" + this->nspace + service_name_ + "If *iface"
+      + (has_return ? ", " + type_name (return_type) + "* _return" : "")
+      + (has_args ? "" : (", " + argument_list (arg_list)))
+      + (has_xceptions ? "" : (", " + xception_list (x_list)))
+      + ", GError **error)";
+
+    f_header_ << "gboolean " << class_name_lc << "_" << method_name << " " <<
+      params << ";" << endl;
+  }
+  f_header_ << endl;
+
+  // Generate the handler's implementation in the implementation file
+
+  // Generate the implementation boilerplate
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_" << service_name_lc << "_if_interface_init (" <<
+    this->nspace << service_name_ << "IfInterface *iface);" << endl <<
+    endl;
+
+  args_indent = string (25, ' ');
+  f_service_ <<
+    "G_DEFINE_TYPE_WITH_CODE (" << class_name << ", " << endl <<
+    args_indent << class_name_lc << "," << endl <<
+    args_indent << parent_type_name << "," << endl <<
+    args_indent << "G_IMPLEMENT_INTERFACE (" <<
+    this->nspace_uc << "TYPE_" << service_name_uc << "_IF," << endl;
+  args_indent += string (23, ' ');
+  f_service_ <<
+    args_indent << class_name_lc << "_" << service_name_lc <<
+    "_if_interface_init));" << endl <<
+    endl;
+
+  // Generate the handler method implementations
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string function_name = (*function_iter)->get_name();
+    string method_name = initial_caps_to_underscores(function_name);
+    t_type *return_type = (*function_iter)->get_returntype();
+    t_struct *arg_list = (*function_iter)->get_arglist();
+    t_struct *x_list = (*function_iter)->get_xceptions();
+
+    const vector<t_field*>& args = arg_list->get_members();
+    const vector<t_field*>& xceptions = x_list->get_members();
+
+    vector<t_field*>::const_iterator field_iter;
+
+    t_function
+      implementing_function (return_type,
+                             service_name_lc + "_handler_" + method_name,
+                             arg_list,
+                             x_list,
+                             (*function_iter)->is_oneway());
+
+    indent(f_service_) <<
+      function_signature (&implementing_function) << endl;
+    scope_up(f_service_);
+    f_service_ <<
+      indent() << "g_return_if_fail (" <<
+      this->nspace_uc << "IS_" << service_name_uc << "_HANDLER (iface));" << endl <<
+      endl <<
+      indent() << class_name_uc << "_GET_CLASS (iface)" << "->" << method_name <<
+      " (iface, ";
+
+    if(!return_type->is_void()) {
+      f_service_ << "_return, ";
+    }
+    for (field_iter = args.begin();
+         field_iter != args.end();
+         ++field_iter) {
+      f_service_ << (*field_iter)->get_name() << ", ";
+    }
+    for (field_iter = xceptions.begin();
+         field_iter != xceptions.end();
+         ++field_iter) {
+      f_service_ << (*field_iter)->get_name() << ", ";
+    }
+    f_service_ << "error);" << endl;
+    scope_down(f_service_);
+    f_service_ << endl;
+  }
+
+  // Generate the handler interface initializer
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_" << service_name_lc << "_if_interface_init (" <<
+    this->nspace << service_name_ << "IfInterface *iface)" << endl;
+  scope_up(f_service_);
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string method_name =
+      initial_caps_to_underscores((*function_iter)->get_name());
+
+    f_service_ <<
+      indent() << "iface->" << method_name << " = " <<
+      class_name_lc << "_" << method_name << ";" << endl;
+  }
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate the handler instance initializer
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_init (" << class_name << " *self)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "THRIFT_UNUSED_VAR (self);" << endl;
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate the handler class initializer
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_class_init (" << class_name << "Class *cls)" << endl;
+  scope_up(f_service_);
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string function_name = (*function_iter)->get_name();
+    string method_name = initial_caps_to_underscores(function_name);
+
+    // All methods are pure virtual and must be implemented by subclasses
+    f_service_ <<
+      indent() << "cls->" << method_name << " = NULL;" << endl;
+  }
+  scope_down(f_service_);
+  f_service_ << endl;
+}
+
+/**
+ * Generates C code that represents a Thrift service processor.
+ *
+ * @param tservice The service for which to generate a processor
+ */
+void t_c_glib_generator::generate_service_processor(t_service *tservice) {
+  vector<t_function*> functions = tservice->get_functions();
+  vector<t_function*>::const_iterator function_iter;
+
+  string service_name_lc =
+    to_lower_case(initial_caps_to_underscores(service_name_));
+  string service_name_uc = to_upper_case(service_name_lc);
+
+  string class_name = this->nspace + service_name_ + "Processor";
+  string class_name_lc =
+    to_lower_case(initial_caps_to_underscores(class_name));
+  string class_name_uc = to_upper_case(class_name_lc);
+
+  string parent_class_name;
+  string parent_type_name;
+
+  string handler_class_name =
+    this->nspace + service_name_ + "Handler";
+  string handler_class_name_lc =
+    initial_caps_to_underscores(handler_class_name);
+
+  string function_name;
+  string args_indent;
+
+  // The service this service extends, or NULL if it extends no service
+  t_service *extends_service = tservice->get_extends();
+
+  // Determine the name of our parent service (if any) and the
+  // processor class' parent class name and type
+  if (extends_service) {
+    string parent_service_name = extends_service->get_name();
+    string parent_service_name_lc =
+      to_lower_case(initial_caps_to_underscores(parent_service_name));
+    string parent_service_name_uc = to_upper_case(parent_service_name_lc);
+
+    parent_class_name =
+      this->nspace + parent_service_name + "Processor";
+    parent_type_name =
+      this->nspace_uc + "TYPE_" + parent_service_name_uc + "_PROCESSOR";
+  }
+  else {
+    parent_class_name = "ThriftDispatchProcessor";
+    parent_type_name = "THRIFT_TYPE_DISPATCH_PROCESSOR";
+  }
+
+  // Generate the processor class' definition in the header file
+
+  // Generate the processor instance definition
+  f_header_ <<
+    "/* " << service_name_ << " processor */" << endl <<
+    "struct _" << class_name << endl <<
+    "{" << endl;
+  indent_up();
+  f_header_ <<
+    indent() << parent_class_name << " parent;" << endl <<
+    endl <<
+    indent() << "/* protected */" << endl <<
+    indent() << this->nspace + service_name_ + "Handler *handler;" << endl <<
+    indent() << "GHashTable *process_map;" << endl;
+  indent_down();
+  f_header_ <<
+    "};" << endl <<
+    "typedef struct _" << class_name << " " << class_name << ";" << endl <<
+    endl;
+
+  // Generate the processor class definition
+  f_header_ <<
+    "struct _" << class_name << "Class" << endl <<
+    "{" << endl;
+  indent_up();
+  f_header_ <<
+    indent() << parent_class_name << "Class parent;" << endl <<
+    endl <<
+    indent() << "/* protected */" << endl <<
+    indent() <<
+    "gboolean (*dispatch_call) (ThriftDispatchProcessor *processor," << endl;
+  args_indent = indent() + string(27, ' ');
+  f_header_ <<
+    args_indent << "ThriftProtocol *in," << endl <<
+    args_indent << "ThriftProtocol *out," << endl <<
+    args_indent << "gchar *fname," << endl <<
+    args_indent << "gint32 seqid," << endl <<
+    args_indent << "GError **error);" << endl;
+  indent_down();
+  f_header_ <<
+    "};" << endl <<
+    "typedef struct _" << class_name << "Class " << class_name << "Class;" << endl <<
+    endl;
+
+  // Generate the remaining header boilerplate
+  f_header_ <<
+    "GType " << class_name_lc << "_get_type (void);" << endl <<
+    "#define " << this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR " <<
+        "(" << class_name_lc << "_get_type())" << endl <<
+    "#define " << class_name_uc << "(obj) " <<
+        "(G_TYPE_CHECK_INSTANCE_CAST ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR, " <<
+        class_name << "))" << endl <<
+    "#define " << this->nspace_uc << "IS_" << service_name_uc << "_PROCESSOR(obj) " <<
+        "(G_TYPE_CHECK_INSTANCE_TYPE ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR))" << endl <<
+    "#define " << class_name_uc << "_CLASS(c) (G_TYPE_CHECK_CLASS_CAST ((c), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR, " <<
+        class_name << "Class))" << endl <<
+    "#define " << this->nspace_uc << "IS_" << service_name_uc <<
+        "_PROCESSOR_CLASS(c) " << "(G_TYPE_CHECK_CLASS_TYPE ((c), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR))" << endl <<
+    "#define " << this->nspace_uc << service_name_uc <<
+        "_PROCESSOR_GET_CLASS(obj) " << "(G_TYPE_INSTANCE_GET_CLASS ((obj), " <<
+        this->nspace_uc << "TYPE_" << service_name_uc << "_PROCESSOR, " <<
+        class_name << "Class))" << endl <<
+    endl;
+
+  // Generate the processor's implementation in the implementation file
+
+  // Generate the processor's properties enum
+  f_service_ <<
+    "enum _" << class_name << "Properties" << endl <<
+    "{" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "PROP_" << class_name_uc << "_0," << endl <<
+    indent() << "PROP_" << class_name_uc << "_HANDLER" << endl;
+  indent_down();
+  f_service_ <<
+    "};" << endl <<
+    endl;
+
+  // Generate the implementation boilerplate
+  args_indent = string(15, ' ');
+  f_service_ <<
+    "G_DEFINE_TYPE (" << class_name << "," << endl <<
+    args_indent << class_name_lc << "," << endl <<
+    args_indent << parent_type_name << ");" << endl <<
+    endl;
+
+  // Generate the processor's processing-function type
+  function_name = class_name + "ProcessFunction";
+  args_indent = string(function_name.length() + 23, ' ');
+  f_service_ <<
+    "typedef gboolean (* " << function_name << ") (" <<
+    class_name << " *, " << endl <<
+    args_indent << "gint32," << endl <<
+    args_indent << "ThriftProtocol *," << endl <<
+    args_indent << "ThriftProtocol *," << endl <<
+    args_indent << "GError **);" << endl <<
+    endl;
+
+  // Generate the processor's processing functions
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string service_function_name = (*function_iter)->get_name();
+    string service_function_name_ic =
+      underscores_to_initial_caps(service_function_name);
+    string service_function_name_lc =
+      initial_caps_to_underscores(service_function_name);
+    string service_function_name_uc =
+      to_upper_case(service_function_name_lc);
+
+    t_type *return_type = (*function_iter)->get_returntype();
+    bool has_return_value = !return_type->is_void();
+
+    t_struct *arg_list = (*function_iter)->get_arglist();
+    const vector<t_field*>& args = arg_list->get_members();
+    vector<t_field*>::const_iterator arg_iter;
+
+    const vector<t_field*>& xceptions =
+      (*function_iter)->get_xceptions()->get_members();
+    vector<t_field*>::const_iterator xception_iter;
+
+    string args_class_name =
+      this->nspace + service_name_ + service_function_name_ic + "Args";
+    string args_class_type =
+      this->nspace_uc + "TYPE_" + service_name_uc + "_" +
+      service_function_name_uc + "_ARGS";
+
+    string result_class_name =
+      this->nspace + service_name_ + service_function_name_ic + "Result";
+    string result_class_type =
+      this->nspace_uc + "TYPE_" + service_name_uc + "_" +
+      service_function_name_uc + "_RESULT";
+
+    string handler_function_name =
+      handler_class_name_lc + "_" + service_function_name_lc;
+
+    function_name =
+      class_name_lc +
+      "_process_" +
+      initial_caps_to_underscores(service_function_name);
+
+    args_indent = string(function_name.length() + 2, ' ');
+    f_service_ <<
+      "static gboolean" << endl <<
+      function_name << " (" << class_name << " *self," << endl <<
+      args_indent << "gint32 sequence_id," << endl <<
+      args_indent << "ThriftProtocol *input_protocol," << endl <<
+      args_indent << "ThriftProtocol *output_protocol," << endl <<
+      args_indent << "GError **error)" << endl;
+    scope_up(f_service_);
+    f_service_ <<
+      indent() << "gboolean result = TRUE;" << endl <<
+      indent() << "ThriftTransport * transport;" << endl <<
+      indent() << args_class_name + " * args =" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "g_object_new (" << args_class_type << ", NULL);" << endl <<
+      endl;
+    indent_down();
+    if ((*function_iter)->is_oneway()) {
+      f_service_ <<
+        indent() << "THRIFT_UNUSED_VAR (sequence_id);" << endl <<
+        indent() << "THRIFT_UNUSED_VAR (output_protocol);" << endl <<
+        endl;
+    }
+    f_service_ <<
+      indent() << "g_object_get (input_protocol, \"transport\", " <<
+      "&transport, NULL);" << endl <<
+      endl;
+
+    // Read the method's arguments from the caller
+    f_service_ <<
+      indent() << "if ((thrift_struct_read (THRIFT_STRUCT (args), " <<
+      "input_protocol, error) != -1) &&" << endl <<
+      indent() << "    (thrift_protocol_read_message_end (input_protocol, " <<
+      "error) != -1) &&" << endl <<
+      indent() << "    (thrift_transport_read_end (transport, error) != FALSE))" << endl;
+    scope_up(f_service_);
+
+    for (arg_iter = args.begin(); arg_iter != args.end(); ++arg_iter) {
+      f_service_ <<
+        indent() << property_type_name((*arg_iter)->get_type()) << " " <<
+        (*arg_iter)->get_name() << ";" << endl;
+    }
+    for (xception_iter = xceptions.begin();
+         xception_iter != xceptions.end();
+         ++xception_iter) {
+      f_service_ <<
+        indent() << type_name((*xception_iter)->get_type()) << " " <<
+        initial_caps_to_underscores((*xception_iter)->get_name()) <<
+        " = NULL;" <<
+        endl;
+    }
+    if (has_return_value) {
+      f_service_ <<
+        indent() << property_type_name(return_type) << " return_value;" << endl;
+    }
+    if (!(*function_iter)->is_oneway()) {
+      f_service_ <<
+        indent() << result_class_name << " * result_struct;" << endl;
+    }
+    f_service_ << endl;
+
+    if (args.size() > 0) {
+      f_service_ <<
+        indent() << "g_object_get (args," << endl;
+      args_indent = indent() + string(14, ' ');
+      for (arg_iter = args.begin(); arg_iter != args.end(); ++arg_iter) {
+        string arg_name = (*arg_iter)->get_name();
+
+        f_service_ <<
+          args_indent << "\"" << arg_name << "\", &" << arg_name << "," << endl;
+      }
+      f_service_ <<
+        args_indent << "NULL);" << endl <<
+        endl;
+    }
+
+    if (!(*function_iter)->is_oneway()) {
+      f_service_ <<
+        indent() << "g_object_unref (transport);" << endl <<
+        indent() << "g_object_get (output_protocol, \"transport\", " <<
+        "&transport, NULL);" << endl <<
+        endl <<
+        indent() << "result_struct = g_object_new (" << result_class_type <<
+        ", NULL);" << endl;
+      if (has_return_value) {
+        f_service_ <<
+          indent() << "g_object_get (result_struct, "
+          "\"success\", &return_value, NULL);" << endl;
+      }
+      f_service_ <<
+        endl;
+    }
+
+    // Pass the arguments to the corresponding method in the handler
+    f_service_ <<
+      indent() << "if (" << handler_function_name << " (" <<
+      this->nspace_uc << service_name_uc << "_IF (self->handler)," << endl;
+    args_indent = indent() + string(handler_function_name.length() + 6, ' ');
+    if (has_return_value) {
+      string return_type_name = type_name(return_type);
+
+      f_service_ <<
+        args_indent;
+
+      // Cast return_value if it was declared as a type other than the return
+      // value's actual type---this is true for integer values 32 bits or fewer
+      // in width, for which GLib requires a plain gint type be used when
+      // storing or retrieving as an object property
+      if (return_type_name != property_type_name(return_type)) {
+        if (return_type_name[return_type_name.length() - 1] != '*') {
+          return_type_name += ' ';
+        }
+        return_type_name += '*';
+
+        f_service_ <<
+          "(" << return_type_name << ")";
+      }
+
+      f_service_ <<
+        "&return_value," << endl;
+    }
+    for (arg_iter = args.begin(); arg_iter != args.end(); ++arg_iter) {
+      f_service_ <<
+        args_indent << (*arg_iter)->get_name() << "," << endl;
+    }
+    for (xception_iter = xceptions.begin();
+         xception_iter != xceptions.end();
+         ++xception_iter) {
+      f_service_ <<
+        args_indent << "&" <<
+        initial_caps_to_underscores((*xception_iter)->get_name()) << "," << endl;
+    }
+    f_service_ <<
+      args_indent << "error) == TRUE)" << endl;
+    scope_up(f_service_);
+
+    // The handler reported success; return the result, if any, to the caller
+    if (!(*function_iter)->is_oneway()) {
+      if (has_return_value) {
+        f_service_ <<
+          indent() << "g_object_set (result_struct, \"success\", return_value, " <<
+          "NULL);" << endl;
+
+        // Deallocate (or unref) return_value
+        return_type = get_true_type(return_type);
+        if (return_type->is_base_type()) {
+          t_base_type *base_type = ((t_base_type *) return_type);
+
+          if (base_type->get_base() == t_base_type::TYPE_STRING) {
+            f_service_ <<
+              indent() << "if (return_value != NULL)" << endl;
+            indent_up();
+            if (base_type->is_binary()) {
+              f_service_ <<
+                indent() << "g_byte_array_unref (return_value);" << endl;
+            } else {
+            f_service_ <<
+              indent() << "g_free (return_value);" << endl;
+            }
+            indent_down();
+          }
+        } else if (return_type->is_container()) {
+          f_service_ <<
+            indent() << "if (return_value != NULL)" << endl;
+          indent_up();
+
+          if (return_type->is_list()) {
+            f_service_ <<
+              indent() << "g_array_unref (return_value);" << endl;
+          } else if (return_type->is_map() || return_type->is_set()) {
+            f_service_ <<
+              indent() << "g_hash_table_unref (return_value);" << endl;
+          }
+
+          indent_down();
+        } else if (return_type->is_struct()) {
+          f_service_ <<
+            indent() << "if (return_value != NULL)" << endl;
+          indent_up();
+          f_service_ <<
+            indent() << "g_object_unref (return_value);" << endl;
+          indent_down();
+        }
+
+        f_service_ <<
+          endl;
+      }
+      f_service_ <<
+        indent() << "result =" << endl;
+      indent_up();
+      f_service_ <<
+        indent() << "((thrift_protocol_write_message_begin (output_protocol," << endl;
+      args_indent = indent() + string(39, ' ');
+      f_service_ <<
+        args_indent << "\"" << service_function_name << "\"," << endl <<
+        args_indent << "T_REPLY," << endl <<
+        args_indent << "sequence_id," << endl <<
+        args_indent << "error) != -1) &&" << endl <<
+        indent() << " (thrift_struct_write (THRIFT_STRUCT (result_struct)," << endl;
+      args_indent = indent() + string(23, ' ');
+      f_service_ <<
+        args_indent << "output_protocol," << endl <<
+        args_indent << "error) != -1));" << endl;
+      indent_down();
+    }
+    scope_down(f_service_);
+    f_service_ <<
+      indent() << "else" << endl;
+    scope_up(f_service_);
+
+    // The handler reported failure; check to see if an application-defined
+    // exception was raised and if so, return it to the caller
+    f_service_ << indent();
+    if (xceptions.size() > 0) {
+      for (xception_iter = xceptions.begin();
+           xception_iter != xceptions.end();
+           ++xception_iter) {
+        f_service_ <<
+          "if (" << initial_caps_to_underscores((*xception_iter)->get_name()) <<
+          " != NULL)" << endl;
+        scope_up(f_service_);
+        f_service_ <<
+          indent() << "g_object_set (result_struct," << endl;
+        args_indent = indent() + string(14, ' ');
+        f_service_ <<
+          args_indent << "\"" << (*xception_iter)->get_name() << "\", " <<
+          (*xception_iter)->get_name() << "," << endl <<
+          args_indent << "NULL);" << endl <<
+          endl;
+        f_service_ <<
+          indent() << "result =" << endl;
+        indent_up();
+        f_service_ <<
+          indent() << "((thrift_protocol_write_message_begin (output_protocol," << endl;
+        args_indent = indent() + string(39, ' ');
+        f_service_ <<
+          args_indent << "\"" << service_function_name << "\"," << endl <<
+          args_indent << "T_REPLY," << endl <<
+          args_indent << "sequence_id," << endl <<
+          args_indent << "error) != -1) &&" << endl <<
+          indent() << " (thrift_struct_write (THRIFT_STRUCT (result_struct)," << endl;
+        args_indent = indent() + string(23, ' ');
+        f_service_ <<
+          args_indent << "output_protocol," << endl <<
+          args_indent << "error) != -1));" << endl;
+        indent_down();
+        scope_down(f_service_);
+        f_service_ <<
+          indent() << "else" << endl;
+      }
+
+      scope_up(f_service_);
+      f_service_ << indent();
+    }
+
+    // If the handler reported failure but raised no application-defined
+    // exception, return a Thrift application exception with the information
+    // returned via GLib's own error-reporting mechanism
+    f_service_ <<
+      "if (*error == NULL)" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "g_warning (\"" << service_name_ << "." <<
+      (*function_iter)->get_name() << " implementation returned FALSE \"" << endl <<
+      indent() << string (11, ' ') << "\"but did not set an error\");" << endl <<
+      endl;
+    indent_down();
+    f_service_ <<
+      indent() << "ThriftApplicationException *xception =" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "g_object_new (THRIFT_TYPE_APPLICATION_EXCEPTION," << endl;
+    args_indent = indent() + string(14, ' ');
+    f_service_ <<
+      args_indent << "\"type\",    *error != NULL ? (*error)->code :" << endl <<
+      args_indent << string(11, ' ') << "THRIFT_APPLICATION_EXCEPTION_ERROR_UNKNOWN," << endl <<
+      args_indent << "\"message\", *error != NULL ? (*error)->message : NULL," << endl <<
+      args_indent << "NULL);" << endl;
+    indent_down();
+    f_service_ <<
+      indent() << "g_clear_error (error);" << endl <<
+      endl <<
+      indent() << "result =" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "((thrift_protocol_write_message_begin (output_protocol," << endl;
+    args_indent = indent() + string(39, ' ');
+    f_service_ <<
+      args_indent << "\"" << service_function_name << "\"," << endl <<
+      args_indent << "T_EXCEPTION," << endl <<
+      args_indent << "sequence_id," << endl <<
+      args_indent << "error) != -1) &&" << endl <<
+      indent() << " (thrift_struct_write (THRIFT_STRUCT (xception)," << endl;
+    args_indent = indent() + string(23, ' ');
+    f_service_ <<
+      args_indent << "output_protocol," << endl <<
+      args_indent << "error) != -1));" << endl;
+    indent_down();
+    f_service_ <<
+      endl <<
+      indent() << "g_object_unref (xception);" << endl;
+
+    if (xceptions.size() > 0) {
+      scope_down(f_service_);
+    }
+    scope_down(f_service_);
+    f_service_ << endl;
+
+    // Dellocate or unref retrieved argument values as necessary
+    for (arg_iter = args.begin(); arg_iter != args.end(); ++arg_iter) {
+      string arg_name = (*arg_iter)->get_name();
+      t_type *arg_type = get_true_type((*arg_iter)->get_type());
+
+      if (arg_type->is_base_type()) {
+        t_base_type *base_type = ((t_base_type *) arg_type);
+
+        if (base_type->get_base() == t_base_type::TYPE_STRING) {
+          f_service_ <<
+            indent() << "if (" << arg_name << " != NULL)" << endl;
+          indent_up();
+          if (base_type->is_binary()) {
+            f_service_ <<
+              indent() << "g_byte_array_unref (" << arg_name << ");" << endl;
+          } else {
+            f_service_ <<
+              indent() << "g_free (" << arg_name << ");" << endl;
+          }
+          indent_down();
+        }
+      } else if (arg_type->is_container()) {
+        f_service_ <<
+          indent() << "if (" << arg_name << " != NULL)" << endl;
+        indent_up();
+
+        if (arg_type->is_list()) {
+          f_service_ <<
+            indent() << "g_array_unref (" << arg_name << ");" << endl;
+        } else if (arg_type->is_map() || arg_type->is_set()) {
+          f_service_ <<
+            indent() << "g_hash_table_unref (" << arg_name << ");" << endl;
+        }
+
+        indent_down();
+      } else if (arg_type->is_struct()) {
+        f_service_ <<
+          indent() << "if (" << arg_name << " != NULL)" << endl;
+        indent_up();
+        f_service_ <<
+          indent() << "g_object_unref (" << arg_name << ");" << endl;
+        indent_down();
+      }
+    }
+
+    if(!(*function_iter)->is_oneway()) {
+      f_service_ <<
+        indent() << "g_object_unref (result_struct);" << endl <<
+        endl <<
+        indent() << "if (result == TRUE)" << endl;
+      indent_up();
+      f_service_ <<
+        indent() << "result =" << endl;
+      indent_up();
+      f_service_ <<
+        indent() << "((thrift_protocol_write_message_end " <<
+        "(output_protocol, error) != -1) &&" << endl <<
+        indent() << " (thrift_transport_write_end (transport, error) " <<
+        "!= FALSE) &&" << endl <<
+        indent() << " (thrift_transport_flush (transport, error) " <<
+        "!= FALSE));" << endl;
+      indent_down();
+      indent_down();
+    }
+    scope_down(f_service_);
+    f_service_ <<
+      indent() << "else" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "result = FALSE;" << endl;
+    indent_down();
+
+    f_service_ <<
+      endl <<
+      indent() << "g_object_unref (transport);" << endl <<
+      indent() << "g_object_unref (args);" << endl <<
+      endl <<
+      indent() << "return result;" << endl;
+    scope_down(f_service_);
+
+    f_service_ << endl;
+  }
+
+  // Generate the processor's dispatch_call implementation
+  function_name = class_name_lc + "_dispatch_call";
+  args_indent = indent() + string(function_name.length() + 2, ' ');
+  f_service_ <<
+    "static gboolean" << endl <<
+    function_name << " (ThriftDispatchProcessor *dispatch_processor," << endl <<
+    args_indent << "ThriftProtocol *input_protocol," << endl <<
+    args_indent << "ThriftProtocol *output_protocol," << endl <<
+    args_indent << "gchar *method_name," << endl <<
+    args_indent << "gint32 sequence_id," << endl <<
+    args_indent << "GError **error)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << class_name << "ProcessFunction process_function; " << endl;
+  f_service_ <<
+    indent() << "gboolean dispatch_result = FALSE;" << endl <<
+    endl <<
+    indent() << class_name << " *self = " <<
+    class_name_uc << " (dispatch_processor);" << endl;
+  f_service_ <<
+    indent() << parent_class_name << "Class "
+    "*parent_class =" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "g_type_class_peek_parent (" << class_name_uc <<
+    "_GET_CLASS (self));" << endl;
+  indent_down();
+  f_service_ <<
+    endl <<
+    indent() << "process_function = g_hash_table_lookup (" <<
+    "self->process_map, method_name);" << endl <<
+    indent() << "if (process_function != NULL)" << endl;
+  scope_up(f_service_);
+  args_indent = indent() + string(39, ' ');
+  f_service_ <<
+    indent() << "dispatch_result = (*process_function) (self," << endl <<
+    args_indent << "sequence_id," << endl <<
+    args_indent << "input_protocol," << endl <<
+    args_indent << "output_protocol," << endl <<
+    args_indent << "error);" << endl;
+  scope_down(f_service_);
+  f_service_ <<
+    indent() << "else" << endl;
+  scope_up(f_service_);
+
+  // Method name not recognized; chain up to our parent processor---note the
+  // top-most implementation of this method, in ThriftDispatchProcessor itself,
+  // will return an application exception to the caller if no class in the
+  // hierarchy recognizes the method name
+  f_service_ <<
+    indent() << "dispatch_result = parent_class->dispatch_call "
+    "(dispatch_processor," << endl;
+  args_indent = indent() + string(47, ' ');
+  f_service_ <<
+    args_indent << "input_protocol," << endl <<
+    args_indent << "output_protocol," << endl <<
+    args_indent << "method_name," << endl <<
+    args_indent << "sequence_id," << endl <<
+    args_indent << "error);" << endl;
+  scope_down(f_service_);
+  f_service_ <<
+    endl <<
+    indent() << "return dispatch_result;" << endl;
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate the processor's property setter
+  function_name = class_name_lc + "_set_property";
+  args_indent = string(function_name.length() + 2, ' ');
+  f_service_ <<
+    "static void" << endl <<
+    function_name << " (GObject *object," << endl <<
+    args_indent << "guint property_id," << endl <<
+    args_indent << "const GValue *value," << endl <<
+    args_indent << "GParamSpec *pspec)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << class_name << " *self = " <<
+    class_name_uc << " (object);" << endl <<
+    endl <<
+    indent() << "switch (property_id)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "case PROP_" << class_name_uc << "_HANDLER:" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "if (self->handler != NULL)" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "g_object_unref (self->handler);" << endl;
+  indent_down();
+  f_service_ <<
+    indent() << "self->handler = g_value_get_object (value);" << endl <<
+    indent() << "g_object_ref (self->handler);" << endl;
+  if (extends_service) {
+    // Chain up to set the handler in every superclass as well
+    f_service_ <<
+      endl <<
+      indent() << "G_OBJECT_CLASS (" << class_name_lc << "_parent_class)->" << endl;
+    indent_up();
+    f_service_ <<
+      indent() << "set_property (object, property_id, value, pspec);" << endl;
+    indent_down();
+  }
+  f_service_ <<
+    indent() << "break;" << endl;
+  indent_down();
+  f_service_ <<
+    indent() << "default:" << endl;
+  indent_up();
+  f_service_ <<
+    indent() <<
+    "G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);" << endl <<
+    indent() << "break;" << endl;
+  indent_down();
+  scope_down(f_service_);
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate processor's property getter
+  function_name = class_name_lc + "_get_property";
+  args_indent = string(function_name.length() + 2, ' ');
+  f_service_ <<
+    "static void" << endl <<
+    function_name << " (GObject *object," << endl <<
+    args_indent << "guint property_id," << endl <<
+    args_indent << "GValue *value," << endl <<
+    args_indent << "GParamSpec *pspec)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << class_name << " *self = " <<
+    class_name_uc << " (object);" << endl <<
+    endl <<
+    indent() << "switch (property_id)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "case PROP_" << class_name_uc << "_HANDLER:" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "g_value_set_object (value, self->handler);" << endl <<
+    indent() << "break;" << endl;
+  indent_down();
+  f_service_ <<
+    indent() << "default:" << endl;
+  indent_up();
+  f_service_ <<
+    indent() <<
+    "G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);" << endl <<
+    indent() << "break;" << endl;
+  indent_down();
+  scope_down(f_service_);
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generator the processor's dispose function
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_dispose (GObject *gobject)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << class_name << " *self = " << class_name_uc << " (gobject);" << endl <<
+    endl <<
+    indent() << "if (self->handler != NULL)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "g_object_unref (self->handler);" << endl <<
+    indent() << "self->handler = NULL;" << endl;
+  scope_down(f_service_);
+  f_service_ <<
+    endl <<
+    indent() << "G_OBJECT_CLASS (" << class_name_lc << "_parent_class)"
+    "->dispose (gobject);" << endl;
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate processor finalize function
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_finalize (GObject *gobject)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << this->nspace << service_name_ << "Processor *self = " <<
+    this->nspace_uc << service_name_uc << "_PROCESSOR (gobject);" << endl <<
+    endl <<
+    indent() << "g_hash_table_destroy (self->process_map);" << endl <<
+    endl <<
+    indent() << "G_OBJECT_CLASS (" << class_name_lc << "_parent_class)"
+    "->finalize (gobject);" << endl;
+  scope_down(f_service_);
+  f_service_ << endl;
+
+  // Generate processor instance initializer
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_init (" << class_name << " *self)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "self->handler = NULL;" << endl <<
+    indent() << "self->process_map = "
+    "g_hash_table_new (g_str_hash, g_str_equal);" << endl <<
+    endl;
+  args_indent = string(21, ' ');
+  for (function_iter = functions.begin();
+       function_iter != functions.end();
+       ++function_iter) {
+    string service_function_name = (*function_iter)->get_name();
+    string process_function_name =
+      class_name_lc +
+      "_process_" +
+      initial_caps_to_underscores(service_function_name);
+
+    f_service_ <<
+      indent() << "g_hash_table_insert (self->process_map," << endl <<
+      indent() + args_indent + "\"" << service_function_name << "\", " << endl <<
+      indent() + args_indent + process_function_name << ");" << endl;
+  }
+  scope_down(f_service_);
+  f_service_ <<
+    endl;
+
+  // Generate processor class initializer
+  f_service_ <<
+    "static void" << endl <<
+    class_name_lc << "_class_init (" << class_name << "Class *cls)" << endl;
+  scope_up(f_service_);
+  f_service_ <<
+    indent() << "GObjectClass *gobject_class = G_OBJECT_CLASS (cls);" << endl <<
+    indent() << "ThriftDispatchProcessorClass *dispatch_processor_class =" << endl;
+  indent_up();
+  f_service_ <<
+    indent() << "THRIFT_DISPATCH_PROCESSOR_CLASS (cls);" << endl;
+  indent_down();
+  f_service_ <<
+    indent() << "GParamSpec *param_spec;" << endl <<
+    endl <<
+    indent() << "gobject_class->dispose = " <<
+    class_name_lc << "_dispose;" << endl <<
+    indent() << "gobject_class->finalize = " <<
+    class_name_lc << "_finalize;" << endl <<
+    indent() << "gobject_class->set_property = " <<
+    class_name_lc << "_set_property;" << endl <<
+    indent() << "gobject_class->get_property = " <<
+    class_name_lc << "_get_property;" << endl <<
+    endl <<
+    indent() << "dispatch_processor_class->dispatch_call = " <<
+    class_name_lc << "_dispatch_call;" << endl <<
+    indent() << "cls->dispatch_call = " <<
+    class_name_lc << "_dispatch_call;" << endl <<
+    endl <<
+    indent() << "param_spec = g_param_spec_object (\"handler\"," << endl;
+  args_indent = indent() + string(34, ' ');
+  f_service_ <<
+    args_indent << "\"Service handler implementation\"," << endl <<
+    args_indent << "\"The service handler implementation \"" << endl <<
+    args_indent << "\"to which method calls are dispatched.\"," << endl <<
+    args_indent << this->nspace_uc + "TYPE_" + service_name_uc + "_HANDLER," << endl <<
+    args_indent << "G_PARAM_READWRITE);" << endl;
+  f_service_ <<
+    indent() << "g_object_class_install_property (gobject_class," << endl;
+  args_indent = indent() + string (33, ' ');
+  f_service_ <<
+    args_indent << "PROP_" << class_name_uc << "_HANDLER," << endl <<
+    args_indent << "param_spec);" << endl;
+  scope_down(f_service_);
 }
 
 /**
@@ -1637,12 +3015,11 @@ void t_c_glib_generator::generate_service_client(t_service *tservice) {
  */
 void t_c_glib_generator::generate_service_server (t_service *tservice) {
   (void) tservice;
-  /* get some C friendly service names */
-  string service_name_u = initial_caps_to_underscores(service_name_);
-  string service_name_uc = to_upper_case(service_name_u);
+  // Generate the service's handler class
+  generate_service_handler (tservice);
 
-  // write the server object instance definition in the header.
-  // TODO: implement after implement TServer and TProcessor
+  // Generate the service's processor class
+  generate_service_processor (tservice);
 }
 
 /**
@@ -1652,6 +3029,13 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
   string name = tstruct->get_name();
   string name_u = initial_caps_to_underscores(name);
   string name_uc = to_upper_case(name_u);
+
+  string class_name = this->nspace + name;
+  string class_name_lc = to_lower_case(initial_caps_to_underscores(class_name));
+  string class_name_uc = to_upper_case(class_name_lc);
+
+  string function_name;
+  string args_indent;
 
   // write the instance definition
   f_types_ <<
@@ -1702,27 +3086,338 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
     endl;
 
   // start writing the object implementation .c file
+
+  // generate properties enum
+  if (members.size() > 0) {
+    f_types_impl_ <<
+      "enum _" << class_name << "Properties" << endl <<
+      "{" << endl;
+    indent_up();
+    f_types_impl_ <<
+      indent() << "PROP_" << class_name_uc << "_0";
+    for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+      string member_name_uc =
+        to_upper_case(to_lower_case
+                      (initial_caps_to_underscores((*m_iter)->get_name())));
+
+      f_types_impl_ << "," << endl <<
+        indent() << "PROP_" << class_name_uc << "_" << member_name_uc;
+    }
+    f_types_impl_ << endl;
+    indent_down();
+    f_types_impl_ <<
+      "};" << endl <<
+      endl;
+  }
+
   // generate struct I/O methods
   string this_get = this->nspace + name + " * this_object = " 
                     + this->nspace_uc + name_uc + "(object);";
   generate_struct_reader (f_types_impl_, tstruct, "this_object->", this_get);
   generate_struct_writer (f_types_impl_, tstruct, "this_object->", this_get);
 
+  // generate property setter and getter
+  if (members.size() > 0) {
+    // generate property setter
+    function_name = class_name_lc + "_set_property";
+    args_indent = string(function_name.length() + 2, ' ');
+    f_types_impl_ <<
+      "static void" << endl <<
+      function_name << " (GObject *object," << endl <<
+      args_indent << "guint property_id," << endl <<
+      args_indent << "const GValue *value," << endl <<
+      args_indent << "GParamSpec *pspec)" << endl;
+    scope_up(f_types_impl_);
+    f_types_impl_ <<
+      indent() << class_name << " *self = " <<
+      class_name_uc << " (object);" << endl <<
+      endl <<
+      indent() << "switch (property_id)" << endl;
+    scope_up(f_types_impl_);
+    for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+      t_field *member = (*m_iter);
+      string member_name = member->get_name();
+      string member_name_uc =
+        to_upper_case(to_lower_case(initial_caps_to_underscores(member_name)));
+      t_type *member_type = get_true_type(member->get_type());
+
+      string property_identifier =
+        "PROP_" + class_name_uc + "_" + member_name_uc;
+
+      f_types_impl_ <<
+        indent() << "case " << property_identifier + ":" << endl;
+      indent_up();
+
+      if (member_type->is_base_type()) {
+        t_base_type *base_type = ((t_base_type *) member_type);
+        string assign_function_name;
+
+        if (base_type->get_base() == t_base_type::TYPE_STRING) {
+          string release_function_name;
+
+          f_types_impl_ <<
+            indent() << "if (self->" << member_name << " != NULL)" << endl;
+          indent_up();
+
+          if (base_type->is_binary()) {
+            release_function_name = "g_byte_array_unref";
+            assign_function_name = "g_value_dup_boxed";
+          } else {
+            release_function_name = "g_free";
+            assign_function_name = "g_value_dup_string";
+          }
+
+          f_types_impl_ <<
+            indent() << release_function_name <<
+            " (self->" << member_name << ");" << endl;
+          indent_down();
+        } else {
+          switch (base_type->get_base()) {
+          case t_base_type::TYPE_BOOL:
+            assign_function_name = "g_value_get_boolean";
+            break;
+
+          case t_base_type::TYPE_BYTE:
+          case t_base_type::TYPE_I16:
+          case t_base_type::TYPE_I32:
+            assign_function_name = "g_value_get_int";
+            break;
+
+          case t_base_type::TYPE_I64:
+            assign_function_name = "g_value_get_int64";
+            break;
+
+          case t_base_type::TYPE_DOUBLE :
+            assign_function_name = "g_value_get_double";
+            break;
+
+          default:
+            throw "compiler error: "
+              "unrecognized base type \"" + base_type->get_name() + "\" "
+              "for struct member \"" + member_name + "\"";
+            break;
+          }
+        }
+
+        f_types_impl_ <<
+          indent() << "self->" << member_name <<
+          " = " << assign_function_name << " (value);" << endl;
+      } else if (member_type->is_enum()) {
+        f_types_impl_ <<
+          indent() << "self->" << member_name <<
+          " = g_value_get_int (value);" << endl;
+      } else if (member_type->is_container()) {
+        string release_function_name;
+        string assign_function_name;
+
+        if (member_type->is_list()) {
+          t_type *elem_type = ((t_list *) member_type)->get_elem_type();
+
+          // Lists of base types other than strings are represented as GArrays;
+          // all others as GPtrArrays
+          if (elem_type->is_base_type() && !elem_type->is_string()) {
+            release_function_name = "g_array_unref";
+          } else {
+            release_function_name = "g_ptr_array_unref";
+          }
+
+          assign_function_name = "g_value_dup_boxed";
+        } else if (member_type->is_set() || member_type->is_map()) {
+          release_function_name = "g_hash_table_unref";
+          assign_function_name = "g_value_dup_boxed";
+        }
+
+        f_types_impl_ <<
+          indent() << "if (self->" << member_name << " != NULL)" << endl;
+        indent_up();
+        f_types_impl_ <<
+          indent() << release_function_name << " (self->" << member_name <<
+          ");" << endl;
+        indent_down();
+        f_types_impl_ <<
+          indent() << "self->" << member_name << " = " <<
+          assign_function_name << " (value);" << endl;
+      } else if (member_type->is_struct() || member_type->is_xception()) {
+        f_types_impl_ <<
+          indent() << "if (self->" << member_name << " != NULL)" << endl;
+        indent_up();
+        f_types_impl_ <<
+          indent() << "g_object_unref (self->" << member_name <<
+          ");" << endl;
+        indent_down();
+        f_types_impl_ <<
+          indent() << "self->" << member_name <<
+          " = g_value_dup_object (value);" << endl;
+      }
+
+      if (member->get_req() != t_field::T_REQUIRED) {
+        f_types_impl_ <<
+          indent() << "self->__isset_" << member_name << " = TRUE;" << endl;
+      }
+
+      f_types_impl_ <<
+        indent() << "break;" << endl <<
+        endl;
+      indent_down();
+    }
+    f_types_impl_ <<
+      indent() << "default:" << endl;
+    indent_up();
+    f_types_impl_ <<
+      indent() <<
+      "G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);" << endl <<
+      indent() << "break;" << endl;
+    indent_down();
+    scope_down(f_types_impl_);
+    scope_down(f_types_impl_);
+    f_types_impl_ << endl;
+
+    // generate property getter
+    function_name = class_name_lc + "_get_property";
+    args_indent = string(function_name.length() + 2, ' ');
+    f_types_impl_ <<
+      "static void" << endl <<
+      function_name << " (GObject *object," << endl <<
+      args_indent << "guint property_id," << endl <<
+      args_indent << "GValue *value," << endl <<
+      args_indent << "GParamSpec *pspec)" << endl;
+    scope_up(f_types_impl_);
+    f_types_impl_ <<
+      indent() << class_name << " *self = " <<
+      class_name_uc << " (object);" << endl <<
+      endl <<
+      indent() << "switch (property_id)" << endl;
+    scope_up(f_types_impl_);
+    for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+      t_field *member = (*m_iter);
+      string member_name = (*m_iter)->get_name();
+      string member_name_uc =
+        to_upper_case(to_lower_case(initial_caps_to_underscores(member_name)));
+      t_type *member_type = get_true_type(member->get_type());
+
+      string property_identifier =
+        "PROP_" + class_name_uc + "_" + member_name_uc;
+
+      string setter_function_name;
+
+      if (member_type->is_base_type()) {
+        t_base_type *base_type = ((t_base_type *) member_type);
+
+        switch (base_type->get_base()) {
+        case t_base_type::TYPE_BOOL:
+          setter_function_name = "g_value_set_boolean";
+          break;
+
+        case t_base_type::TYPE_BYTE:
+        case t_base_type::TYPE_I16:
+        case t_base_type::TYPE_I32:
+          setter_function_name = "g_value_set_int";
+          break;
+
+        case t_base_type::TYPE_I64:
+          setter_function_name = "g_value_set_int64";
+          break;
+
+        case t_base_type::TYPE_DOUBLE :
+          setter_function_name = "g_value_set_double";
+          break;
+
+        case t_base_type::TYPE_STRING:
+          if (base_type->is_binary()) {
+            setter_function_name = "g_value_set_boxed";
+          } else {
+            setter_function_name = "g_value_set_string";
+          }
+          break;
+
+        default:
+          throw "compiler error: "
+            "unrecognized base type \"" + base_type->get_name() + "\" "
+            "for struct member \"" + member_name + "\"";
+          break;
+        }
+      } else if (member_type->is_enum()) {
+        setter_function_name = "g_value_set_int";
+      } else if (member_type->is_struct() || member_type->is_xception()) {
+        setter_function_name = "g_value_set_object";
+      } else if (member_type->is_container()) {
+        setter_function_name = "g_value_set_boxed";
+      } else {
+        throw "compiler error: "
+          "unrecognized type for struct member \"" + member_name + "\"";
+      }
+
+      f_types_impl_ <<
+        indent() << "case " << property_identifier + ":" << endl;
+      indent_up();
+      f_types_impl_ <<
+        indent() << setter_function_name << " (value, self->" <<
+        member_name << ");" << endl <<
+        indent() << "break;" << endl <<
+        endl;
+      indent_down();
+    }
+    f_types_impl_ <<
+      indent() << "default:" << endl;
+    indent_up();
+    f_types_impl_ <<
+      indent() <<
+      "G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);" << endl <<
+      indent() << "break;" << endl;
+    indent_down();
+    scope_down(f_types_impl_);
+    scope_down(f_types_impl_);
+    f_types_impl_ << endl;
+  }
+
   // generate the instance init function
+
   f_types_impl_ <<
-    "void " << endl <<
+    "static void " << endl <<
     this->nspace_lc << name_u << "_instance_init (" << this->nspace << name << " * object)" << endl <<
     "{" << endl;
+  indent_up();
+
+  // generate default-value structures for container-type members
+  bool constant_declaration_output = false;
+  for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+    t_field *member = *m_iter;
+    t_const_value *member_value = member->get_value();
+
+    if (member_value != NULL) {
+      string member_name = member->get_name();
+      t_type* member_type = get_true_type (member->get_type());
+
+      if (member_type->is_list()) {
+        const vector<t_const_value *> &list = member_value->get_list();
+        t_type *elem_type = ((t_list *) member_type)->get_elem_type();
+
+        // Generate an array with the list literal
+        indent(f_types_impl_) <<
+          "static " << type_name(elem_type, false, true) <<
+          " __default_" << member_name << "[" << list.size() << "] = " << endl;
+        indent_up();
+        f_types_impl_ <<
+          indent() << constant_literal (member_type, member_value) << ";" << endl;
+        indent_down();
+
+        constant_declaration_output = true;
+      }
+
+      // TODO: Handle container types other than list
+    }
+  }
+  if (constant_declaration_output) {
+    f_types_impl_ << endl;
+  }
 
   // satisfy compilers with -Wall turned on
-  indent_up();
   indent(f_types_impl_) << "/* satisfy -Wall */" << endl <<
                indent() << "THRIFT_UNUSED_VAR (object);" << endl;
 
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
     t_type* t = get_true_type ((*m_iter)->get_type());
     if (t->is_base_type()) {
-      // only have init's for base types
       string dval = " = ";
       if (t->is_enum()) {
         dval += "(" + type_name (t) + ")";
@@ -1761,6 +3456,21 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
       indent(f_types_impl_) << "object->" << name << " = " <<
                                   init_function << endl;
 
+      // Pre-populate the container with the specified default values, if any
+      if ((*m_iter)->get_value()) {
+        t_const_value *member_value = (*m_iter)->get_value();
+
+        if (t->is_list()) {
+          const vector<t_const_value *> &list = member_value->get_list();
+
+          indent(f_types_impl_) <<
+            "g_array_append_vals (object->" << name <<
+            ", &__default_" << name <<
+            ", " << list.size() << ");" << endl;
+        }
+
+        // TODO: Handle container types other than list
+      }
     }
 
     /* if not required, initialize the __isset variable */
@@ -1775,7 +3485,7 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
 
   /* create the destructor */
   f_types_impl_ <<
-    "void " << endl <<
+    "static void " << endl <<
     this->nspace_lc << name_u << "_finalize (GObject *object)" << endl <<
     "{" << endl;
   indent_up();
@@ -1796,15 +3506,15 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
       if (t->is_map() || t->is_set()) {
         f_types_impl_ << indent() << "if (tobject->" << name << " != NULL)" << endl;
         f_types_impl_ << indent() << "{" << endl;
-	indent_up();
-	f_types_impl_ <<
-	indent() << "g_hash_table_destroy (tobject->" << name << ");" << endl;
-	f_types_impl_ << indent() << "tobject->" << name << " = NULL;" << endl;
-	indent_down();
-	f_types_impl_ << indent() << "}" << endl;
+        indent_up();
+        f_types_impl_ <<
+        indent() << "g_hash_table_destroy (tobject->" << name << ");" << endl;
+        f_types_impl_ << indent() << "tobject->" << name << " = NULL;" << endl;
+        indent_down();
+        f_types_impl_ << indent() << "}" << endl;
       } else if (t->is_list()) {
         t_type *etype = ((t_list *) t)->get_elem_type();
-        string destructor_function = "g_ptr_array_free";
+        string destructor_function = "g_ptr_array_unref";
 
         if (etype->is_base_type()) {
           t_base_type::t_base tbase = ((t_base_type *) etype)->get_base();
@@ -1817,7 +3527,7 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
             case t_base_type::TYPE_I32:           
             case t_base_type::TYPE_I64:
             case t_base_type::TYPE_DOUBLE:
-              destructor_function = "g_array_free";
+              destructor_function = "g_array_unref";
               break;
             case t_base_type::TYPE_STRING:
               break;
@@ -1831,7 +3541,7 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
         indent_up();
         f_types_impl_ <<
           indent() << destructor_function << " (tobject->" << name <<
-                       ", TRUE);" << endl;
+                       ");" << endl;
         f_types_impl_ << indent() << "tobject->" << name << " = NULL;" << endl;
         indent_down();
         f_types_impl_ << indent() << "}" << endl;
@@ -1855,7 +3565,7 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
       f_types_impl_ << indent() << "{" << endl;
       indent_up();
       f_types_impl_ <<
-      indent() << "g_free (tobject->" << name << ");" << endl;
+      indent() << generate_free_func_from_type(t) << "(tobject->" << name << ");" << endl;
       f_types_impl_ << indent() << "tobject->" << name << " = NULL;" << endl;
       indent_down();
       f_types_impl_ << indent() << "}" << endl;
@@ -1867,25 +3577,219 @@ void t_c_glib_generator::generate_object(t_struct *tstruct) {
     "}" << endl <<
     endl;
 
+  // generate the class init function
 
   f_types_impl_ <<
-    "void " << endl <<
-    this->nspace_lc << name_u << "_class_init (ThriftStructClass * cls)" << endl <<
-    "{" << endl;
-  indent_up();
+    "static void" << endl <<
+    class_name_lc << "_class_init (" << class_name << "Class * cls)" << endl;
+  scope_up(f_types_impl_);
 
   f_types_impl_ <<   
     indent() << "GObjectClass *gobject_class = G_OBJECT_CLASS (cls);" << endl <<
+    indent() << "ThriftStructClass *struct_class = "  <<
+    "THRIFT_STRUCT_CLASS (cls);" << endl <<
     endl <<
-    indent() << "gobject_class->finalize = " << this->nspace_lc << name_u << "_finalize;" << endl <<
-    indent() << "cls->read = " << this->nspace_lc << name_u << "_read;" << endl <<
-    indent() << "cls->write = " << this->nspace_lc << name_u << "_write;" << endl;
+    indent() << "struct_class->read = " << class_name_lc << "_read;" << endl <<
+    indent() << "struct_class->write = " << class_name_lc << "_write;" << endl <<
+    endl <<
+    indent() << "gobject_class->finalize = " << class_name_lc << "_finalize;" << endl;
+  if (members.size() > 0) {
+    f_types_impl_ <<
+      indent() << "gobject_class->get_property = " <<
+      class_name_lc << "_get_property;" << endl <<
+      indent() << "gobject_class->set_property = " <<
+      class_name_lc << "_set_property;" << endl;
 
-  indent_down();
-  f_types_impl_ <<
-    "}" << endl <<
-    endl;
+    // install a property for each member
+    for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+      t_field *member = (*m_iter);
+      string member_name = member->get_name();
+      string member_name_uc =
+        to_upper_case(to_lower_case(initial_caps_to_underscores(member_name)));
+      t_type *member_type = get_true_type(member->get_type());
+      t_const_value *member_value = member->get_value();
 
+      string property_identifier =
+        "PROP_" + class_name_uc + "_" + member_name_uc;
+
+      f_types_impl_ << endl <<
+        indent() << "g_object_class_install_property" << endl;
+      indent_up();
+      args_indent = indent() + ' ';
+      f_types_impl_ <<
+        indent() << "(gobject_class," << endl <<
+        args_indent << property_identifier << "," << endl <<
+        args_indent;
+
+      if (member_type->is_base_type()) {
+        t_base_type::t_base base_type =
+          ((t_base_type *) member_type)->get_base();
+
+        if (base_type == t_base_type::TYPE_STRING) {
+          if (((t_base_type *) member_type)->is_binary()) {
+            args_indent += string(20, ' ');
+            f_types_impl_ <<
+              "g_param_spec_boxed (\"" << member_name << "\"," << endl <<
+              args_indent << "NULL," << endl <<
+              args_indent << "NULL," << endl <<
+              args_indent << "G_TYPE_BYTE_ARRAY," << endl <<
+              args_indent << "G_PARAM_READWRITE));" << endl;
+          } else {
+            args_indent += string(21, ' ');
+            f_types_impl_ <<
+              "g_param_spec_string (\"" << member_name << "\"," << endl <<
+              args_indent << "NULL," << endl <<
+              args_indent << "NULL," << endl <<
+              args_indent <<
+              ((member_value != NULL) ?
+               "\"" + member_value->get_string() + "\"" :
+               "NULL") <<
+              "," << endl <<
+              args_indent << "G_PARAM_READWRITE));" << endl;
+          }
+        } else if (base_type == t_base_type::TYPE_BOOL) {
+          args_indent += string(22, ' ');
+          f_types_impl_ <<
+            "g_param_spec_boolean (\"" << member_name << "\"," << endl <<
+            args_indent << "NULL," << endl <<
+            args_indent << "NULL," << endl <<
+            args_indent <<
+            (((member_value != NULL) &&
+              (member_value->get_integer() != 0)) ? "TRUE" : "FALSE") <<
+            "," << endl <<
+            args_indent << "G_PARAM_READWRITE));" << endl;
+        } else if ((base_type == t_base_type::TYPE_BYTE) ||
+                   (base_type == t_base_type::TYPE_I16) ||
+                   (base_type == t_base_type::TYPE_I32) ||
+                   (base_type == t_base_type::TYPE_I64) ||
+                   (base_type == t_base_type::TYPE_DOUBLE)) {
+          string param_spec_function_name = "g_param_spec_int";
+          string min_value;
+          string max_value;
+          ostringstream default_value;
+
+          switch (base_type) {
+          case t_base_type::TYPE_BYTE:
+            min_value = "G_MININT8";
+            max_value = "G_MAXINT8";
+            break;
+
+          case t_base_type::TYPE_I16:
+            min_value = "G_MININT16";
+            max_value = "G_MAXINT16";
+            break;
+
+          case t_base_type::TYPE_I32:
+            min_value = "G_MININT32";
+            max_value = "G_MAXINT32";
+            break;
+
+          case t_base_type::TYPE_I64:
+            param_spec_function_name = "g_param_spec_int64";
+            min_value = "G_MININT64";
+            max_value = "G_MAXINT64";
+            break;
+
+          case t_base_type::TYPE_DOUBLE:
+            param_spec_function_name = "g_param_spec_double";
+            min_value = "-INFINITY";
+            max_value = "INFINITY";
+            break;
+
+          default:
+            throw "compiler error: "
+              "unrecognized base type \"" + member_type->get_name() + "\" "
+              "for struct member \"" + member_name + "\"";
+            break;
+          }
+
+          if (member_value != NULL) {
+            default_value <<
+              (base_type == t_base_type::TYPE_DOUBLE ?
+               member_value->get_double() :
+               member_value->get_integer());
+          } else {
+            default_value << "0";
+          }
+
+          args_indent += string(param_spec_function_name.length() + 2, ' ');
+          f_types_impl_ <<
+            param_spec_function_name << " (\"" << member_name << "\"," << endl <<
+            args_indent << "NULL," << endl <<
+            args_indent << "NULL," << endl <<
+            args_indent << min_value << "," << endl <<
+            args_indent << max_value << "," << endl <<
+            args_indent << default_value.str() << "," << endl <<
+            args_indent << "G_PARAM_READWRITE));" << endl;
+        }
+
+        indent_down();
+      } else if (member_type->is_enum()) {
+        t_enum_value *enum_min_value =
+          ((t_enum *) member_type)->get_min_value();
+        t_enum_value *enum_max_value =
+          ((t_enum *) member_type)->get_max_value();
+        int min_value =
+          (enum_min_value != NULL) ? enum_min_value->get_value() : 0;
+        int max_value =
+          (enum_max_value != NULL) ? enum_max_value->get_value() : 0;
+
+        args_indent += string(18, ' ');
+        f_types_impl_ <<
+          "g_param_spec_int (\"" << member_name << "\"," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << min_value << "," << endl <<
+          args_indent << max_value << "," << endl <<
+          args_indent << min_value << "," << endl <<
+          args_indent << "G_PARAM_READWRITE));" << endl;
+        indent_down();
+      } else if (member_type->is_struct() || member_type->is_xception()) {
+        string param_type =
+          this->nspace_uc +
+          "TYPE_" +
+          to_upper_case(initial_caps_to_underscores(member_type->get_name()));
+
+        args_indent += string(20, ' ');
+        f_types_impl_ <<
+          "g_param_spec_object (\"" << member_name << "\"," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << param_type << "," << endl <<
+          args_indent << "G_PARAM_READWRITE));" << endl;
+        indent_down();
+      } else if (member_type->is_list()) {
+        t_type *elem_type = ((t_list *) member_type)->get_elem_type();
+        string param_type;
+
+        if (elem_type->is_base_type() && !elem_type->is_string()) {
+          param_type = "G_TYPE_ARRAY";
+        } else {
+          param_type = "G_TYPE_PTR_ARRAY";
+        }
+
+        args_indent += string(20, ' ');
+        f_types_impl_ <<
+          "g_param_spec_boxed (\"" << member_name << "\"," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << param_type << "," << endl <<
+          args_indent << "G_PARAM_READWRITE));" << endl;
+        indent_down();
+      } else if (member_type->is_set() || member_type->is_map()) {
+        args_indent += string(20, ' ');
+        f_types_impl_ <<
+          "g_param_spec_boxed (\"" << member_name << "\"," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << "NULL," << endl <<
+          args_indent << "G_TYPE_HASH_TABLE," << endl <<
+          args_indent << "G_PARAM_READWRITE));" << endl;
+        indent_down();
+      }
+    }
+  }
+  scope_down(f_types_impl_);
+  f_types_impl_ << endl;
 
   f_types_impl_ <<
     "GType" << endl <<
@@ -1938,7 +3842,7 @@ void t_c_glib_generator::generate_struct_writer (ofstream &out,
   if (is_function) {
     error_ret = -1;
     indent(out) <<
-      "gint32" << endl <<
+      "static gint32" << endl <<
       this->nspace_lc << name_u <<
       "_write (ThriftStruct *object, ThriftProtocol *protocol, GError **error)" << endl;
   }
@@ -2025,7 +3929,7 @@ void t_c_glib_generator::generate_struct_reader(ofstream &out,
     error_ret = -1;
     indent(out) <<
       "/* reads a " << name_u << " object */" << endl <<
-      "gint32" << endl <<
+      "static gint32" << endl <<
       this->nspace_lc << name_u <<
           "_read (ThriftStruct *object, ThriftProtocol *protocol, GError **error)" << endl;
   }
@@ -2285,8 +4189,10 @@ void t_c_glib_generator::generate_serialize_container(ofstream &out,
     t_type *tval = ((t_map *) ttype)->get_val_type();
     string tkey_name = type_name (tkey);
     string tval_name = type_name (tval);
-    string tkey_ptr = tkey->is_string() || !tkey->is_base_type() ? "" : "*";
-    string tval_ptr = tval->is_string() || !tval->is_base_type() ? "" : "*";
+    string tkey_ptr;
+    string tval_ptr;
+    string keyname = tmp("key");
+    string valname = tmp("val");
 
     /*
      * Some ugliness here.  To maximize backwards compatibility, we
@@ -2302,9 +4208,19 @@ void t_c_glib_generator::generate_serialize_container(ofstream &out,
       indent() << "  return " << error_ret << ";" << endl <<
       indent() << "xfer += ret;" << endl <<
       endl <<
-      indent() << "GList *key_list = NULL, *iter = NULL;" << endl <<
-      indent() << tkey_name << tkey_ptr << " key;" << endl <<
-      indent() << tval_name << tval_ptr << " value;" << endl <<
+      indent() << "GList *key_list = NULL, *iter = NULL;" << endl;
+    declare_local_variable(out, tkey, keyname);
+    declare_local_variable(out, tval, valname);
+
+    /* If either the key or value type is a typedef, find its underlying type so
+       we can correctly determine how to generate a pointer to it */
+    tkey = get_true_type(tkey);
+    tval = get_true_type(tval);
+
+    tkey_ptr = tkey->is_string() || !tkey->is_base_type() ? "" : "*";
+    tval_ptr = tval->is_string() || !tval->is_base_type() ? "" : "*";
+
+    out <<
       indent() << "g_hash_table_foreach ((GHashTable *) " << prefix << 
                    ", thrift_hash_table_get_keys, &key_list);" << endl <<
       indent() << tkey_name << tkey_ptr <<
@@ -2323,13 +4239,16 @@ void t_c_glib_generator::generate_serialize_container(ofstream &out,
 
     scope_up(out);
     out <<
-      indent() << "key = keys[i];" << endl <<
-      indent() << "value = (" << tval_name << tval_ptr <<
+      indent() << keyname << " = keys[i];" << endl <<
+      indent() << valname << " = (" << tval_name << tval_ptr <<
                    ") g_hash_table_lookup (((GHashTable *) " << prefix <<
-                   "), (gpointer) key);" << endl <<
+                   "), (gpointer) " << keyname << ");" << endl <<
       endl;
-    generate_serialize_map_element (out, (t_map *) ttype, tkey_ptr + " key",
-                                    tval_ptr + " value", error_ret);
+    generate_serialize_map_element (out,
+                                    (t_map *) ttype,
+                                    tkey_ptr + " " + keyname,
+                                    tval_ptr + " " + valname,
+                                    error_ret);
     scope_down(out);
 
     out <<
@@ -2629,6 +4548,9 @@ void t_c_glib_generator::generate_deserialize_struct(ofstream &out,
   indent_up();
   if (allocate) {
     indent(out) << "g_object_unref (" << prefix << ");" << endl;
+    if (tstruct->is_xception()) {
+      indent(out) << prefix << " = NULL;" << endl;
+    }
   }
   out <<
     indent() << "return " << error_ret << ";" << endl;
@@ -2726,11 +4648,19 @@ void t_c_glib_generator::generate_deserialize_container (ofstream &out, t_type *
 
 void t_c_glib_generator::declare_local_variable(ofstream &out, t_type *ttype, string &name) {
   string tname = type_name (ttype);
+
+  /* If the given type is a typedef, find its underlying type so we
+     can correctly determine how to generate a pointer to it */
+  ttype = get_true_type(ttype);
+
   string ptr = ttype->is_string() || !ttype->is_base_type() ? "" : "*";
 
   if (ttype->is_map()) {
+    t_map *tmap = (t_map *)ttype;
     out <<
-    indent() << tname << ptr << " " << name << " = g_hash_table_new (NULL, NULL);" << endl;
+      indent() << tname << ptr << " " << name << " = " <<
+      generate_new_hash_from_type(tmap->get_key_type(), tmap->get_val_type()) <<
+      endl;
   } else if (ttype->is_enum()) {
     out <<
     indent() << tname << ptr << " " << name << ";" << endl;
@@ -2747,13 +4677,20 @@ void t_c_glib_generator::generate_deserialize_map_element(ofstream &out,
                                                           int error_ret) {
   t_type *tkey = tmap->get_key_type();
   t_type *tval = tmap->get_val_type();
-  string tkey_ptr = tkey->is_string() || !tkey->is_base_type() ? "" : "*";
-  string tval_ptr = tval->is_string() || !tval->is_base_type() ? "" : "*";
   string keyname = tmp("key");
   string valname = tmp("val");
 
   declare_local_variable(out, tkey, keyname);
   declare_local_variable(out, tval, valname);
+
+  /* If either the key or value type is a typedef, find its underlying
+     type so we can correctly determine how to generate a pointer to
+     it */
+  tkey = get_true_type(tkey);
+  tval = get_true_type(tval);
+
+  string tkey_ptr = tkey->is_string() || !tkey->is_base_type() ? "" : "*";
+  string tval_ptr = tval->is_string() || !tval->is_base_type() ? "" : "*";
 
   // deserialize the fields of the map element
   t_field fkey (tkey, tkey_ptr + keyname);
@@ -2814,7 +4751,7 @@ void t_c_glib_generator::generate_deserialize_list_element(ofstream &out,
       case t_base_type::TYPE_I32:
       case t_base_type::TYPE_I64:
       case t_base_type::TYPE_DOUBLE:
-        out << "g_array_append_val (" << prefix << ", " << elem << ");" << endl;
+        out << "g_array_append_vals (" << prefix << ", " << elem << ", 1);" << endl;
         return;
       default:
         throw "compiler error: no array info for type";
@@ -2839,8 +4776,11 @@ string t_c_glib_generator::generate_free_func_from_type (t_type * ttype) {
       case t_base_type::TYPE_I32:
       case t_base_type::TYPE_I64:
       case t_base_type::TYPE_DOUBLE:
-        return "NULL";
+        return "g_free";
       case t_base_type::TYPE_STRING:
+        if (((t_base_type *) ttype)->is_binary()) {
+            return "thrift_string_free";
+        }
         return "g_free";
       default:
         throw "compiler error: no hash table info for type";
@@ -2945,7 +4885,7 @@ string t_c_glib_generator::generate_cmp_func_from_type (t_type * ttype) {
         throw "compiler error: no hash table info for type";
     }
   } else if (ttype->is_enum()) {
-    return "NULL";
+    return "g_direct_equal";
   } else if (ttype->is_container() || ttype->is_struct()) {
     return "g_direct_equal";
   } else if (ttype->is_typedef()) {
@@ -3045,6 +4985,39 @@ string initial_caps_to_underscores(string name) {
       ret += '_';
     }
     ret += lc;
+  }
+
+  return ret;
+}
+
+/**
+ * Performs the reverse operation of initial_caps_to_underscores: The first
+ * character of the string is made uppercase, along with each character that
+ * follows an underscore (which is removed). Useful for converting Thrift
+ * service-method names into GObject-style class names.
+ *
+ * Input: "zomg_camel_case"
+ * Output: "ZomgCamelCase"
+ */
+string underscores_to_initial_caps(string name) {
+  string ret;
+  const char *tmp = name.c_str();
+  bool uppercase_next = true;
+
+  for (unsigned int i = 0; i < name.length(); i++) {
+    char c = tmp[i];
+    if (c == '_') {
+      uppercase_next = true;
+    }
+    else {
+      if (uppercase_next) {
+        ret += toupper (c);
+        uppercase_next = false;
+      }
+      else {
+        ret += c;
+      }
+    }
   }
 
   return ret;

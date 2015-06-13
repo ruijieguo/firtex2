@@ -21,6 +21,7 @@
 #include <exception>
 
 #include <thrift/transport/TFDTransport.h>
+#include <thrift/transport/PlatformSocket.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -39,8 +40,8 @@ void TFDTransport::close() {
     return;
   }
 
-  int rv = ::close(fd_);
-  int errno_copy = errno;
+  int rv = ::THRIFT_CLOSE(fd_);
+  int errno_copy = THRIFT_ERRNO;
   fd_ = -1;
   // Have to check uncaught_exception because this is called in the destructor.
   if (rv < 0 && !std::uncaught_exception()) {
@@ -54,14 +55,14 @@ uint32_t TFDTransport::read(uint8_t* buf, uint32_t len) {
   unsigned int maxRetries = 5; // same as the TSocket default
   unsigned int retries = 0;
   while (true) {
-    ssize_t rv = ::read(fd_, buf, len);
+    THRIFT_SSIZET rv = ::THRIFT_READ(fd_, buf, len);
     if (rv < 0) {
-      if (errno == EINTR && retries < maxRetries) {
+      if (THRIFT_ERRNO == THRIFT_EINTR && retries < maxRetries) {
         // If interrupted, try again
         ++retries;
         continue;
       }
-      int errno_copy = errno;
+	  int errno_copy = THRIFT_ERRNO;
       throw TTransportException(TTransportException::UNKNOWN,
                                 "TFDTransport::read()",
                                 errno_copy);
@@ -74,10 +75,10 @@ uint32_t TFDTransport::read(uint8_t* buf, uint32_t len) {
 
 void TFDTransport::write(const uint8_t* buf, uint32_t len) {
   while (len > 0) {
-    ssize_t rv = ::write(fd_, buf, len);
+    THRIFT_SSIZET rv = ::THRIFT_WRITE(fd_, buf, len);
 
     if (rv < 0) {
-      int errno_copy = errno;
+		int errno_copy = THRIFT_ERRNO;
       throw TTransportException(TTransportException::UNKNOWN,
                                 "TFDTransport::write()",
                                 errno_copy);

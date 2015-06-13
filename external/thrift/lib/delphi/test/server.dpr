@@ -24,7 +24,8 @@ program server;
 uses
   SysUtils,
   TestServer in 'TestServer.pas',
-  Thrift.Test in 'gen-delphi\Thrift.Test.pas',
+  TestServerEvents in 'TestServerEvents.pas',
+  Thrift.Test,  // in gen-delphi folder
   Thrift in '..\src\Thrift.pas',
   Thrift.Transport in '..\src\Thrift.Transport.pas',
   Thrift.Transport.Pipes in '..\src\Thrift.Transport.Pipes.pas',
@@ -33,6 +34,7 @@ uses
   Thrift.Collections in '..\src\Thrift.Collections.pas',
   Thrift.Server in '..\src\Thrift.Server.pas',
   Thrift.Console in '..\src\Thrift.Console.pas',
+  Thrift.TypeRegistry in '..\src\Thrift.TypeRegistry.pas',
   Thrift.Utils in '..\src\Thrift.Utils.pas',
   Thrift.Stream in '..\src\Thrift.Stream.pas';
 
@@ -54,10 +56,14 @@ begin
       args[i-1] := arg;
     end;
     TTestServer.Execute( args );
-    Readln;
   except
-    on E: Exception do
+    on E: EAbort do begin
+      ExitCode := $FF;
+    end;
+    on E: Exception do begin
       Writeln(E.ClassName, ': ', E.Message);
+      ExitCode := $FF;
+    end;
   end;
 end.
 

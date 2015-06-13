@@ -35,6 +35,7 @@ uses
   Thrift.Server in '..\src\Thrift.Server.pas',
   Thrift.Stream in '..\src\Thrift.Stream.pas',
   Thrift.Console in '..\src\Thrift.Console.pas',
+  Thrift.TypeRegistry in '..\src\Thrift.TypeRegistry.pas',
   Thrift.Utils in '..\src\Thrift.Utils.pas';
 
 var
@@ -54,12 +55,14 @@ begin
       arg := ParamStr( i );
       args[i-1] := arg;
     end;
-    TTestClient.Execute( args );
-    Readln;
+    ExitCode := TTestClient.Execute( args);
   except
+    on E: EAbort do begin
+      ExitCode := $FF;
+    end;
     on E: Exception do begin
       Writeln(E.ClassName, ': ', E.Message);
-      ExitCode := $FFFF;
+      ExitCode := $FF;
     end;
   end;
 end.

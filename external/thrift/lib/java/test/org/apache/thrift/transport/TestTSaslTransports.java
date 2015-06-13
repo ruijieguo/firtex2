@@ -73,7 +73,7 @@ public class TestTSaslTransports extends TestCase {
       + "score and seven years ago our fathers brought forth on this "
       + "continent a new nation, conceived in liberty, and dedicated to the "
       + "proposition that all men are created equal.";
-  
+
   private static final String testMessage2 = "I have a dream that one day "
       + "this nation will rise up and live out the true meaning of its creed: "
       + "'We hold these truths to be self-evident, that all men are created equal.'";
@@ -123,7 +123,9 @@ public class TestTSaslTransports extends TestCase {
     }
 
     private void internalRun() throws Exception {
-      TServerSocket serverSocket = new TServerSocket(ServerTestBase.PORT);
+      TServerSocket serverSocket = new TServerSocket(
+        new TServerSocket.ServerSocketTransportArgs().
+          port(ServerTestBase.PORT));
       try {
         acceptAndWrite(serverSocket);
       } finally {
@@ -280,7 +282,7 @@ public class TestTSaslTransports extends TestCase {
         public void run() {
           try {
             // Transport
-            TServerSocket socket = new TServerSocket(PORT);
+            TServerSocket socket = new TServerSocket(new TServerSocket.ServerSocketTransportArgs().port(PORT));
 
             TTransportFactory factory = new TSaslServerTransport.Factory(
               WRAPPED_MECHANISM, SERVICE, HOST, WRAPPED_PROPS,
@@ -408,6 +410,69 @@ public class TestTSaslTransports extends TestCase {
       super("ThriftSaslAnonymous", 1.0, "Thrift Anonymous SASL provider");
       put("SaslClientFactory.ANONYMOUS", SaslAnonymousFactory.class.getName());
       put("SaslServerFactory.ANONYMOUS", SaslAnonymousFactory.class.getName());
+    }
+  }
+
+  private static class MockTTransport extends TTransport {
+
+    byte[] badHeader = null;
+    private TMemoryInputTransport readBuffer = new TMemoryInputTransport();
+
+    public MockTTransport(int mode) {
+      if (mode==1) {
+        // Invalid status byte
+        badHeader = new byte[] { (byte)0xFF, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x05 };
+      } else if (mode == 2) {
+        // Valid status byte, negative payload length
+        badHeader = new byte[] { (byte)0x01, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF };
+      } else if (mode == 3) {
+        // Valid status byte, excessively large, bogus payload length
+        badHeader = new byte[] { (byte)0x01, (byte)0x64, (byte)0x00, (byte)0x00, (byte)0x00 };
+      }
+      readBuffer.reset(badHeader);
+    }
+
+    @Override
+    public boolean isOpen() {
+      return true;
+    }
+
+    @Override
+    public void open() throws TTransportException {}
+
+    @Override
+    public void close() {}
+
+    @Override
+    public int read(byte[] buf, int off, int len) throws TTransportException {
+      return readBuffer.read(buf, off, len);
+    }
+
+    @Override
+    public void write(byte[] buf, int off, int len) throws TTransportException {}
+  }
+
+  public void testBadHeader() {
+    TSaslTransport saslTransport = new TSaslServerTransport(new MockTTransport(1));
+    try {
+      saslTransport.receiveSaslMessage();
+      fail("Should have gotten an error due to incorrect status byte value.");
+    } catch (TTransportException e) {
+      assertEquals(e.getMessage(), "Invalid status -1");
+    }
+    saslTransport = new TSaslServerTransport(new MockTTransport(2));
+    try {
+      saslTransport.receiveSaslMessage();
+      fail("Should have gotten an error due to negative payload length.");
+    } catch (TTransportException e) {
+      assertEquals(e.getMessage(), "Invalid payload header length: -1");
+    }
+    saslTransport = new TSaslServerTransport(new MockTTransport(3));
+    try {
+      saslTransport.receiveSaslMessage();
+      fail("Should have gotten an error due to bogus (large) payload length.");
+    } catch (TTransportException e) {
+      assertEquals(e.getMessage(), "Invalid payload header length: 1677721600");
     }
   }
 }

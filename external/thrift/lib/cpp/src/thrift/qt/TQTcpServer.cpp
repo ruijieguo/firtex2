@@ -17,12 +17,12 @@
  * under the License.
  */
 
-#include "TQTcpServer.h"
-#include "TQIODeviceTransport.h"
+#include <thrift/qt/TQTcpServer.h>
+#include <thrift/qt/TQIODeviceTransport.h>
 
 #include <QTcpSocket>
 
-#include <tr1/functional>
+#include <thrift/cxxfunctional.h>
 
 #include <thrift/protocol/TProtocol.h>
 #include <thrift/async/TAsyncProcessor.h>
@@ -33,8 +33,8 @@ using apache::thrift::protocol::TProtocolFactory;
 using apache::thrift::transport::TTransport;
 using apache::thrift::transport::TTransportException;
 using apache::thrift::transport::TQIODeviceTransport;
-using std::tr1::function;
-using std::tr1::bind;
+using apache::thrift::stdcxx::function;
+using apache::thrift::stdcxx::bind;
 
 QT_USE_NAMESPACE
 
@@ -80,11 +80,11 @@ void TQTcpServer::processIncoming()
     // when the QTcpServer is destroyed, but any real app should delete this
     // class before deleting the QTcpServer that we are using
     shared_ptr<QTcpSocket> connection(server_->nextPendingConnection());
-    
+
     shared_ptr<TTransport> transport;
     shared_ptr<TProtocol> iprot;
     shared_ptr<TProtocol> oprot;
-    
+
     try {
       transport = shared_ptr<TTransport>(new TQIODeviceTransport(connection));
       iprot = shared_ptr<TProtocol>(pfact_->getProtocol(transport));
@@ -93,13 +93,13 @@ void TQTcpServer::processIncoming()
       qWarning("[TQTcpServer] Failed to initialize transports/protocols");
       continue;
     }
-    
+
     ctxMap_[connection.get()] =
       shared_ptr<ConnectionContext>(
          new ConnectionContext(connection, transport, iprot, oprot));
-    
+
     connect(connection.get(), SIGNAL(readyRead()), SLOT(beginDecode()));
-    
+
     // need to use QueuedConnection since we will be deleting the socket in the slot
     connect(connection.get(), SIGNAL(disconnected()), SLOT(socketClosed()),
             Qt::QueuedConnection);
@@ -115,13 +115,13 @@ void TQTcpServer::beginDecode()
     qWarning("[TQTcpServer] Got data on an unknown QTcpSocket");
     return;
   }
-  
+
   shared_ptr<ConnectionContext> ctx = ctxMap_[connection];
-  
+
   try {
     processor_->process(
       bind(&TQTcpServer::finish, this,
-           ctx, std::tr1::placeholders::_1),
+           ctx, apache::thrift::stdcxx::placeholders::_1),
       ctx->iprot_, ctx->oprot_);
   } catch(const TTransportException& ex) {
     qWarning("[TQTcpServer] TTransportException during processing: '%s'",
@@ -142,7 +142,7 @@ void TQTcpServer::socketClosed()
     qWarning("[TQTcpServer] Unknown QTcpSocket closed");
     return;
   }
-  
+
   ctxMap_.erase(connection);
 }
 

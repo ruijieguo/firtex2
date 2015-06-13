@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /*
    +----------------------------------------------------------------------+
@@ -24,7 +24,7 @@
    +----------------------------------------------------------------------+
  */
 
-/* $Id: run-tests.php 320475 2011-12-06 05:44:54Z derick $ */
+/* $Id: d53c3b6c5ef3b2a2ba5dcbefb2fac1c9ae50957a $ */
 
 /* Sanity check to ensure that pcre extension needed by this script is available.
  * In the event it is not, print a nice error message indicating that this script will
@@ -200,25 +200,7 @@ if (getenv('TEST_PHP_DETAILED')) {
 	$DETAILED = 0;
 }
 
-// Check whether a junit log is wanted.
-$JUNIT = getenv('TEST_PHP_JUNIT');
-if (empty($JUNIT) || (!file_exists($JUNIT) && !is_writable(dirname($JUNIT))) || (file_exists($JUNIT) && !is_writable($JUNIT)) || !($JUNIT = @fopen($JUNIT, 'w'))) {
-	$JUNIT = FALSE;
-}
-else{
-	$JUNIT = array(
-		'fp'            => $JUNIT,
-		'test_total'    => 0,
-		'test_pass'     => 0,
-		'test_fail'     => 0,
-		'test_error'    => 0,
-		'test_skip'     => 0,
-		'started_at'    => microtime(true),
-		'finished_at'   => NULL,
-		'execution_time'=> NULL,
-		'result_xml'    => '',
-	);
-}
+junit_init();
 
 if (getenv('SHOW_ONLY_GROUPS')) {
 	$SHOW_ONLY_GROUPS = explode(",", getenv('SHOW_ONLY_GROUPS'));
@@ -257,10 +239,9 @@ $ini_overwrites = array(
 		'magic_quotes_runtime=0',
 		'ignore_repeated_errors=0',
 		'precision=14',
-		'unicode.runtime_encoding=ISO-8859-1',
-		'unicode.script_encoding=UTF-8',
-		'unicode.output_encoding=UTF-8',
-		'unicode.from_error_mode=U_INVALID_SUBSTITUTE',
+		'memory_limit=128M',
+		'opcache.fast_shutdown=0',
+		'opcache.file_update_protection=0',
 	);
 
 function write_information($show_html)
@@ -332,14 +313,15 @@ VALGRIND    : " . ($leak_check ? $valgrind_header : 'Not used') . "
 define('PHP_QA_EMAIL', 'qa-reports@lists.php.net');
 define('QA_SUBMISSION_PAGE', 'http://qa.php.net/buildtest-process.php');
 define('QA_REPORTS_PAGE', 'http://qa.php.net/reports');
+define('TRAVIS_CI' , (bool) getenv('TRAVIS_PHP_VERSION'));
 
 function save_or_mail_results()
 {
 	global $sum_results, $just_save_results, $failed_test_summary,
-	       $PHP_FAILED_TESTS, $CUR_DIR, $php, $output_file, $compression;
+		   $PHP_FAILED_TESTS, $CUR_DIR, $php, $output_file, $compression;
 
 	/* We got failed Tests, offer the user to send an e-mail to QA team, unless NO_INTERACTION is set */
-	if (!getenv('NO_INTERACTION')) {
+	if (!getenv('NO_INTERACTION') && !TRAVIS_CI) {
 		$fp = fopen("php://stdin", "r+");
 		if ($sum_results['FAILED'] || $sum_results['BORKED'] || $sum_results['WARNED'] || $sum_results['LEAKED'] || $sum_results['XFAILED']) {
 			echo "\nYou may have found a problem in PHP.";
@@ -356,8 +338,8 @@ function save_or_mail_results()
 		$just_save_results = (strtolower($user_input[0]) == 's');
 	}
 
-	if ($just_save_results || !getenv('NO_INTERACTION')) {
-		if ($just_save_results || strlen(trim($user_input)) == 0 || strtolower($user_input[0]) == 'y') {
+	if ($just_save_results || !getenv('NO_INTERACTION') || TRAVIS_CI) {
+		if ($just_save_results || TRAVIS_CI || strlen(trim($user_input)) == 0 || strtolower($user_input[0]) == 'y') {
 			/*
 			 * Collect information about the host system for our report
 			 * Fetch phpinfo() output so that we can see the PHP enviroment
@@ -369,7 +351,9 @@ function save_or_mail_results()
 			}
 
 			/* Ask the user to provide an email address, so that QA team can contact the user */
-			if (!strncasecmp($user_input, 'y', 1) || strlen(trim($user_input)) == 0) {
+			if (TRAVIS_CI) {
+				$user_email = 'travis at php dot net';
+			} elseif (!strncasecmp($user_input, 'y', 1) || strlen(trim($user_input)) == 0) {
 				echo "\nPlease enter your email address.\n(Your address will be mangled so that it will not go out on any\nmailinglist in plain text): ";
 				flush();
 				$user_email = trim(fgets($fp, 1024));
@@ -445,7 +429,7 @@ function save_or_mail_results()
 			$failed_tests_data .= $sep . "PHPINFO" . $sep;
 			$failed_tests_data .= shell_exec($php . ' -ddisplay_errors=stderr -dhtml_errors=0 -i 2> /dev/null');
 
-			if ($just_save_results || !mail_qa_team($failed_tests_data, $compression, $status)) {
+			if ($just_save_results || !mail_qa_team($failed_tests_data, $compression, $status) && !TRAVIS_CI) {
 				file_put_contents($output_file, $failed_tests_data);
 
 				if (!$just_save_results) {
@@ -453,7 +437,7 @@ function save_or_mail_results()
 				}
 
 				echo "Please send " . $output_file . " to " . PHP_QA_EMAIL . " manually, thank you.\n";
-			} else {
+			} elseif (!getenv('NO_INTERACTION') && !TRAVIS_CI) {
 				fwrite($fp, "\nThank you for helping to make PHP better.\n");
 				fclose($fp);
 			}
@@ -476,7 +460,7 @@ $pass_options = '';
 $compression = 0;
 $output_file = $CUR_DIR . '/php_test_results_' . date('Ymd_Hi') . '.txt';
 
-if ($compression) {
+if ($compression && in_array("compress.zlib", stream_get_filters())) {
 	$output_file = 'compress.zlib://' . $output_file . '.gz';
 }
 
@@ -618,6 +602,15 @@ if (isset($argc) && $argc > 1) {
 					putenv("TEST_PHP_EXECUTABLE=$php");
 					$environment['TEST_PHP_EXECUTABLE'] = $php;
 					break;
+				case 'P':
+					if(constant('PHP_BINARY')) {
+						$php = PHP_BINARY;
+					} else {
+						break;
+					}
+					putenv("TEST_PHP_EXECUTABLE=$php");
+					$environment['TEST_PHP_EXECUTABLE'] = $php;
+					break;
 				case 'q':
 					putenv('NO_INTERACTION=1');
 					break;
@@ -653,6 +646,9 @@ if (isset($argc) && $argc > 1) {
 				case 'x':
 					$environment['SKIP_SLOW_TESTS'] = 1;
 					break;
+				case '--offline':
+					$environment['SKIP_ONLINE_TESTS'] = 1;
+					break;
 				//case 'w'
 				case '-':
 					// repeat check with full switch
@@ -666,7 +662,7 @@ if (isset($argc) && $argc > 1) {
 					$html_output = is_resource($html_file);
 					break;
 				case '--version':
-					echo '$Revision: 320475 $' . "\n";
+					echo '$Id: d53c3b6c5ef3b2a2ba5dcbefb2fac1c9ae50957a $' . "\n";
 					exit(1);
 
 				default:
@@ -697,18 +693,22 @@ Options:
     -d foo=bar  Pass -d option to the php binary (Define INI entry foo
                 with value 'bar').
 
-    -g          Comma seperated list of groups to show during test run
+    -g          Comma separated list of groups to show during test run
                 (possible values: PASS, FAIL, XFAIL, SKIP, BORK, WARN, LEAK, REDIRECT).
 
     -m          Test for memory leaks with Valgrind.
 
     -p <php>    Specify PHP executable to run.
 
+    -P          Use PHP_BINARY as PHP executable to run.
+
     -q          Quiet, no user interaction (same as environment NO_INTERACTION).
 
     -s <file>   Write output to <file>.
 
     -x          Sets 'SKIP_SLOW_TESTS' environmental variable.
+
+    --offline   Sets 'SKIP_ONLINE_TESTS' environmental variable.
 
     --verbose
     -v          Verbose mode.
@@ -815,14 +815,12 @@ HELP;
 			fclose($failed_tests_file);
 		}
 
-		if (count($test_files) || count($test_results)) {
-			compute_summary();
-			if ($html_output) {
-				fwrite($html_file, "<hr/>\n" . get_summary(false, true));
-			}
-			echo "=====================================================================";
-			echo get_summary(false, false);
+		compute_summary();
+		if ($html_output) {
+			fwrite($html_file, "<hr/>\n" . get_summary(false, true));
 		}
+		echo "=====================================================================";
+		echo get_summary(false, false);
 
 		if ($html_output) {
 			fclose($html_file);
@@ -831,12 +829,10 @@ HELP;
 		if ($output_file != '' && $just_save_results) {
 			save_or_mail_results();
 		}
-		
-		if ($JUNIT) {
-			save_junit_xml();
-		}
 
-		if (getenv('REPORT_EXIT_STATUS') == 1 and preg_match('/FAILED(?: |$)/', implode(' ', $test_results))) {
+		junit_save_xml();
+
+		if (getenv('REPORT_EXIT_STATUS') == 1 and $sum_results['FAILED']) {
 			exit(1);
 		}
 
@@ -970,9 +966,7 @@ if ($html_output) {
 
 save_or_mail_results();
 
-if ($JUNIT) {
-	save_junit_xml();
-}
+junit_save_xml();
 
 if (getenv('REPORT_EXIT_STATUS') == 1 and $sum_results['FAILED']) {
 	exit(1);
@@ -987,19 +981,19 @@ function mail_qa_team($data, $compression, $status = false)
 {
 	$url_bits = parse_url(QA_SUBMISSION_PAGE);
 
-    if (($proxy = getenv('http_proxy'))) {
-        $proxy = parse_url($proxy);
-        $path = $url_bits['host'].$url_bits['path'];
-        $host = $proxy['host'];
-        if (empty($proxy['port'])) {
-            $proxy['port'] = 80;
-        }
-        $port = $proxy['port'];
-    } else {
-        $path = $url_bits['path'];
-        $host = $url_bits['host'];
-        $port = empty($url_bits['port']) ? 80 : $port = $url_bits['port'];
-    }
+	if (($proxy = getenv('http_proxy'))) {
+		$proxy = parse_url($proxy);
+		$path = $url_bits['host'].$url_bits['path'];
+		$host = $proxy['host'];
+		if (empty($proxy['port'])) {
+			$proxy['port'] = 80;
+		}
+		$port = $proxy['port'];
+	} else {
+		$path = $url_bits['path'];
+		$host = $url_bits['host'];
+		$port = empty($url_bits['port']) ? 80 : $port = $url_bits['port'];
+	}
 
 	$data = "php_test_data=" . urlencode(base64_encode(str_replace("\00", '[0x0]', $data)));
 	$data_length = strlen($data);
@@ -1097,6 +1091,7 @@ function system_with_timeout($commandline, $env = null, $stdin = null)
 		fwrite($pipes[0], $stdin);
 	}
 	fclose($pipes[0]);
+	unset($pipes[0]);
 
 	$timeout = $leak_check ? 300 : (isset($env['TEST_TIMEOUT']) ? $env['TEST_TIMEOUT'] : 60);
 
@@ -1329,21 +1324,15 @@ TEST $file
 								'diff'      => '',
 								'info'      => "$bork_info [$file]",
 		);
-		
-		if ($JUNIT) {
-			$JUNIT['test_total']++;
-			$JUNIT['test_error']++;
-			$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested_file, ENT_QUOTES).'" time="0">'."\n";
-			$JUNIT['result_xml'] .= '<error type="BORKED" message="'.$bork_info.'" />'."\n";
-			$JUNIT['result_xml'] .= '</testcase>'."\n";
-		}
+
+		junit_mark_test_as('BORK', $shortname, $tested_file, 0, $bork_info);
 		return 'BORKED';
 	}
 
 	$tested = trim($section_text['TEST']);
 
-	/* For GET/POST tests, check if cgi sapi is available and if it is, use it. */
-	if (!empty($section_text['GET']) || !empty($section_text['POST']) || !empty($section_text['POST_RAW']) || !empty($section_text['COOKIE']) || !empty($section_text['EXPECTHEADERS'])) {
+	/* For GET/POST/PUT tests, check if cgi sapi is available and if it is, use it. */
+	if (!empty($section_text['GET']) || !empty($section_text['POST']) || !empty($section_text['GZIP_POST']) || !empty($section_text['DEFLATE_POST']) || !empty($section_text['POST_RAW']) || !empty($section_text['PUT']) || !empty($section_text['COOKIE']) || !empty($section_text['EXPECTHEADERS'])) {
 		if (isset($php_cgi)) {
 			$old_php = $php;
 			$php = $php_cgi . ' -C ';
@@ -1357,15 +1346,13 @@ TEST $file
 			} else if (file_exists("./sapi/cgi/php-cgi")) {
 				$old_php = $php;
 				$php = realpath("./sapi/cgi/php-cgi") . ' -C ';
+			} else if (file_exists(dirname($php) . "/php-cgi")) {
+				$old_php = $php;
+				$php = realpath(dirname($php) . "/php-cgi") . ' -C ';
 			} else {
 				show_result('SKIP', $tested, $tested_file, "reason: CGI not available");
-				if ($JUNIT) {
-					$JUNIT['test_total']++;
-					$JUNIT['test_skip']++;
-					$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="0">'."\n";
-					$JUNIT['result_xml'] .= '<skipped>CGI not available</skipped>'."\n";
-					$JUNIT['result_xml'] .= '</testcase>'."\n";
-				}
+
+				junit_mark_test_as('SKIP', $shortname, $tested, 0, 'CGI not available');
 				return 'SKIPPED';
 			}
 		}
@@ -1511,18 +1498,17 @@ TEST $file
 
 			if ($leak_check) {
 				$env['USE_ZEND_ALLOC'] = '0';
+				$env['ZEND_DONT_UNLOAD_MODULES'] = 1;
 			} else {
 				$env['USE_ZEND_ALLOC'] = '1';
+				$env['ZEND_DONT_UNLOAD_MODULES'] = 0;
 			}
 
-			if ($JUNIT) {
-				$test_started_at	= microtime(true);
-			}
-			$output = system_with_timeout("$extra $php $pass_options -q $ini_settings -d display_errors=0 $test_skipif", $env);
-			if ($JUNIT) {
-				$test_finished_at   = microtime(true);
-				$test_execution_time= number_format($test_finished_at-$test_started_at, 2);
-			}
+			junit_start_timer($shortname);
+
+			$output = system_with_timeout("$extra $php $pass_options -q $ini_settings -d display_errors=0 \"$test_skipif\"", $env);
+
+			junit_finish_timer($shortname);
 
 			if (!$cfg['keep']['skip']) {
 				@unlink($test_skipif);
@@ -1544,13 +1530,8 @@ TEST $file
 					@unlink($test_skipif);
 				}
 
-				if ($JUNIT) {
-					$JUNIT['test_total']++;
-					$JUNIT['test_skip']++;
-					$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-					$JUNIT['result_xml'] .= '<skipped><![CDATA['."\n".$m[1]."\n".']]></skipped>'."\n";
-					$JUNIT['result_xml'] .= '</testcase>'."\n";
-				}
+				$message = !empty($m[1]) ? $m[1] : '';
+				junit_mark_test_as('SKIP', $shortname, $tested, null, "<![CDATA[\n$message\n]]>");
 				return 'SKIPPED';
 			}
 
@@ -1567,6 +1548,16 @@ TEST $file
 				}
 			}
 		}
+	}
+	
+	if (!extension_loaded("zlib")
+	&& (	array_key_exists("GZIP_POST", $section_text) 
+		||	array_key_exists("DEFLATE_POST", $section_text))
+	) {
+		$message = "ext/zlib required";
+		show_result('SKIP', $tested, $tested_file, "reason: $message", $temp_filenames);
+		junit_mark_test_as('SKIP', $shortname, $tested, null, "<![CDATA[\n$message\n]]>");
+		return 'SKIPPED';
 	}
 
 	if (@count($section_text['REDIRECTTEST']) == 1) {
@@ -1605,12 +1596,8 @@ TEST $file
 
 			// a redirected test never fails
 			$IN_REDIRECT = false;
-			if ($JUNIT) {
-				$JUNIT['test_total']++;
-				$JUNIT['test_pass']++;
-				$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-				$JUNIT['result_xml'] .= '</testcase>'."\n";
-			}
+
+			junit_mark_test_as('PASS', $shortname, $tested);
 			return 'REDIR';
 
 		} else {
@@ -1642,13 +1629,9 @@ TEST $file
 								'diff'   => '',
 								'info'   => "$bork_info [$file]",
 		);
-		if ($JUNIT) {
-			$JUNIT['test_total']++;
-			$JUNIT['test_error']++;
-			$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-			$JUNIT['result_xml'] .= '<error type="BORKED" message="'.$bork_info.'" />'."\n";
-			$JUNIT['result_xml'] .= '</testcase>'."\n";
-		}
+
+		junit_mark_test_as('BORK', $shortname, $tested, null, $bork_info);
+
 		return 'BORKED';
 	}
 
@@ -1702,31 +1685,50 @@ TEST $file
 		$env['REQUEST_METHOD'] = 'POST';
 
 		if (empty($request)) {
-			if ($JUNIT) {
-				$JUNIT['test_total']++;
-				$JUNIT['test_error']++;
-				$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-				$JUNIT['result_xml'] .= '<error type="BORKED" message="empty $request" />'."\n";
-				$JUNIT['result_xml'] .= '</testcase>'."\n";
-			}
+			junit_mark_test_as('BORK', $shortname, $tested, null, 'empty $request');
 			return 'BORKED';
 		}
 
 		save_text($tmp_post, $request);
-		$cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < $tmp_post";
+		$cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < \"$tmp_post\"";
+
+	} elseif (array_key_exists('PUT', $section_text) && !empty($section_text['PUT'])) {
+
+		$post = trim($section_text['PUT']);
+		$raw_lines = explode("\n", $post);
+
+		$request = '';
+		$started = false;
+
+		foreach ($raw_lines as $line) {
+
+			if (empty($env['CONTENT_TYPE']) && preg_match('/^Content-Type:(.*)/i', $line, $res)) {
+				$env['CONTENT_TYPE'] = trim(str_replace("\r", '', $res[1]));
+				continue;
+			}
+
+			if ($started) {
+				$request .= "\n";
+			}
+
+			$started = true;
+			$request .= $line;
+		}
+
+		$env['CONTENT_LENGTH'] = strlen($request);
+		$env['REQUEST_METHOD'] = 'PUT';
+
+		if (empty($request)) {
+            junit_mark_test_as('BORK', $shortname, $tested, null, 'empty $request');
+			return 'BORKED';
+		}
+
+		save_text($tmp_post, $request);
+		$cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < \"$tmp_post\"";
 
 	} else if (array_key_exists('POST', $section_text) && !empty($section_text['POST'])) {
 
 		$post = trim($section_text['POST']);
-
-		if (array_key_exists('GZIP_POST', $section_text) && function_exists('gzencode')) {
-			$post = gzencode($post, 9, FORCE_GZIP);
-			$env['HTTP_CONTENT_ENCODING'] = 'gzip';
-		} else if (array_key_exists('DEFLATE_POST', $section_text) && function_exists('gzcompress')) {
-			$post = gzcompress($post, 9);
-			$env['HTTP_CONTENT_ENCODING'] = 'deflate';
-		}
-
 		save_text($tmp_post, $post);
 		$content_length = strlen($post);
 
@@ -1734,7 +1736,36 @@ TEST $file
 		$env['CONTENT_TYPE']   = 'application/x-www-form-urlencoded';
 		$env['CONTENT_LENGTH'] = $content_length;
 
-		$cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < $tmp_post";
+		$cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < \"$tmp_post\"";
+
+    } else if (array_key_exists('GZIP_POST', $section_text) && !empty($section_text['GZIP_POST'])) {
+
+        $post = trim($section_text['GZIP_POST']);
+        $post = gzencode($post, 9, FORCE_GZIP);
+        $env['HTTP_CONTENT_ENCODING'] = 'gzip';
+
+        save_text($tmp_post, $post);
+        $content_length = strlen($post);
+
+        $env['REQUEST_METHOD'] = 'POST';
+        $env['CONTENT_TYPE']   = 'application/x-www-form-urlencoded';
+        $env['CONTENT_LENGTH'] = $content_length;
+
+        $cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < \"$tmp_post\"";
+
+    } else if (array_key_exists('DEFLATE_POST', $section_text) && !empty($section_text['DEFLATE_POST'])) {
+        $post = trim($section_text['DEFLATE_POST']);
+        $post = gzcompress($post, 9);
+        $env['HTTP_CONTENT_ENCODING'] = 'deflate';
+        save_text($tmp_post, $post);
+        $content_length = strlen($post);
+
+        $env['REQUEST_METHOD'] = 'POST';
+        $env['CONTENT_TYPE']   = 'application/x-www-form-urlencoded';
+        $env['CONTENT_LENGTH'] = $content_length;
+
+        $cmd = "$php $pass_options $ini_settings -f \"$test_file\" 2>&1 < \"$tmp_post\"";
+
 
 	} else {
 
@@ -1747,6 +1778,7 @@ TEST $file
 
 	if ($leak_check) {
 		$env['USE_ZEND_ALLOC'] = '0';
+		$env['ZEND_DONT_UNLOAD_MODULES'] = 1;
 
 		if ($valgrind_version >= 330) {
 			/* valgrind 3.3.0+ doesn't have --log-file-exactly option */
@@ -1757,6 +1789,7 @@ TEST $file
 
 	} else {
 		$env['USE_ZEND_ALLOC'] = '1';
+		$env['ZEND_DONT_UNLOAD_MODULES'] = 0;
 	}
 
 	if ($DETAILED) echo "
@@ -1771,14 +1804,11 @@ HTTP_COOKIE     = " . $env['HTTP_COOKIE'] . "
 COMMAND $cmd
 ";
 
-	if ($JUNIT) {
-		$test_started_at    = microtime(true);
-	}
+	junit_start_timer($shortname);
+
 	$out = system_with_timeout($cmd, $env, isset($section_text['STDIN']) ? $section_text['STDIN'] : null);
-	if ($JUNIT) {
-		$test_finished_at   = microtime(true);
-		$test_execution_time= number_format($test_finished_at-$test_started_at, 2);
-	}
+
+	junit_finish_timer($shortname);
 
 	if (array_key_exists('CLEAN', $section_text) && (!$no_clean || $cfg['keep']['clean'])) {
 
@@ -1792,7 +1822,7 @@ COMMAND $cmd
 				settings2params($clean_params);
 				$extra = substr(PHP_OS, 0, 3) !== "WIN" ?
 					"unset REQUEST_METHOD; unset QUERY_STRING; unset PATH_TRANSLATED; unset SCRIPT_FILENAME; unset REQUEST_METHOD;": "";
-				system_with_timeout("$extra $php $pass_options -q $clean_params $test_clean", $env);
+				system_with_timeout("$extra $php $pass_options -q $clean_params \"$test_clean\"", $env);
 			}
 
 			if (!$cfg['keep']['clean']) {
@@ -1967,12 +1997,7 @@ COMMAND $cmd
 					$info = " (warn: XFAIL section but test passes)";
 				}else {
 					show_result("PASS", $tested, $tested_file, '', $temp_filenames);
-					if ($JUNIT) {
-						$JUNIT['test_total']++;
-						$JUNIT['test_pass']++;
-						$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-						$JUNIT['result_xml'] .= '</testcase>'."\n";
-					}
+					junit_mark_test_as('PASS', $shortname, $tested);
 					return 'PASSED';
 				}
 			}
@@ -2002,12 +2027,7 @@ COMMAND $cmd
 					$info = " (warn: XFAIL section but test passes)";
 				}else {
 					show_result("PASS", $tested, $tested_file, '', $temp_filenames);
-					if ($JUNIT) {
-						$JUNIT['test_total']++;
-						$JUNIT['test_pass']++;
-						$JUNIT['result_xml'] .= '<testcase classname="'.$shortname.'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-						$JUNIT['result_xml'] .= '</testcase>'."\n";
-					}
+					junit_mark_test_as('PASS', $shortname, $tested);
 					return 'PASSED';
 				}
 			}
@@ -2104,22 +2124,9 @@ $output
 		$php = $old_php;
 	}
 	
-	if ($JUNIT) {
-		$JUNIT['result_xml'] .= '<testcase classname="'.	str_replace($cwd . '/', '', $tested_file).'" name="'.htmlspecialchars($tested, ENT_QUOTES).'" time="'.$test_execution_time.'">'."\n";
-		$JUNIT['test_total']++;
-		if (in_array('XFAIL', $restype)) {
-			$JUNIT['test_pass']++;
-		}
-		elseif (in_array('FAIL', $restype)) {
-			$JUNIT['test_fail']++;
-			$JUNIT['result_xml'] .= '<failure type="'.$restype[0].'ED" message="'.$info.'"><![CDATA['."\n".preg_replace('/\e/', '<esc>', $diff)."\n".']]></failure>'."\n";
-		}
-		else{
-			$JUNIT['test_error']++;
-			$JUNIT['result_xml'] .= '<error type="'.$restype[0].'ED" message="'.$info.'"><![CDATA['."\n".preg_replace('/\e/', '<esc>', $diff)."\n".']]></error>'."\n";
-		}
-		$JUNIT['result_xml'] .= '</testcase>'."\n";
-	}
+	$diff = empty($diff) ? '' : "<![CDATA[\n " . preg_replace('/\e/', '<esc>', $diff) . "\n]]>";
+
+	junit_mark_test_as($restype, str_replace($cwd . '/', '', $tested_file), $tested, null, $info, $diff);
 
 	return $restype[0] . 'ED';
 }
@@ -2607,19 +2614,204 @@ function show_result($result, $tested, $tested_file, $extra = '', $temp_filename
 	}
 }
 
-function save_junit_xml() {
-	global $JUNIT;
-	$JUNIT['finished_at']   = microtime(true);
-	$JUNIT['execution_time']= number_format(($JUNIT['finished_at']-$JUNIT['started_at']), 2);
-	$JUNIT['result_xml']    =   '<?xml version="1.0" encoding="UTF-8"?>'."\n".
-								'<testsuites>'."\n".
-								'<testsuite name="php-src" tests="'.$JUNIT['test_total'].'" failures="'.$JUNIT['test_fail'].'" errors="'.$JUNIT['test_error'].'" skip="'.$JUNIT['test_skip'].'" time="'.$JUNIT['execution_time'].'">'."\n".
-								$JUNIT['result_xml'].
-								'</testsuite>'."\n".
-								'</testsuites>';
-	fwrite($JUNIT['fp'], $JUNIT['result_xml']);
+function junit_init() {
+	// Check whether a junit log is wanted.
+	$JUNIT = getenv('TEST_PHP_JUNIT');
+	if (empty($JUNIT)) {
+		$JUNIT = FALSE;
+	} elseif (!$fp = fopen($JUNIT, 'w')) {
+		error("Failed to open $JUNIT for writing.");
+	} else {
+		$JUNIT = array(
+			'fp'            => $fp,
+			'name'          => 'php-src',
+			'test_total'    => 0,
+			'test_pass'     => 0,
+			'test_fail'     => 0,
+			'test_error'    => 0,
+			'test_skip'     => 0,
+			'execution_time'=> 0,
+			'suites'        => array(),
+			'files'         => array()
+		);
+	}
+
+	$GLOBALS['JUNIT'] = $JUNIT;
 }
 
+function junit_save_xml() {
+	global $JUNIT;
+	if (!junit_enabled()) return;
+
+	$xml = '<?xml version="1.0" encoding="UTF-8"?>'. PHP_EOL .
+		   '<testsuites>' . PHP_EOL;
+	$xml .= junit_get_suite_xml();
+	$xml .= '</testsuites>';
+	fwrite($JUNIT['fp'], $xml);
+}
+
+function junit_get_suite_xml($suite_name = '') {
+	global $JUNIT;
+
+	$suite = $suite_name ? $JUNIT['suites'][$suite_name] : $JUNIT;
+
+    $result = sprintf(
+		'<testsuite name="%s" tests="%s" failures="%d" errors="%d" skip="%d" time="%s">' . PHP_EOL,
+        $suite['name'], $suite['test_total'], $suite['test_fail'], $suite['test_error'], $suite['test_skip'],
+		$suite['execution_time']
+	);
+
+	foreach($suite['suites'] as $sub_suite) {
+		$result .= junit_get_suite_xml($sub_suite['name']);
+	}
+
+	// Output files only in subsuites
+	if (!empty($suite_name)) {
+		foreach($suite['files'] as $file) {
+			$result .= $JUNIT['files'][$file]['xml'];
+		}
+	}
+
+	$result .= '</testsuite>' . PHP_EOL;
+
+	return $result;
+}
+
+function junit_enabled() {
+	global $JUNIT;
+	return !empty($JUNIT);
+}
+
+/**
+ * @param array|string $type
+ * @param string $file_name
+ * @param string $test_name
+ * @param int|string $time
+ * @param string $message
+ * @param string $details
+ * @return void
+ */
+function junit_mark_test_as($type, $file_name, $test_name, $time = null, $message = '', $details = '') {
+	global $JUNIT;
+	if (!junit_enabled()) return;
+
+	$suite = junit_get_suitename_for($file_name);
+
+	junit_suite_record($suite, 'test_total');
+
+	$time = null !== $time ? $time : junit_get_timer($file_name);
+	junit_suite_record($suite, 'execution_time', $time);
+
+	$escaped_details = htmlspecialchars($details, ENT_QUOTES, 'UTF-8');
+
+    $escaped_test_name = basename($file_name) . ' - ' . htmlspecialchars($test_name, ENT_QUOTES);
+    $JUNIT['files'][$file_name]['xml'] = "<testcase classname='$suite' name='$escaped_test_name' time='$time'>\n";
+
+	if (is_array($type)) {
+		$output_type = $type[0] . 'ED';
+		$temp = array_intersect(array('XFAIL', 'FAIL'), $type);
+		$type = reset($temp);
+	} else {
+		$output_type = $type . 'ED';
+	}
+
+	if ('PASS' == $type || 'XFAIL' == $type) {
+		junit_suite_record($suite, 'test_pass');
+	} elseif ('BORK' == $type) {
+		junit_suite_record($suite, 'test_error');
+		$JUNIT['files'][$file_name]['xml'] .= "<error type='$output_type' message='$message'/>\n";
+	} elseif ('SKIP' == $type) {
+		junit_suite_record($suite, 'test_skip');
+		$JUNIT['files'][$file_name]['xml'] .= "<skipped>$message</skipped>\n";
+	} elseif('FAIL' == $type) {
+		junit_suite_record($suite, 'test_fail');
+		$JUNIT['files'][$file_name]['xml'] .= "<failure type='$output_type' message='$message'>$escaped_details</failure>\n";
+	} else {
+		junit_suite_record($suite, 'test_error');
+		$JUNIT['files'][$file_name]['xml'] .= "<error type='$output_type' message='$message'>$escaped_details</error>\n";
+	}
+
+	$JUNIT['files'][$file_name]['xml'] .= "</testcase>\n";
+
+}
+
+function junit_suite_record($suite, $param, $value = 1) {
+	global $JUNIT;
+
+	$JUNIT[$param] += $value;
+	$JUNIT['suites'][$suite][$param] += $value;
+}
+
+function junit_get_timer($file_name) {
+	global $JUNIT;
+	if (!junit_enabled()) return 0;
+
+	if (isset($JUNIT['files'][$file_name]['total'])) {
+		return number_format($JUNIT['files'][$file_name]['total'], 4);
+	}
+
+	return 0;
+}
+
+function junit_start_timer($file_name) {
+	global $JUNIT;
+	if (!junit_enabled()) return;
+
+	if (!isset($JUNIT['files'][$file_name]['start'])) {
+		$JUNIT['files'][$file_name]['start'] = microtime(true);
+
+		$suite = junit_get_suitename_for($file_name);
+		junit_init_suite($suite);
+		$JUNIT['suites'][$suite]['files'][$file_name] = $file_name;
+	}
+}
+
+function junit_get_suitename_for($file_name) {
+	return junit_path_to_classname(dirname($file_name));
+}
+
+function junit_path_to_classname($file_name) {
+    global $JUNIT;
+    return $JUNIT['name'] . '.' . str_replace(DIRECTORY_SEPARATOR, '.', $file_name);
+}
+
+function junit_init_suite($suite_name) {
+	global $JUNIT;
+	if (!junit_enabled()) return;
+
+	if (!empty($JUNIT['suites'][$suite_name])) {
+		return;
+	}
+
+	$JUNIT['suites'][$suite_name] = array(
+		'name'          => $suite_name,
+		'test_total'    => 0,
+		'test_pass'     => 0,
+		'test_fail'     => 0,
+		'test_error'    => 0,
+		'test_skip'     => 0,
+		'suites'        => array(),
+		'files'         => array(),
+		'execution_time'=> 0,
+	);
+}
+
+function junit_finish_timer($file_name) {
+	global $JUNIT;
+	if (!junit_enabled()) return;
+
+	if (!isset($JUNIT['files'][$file_name]['start'])) {
+		error("Timer for $file_name was not started!");
+	}
+
+	if (!isset($JUNIT['files'][$file_name]['total'])) {
+        $JUNIT['files'][$file_name]['total'] = 0;
+    }
+
+	$start = $JUNIT['files'][$file_name]['start'];
+	$JUNIT['files'][$file_name]['total'] += microtime(true) - $start;
+	unset($JUNIT['files'][$file_name]['start']);
+}
 
 /*
  * Local variables:

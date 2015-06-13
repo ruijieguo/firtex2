@@ -181,7 +181,8 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
   }
 
   // Flag for stopping the server
-  private volatile boolean stopped_ = true;
+  // Please see THRIFT-1795 for the usage of this flag
+  private volatile boolean stopped_ = false;
 
   // The thread handling all accepts
   private AcceptThread acceptThread;
@@ -220,7 +221,6 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
       }
       acceptThread = new AcceptThread((TNonblockingServerTransport) serverTransport_,
         createSelectorThreadLoadBalancer(selectorThreads));
-      stopped_ = false;
       for (SelectorThread thread : selectorThreads) {
         thread.start();
       }
@@ -371,12 +371,21 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
      */
     public void run() {
       try {
+        if (eventHandler_ != null) {
+          eventHandler_.preServe();
+        }
+
         while (!stopped_) {
           select();
         }
       } catch (Throwable t) {
         LOGGER.error("run() exiting due to uncaught error", t);
       } finally {
+        try {
+          acceptSelector.close();
+        } catch (IOException e) {
+          LOGGER.error("Got an IOException while closing accept selector!", e);
+        }
         // This will wake up the selector threads
         TThreadedSelectorServer.this.stop();
       }
@@ -543,6 +552,11 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
       } catch (Throwable t) {
         LOGGER.error("run() exiting due to uncaught error", t);
       } finally {
+        try {
+          selector.close();
+        } catch (IOException e) {
+          LOGGER.error("Got an IOException while closing selector!", e);
+        }
         // This will wake up the accept thread and the other selector threads
         TThreadedSelectorServer.this.stop();
       }
@@ -597,12 +611,21 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
       }
     }
 
+    protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans,
+        final SelectionKey selectionKey,
+        final AbstractSelectThread selectThread) {
+        return processorFactory_.isAsyncProcessor() ?
+                  new AsyncFrameBuffer(trans, selectionKey, selectThread) :
+                  new FrameBuffer(trans, selectionKey, selectThread);
+    }
+
     private void registerAccepted(TNonblockingTransport accepted) {
       SelectionKey clientKey = null;
       try {
         clientKey = accepted.registerSelector(selector, SelectionKey.OP_READ);
 
-        FrameBuffer frameBuffer = new FrameBuffer(accepted, clientKey, SelectorThread.this);
+        FrameBuffer frameBuffer = createFrameBuffer(accepted, clientKey, SelectorThread.this);
+
         clientKey.attach(frameBuffer);
       } catch (IOException e) {
         LOGGER.warn("Failed to register accepted connection to selector!", e);
@@ -626,7 +649,7 @@ public class TThreadedSelectorServer extends AbstractNonblockingServer {
    * A round robin load balancer for choosing selector threads for new
    * connections.
    */
-  protected class SelectorThreadLoadBalancer {
+  protected static class SelectorThreadLoadBalancer {
     private final Collection<? extends SelectorThread> threads;
     private Iterator<? extends SelectorThread> nextThreadIterator;
 

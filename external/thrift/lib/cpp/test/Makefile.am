@@ -16,16 +16,24 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+AUTOMAKE_OPTIONS = subdir-objects serial-tests
 
 noinst_LTLIBRARIES = libtestgencpp.la libprocessortest.la
 nodist_libtestgencpp_la_SOURCES = \
 	gen-cpp/DebugProtoTest_types.cpp \
-	gen-cpp/OptionalRequiredTest_types.cpp \
-	gen-cpp/DebugProtoTest_types.cpp \
-	gen-cpp/ThriftTest_types.cpp \
 	gen-cpp/DebugProtoTest_types.h \
+	gen-cpp/EnumTest_types.cpp \
+	gen-cpp/EnumTest_types.h \
+	gen-cpp/OptionalRequiredTest_types.cpp \
 	gen-cpp/OptionalRequiredTest_types.h \
+	gen-cpp/Recursive_types.cpp \
+	gen-cpp/Recursive_types.h \
+	gen-cpp/ThriftTest_types.cpp \
 	gen-cpp/ThriftTest_types.h \
+	gen-cpp/ThriftTest_constants.cpp \
+	gen-cpp/ThriftTest_constants.h \
+	gen-cpp/TypedefTest_types.cpp \
+	gen-cpp/TypedefTest_types.h \
 	ThriftTest_extras.cpp \
 	DebugProtoTest_extras.cpp
 
@@ -42,7 +50,9 @@ DebugProtoTest_extras.o: gen-cpp/DebugProtoTest_types.h
 
 libtestgencpp_la_LIBADD = $(top_builddir)/lib/cpp/libthrift.la
 
-noinst_PROGRAMS = Benchmark
+noinst_PROGRAMS = Benchmark \
+	processor_test \
+	concurrency_test
 
 Benchmark_SOURCES = \
 	Benchmark.cpp
@@ -55,15 +65,16 @@ check_PROGRAMS = \
 	DebugProtoTest \
 	JSONProtoTest \
 	OptionalRequiredTest \
+	RecursiveTest \
 	SpecializationTest \
 	AllProtocolsTest \
 	TransportTest \
 	ZlibTest \
 	TFileTransportTest \
-	UnitTests
-# disable these test ... too strong
-#       processor_test
-#	concurrency_test
+	UnitTests \
+	link_test \
+	OpenSSLManualInitTest \
+	EnumTest
 
 TESTS_ENVIRONMENT= \
 	BOOST_TEST_LOG_SINK=tests.xml \
@@ -77,7 +88,9 @@ UnitTests_SOURCES = \
 	UnitTestMain.cpp \
 	TMemoryBufferTest.cpp \
 	TBufferBaseTest.cpp \
-	Base64Test.cpp
+	Base64Test.cpp \
+	ToStringTest.cpp \
+	TypedefTest.cpp
 
 if !WITH_BOOSTTHREADS
 UnitTests_SOURCES += \
@@ -86,7 +99,7 @@ endif
 
 UnitTests_LDADD = \
   libtestgencpp.la \
-  $(BOOST_ROOT_PATH)/lib/libboost_unit_test_framework.a
+  -l:libboost_unit_test_framework.a
 
 TransportTest_SOURCES = \
 	TransportTest.cpp
@@ -94,7 +107,7 @@ TransportTest_SOURCES = \
 TransportTest_LDADD = \
   libtestgencpp.la \
   $(top_builddir)/lib/cpp/libthriftz.la \
-  $(BOOST_ROOT_PATH)/lib/libboost_unit_test_framework.a \
+  -l:libboost_unit_test_framework.a \
   -lz
 
 ZlibTest_SOURCES = \
@@ -103,15 +116,22 @@ ZlibTest_SOURCES = \
 ZlibTest_LDADD = \
   libtestgencpp.la \
   $(top_builddir)/lib/cpp/libthriftz.la \
-  $(BOOST_ROOT_PATH)/lib/libboost_unit_test_framework.a \
+  -l:libboost_unit_test_framework.a \
   -lz
+
+EnumTest_SOURCES = \
+  EnumTest.cpp
+
+EnumTest_LDADD = \
+  libtestgencpp.la \
+  -l:libboost_unit_test_framework.a
 
 TFileTransportTest_SOURCES = \
 	TFileTransportTest.cpp
 
 TFileTransportTest_LDADD = \
   libtestgencpp.la \
-  $(BOOST_ROOT_PATH)/lib/libboost_unit_test_framework.a
+  -l:libboost_unit_test_framework.a
 
 #
 # TFDTransportTest
@@ -168,6 +188,14 @@ OptionalRequiredTest_SOURCES = \
 OptionalRequiredTest_LDADD = libtestgencpp.la
 
 #
+# OptionalRequiredTest
+#
+RecursiveTest_SOURCES = \
+	RecursiveTest.cpp
+
+RecursiveTest_LDADD = libtestgencpp.la
+
+#
 # SpecializationTest
 #
 SpecializationTest_SOURCES = \
@@ -184,6 +212,11 @@ concurrency_test_SOURCES = \
 concurrency_test_LDADD = \
   $(top_builddir)/lib/cpp/libthrift.la
 
+link_test_SOURCES = \
+  link/LinkTest.cpp \
+  link/TemplatedService1.cpp \
+  link/TemplatedService2.cpp
+
 processor_test_SOURCES = \
 	processor/ProcessorTest.cpp \
 	processor/EventLog.cpp \
@@ -197,7 +230,15 @@ processor_test_LDADD = libprocessortest.la \
                        $(top_builddir)/lib/cpp/libthriftnb.la \
                        $(BOOST_LDFLAGS) \
                        -levent \
-                       $(BOOST_ROOT_PATH)/lib/libboost_unit_test_framework.a
+                       -l:libboost_unit_test_framework.a
+
+OpenSSLManualInitTest_SOURCES = \
+	OpenSSLManualInitTest.cpp
+
+OpenSSLManualInitTest_LDADD = \
+	$(top_builddir)/lib/cpp/libthrift.la \
+	-l:libboost_unit_test_framework.a
+
 #
 # Common thrift code generation rules
 #
@@ -206,8 +247,17 @@ THRIFT = $(top_builddir)/compiler/cpp/thrift
 gen-cpp/DebugProtoTest_types.cpp gen-cpp/DebugProtoTest_types.h: $(top_srcdir)/test/DebugProtoTest.thrift
 	$(THRIFT) --gen cpp:dense $<
 
+gen-cpp/EnumTest_types.cpp gen-cpp/EnumTest_types.h: $(top_srcdir)/test/EnumTest.thrift
+	$(THRIFT) --gen cpp $<
+
+gen-cpp/TypedefTest_types.cpp gen-cpp/TypedefTest_types.h: $(top_srcdir)/test/TypedefTest.thrift
+	$(THRIFT) --gen cpp $<
+
 gen-cpp/OptionalRequiredTest_types.cpp gen-cpp/OptionalRequiredTest_types.h: $(top_srcdir)/test/OptionalRequiredTest.thrift
 	$(THRIFT) --gen cpp:dense $<
+
+gen-cpp/Recursive_types.cpp gen-cpp/Recursive_types.h: $(top_srcdir)/test/Recursive.thrift
+	$(THRIFT) --gen cpp $<
 
 gen-cpp/Service.cpp gen-cpp/StressTest_types.cpp: $(top_srcdir)/test/StressTest.thrift
 	$(THRIFT) --gen cpp:dense $<
@@ -215,15 +265,12 @@ gen-cpp/Service.cpp gen-cpp/StressTest_types.cpp: $(top_srcdir)/test/StressTest.
 gen-cpp/SecondService.cpp gen-cpp/ThriftTest_constants.cpp gen-cpp/ThriftTest.cpp gen-cpp/ThriftTest_types.cpp gen-cpp/ThriftTest_types.h: $(top_srcdir)/test/ThriftTest.thrift
 	$(THRIFT) --gen cpp:dense $<
 
-gen-cpp/ChildService.cpp: processor/proc.thrift
+gen-cpp/ChildService.cpp gen-cpp/ChildService.h gen-cpp/ParentService.cpp gen-cpp/ParentService.h gen-cpp/proc_types.cpp gen-cpp/proc_types.h: processor/proc.thrift
 	$(THRIFT) --gen cpp:templates,cob_style $<
 
-INCLUDES = \
-	-I$(top_srcdir)/lib/cpp/src
-
-AM_CPPFLAGS = $(BOOST_CPPFLAGS)
+AM_CPPFLAGS = $(BOOST_CPPFLAGS) -I$(top_srcdir)/lib/cpp/src
 AM_LDFLAGS = $(BOOST_LDFLAGS)
-AM_CXXFLAGS = -Wall
+AM_CXXFLAGS = -Wall -Wextra -pedantic
 
 clean-local:
 	$(RM) -r gen-cpp

@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+AUTOMAKE_OPTIONS = serial-tests
 
 SUBDIRS =
 
@@ -26,6 +27,7 @@ CFLAGS = @GCOV_CFLAGS@
 CXXFLAGS = -g
 
 check_PROGRAMS = \
+  testapplicationexception \
   testtransportsocket \
   testbinaryprotocol \
   testbufferedtransport \
@@ -41,9 +43,17 @@ if WITH_CPP
   check_PROGRAMS += testthrifttestclient
 endif
 
+testapplicationexception_SOURCES = testapplicationexception.c
+testapplicationexception_LDADD = \
+    ../libthrift_c_glib_la-thrift_application_exception.o \
+    ../libthrift_c_glib_la-thrift_protocol.o \
+    ../libthrift_c_glib_la-thrift_struct.o \
+    ../libthrift_c_glib_la-thrift_transport.o
+
 testtransportsocket_SOURCES = testtransportsocket.c
 testtransportsocket_LDADD = \
     ../libthrift_c_glib_la-thrift_transport.o \
+    ../libthrift_c_glib_la-thrift_buffered_transport.o \
     ../libthrift_c_glib_la-thrift_server_transport.o \
     ../libthrift_c_glib_la-thrift_server_socket.o
 
@@ -158,7 +168,7 @@ gen-c_glib/t_test_optional_required_test_types.c gen-c_glib/t_test_optional_requ
 gen-c_glib/t_test_second_service.c gen-c_glib/t_test_thrift_test.c gen-c_glib/t_test_thrift_test_types.c gen-c_glib/t_test_second_service.h gen-c_glib/t_test_thrift_test-.h gen-c_glib/t_test_thrift_test_types.h: ../../../test/ThriftTest.thrift
 	$(THRIFT) --gen c_glib $<
 
-gen-cpp/ThriftTest.cpp gen-cpp/ThriftTest.h: ../../../test/ThriftTest.thrift
+gen-cpp/ThriftTest.cpp gen-cpp/ThriftTest_constants.cpp gen-cpp/ThriftTest_types.cpp: ../../../test/ThriftTest.thrift
 	$(THRIFT) --gen cpp $<
 
 TESTS = \

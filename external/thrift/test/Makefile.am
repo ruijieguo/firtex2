@@ -17,7 +17,11 @@
 # under the License.
 #
 
-SUBDIRS = nodejs
+SUBDIRS =
+
+if WITH_C_GLIB
+SUBDIRS += c_glib
+endif
 
 if WITH_CPP
 SUBDIRS += cpp
@@ -34,6 +38,7 @@ endif
 if WITH_PYTHON
 SUBDIRS += py
 SUBDIRS += py.twisted
+SUBDIRS += py.tornado
 endif
 
 if WITH_RUBY
@@ -44,6 +49,14 @@ if WITH_HASKELL
 SUBDIRS += hs
 endif
 
+if WITH_GO
+SUBDIRS += go
+endif
+
+if WITH_ERLANG
+SUBDIRS += erl
+endif
+
 #
 # generate html for ThriftTest.thrift
 #
@@ -51,16 +64,21 @@ check-local:
 	$(top_builddir)/compiler/cpp/thrift --gen html -r $(top_srcdir)/test/ThriftTest.thrift
 
 EXTRA_DIST = \
+	keys \
 	test.sh \
+	test.py \
+	tests.json \
+	c_glib \
 	cpp \
-	csharp \
+	erl \
 	hs \
-	nodejs \
+	lua \
 	ocaml \
 	perl \
 	php \
 	py \
 	py.twisted \
+	py.tornado \
 	rb \
 	threads \
 	AnnotationTest.thrift \
@@ -69,11 +87,19 @@ EXTRA_DIST = \
 	DebugProtoTest.thrift \
 	DenseLinkingTest.thrift \
 	DocTest.thrift \
+	EnumTest.thrift \
+	Include.thrift \
 	JavaBeansTest.thrift \
 	ManyOptionals.thrift \
 	ManyTypedefs.thrift \
+	NameConflictTest.thrift \
 	OptionalRequiredTest.thrift \
+	Recursive.thrift \
+	ReuseObjects.thrift \
 	SmallTest.thrift \
 	StressTest.thrift \
 	ThriftTest.thrift \
-	FastbinaryTest.py
+	TypedefTest.thrift \
+	FastbinaryTest.py \
+	result.html \
+	README.md

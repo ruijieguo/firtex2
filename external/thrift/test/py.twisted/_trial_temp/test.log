@@ -1,0 +1,55 @@
+2014-11-05 03:30:26+0000 [-] Log opened.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testByte <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 39724
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985bf5098>
+2014-11-05 03:30:26+0000 [-] (TCP Port 39724 Closed)
+2014-11-05 03:30:26+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985bf5098>
+2014-11-05 03:30:26+0000 [-] Main loop terminated.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testDouble <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 45328
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c037a0>
+2014-11-05 03:30:26+0000 [-] (TCP Port 45328 Closed)
+2014-11-05 03:30:26+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c037a0>
+2014-11-05 03:30:26+0000 [-] Main loop terminated.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testException <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 57028
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c03c68>
+2014-11-05 03:30:26+0000 [-] (TCP Port 57028 Closed)
+2014-11-05 03:30:26+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c03c68>
+2014-11-05 03:30:26+0000 [-] Main loop terminated.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testI32 <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 41394
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c27b48>
+2014-11-05 03:30:26+0000 [-] (TCP Port 41394 Closed)
+2014-11-05 03:30:26+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c27b48>
+2014-11-05 03:30:26+0000 [-] Main loop terminated.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testI64 <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 49159
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c27ef0>
+2014-11-05 03:30:26+0000 [-] (TCP Port 49159 Closed)
+2014-11-05 03:30:26+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c27ef0>
+2014-11-05 03:30:26+0000 [-] Main loop terminated.
+2014-11-05 03:30:26+0000 [-] --> test_suite.ThriftTestCase.testOneway <--
+2014-11-05 03:30:26+0000 [-] ThriftServerFactory starting on 59471
+2014-11-05 03:30:26+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c28878>
+2014-11-05 03:30:27+0000 [-] (TCP Port 59471 Closed)
+2014-11-05 03:30:27+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c28878>
+2014-11-05 03:30:27+0000 [-] Main loop terminated.
+2014-11-05 03:30:27+0000 [-] --> test_suite.ThriftTestCase.testString <--
+2014-11-05 03:30:27+0000 [-] ThriftServerFactory starting on 49242
+2014-11-05 03:30:27+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c28e18>
+2014-11-05 03:30:27+0000 [-] (TCP Port 49242 Closed)
+2014-11-05 03:30:27+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c28e18>
+2014-11-05 03:30:27+0000 [-] Main loop terminated.
+2014-11-05 03:30:27+0000 [-] --> test_suite.ThriftTestCase.testStruct <--
+2014-11-05 03:30:27+0000 [-] ThriftServerFactory starting on 57344
+2014-11-05 03:30:27+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c3b3f8>
+2014-11-05 03:30:27+0000 [-] (TCP Port 57344 Closed)
+2014-11-05 03:30:27+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c3b3f8>
+2014-11-05 03:30:27+0000 [-] Main loop terminated.
+2014-11-05 03:30:27+0000 [-] --> test_suite.ThriftTestCase.testVoid <--
+2014-11-05 03:30:27+0000 [-] ThriftServerFactory starting on 54969
+2014-11-05 03:30:27+0000 [-] Starting factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c3b998>
+2014-11-05 03:30:27+0000 [-] (TCP Port 54969 Closed)
+2014-11-05 03:30:27+0000 [-] Stopping factory <thrift.transport.TTwisted.ThriftServerFactory instance at 0x2b5985c3b998>
+2014-11-05 03:30:27+0000 [-] Main loop terminated.

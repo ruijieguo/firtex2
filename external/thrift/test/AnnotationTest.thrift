@@ -28,6 +28,7 @@ struct foo {
   cpp.type = "DenseFoo",
   python.type = "DenseFoo",
   java.final = "",
+  annotation.without.value,
 )
 
 exception foo_error {
@@ -51,7 +52,7 @@ enum weekdays {
 /* Note that annotations on senum values are not supported. */
 senum seasons {
   "Spring",
-  "Summer", 
+  "Summer",
   "Fall",
   "Winter"
 } ( foo = "bar" )

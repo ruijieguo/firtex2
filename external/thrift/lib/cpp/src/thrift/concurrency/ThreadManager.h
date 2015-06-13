@@ -21,9 +21,9 @@
 #define _THRIFT_CONCURRENCY_THREADMANAGER_H_ 1
 
 #include <boost/shared_ptr.hpp>
-#include <tr1/functional>
+#include <thrift/cxxfunctional.h>
 #include <sys/types.h>
-#include "Thread.h"
+#include <thrift/concurrency/Thread.h>
 
 namespace apache { namespace thrift { namespace concurrency {
 
@@ -57,8 +57,7 @@ class ThreadManager {
   ThreadManager() {}
 
  public:
-  class Task;
-  typedef std::tr1::function<void(boost::shared_ptr<Runnable>)> ExpireCallback;
+  typedef apache::thrift::stdcxx::function<void(boost::shared_ptr<Runnable>)> ExpireCallback;
 
   virtual ~ThreadManager() {}
 

@@ -314,9 +314,9 @@ extern "C" {
 
 #include "t_test_thrift_test.h"
 #include "t_test_thrift_test_types.h"
-#include <thrift/transport/thrift_socket.h>
-#include <thrift/protocol/thrift_protocol.h>
-#include <thrift/protocol/thrift_binary_protocol.h>
+#include <thrift/c_glib/transport/thrift_socket.h>
+#include <thrift/c_glib/protocol/thrift_protocol.h>
+#include <thrift/c_glib/protocol/thrift_binary_protocol.h>
 
 static void
 test_thrift_client (void)
@@ -471,7 +471,7 @@ test_thrift_client (void)
   // insanity
   insanity_out = (TTestInsanity *) g_object_new (T_TEST_TYPE_INSANITY, NULL);
   insanity_out->userMap = g_hash_table_new (NULL, NULL);
-  g_hash_table_insert (insanity_out->userMap, &enum_out, &user_id_out);
+  g_hash_table_insert (insanity_out->userMap, GINT_TO_POINTER (enum_out), &user_id_out);
 
   xtruct1 = (TTestXtruct *) g_object_new (T_TEST_TYPE_XTRUCT, NULL);
   xtruct1->byte_thing = 1;

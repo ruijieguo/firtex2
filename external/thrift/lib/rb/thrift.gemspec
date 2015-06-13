@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'thrift'
-  s.version     = '0.9.0.1'
+  s.version     = '0.9.2.0'
   s.authors     = ['Thrift Developers']
   s.email       = ['dev@thrift.apache.org']
   s.homepage    = 'http://thrift.apache.org'
@@ -23,12 +23,15 @@ Gem::Specification.new do |s|
   s.test_files = Dir.glob("{test,spec,benchmark}/**/*")
   s.executables =  Dir.glob("{bin}/**/*")
 
-  s.extra_rdoc_files  = %w[CHANGELOG README] + Dir.glob("{ext,lib}/**/*.{c,h,rb}")
+  s.extra_rdoc_files  = %w[README.md] + Dir.glob("{ext,lib}/**/*.{c,h,rb}")
 
   s.require_paths = %w[lib ext]
 
-  s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 2.10.0'
-  s.add_development_dependency 'mongrel', "1.2.0.pre2"
+  s.add_development_dependency "rack", "~> 1.5.2"
+  s.add_development_dependency "rack-test", "~> 0.6.2"
+  s.add_development_dependency "thin", "~> 1.5.0"
+  s.add_development_dependency "bundler"
+  s.add_development_dependency 'rake'
 end
 

@@ -39,13 +39,14 @@
 #include <errno.h>
 #include <limits.h>
 
-#ifdef MINGW
+#ifdef _WIN32
 # include <windows.h> /* for GetFullPathName */
 #endif
 
 // Careful: must include globals first for extern definitions
 #include "globals.h"
 
+#include "platform.h"
 #include "main.h"
 #include "parse/t_program.h"
 #include "parse/t_scope.h"
@@ -111,12 +112,6 @@ string g_curpath;
 vector<string> g_incl_searchpath;
 
 /**
- * Should C++ include statements use path prefixes for other thrift-generated
- * header files
- */
-bool g_cpp_use_include_prefix = false;
-
-/**
  * Global debug state
  */
 int g_debug = 0;
@@ -151,6 +146,13 @@ char* g_doctext;
  */
 int g_doctext_lineno;
 
+/** 
+ * The First doctext comment
+ */
+char* g_program_doctext_candidate;
+int  g_program_doctext_lineno = 0;
+PROGDOCTEXT_STATUS  g_program_doctext_status = INVALID;
+
 /**
  * Whether or not negative field keys are accepted.
  */
@@ -164,36 +166,14 @@ int g_allow_64bit_consts = 0;
 /**
  * Flags to control code generation
  */
-bool gen_cpp = false;
-bool gen_dense = false;
-bool gen_java = false;
-bool gen_javabean = false;
-bool gen_rb = false;
-bool gen_py = false;
-bool gen_py_newstyle = false;
-bool gen_xsd = false;
-bool gen_php = false;
-bool gen_phpi = false;
-bool gen_phps = true;
-bool gen_phpa = false;
-bool gen_phpo = false;
-bool gen_rest = false;
-bool gen_perl = false;
-bool gen_erl = false;
-bool gen_ocaml = false;
-bool gen_hs = false;
-bool gen_cocoa = false;
-bool gen_csharp = false;
-bool gen_delphi = false;
-bool gen_st = false;
 bool gen_recurse = false;
 
 /**
- * MinGW doesn't have realpath, so use fallback implementation in that case,
+ * Win32 doesn't have realpath, so use fallback implementation in that case,
  * otherwise this just calls through to realpath
  */
 char *saferealpath(const char *path, char *resolved_path) {
-#ifdef MINGW
+#ifdef _WIN32
   char buf[MAX_PATH];
   char* basename;
   DWORD len = GetFullPathName(path, MAX_PATH, buf, &basename);
@@ -218,7 +198,7 @@ char *saferealpath(const char *path, char *resolved_path) {
 }
 
 bool check_is_directory(const char *dir_name) {
-#ifdef MINGW
+#ifdef _WIN32
   DWORD attributes = ::GetFileAttributesA(dir_name);
   if(attributes == INVALID_FILE_ATTRIBUTES) {
     fprintf(stderr, "Output directory %s is unusable: GetLastError() = %ld\n", dir_name, GetLastError());
@@ -364,7 +344,7 @@ string include_file(string filename) {
   // Absolute path? Just try that
   if (filename[0] == '/') {
     // Realpath!
-    char rp[PATH_MAX];
+    char rp[THRIFT_PATH_MAX];
     if (saferealpath(filename.c_str(), rp) == NULL) {
       pwarning(0, "Cannot open include file %s\n", filename.c_str());
       return std::string();
@@ -386,7 +366,7 @@ string include_file(string filename) {
       string sfilename = *(it) + "/" + filename;
 
       // Realpath!
-      char rp[PATH_MAX];
+      char rp[THRIFT_PATH_MAX];
       if (saferealpath(sfilename.c_str(), rp) == NULL) {
         continue;
       }
@@ -414,6 +394,32 @@ void clear_doctext() {
   }
   free(g_doctext);
   g_doctext = NULL;
+}
+
+/**
+ * Reset program doctext information after processing a file
+ */
+void reset_program_doctext_info() {
+  if(g_program_doctext_candidate != NULL) {
+    free(g_program_doctext_candidate);
+    g_program_doctext_candidate = NULL;
+  }
+  g_program_doctext_lineno = 0;
+  g_program_doctext_status = INVALID;
+  pdebug("%s","program doctext set to INVALID");
+}
+
+/**
+ * We are sure the program doctext candidate is really the program doctext.
+ */
+void declare_valid_program_doctext() {
+  if((g_program_doctext_candidate != NULL) && (g_program_doctext_status == STILL_CANDIDATE)) {
+    g_program_doctext_status = ABSOLUTELY_SURE;  
+    pdebug("%s","program doctext set to ABSOLUTELY_SURE");
+  } else {
+    g_program_doctext_status = NO_PROGRAM_DOCTEXT;  
+    pdebug("%s","program doctext set to NO_PROGRAM_DOCTEXT");
+  }
 }
 
 /**
@@ -545,8 +551,13 @@ char* clean_up_doctext(char* doctext) {
     docstring += '\n';
   }
 
-  assert(docstring.length() <= strlen(doctext));
-  strcpy(doctext, docstring.c_str());
+  //assert(docstring.length() <= strlen(doctext));  may happen, see THRIFT-1755
+  if(docstring.length() <= strlen(doctext)) {
+    strcpy(doctext, docstring.c_str());
+  } else {
+    free(doctext);  // too short
+    doctext = strdup(docstring.c_str());
+  }
   return doctext;
 }
 
@@ -650,6 +661,20 @@ void generate_all_fingerprints(t_program* program) {
   */
 }
 
+
+/**
+ * Emits a warning on list<byte>, binary type is typically a much better choice.
+ */
+void check_for_list_of_bytes(t_type* list_elem_type) {
+  if((g_parse_mode == PROGRAM) && (list_elem_type != NULL) && list_elem_type->is_base_type()) {
+    t_base_type* tbase = (t_base_type*)list_elem_type;
+    if(tbase->get_base() == t_base_type::TYPE_BYTE) {
+      pwarning(1,"Consider using the more efficient \"binary\" type instead of \"list<byte>\".");
+    }
+  }
+}
+
+
 /**
  * Prints the version number
  */
@@ -689,7 +714,7 @@ void help() {
   fprintf(stderr, "                compatibility with older .thrift files)\n");
   fprintf(stderr, "  --allow-64bit-consts  Do not print warnings about using 64-bit constants\n");
   fprintf(stderr, "  --gen STR   Generate code with a dynamically-registered generator.\n");
-  fprintf(stderr, "                STR has the form language[:key1=val1[,key2,[key3=val3]]].\n");
+  fprintf(stderr, "                STR has the form language[:key1=val1[,key2[,key3=val3]]].\n");
   fprintf(stderr, "                Keys and values are options passed to the generator.\n");
   fprintf(stderr, "                Many options will not require values.\n");
   fprintf(stderr, "\n");
@@ -780,8 +805,8 @@ void validate_const_rec(std::string name, t_type* type, t_const_value* value) {
       }
     }
     if (!found) {
-      throw "type error: const " + name + " was declared as type " 
-        + type->get_name() + " which is an enum, but " 
+      throw "type error: const " + name + " was declared as type "
+        + type->get_name() + " which is an enum, but "
         + value->get_identifier() + " is not a valid value for that enum";
     }
   } else if (type->is_struct() || type->is_xception()) {
@@ -834,6 +859,18 @@ void validate_const_rec(std::string name, t_type* type, t_const_value* value) {
 }
 
 /**
+ * Check simple identifier names
+ * It's easier to do it this way instead of rewriting the whole grammar etc.
+ */
+void validate_simple_identifier(const char* identifier) {
+  string name( identifier);
+  if( name.find(".") != string::npos) {
+    yyerror("Identifier %s can't have a dot.", identifier);
+    exit(1);
+  }
+}
+
+/**
  * Check the type of the parsed const information against its declared type
  */
 void validate_const_type(t_const* c) {
@@ -862,6 +899,24 @@ bool validate_throws(t_struct* throws) {
 }
 
 /**
+ * Skips UTF-8 BOM if there is one
+ */
+bool skip_utf8_bom(FILE* f) {
+
+  // pretty straightforward, but works
+  if( fgetc(f) == 0xEF) {
+    if( fgetc(f) == 0xBB) {
+      if( fgetc(f) == 0xBF) {
+        return true;
+      } 
+    } 
+  } 
+  
+  rewind(f); 
+  return false;
+}
+
+/**
  * Parses a program
  */
 void parse(t_program* program, t_program* parent_program) {
@@ -873,11 +928,14 @@ void parse(t_program* program, t_program* parent_program) {
   g_curpath = path;
 
   // Open the file
+  // skip UTF-8 BOM if there is one
   yyin = fopen(path.c_str(), "r");
   if (yyin == 0) {
     failure("Could not open input file: \"%s\"", path.c_str());
   }
-
+  if( skip_utf8_bom( yyin))
+    pverbose("Skipped UTF-8 BOM at %s\n", path.c_str());
+  
   // Create new scope and scan for includes
   pverbose("Scanning %s for includes\n", path.c_str());
   g_parse_mode = INCLUDES;
@@ -900,6 +958,9 @@ void parse(t_program* program, t_program* parent_program) {
     parse(*iter, program);
   }
 
+  // reset program doctext status before parsing a new file
+  reset_program_doctext_info();
+
   // Parse the program file
   g_parse_mode = PROGRAM;
   g_program = program;
@@ -907,10 +968,16 @@ void parse(t_program* program, t_program* parent_program) {
   g_parent_scope = (parent_program != NULL) ? parent_program->scope() : NULL;
   g_parent_prefix = program->get_name() + ".";
   g_curpath = path;
+
+  // Open the file
+  // skip UTF-8 BOM if there is one
   yyin = fopen(path.c_str(), "r");
   if (yyin == 0) {
     failure("Could not open input file: \"%s\"", path.c_str());
   }
+  if( skip_utf8_bom( yyin))
+    pverbose("Skipped UTF-8 BOM at %s\n", path.c_str());
+  
   pverbose("Parsing %s for types\n", path.c_str());
   yylineno = 1;
   try {
@@ -942,8 +1009,8 @@ void generate(t_program* program, const vector<string>& generator_strings) {
   try {
     pverbose("Program: %s\n", program->get_path().c_str());
 
-    // Compute fingerprints.
-    generate_all_fingerprints(program);
+    // Compute fingerprints. - not anymore, we do it on the fly now
+    //generate_all_fingerprints(program);
 
     if (dump_docs) {
       dump_docstrings(program);
@@ -1009,7 +1076,7 @@ int main(int argc, char** argv) {
         help();
       } else if (strcmp(arg, "-version") == 0) {
         version();
-        exit(1);
+        exit(0);
       } else if (strcmp(arg, "-debug") == 0) {
         g_debug = 1;
       } else if (strcmp(arg, "-nowarn") == 0) {
@@ -1032,60 +1099,6 @@ int main(int argc, char** argv) {
           usage();
         }
         generator_strings.push_back(arg);
-      } else if (strcmp(arg, "-dense") == 0) {
-        gen_dense = true;
-      } else if (strcmp(arg, "-cpp") == 0) {
-        gen_cpp = true;
-      } else if (strcmp(arg, "-javabean") == 0) {
-        gen_javabean = true;
-      } else if (strcmp(arg, "-java") == 0) {
-        gen_java = true;
-      } else if (strcmp(arg, "-php") == 0) {
-        gen_php = true;
-      } else if (strcmp(arg, "-phpi") == 0) {
-        gen_phpi = true;
-      } else if (strcmp(arg, "-phps") == 0) {
-        gen_php = true;
-        gen_phps = true;
-      } else if (strcmp(arg, "-phpl") == 0) {
-        gen_php = true;
-        gen_phps = false;
-      } else if (strcmp(arg, "-phpa") == 0) {
-        gen_php = true;
-        gen_phps = false;
-        gen_phpa = true;
-      } else if (strcmp(arg, "-phpo") == 0) {
-        gen_php = true;
-        gen_phpo = true;
-      } else if (strcmp(arg, "-rest") == 0) {
-        gen_rest = true;
-      } else if (strcmp(arg, "-py") == 0) {
-        gen_py = true;
-      } else if (strcmp(arg, "-pyns") == 0) {
-        gen_py = true;
-        gen_py_newstyle = true;
-      } else if (strcmp(arg, "-rb") == 0) {
-        gen_rb = true;
-      } else if (strcmp(arg, "-xsd") == 0) {
-        gen_xsd = true;
-      } else if (strcmp(arg, "-perl") == 0) {
-        gen_perl = true;
-      } else if (strcmp(arg, "-erl") == 0) {
-        gen_erl = true;
-      } else if (strcmp(arg, "-ocaml") == 0) {
-        gen_ocaml = true;
-      } else if (strcmp(arg, "-hs") == 0) {
-        gen_hs = true;
-      } else if (strcmp(arg, "-cocoa") == 0) {
-        gen_cocoa = true;
-      } else if (strcmp(arg, "-st") == 0) {
-        gen_st = true;
-      } else if (strcmp(arg, "-csharp") == 0) {
-        gen_csharp = true;
-      } else if (strcmp(arg, "-delphi") == 0) {
-        gen_delphi = true;
-      } else if (strcmp(arg, "-cpp_use_include_prefix") == 0) {
-        g_cpp_use_include_prefix = true;
       } else if (strcmp(arg, "-I") == 0) {
         // An argument of "-I\ asdf" is invalid and has unknown results
         arg = argv[++i];
@@ -1097,15 +1110,14 @@ int main(int argc, char** argv) {
         g_incl_searchpath.push_back(arg);
       } else if ((strcmp(arg, "-o") == 0) || (strcmp(arg, "-out") == 0)) {
         out_path_is_absolute = (strcmp(arg, "-out") == 0) ? true : false;
-		  
-		arg = argv[++i];
+        arg = argv[++i];
         if (arg == NULL) {
           fprintf(stderr, "-o: missing output directory\n");
           usage();
         }
         out_path = arg;
 
-#ifdef MINGW
+#ifdef _WIN32
         //strip out trailing \ on Windows
         int last = out_path.length()-1;
         if (out_path[last] == '\\')
@@ -1133,7 +1145,7 @@ int main(int argc, char** argv) {
   // if you're asking for version, you have a right not to pass a file
   if ((strcmp(argv[argc-1], "-version") == 0) || (strcmp(argv[argc-1], "--version") == 0)) {
     version();
-    exit(1);
+    exit(0);
   }
 
   // You gotta generate something!
@@ -1143,7 +1155,7 @@ int main(int argc, char** argv) {
   }
 
   // Real-pathify it
-  char rp[PATH_MAX];
+  char rp[THRIFT_PATH_MAX];
   if (argv[i] == NULL) {
     fprintf(stderr, "Missing file name\n");
     usage();

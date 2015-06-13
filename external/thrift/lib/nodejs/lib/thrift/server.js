@@ -17,36 +17,66 @@
  * under the License.
  */
 var net = require('net');
+var tls = require('tls');
 
-var ttransport = require('./transport');
-var BinaryParser = require('./binary_parser').BinaryParser,
+var ttransport = require('./transport'),
     TBinaryProtocol = require('./protocol').TBinaryProtocol;
 
-exports.createServer = function(cls, handler, options) {
-  if (cls.Processor) {
-    cls = cls.Processor;
-  }
-  var processor = new cls(handler);
-  var transport = (options && options.transport) ? options.transport : ttransport.TFramedTransport;
+
+/** 
+ * Create a Thrift server which can serve one or multiple services. 
+ * @param {object} processor - A normal or multiplexedProcessor (must
+ *                             be preconstructed with the desired handler).
+ * @param {ServerOptions} options - Optional additional server configuration.
+ * @returns {object} - The Apache Thrift Multipled Server.
+ */
+exports.createMultiplexServer = function(processor, options) {
+  var transport = (options && options.transport) ? options.transport : ttransport.TBufferedTransport;
   var protocol = (options && options.protocol) ? options.protocol : TBinaryProtocol;
 
-  return net.createServer(function(stream) {
-    stream.on('data', transport.receiver(function(transport_with_data) {
-      var input = new protocol(transport_with_data);
+  function serverImpl(stream) {
+    var self = this;
+    stream.on('error', function(err) { 
+        self.emit('error', err); 
+    });
+    stream.on('data', transport.receiver(function(transportWithData) {
+      var input = new protocol(transportWithData);
       var output = new protocol(new transport(undefined, function(buf) {
-        stream.write(buf);
+        try {
+            stream.write(buf);
+        } catch (err) {
+            self.emit('error', err);
+            stream.end();
+        }
       }));
 
       try {
-        processor.process(input, output);
-        transport_with_data.commitPosition();
-      }
-      catch (e) {
-        if (e instanceof ttransport.InputBufferUnderrunError) {
-          transport_with_data.rollbackPosition();
+        do {
+          processor.process(input, output);
+          transportWithData.commitPosition();
+        } while (true);
+      } catch (err) {
+        if (err instanceof ttransport.InputBufferUnderrunError) {
+          //The last data in the buffer was not a complete message, wait for the rest
+          transportWithData.rollbackPosition();
+        }
+        else if (err.message === "Invalid type: undefined") {
+          //No more data in the buffer
+          //This trap is a bit hackish
+          //The next step to improve the node behavior here is to have
+          //  the compiler generated process method throw a more explicit
+          //  error when the network buffer is empty (regardles of the
+          //  protocol/transport stack in use) and replace this heuristic.
+          //  Also transports should probably not force upper layers to
+          //  manage their buffer positions (i.e. rollbackPosition() and
+          //  commitPosition() should be eliminated in lieu of a transport
+          //  encapsulated buffer management strategy.)
+          transportWithData.rollbackPosition();
         }
         else {
-          throw e;
+          //Unexpected error
+          self.emit('error', err);
+          stream.end();
         }
       }
     }));
@@ -54,5 +84,24 @@ exports.createServer = function(cls, handler, options) {
     stream.on('end', function() {
       stream.end();
     });
-  });
+  }
+  
+  if (options.tls) {
+    return tls.createServer(options.tls, serverImpl);
+  } else {
+    return net.createServer(serverImpl);
+  }
+};
+
+/** 
+ * Create a single service Apache Thrift server. 
+ * @param {object} processor - A service class or processor function.
+ * @param {ServerOptions} options - Optional additional server configuration.
+ * @returns {object} - The Apache Thrift Multipled Server.
+ */
+exports.createServer = function(processor, handler, options) {
+  if (processor.Processor) {
+    processor = processor.Processor;
+  }
+  return exports.createMultiplexServer(new processor(handler), options);
 };

@@ -28,6 +28,8 @@ class TProtocolException(TException):
   NEGATIVE_SIZE = 2
   SIZE_LIMIT = 3
   BAD_VERSION = 4
+  NOT_IMPLEMENTED = 5
+  DEPTH_LIMIT = 6
 
   def __init__(self, type=UNKNOWN, message=None):
     TException.__init__(self, message)
@@ -40,7 +42,7 @@ class TProtocolBase:
   def __init__(self, trans):
     self.trans = trans
 
-  def writeMessageBegin(self, name, type, seqid):
+  def writeMessageBegin(self, name, ttype, seqid):
     pass
 
   def writeMessageEnd(self):
@@ -52,7 +54,7 @@ class TProtocolBase:
   def writeStructEnd(self):
     pass
 
-  def writeFieldBegin(self, name, type, id):
+  def writeFieldBegin(self, name, ttype, fid):
     pass
 
   def writeFieldEnd(self):
@@ -79,7 +81,7 @@ class TProtocolBase:
   def writeSetEnd(self):
     pass
 
-  def writeBool(self, bool):
+  def writeBool(self, bool_val):
     pass
 
   def writeByte(self, byte):
@@ -97,7 +99,7 @@ class TProtocolBase:
   def writeDouble(self, dub):
     pass
 
-  def writeString(self, str):
+  def writeString(self, str_val):
     pass
 
   def readMessageBegin(self):
@@ -157,46 +159,46 @@ class TProtocolBase:
   def readString(self):
     pass
 
-  def skip(self, type):
-    if type == TType.STOP:
+  def skip(self, ttype):
+    if ttype == TType.STOP:
       return
-    elif type == TType.BOOL:
+    elif ttype == TType.BOOL:
       self.readBool()
-    elif type == TType.BYTE:
+    elif ttype == TType.BYTE:
       self.readByte()
-    elif type == TType.I16:
+    elif ttype == TType.I16:
       self.readI16()
-    elif type == TType.I32:
+    elif ttype == TType.I32:
       self.readI32()
-    elif type == TType.I64:
+    elif ttype == TType.I64:
       self.readI64()
-    elif type == TType.DOUBLE:
+    elif ttype == TType.DOUBLE:
       self.readDouble()
-    elif type == TType.STRING:
+    elif ttype == TType.STRING:
       self.readString()
-    elif type == TType.STRUCT:
+    elif ttype == TType.STRUCT:
       name = self.readStructBegin()
       while True:
-        (name, type, id) = self.readFieldBegin()
-        if type == TType.STOP:
+        (name, ttype, id) = self.readFieldBegin()
+        if ttype == TType.STOP:
           break
-        self.skip(type)
+        self.skip(ttype)
         self.readFieldEnd()
       self.readStructEnd()
-    elif type == TType.MAP:
+    elif ttype == TType.MAP:
       (ktype, vtype, size) = self.readMapBegin()
-      for i in range(size):
+      for i in xrange(size):
         self.skip(ktype)
         self.skip(vtype)
       self.readMapEnd()
-    elif type == TType.SET:
+    elif ttype == TType.SET:
       (etype, size) = self.readSetBegin()
-      for i in range(size):
+      for i in xrange(size):
         self.skip(etype)
       self.readSetEnd()
-    elif type == TType.LIST:
+    elif ttype == TType.LIST:
       (etype, size) = self.readListBegin()
-      for i in range(size):
+      for i in xrange(size):
         self.skip(etype)
       self.readListEnd()
 
@@ -400,6 +402,19 @@ class TProtocolBase:
     else:
       writer(val)
 
+def checkIntegerLimits(i, bits):
+    if bits == 8 and (i < -128 or i > 127):
+        raise TProtocolException(TProtocolException.INVALID_DATA,
+                                 "i8 requires -128 <= number <= 127")
+    elif bits == 16 and (i < -32768 or i > 32767):
+        raise TProtocolException(TProtocolException.INVALID_DATA,
+                                 "i16 requires -32768 <= number <= 32767")
+    elif bits == 32 and (i < -2147483648 or i > 2147483647):
+        raise TProtocolException(TProtocolException.INVALID_DATA,
+                                 "i32 requires -2147483648 <= number <= 2147483647")
+    elif bits == 64 and (i < -9223372036854775808 or i > 9223372036854775807):
+         raise TProtocolException(TProtocolException.INVALID_DATA,
+                                  "i64 requires -9223372036854775808 <= number <= 9223372036854775807")
 
 class TProtocolFactory:
   def getProtocol(self, trans):

@@ -25,14 +25,9 @@ uses
   SysUtils, Thrift.Protocol;
 
 const
-  Version = '0.9.0';
+  Version = '0.9.2';
 
 type
-  IProcessor = interface
-    ['{B1538A07-6CAC-4406-8A4C-AFED07C70A89}']
-    function Process( const iprot :IProtocol; const oprot: IProtocol): Boolean;
-  end;
-
   TApplicationException = class( SysUtils.Exception )
   public
     type
@@ -43,7 +38,12 @@ type
         InvalidMessageType,
         WrongMethodName,
         BadSequenceID,
-        MissingResult
+        MissingResult,
+        InternalError,
+        ProtocolError,
+        InvalidTransform,
+        InvalidProtocol,
+        UnsupportedClientType
       );
 {$SCOPEDENUMS OFF}
   private
@@ -107,9 +107,11 @@ var
   field : IField;
   msg : string;
   typ : TExceptionType;
+  struc : IStruct;
 begin
   msg := '';
   typ := TExceptionType.Unknown;
+  struc := iprot.ReadStructBegin;
   while ( True ) do
   begin
     field := iprot.ReadFieldBegin;

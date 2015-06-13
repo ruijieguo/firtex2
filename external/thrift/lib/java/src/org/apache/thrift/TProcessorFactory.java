@@ -36,4 +36,8 @@ public class TProcessorFactory {
   public TProcessor getProcessor(TTransport trans) {
     return processor_;
   }
+
+  public boolean isAsyncProcessor() {
+      return processor_ instanceof TBaseAsyncProcessor;
+  }
 }

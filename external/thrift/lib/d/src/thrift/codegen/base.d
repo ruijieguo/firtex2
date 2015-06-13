@@ -43,7 +43,7 @@ import std.algorithm : find;
 import std.array : empty, front;
 import std.conv : to;
 import std.exception : enforce;
-import std.traits : BaseTypeTuple, isPointer, isSomeFunction, pointerTarget,
+import std.traits : BaseTypeTuple, isPointer, isSomeFunction, PointerTarget,
   ReturnType;
 import thrift.base;
 import thrift.internal.codegen;
@@ -358,7 +358,7 @@ template BaseService(T) if (isDerivedService!T) {
 mixin template TStructHelpers(alias fieldMetaData = cast(TFieldMeta[])null) if (
   is(typeof(fieldMetaData) : TFieldMeta[])
 ) {
-  import std.algorithm : canFind;
+  import std.algorithm : any;
   import thrift.codegen.base;
   import thrift.internal.codegen : isNullable, MemberType, mergeFieldMeta,
     FieldNames;
@@ -459,7 +459,7 @@ mixin template TStructHelpers(alias fieldMetaData = cast(TFieldMeta[])null) if (
     return true;
   }
 
-  static if (canFind!`!a.defaultValue.empty`(mergeFieldMeta!(This, fieldMetaData))) {
+  static if (any!`!a.defaultValue.empty`(mergeFieldMeta!(This, fieldMetaData))) {
     static if (is(This _ == class)) {
       this() {
         mixin(thriftFieldInitCode!(mergeFieldMeta!(This, fieldMetaData))("this"));
@@ -500,10 +500,10 @@ string thriftFieldInitCode(alias fieldMeta)(string thisName) {
   return code;
 }
 
-version (unittest) {
+unittest {
   // Cannot make this nested in the unittest block due to a »no size yet for
   // forward reference« error.
-  struct Foo {
+  static struct Foo {
     string a;
     int b;
     int c;
@@ -514,8 +514,7 @@ version (unittest) {
       TFieldMeta("c", 3, TReq.REQUIRED, "4")
     ]);
   }
-}
-unittest {
+
   auto f = Foo();
 
   f.set!"b"(12345);
@@ -674,7 +673,7 @@ void readStruct(T, Protocol, alias fieldMetaData = cast(TFieldMeta[])null,
     string readFieldCode(FieldType)(string name, short id, TReq req) {
       static if (pointerStruct && isPointer!FieldType) {
         immutable v = "(*s." ~ name ~ ")";
-        alias pointerTarget!FieldType F;
+        alias PointerTarget!FieldType F;
       } else {
         immutable v = "s." ~ name;
         alias FieldType F;
@@ -862,7 +861,7 @@ void writeStruct(T, Protocol, alias fieldMetaData = cast(TFieldMeta[])null,
 
       static if (pointerStruct && isPointer!FieldType) {
         immutable v = "(*s." ~ name ~ ")";
-        alias pointerTarget!FieldType F;
+        alias PointerTarget!FieldType F;
       } else {
         immutable v = "s." ~ name;
         alias FieldType F;
@@ -913,7 +912,7 @@ unittest {
   // combinations. Functionality checks are covered by the rest of the test
   // suite.
 
-  struct Test {
+  static struct Test {
     // Non-nullable.
     int a1;
     int a2;

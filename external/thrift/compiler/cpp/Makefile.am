@@ -23,7 +23,7 @@
 
 AM_YFLAGS = -d
 LIBS =
-BUILT_SOURCES =
+BUILT_SOURCES = thrifty.cc
 
 bin_PROGRAMS = thrift
 
@@ -38,6 +38,7 @@ thrift_SOURCES = src/main.cc \
                  src/globals.h \
                  src/main.h \
                  src/platform.h \
+                 src/logging.h \
                  src/md5.h \
                  src/parse/t_doc.h \
                  src/parse/t_type.h \
@@ -45,6 +46,7 @@ thrift_SOURCES = src/main.cc \
                  src/parse/t_enum.h \
                  src/parse/t_enum_value.h \
                  src/parse/t_typedef.h \
+                 src/parse/t_typedef.cc \
                  src/parse/t_container.h \
                  src/parse/t_list.h \
                  src/parse/t_set.h \
@@ -68,6 +70,7 @@ thrift_SOURCES = src/main.cc \
 thrift_SOURCES += src/generate/t_c_glib_generator.cc \
                   src/generate/t_cpp_generator.cc \
                   src/generate/t_java_generator.cc \
+                  src/generate/t_json_generator.cc \
                   src/generate/t_as3_generator.cc \
                   src/generate/t_csharp_generator.cc \
                   src/generate/t_py_generator.cc \
@@ -85,10 +88,12 @@ thrift_SOURCES += src/generate/t_c_glib_generator.cc \
                   src/generate/t_javame_generator.cc \
                   src/generate/t_delphi_generator.cc \
                   src/generate/t_go_generator.cc \
-                  src/generate/t_d_generator.cc
+                  src/generate/t_gv_generator.cc \
+                  src/generate/t_d_generator.cc \
+                  src/generate/t_lua_generator.cc
 
 thrift_CPPFLAGS = -I$(srcdir)/src
-thrift_CXXFLAGS = -Wall
+thrift_CXXFLAGS = -Wall -Wextra -pedantic
 thrift_LDADD = @LEXLIB@ libparse.a
 
 libparse_a_CPPFLAGS = -I$(srcdir)/src
@@ -103,9 +108,11 @@ WINDOWS_DIST = \
              compiler.vcxproj.filters
 
 EXTRA_DIST = \
+             README.md \
+             CMakeLists.txt \
              $(WINDOWS_DIST)
 
 clean-local:
-	$(RM) thriftl.cc thrifty.cc thrifty.h version.h windows/version.h
+	$(RM) thriftl.cc thrifty.cc thrifty.h thrifty.hh version.h windows/version.h
 
 src/main.cc: version.h

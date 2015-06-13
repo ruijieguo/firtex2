@@ -17,14 +17,12 @@
  * under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <thrift/thrift-config.h>
 
-#include "ThreadManager.h"
-#include "Exception.h"
-#include "Monitor.h"
-#include "Util.h"
+#include <thrift/concurrency/ThreadManager.h>
+#include <thrift/concurrency/Exception.h>
+#include <thrift/concurrency/Monitor.h>
+#include <thrift/concurrency/Util.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -310,7 +308,7 @@ class ThreadManager::Worker: public Runnable {
         }
       }
 
-      if (task != NULL) {
+      if (task) {
         if (task->state_ == ThreadManager::Task::EXECUTING) {
           try {
             task->run();
@@ -377,7 +375,7 @@ void ThreadManager::Impl::start() {
   {
     Synchronized s(monitor_);
     if (state_ == ThreadManager::UNINITIALIZED) {
-      if (threadFactory_ == NULL) {
+      if (!threadFactory_) {
         throw InvalidArgumentException();
       }
       state_ = ThreadManager::STARTED;
@@ -448,8 +446,8 @@ void ThreadManager::Impl::removeWorker(size_t value) {
     }
 
     for (std::set<shared_ptr<Thread> >::iterator ix = deadWorkers_.begin(); ix != deadWorkers_.end(); ix++) {
-      workers_.erase(*ix);
       idMap_.erase((*ix)->getId());
+      workers_.erase(*ix);
     }
 
     deadWorkers_.clear();
@@ -518,7 +516,7 @@ boost::shared_ptr<Runnable> ThreadManager::Impl::removeNextPending() {
 
   shared_ptr<ThreadManager::Task> task = tasks_.front();
   tasks_.pop();
-  
+
   return task->getRunnable();
 }
 
@@ -555,8 +553,7 @@ class SimpleThreadManager : public ThreadManager::Impl {
  public:
   SimpleThreadManager(size_t workerCount=4, size_t pendingTaskCountMax=0) :
     workerCount_(workerCount),
-    pendingTaskCountMax_(pendingTaskCountMax),
-    firstTime_(true) {
+    pendingTaskCountMax_(pendingTaskCountMax) {
   }
 
   void start() {
@@ -568,7 +565,6 @@ class SimpleThreadManager : public ThreadManager::Impl {
  private:
   const size_t workerCount_;
   const size_t pendingTaskCountMax_;
-  bool firstTime_;
   Monitor monitor_;
 };
 

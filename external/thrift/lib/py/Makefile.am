@@ -16,9 +16,8 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
+AUTOMAKE_OPTIONS = serial-tests
 DESTDIR ?= /
-EXTRA_DIST = setup.py setup.cfg src compat
 
 all-local:
 	$(PYTHON) setup.py build
@@ -34,3 +33,10 @@ clean-local:
 	$(RM) -r build
 
 check-local: all
+
+EXTRA_DIST = \
+	compat \
+	setup.py \
+	setup.cfg \
+	src \
+	README.md

@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+AUTOMAKE_OPTIONS = serial-tests
 
 THRIFT = $(top_srcdir)/compiler/cpp/thrift
 

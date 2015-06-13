@@ -18,26 +18,26 @@
 #
 
 EXTRA_DIST = \
-  LICENSE \
-  README \
-  Setup.lhs \
-  TODO \
-  Thrift.cabal \
-  src
+	LICENSE \
+	README.md \
+	Setup.lhs \
+	TODO \
+	Thrift.cabal \
+	src
 
 all-local:
-	$(RUNHASKELL) Setup.lhs configure $(CABAL_CONFIGURE_FLAGS)
-	$(RUNHASKELL) Setup.lhs build
+	$(CABAL) update
+	$(CABAL) install
 
 install-exec-hook:
-	$(RUNHASKELL) Setup.lhs install
+	$(CABAL) install
 
 # Make sure this doesn't fail if Haskell is not configured.
 clean-local:
-	$(RUNHASKELL) Setup.lhs clean
+	$(CABAL) clean
 
 maintainer-clean-local:
-	$(RUNHASKELL) Setup.lhs clean
+	$(CABAL) clean
 
 check-local:
 	$(CABAL) check

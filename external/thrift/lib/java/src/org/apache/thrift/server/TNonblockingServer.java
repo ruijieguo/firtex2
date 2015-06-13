@@ -48,7 +48,8 @@ public class TNonblockingServer extends AbstractNonblockingServer {
   }
 
   // Flag for stopping the server
-  private volatile boolean stopped_ = true;
+  // Please see THRIFT-1795 for the usage of this flag
+  private volatile boolean stopped_ = false;
 
   private SelectAcceptThread selectAcceptThread_;
 
@@ -68,7 +69,6 @@ public class TNonblockingServer extends AbstractNonblockingServer {
     // start the selector
     try {
       selectAcceptThread_ = new SelectAcceptThread((TNonblockingServerTransport)serverTransport_);
-      stopped_ = false;
       selectAcceptThread_.start();
       return true;
     } catch (IOException e) {
@@ -150,6 +150,10 @@ public class TNonblockingServer extends AbstractNonblockingServer {
      */
     public void run() {
       try {
+        if (eventHandler_ != null) {
+          eventHandler_.preServe();
+        }
+
         while (!stopped_) {
           select();
           processInterestChanges();
@@ -160,6 +164,11 @@ public class TNonblockingServer extends AbstractNonblockingServer {
       } catch (Throwable t) {
         LOGGER.error("run() exiting due to uncaught error", t);
       } finally {
+        try {
+          selector.close();
+        } catch (IOException e) {
+          LOGGER.error("Got an IOException while closing selector!", e);
+        }
         stopped_ = true;
       }
     }
@@ -208,6 +217,14 @@ public class TNonblockingServer extends AbstractNonblockingServer {
       }
     }
 
+    protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans,
+        final SelectionKey selectionKey,
+        final AbstractSelectThread selectThread) {
+        return processorFactory_.isAsyncProcessor() ?
+                  new AsyncFrameBuffer(trans, selectionKey, selectThread) :
+                  new FrameBuffer(trans, selectionKey, selectThread);
+    }
+
     /**
      * Accept a new connection.
      */
@@ -220,9 +237,9 @@ public class TNonblockingServer extends AbstractNonblockingServer {
         clientKey = client.registerSelector(selector, SelectionKey.OP_READ);
 
         // add this key to the map
-        FrameBuffer frameBuffer = new FrameBuffer(client, clientKey,
-          SelectAcceptThread.this);
-        clientKey.attach(frameBuffer);
+          FrameBuffer frameBuffer = createFrameBuffer(client, clientKey, SelectAcceptThread.this);
+
+          clientKey.attach(frameBuffer);
       } catch (TTransportException tte) {
         // something went wrong accepting.
         LOGGER.warn("Exception trying to accept!", tte);

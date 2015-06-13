@@ -23,79 +23,85 @@ using System.IO;
 namespace Thrift.Transport
 {
   public class TBufferedTransport : TTransport, IDisposable
-	{
-		private BufferedStream inputBuffer;
-		private BufferedStream outputBuffer;
-		private int bufSize;
-		private TStreamTransport transport;
+    {
+        private BufferedStream inputBuffer;
+        private BufferedStream outputBuffer;
+        private int bufSize;
+        private TStreamTransport transport;
 
-		public TBufferedTransport(TStreamTransport transport)
-			:this(transport, 1024)
-		{
+        public TBufferedTransport(TStreamTransport transport)
+            :this(transport, 1024)
+        {
 
-		}
+        }
 
-		public TBufferedTransport(TStreamTransport transport, int bufSize)
-		{
-			this.bufSize = bufSize;
-			this.transport = transport;
-			InitBuffers();
-		}
+        public TBufferedTransport(TStreamTransport transport, int bufSize)
+        {
+            this.bufSize = bufSize;
+            this.transport = transport;
+            InitBuffers();
+        }
 
-		private void InitBuffers()
-		{
-			if (transport.InputStream != null)
-			{
-				inputBuffer = new BufferedStream(transport.InputStream, bufSize);
-			}
-			if (transport.OutputStream != null)
-			{
-				outputBuffer = new BufferedStream(transport.OutputStream, bufSize);
-			}
-		}
+        private void InitBuffers()
+        {
+            if (transport.InputStream != null)
+            {
+                inputBuffer = new BufferedStream(transport.InputStream, bufSize);
+            }
+            if (transport.OutputStream != null)
+            {
+                outputBuffer = new BufferedStream(transport.OutputStream, bufSize);
+            }
+        }
 
-		public TTransport UnderlyingTransport
-		{
-			get { return transport; }
-		}
+        private void CloseBuffers()
+        {
+            if (inputBuffer != null && inputBuffer.CanRead)
+            {
+                inputBuffer.Close();
+            }
+            if (outputBuffer != null && outputBuffer.CanWrite)
+            {
+                outputBuffer.Close();
+            }
+        }
 
-		public override bool IsOpen
-		{
-			get { return transport.IsOpen; }
-		}
+        public TTransport UnderlyingTransport
+        {
+            get { return transport; }
+        }
 
-		public override void Open()
-		{
-			transport.Open();
-			InitBuffers();
-		}
+        public override bool IsOpen
+        {
+            get { return transport.IsOpen; }
+        }
 
-		public override void Close()
-		{
-			if (inputBuffer != null && inputBuffer.CanRead)
-			{
-				inputBuffer.Close();
-			}
-			if (outputBuffer != null && outputBuffer.CanWrite)
-			{
-				outputBuffer.Close();
-			}
-		}
+        public override void Open()
+        {
+            transport.Open();
+            InitBuffers();
+        }
 
-		public override int Read(byte[] buf, int off, int len)
-		{
-			return inputBuffer.Read(buf, off, len);
-		}
+        public override void Close()
+        {
+            CloseBuffers();
+            transport.Close();
+        }
 
-		public override void Write(byte[] buf, int off, int len)
-		{
-			outputBuffer.Write(buf, off, len);
-		}
+        public override int Read(byte[] buf, int off, int len)
+        {
+            return inputBuffer.Read(buf, off, len);
+        }
 
-		public override void Flush()
-		{
-			outputBuffer.Flush();
-		}
+        public override void Write(byte[] buf, int off, int len)
+        {
+            outputBuffer.Write(buf, off, len);
+        }
+
+        public override void Flush()
+        {
+            outputBuffer.Flush();
+        }
 
     #region " IDisposable Support "
     private bool _IsDisposed;

@@ -19,7 +19,9 @@
 
 THRIFTCODE= \
             src/Collections/THashSet.cs \
+            src/Collections/TCollections.cs \
             src/Properties/AssemblyInfo.cs \
+            src/Protocol/TAbstractBase.cs \
             src/Protocol/TBase.cs \
             src/Protocol/TBase64Utils.cs \
             src/Protocol/TJSONProtocol.cs \
@@ -31,6 +33,9 @@ THRIFTCODE= \
             src/Protocol/TProtocolUtil.cs \
             src/Protocol/TMessageType.cs \
             src/Protocol/TProtocol.cs \
+            src/Protocol/TProtocolDecorator.cs \
+            src/Protocol/TMultiplexedProtocol.cs \
+            src/Protocol/TMultiplexedProcessor.cs \
             src/Protocol/TType.cs \
             src/Protocol/TField.cs \
             src/Protocol/TMessage.cs \
@@ -41,6 +46,7 @@ THRIFTCODE= \
             src/Server/TThreadPoolServer.cs \
             src/Server/TSimpleServer.cs \
             src/Server/TServer.cs \
+            src/Server/TServerEventHandler.cs \
             src/Transport/TBufferedTransport.cs \
             src/Transport/TTransport.cs \
             src/Transport/TSocket.cs \
@@ -52,7 +58,13 @@ THRIFTCODE= \
             src/Transport/TTransportFactory.cs \
             src/Transport/THttpClient.cs \
             src/Transport/THttpHandler.cs \
+            src/Transport/TMemoryBuffer.cs \
+            src/Transport/TNamedPipeClientTransport.cs \
+            src/Transport/TNamedPipeServerTransport.cs \
+            src/Transport/TTLSSocket.cs \
+            src/Transport/TTLSServerSocket.cs \
             src/TProcessor.cs \
+            src/TException.cs \
             src/TApplicationException.cs
 
 CSC=gmcs
@@ -69,10 +81,18 @@ Thrift.dll: $(THRIFTCODE)
 clean-local:
 	$(RM) Thrift.dll
 
+# run csharp tests?
+# check:
+# 	cd test/ThriftTest && ./maketest.sh
+# 	cd test/Multiplex && ./maketest.sh
+
 EXTRA_DIST = \
              $(THRIFTCODE) \
              ThriftMSBuildTask \
              src/Thrift.csproj \
              src/Thrift.sln \
              src/Thrift.WP7.csproj \
-             src/Properties/AssemblyInfo.WP7.cs
+             src/Properties/AssemblyInfo.WP7.cs \
+             src/Transport/TSilverlightSocket.cs \
+             test \
+             README.md

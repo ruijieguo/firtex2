@@ -17,38 +17,39 @@
 # under the License.
 #
 
-# TODO(dreiss): Have a Python build with and without the extension.
+%define without_java 1
+%define without_python 1
+%define without_tests 1
+
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-# TODO(dreiss): Where is this supposed to go?
-%{!?thrift_erlang_root: %define thrift_erlang_root /opt/thrift-erl}
 
 Name:           thrift
 License:        Apache License v2.0
 Group:          Development
 Summary:        RPC and serialization framework
-Version:        20080529svn
-Epoch:          1
-Release:        1
-URL:            http://developers.facebook.com/thrift
-Packager:       David Reiss <dreiss@facebook.com>
+Version:        0.9.2
+Release:        0
+URL:            http://thrift.apache.org
+Packager:       Thrift Developers <dev@thrift.apache.org>
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  gcc >= 3.4.6
 BuildRequires:  gcc-c++
 
-# TODO(dreiss): Can these be moved into the individual packages?
-%if %{!?without_java: 1}
+%if 0%{!?without_java:1}
 BuildRequires:  java-devel >= 0:1.5.0
 BuildRequires:  ant >= 0:1.6.5
 %endif
 
-%if %{!?without_python: 1}
+%if 0%{!?without_python:1}
 BuildRequires:  python-devel
 %endif
 
-%if %{!?without_erlang: 1}
-BuildRequires:  erlang
+%if 0%{!?without_ruby:1}
+%define gem_name %{name}
+BuildRequires:  ruby-devel
+BuildRequires:  rubygems-devel
 %endif
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -75,6 +76,7 @@ C++ libraries for Thrift.
 %files lib-cpp
 %defattr(-,root,root)
 %{_libdir}/libthrift*.so.*
+%{_libdir}/libthrift*.so
 
 
 %package lib-cpp-devel
@@ -82,10 +84,10 @@ Summary:   Thrift C++ library development files
 Group:     Libraries
 Requires:  %{name} = %{version}-%{release}
 Requires:  boost-devel
-%if %{!?without_libevent: 1}
+%if 0%{!?without_libevent:1}
 Requires:  libevent-devel >= 1.2
 %endif
-%if %{!?without_zlib: 1}
+%if 0%{!?without_zlib:1}
 Requires:  zlib-devel
 %endif
 
@@ -96,11 +98,10 @@ C++ static libraries and headers for Thrift.
 %defattr(-,root,root)
 %{_includedir}/thrift/
 %{_libdir}/libthrift*.*a
-%{_libdir}/libthrift*.so
 %{_libdir}/pkgconfig/thrift*.pc
 
 
-%if %{!?without_java: 1}
+%if 0%{!?without_java:1}
 %package lib-java
 Summary:   Thrift Java library
 Group:     Libraries
@@ -115,7 +116,7 @@ Java libraries for Thrift.
 %endif
 
 
-%if %{!?without_python: 1}
+%if 0%{!?without_python:1}
 %package lib-python
 Summary: Thrift Python library
 Group:   Libraries
@@ -129,18 +130,32 @@ Python libraries for Thrift.
 %endif
 
 
-%if %{!?without_erlang: 1}
-%package lib-erlang
-Summary:  Thrift Python library
-Group:    Libraries
-Requires: erlang
+%if 0%{!?without_ruby:1}
+%package -n rubygem-%{gem_name}
+Summary: Thrift Ruby library
+Group:   Libraries
+Obsoletes: %{name}-lib-ruby
 
-%description lib-erlang
-Erlang libraries for Thrift.
+%description -n rubygem-%{gem_name}
+Ruby libraries for Thrift.
 
-%files lib-erlang
+%files -n rubygem-%{gem_name}
 %defattr(-,root,root)
-%{thrift_erlang_root}
+%{gem_dir}/*
+%endif
+
+
+%if 0%{!?without_php:1}
+%package lib-php
+Summary: Thrift PHP library
+Group:   Libraries
+
+%description lib-php
+PHP libraries for Thrift.
+
+%files lib-php
+%defattr(-,root,root)
+/usr/lib/php/*
 %endif
 
 
@@ -148,59 +163,78 @@ Erlang libraries for Thrift.
 %setup -q
 
 %build
-# TODO(dreiss): Implement a single --without-build-kludges.
+[[ -e Makefile.in ]] || ./bootstrap.sh
+export GEM_HOME=${PWD}/.gem-home
+export RUBYLIB=${PWD}/lib/rb/lib
 %configure \
   %{?without_libevent: --without-libevent } \
   %{?without_zlib:     --without-zlib     } \
-  --without-java \
+  %{?without_tests:    --without-tests    } \
+  %{?without_java:     --without-java     } \
+  %{?without_python:   --without-python   } \
+  %{?without_ruby:     --without-ruby     } \
+  %{?without_php:      --without-php      } \
+  %{!?without_php:     PHP_PREFIX=${RPM_BUILD_ROOT}/usr/lib/php } \
   --without-csharp \
-  --without-py \
   --without-erlang \
 
-make
+make %{?_smp_mflags}
 
-%if %{!?without_java: 1}
+%if 0%{!?without_java:1}
 cd lib/java
 %ant
 cd ../..
 %endif
 
-%if %{!?without_python: 1}
+%if 0%{!?without_python:1}
 cd lib/py
 CFLAGS="%{optflags}" %{__python} setup.py build
 cd ../..
 %endif
 
-%if %{!?without_erlang: 1}
-cd lib/erl
-make
-cd ../..
+%if 0%{!?without_ruby:1}
+%gem_install -n lib/rb/thrift*.gem
 %endif
 
 %install
+export GEM_HOME=${PWD}/.gem-home
+export RUBYLIB=${PWD}/lib/rb/lib
 %makeinstall
+ln -s libthrift-%{version}.so ${RPM_BUILD_ROOT}%{_libdir}/libthrift.so.0
+ln -s libthriftnb-%{version}.so ${RPM_BUILD_ROOT}%{_libdir}/libthriftnb.so.0
+ln -s libthriftz-%{version}.so ${RPM_BUILD_ROOT}%{_libdir}/libthriftz.so.0
 
-%if %{!?without_java: 1}
+%if 0%{!?without_java:1}
 mkdir -p $RPM_BUILD_ROOT%{_javadir}
-cp -p lib/java/*.jar $RPM_BUILD_ROOT%{_javadir}
+cp -p lib/java/build/*.jar $RPM_BUILD_ROOT%{_javadir}
 %endif
 
-%if %{!?without_python: 1}
+%if 0%{!?without_python:1}
 cd lib/py
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 cd ../..
 %endif
 
-%if %{!?without_erlang: 1}
-mkdir -p ${RPM_BUILD_ROOT}%{thrift_erlang_root}
-cp -r lib/erl/ebin ${RPM_BUILD_ROOT}%{thrift_erlang_root}
+%if 0%{!?without_ruby:1}
+mkdir -p %{buildroot}%{gem_dir}
+cp -a ./%{gem_dir}/* %{buildroot}%{gem_dir}/
 %endif
-
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 
+%post
+umask 007
+/sbin/ldconfig > /dev/null 2>&1
+
+
+%postun
+umask 007
+/sbin/ldconfig > /dev/null 2>&1
+
 %changelog
-* Wed May 28 2008 David Reiss <dreiss@facebook.com> - 20080529svn
-- Initial build, based on the work of Kevin Smith and Ben Maurer.
+* Thu Oct 31 2014 Thrift Dev <dev@thrift.apache.org>
+- Thrift 0.9.2 release.
+* Wed Oct 10 2012 Thrift Dev <dev@thrift.apache.org> 
+- Thrift 0.9.0 release.

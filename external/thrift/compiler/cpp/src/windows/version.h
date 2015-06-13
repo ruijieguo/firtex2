@@ -2,10 +2,10 @@
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding cogoright ownership. The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a cogo of the License at
+ * with the License. You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -28,15 +28,6 @@
 #error "This is a Windows header only"
 #endif
 
-#define PATH_MAX MAX_PATH
-#define THRIFT_VERSION "0.9.0"
-
-#ifndef S_ISDIR
-#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
-#endif
-
-#ifndef S_ISREG
-#define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
-#endif
+#define THRIFT_VERSION "0.9.2"
 
 #endif // _THRIFT_WINDOWS_VERSION_H_

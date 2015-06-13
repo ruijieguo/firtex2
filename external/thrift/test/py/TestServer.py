@@ -19,8 +19,8 @@
 # under the License.
 #
 from __future__ import division
-import sys, glob, time
-sys.path.insert(0, glob.glob('../../lib/py/build/lib.*')[0])
+import sys, glob, time, os
+sys.path.insert(0, glob.glob(os.path.join(os.path.dirname(__file__),'../../lib/py/build/lib.*'))[0])
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -33,31 +33,37 @@ parser.add_option("--zlib", action="store_true", dest="zlib",
     help="use zlib wrapper for compressed transport")
 parser.add_option("--ssl", action="store_true", dest="ssl",
     help="use SSL for encrypted transport")
-parser.add_option('-v', '--verbose', action="store_const", 
+parser.add_option('-v', '--verbose', action="store_const",
     dest="verbose", const=2,
     help="verbose output")
-parser.add_option('-q', '--quiet', action="store_const", 
+parser.add_option('-q', '--quiet', action="store_const",
     dest="verbose", const=0,
     help="minimal output")
-parser.add_option('--proto',  dest="proto", type="string",
-    help="protocol to use, one of: accel, binary, compact")
+parser.add_option('--protocol',  dest="proto", type="string",
+    help="protocol to use, one of: accel, binary, compact, json")
+parser.add_option('--transport',  dest="trans", type="string",
+    help="transport to use, one of: buffered, framed")
 parser.set_defaults(port=9090, verbose=1, proto='binary')
 options, args = parser.parse_args()
 
-sys.path.insert(0, options.genpydir)
+script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+sys.path.insert(0, os.path.join(script_dir, options.genpydir))
 
 from ThriftTest import ThriftTest
 from ThriftTest.ttypes import *
+from thrift.Thrift import TException
 from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.transport import TZlibTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.protocol import TCompactProtocol
+from thrift.protocol import TJSONProtocol
 from thrift.server import TServer, TNonblockingServer, THttpServer
 
 PROT_FACTORIES = {'binary': TBinaryProtocol.TBinaryProtocolFactory,
     'accel': TBinaryProtocol.TBinaryProtocolAcceleratedFactory,
-    'compact': TCompactProtocol.TCompactProtocolFactory}
+    'compact': TCompactProtocol.TCompactProtocolFactory,
+    'json': TJSONProtocol.TJSONProtocolFactory}
 
 class TestHandler:
 
@@ -100,16 +106,24 @@ class TestHandler:
       print 'testStruct({%s, %d, %d, %d})' % (thing.string_thing, thing.byte_thing, thing.i32_thing, thing.i64_thing)
     return thing
 
-  def testException(self, str):
+  def testException(self, arg):
+    #if options.verbose > 1:
+    print 'testException(%s)' % arg
+    if arg == 'Xception':
+      raise Xception(errorCode=1001, message=arg)
+    elif arg == 'TException':
+      raise TException(message='This is a TException')
+
+  def testMultiException(self, arg0, arg1):
     if options.verbose > 1:
-      print 'testException(%s)' % str
-    if str == 'Xception':
-      x = Xception()
-      x.errorCode = 1001
-      x.message = str
-      raise x
-    elif str == "throw_undeclared":
-      raise ValueError("Exception test PASSES.")
+      print 'testMultiException(%s, %s)' % (arg0, arg1)
+    if arg0 == 'Xception':
+      raise Xception(errorCode=1001, message='This is an Xception')
+    elif arg0 == 'Xception2':
+      raise Xception2(
+        errorCode=2002,
+        struct_thing=Xtruct(string_thing='This is an Xception2'))
+    return Xtruct(string_thing=arg1)
 
   def testOneway(self, seconds):
     if options.verbose > 1:
@@ -151,18 +165,24 @@ class TestHandler:
   def testMapMap(self, thing):
     if options.verbose > 1:
       print 'testMapMap(%s)' % thing
-    return thing
+    return {thing: {thing: thing}}
+
+  def testInsanity(self, argument):
+    if options.verbose > 1:
+      print 'testInsanity(%s)' % argument
+    return {123489: {Numberz.ONE:argument}}
 
   def testMulti(self, arg0, arg1, arg2, arg3, arg4, arg5):
     if options.verbose > 1:
       print 'testMulti(%s)' % [arg0, arg1, arg2, arg3, arg4, arg5]
-    x = Xtruct(byte_thing=arg0, i32_thing=arg1, i64_thing=arg2)
-    return x
+    return Xtruct(string_thing='Hello2',
+                  byte_thing=arg0, i32_thing=arg1, i64_thing=arg2)
 
-# set up the protocol factory form the --proto option
+
+# set up the protocol factory form the --protocol option
 pfactory_cls = PROT_FACTORIES.get(options.proto, None)
 if pfactory_cls is None:
-  raise AssertionError('Unknown --proto option: %s' % options.proto)
+  raise AssertionError('Unknown --protocol option: %s' % options.proto)
 pfactory = pfactory_cls()
 
 # get the server type (TSimpleServer, TNonblockingServer, etc...)
@@ -171,7 +191,7 @@ if len(args) > 1:
 server_type = args[0]
 
 # Set up the handler and processor objects
-handler = TestHandler()
+handler   = TestHandler()
 processor = ThriftTest.Processor(handler)
 
 # Handle THttpServer as a special case
@@ -181,14 +201,25 @@ if server_type == 'THttpServer':
   sys.exit(0)
 
 # set up server transport and transport factory
+
+rel_path = "../keys/server.pem"
+abs_key_path = os.path.join(script_dir, rel_path)
+
 host = None
 if options.ssl:
   from thrift.transport import TSSLSocket
-  transport = TSSLSocket.TSSLServerSocket(host, options.port, certfile='test_cert.pem')
+  transport = TSSLSocket.TSSLServerSocket(host, options.port, certfile=abs_key_path)
 else:
   transport = TSocket.TServerSocket(host, options.port)
 tfactory = TTransport.TBufferedTransportFactory()
-
+if options.trans == 'buffered':
+  tfactory = TTransport.TBufferedTransportFactory()
+elif options.trans == 'framed':
+  tfactory = TTransport.TFramedTransportFactory()
+elif options.trans == '':
+  raise AssertionError('Unknown --transport option: %s' % options.trans)
+else:
+  tfactory = TTransport.TBufferedTransportFactory()
 # if --zlib, then wrap server transport, and use a different transport factory
 if options.zlib:
   transport = TZlibTransport.TZlibTransport(transport) # wrap  with zlib

@@ -25,6 +25,7 @@
 #include <thrift/server/TThreadedServer.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TTransportUtils.h>
+#include <thrift/TToString.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -34,6 +35,7 @@
 
 using namespace std;
 using namespace apache::thrift;
+using namespace apache::thrift::concurrency;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::server;
@@ -41,23 +43,21 @@ using namespace apache::thrift::server;
 using namespace tutorial;
 using namespace shared;
 
-using namespace boost;
-
 class CalculatorHandler : public CalculatorIf {
  public:
   CalculatorHandler() {}
 
   void ping() {
-    printf("ping()\n");
+    cout << "ping()" << endl;
   }
 
   int32_t add(const int32_t n1, const int32_t n2) {
-    printf("add(%d,%d)\n", n1, n2);
+    cout << "add(" << n1 << ", " << n2 << ")" << endl;
     return n1 + n2;
   }
 
-  int32_t calculate(const int32_t logid, const Work &work) {
-    printf("calculate(%d,{%d,%d,%d})\n", logid, work.op, work.num1, work.num2);
+  int32_t calculate(const int32_t logid, const Work& work) {
+    cout << "calculate(" << logid << ", " << work << ")" << endl;
     int32_t val;
 
     switch (work.op) {
@@ -88,9 +88,7 @@ class CalculatorHandler : public CalculatorIf {
 
     SharedStruct ss;
     ss.key = logid;
-    char buffer[12];
-    snprintf(buffer, sizeof(buffer), "%d", val);
-    ss.value = buffer;
+    ss.value = to_string(val);
 
     log[logid] = ss;
 
@@ -98,12 +96,12 @@ class CalculatorHandler : public CalculatorIf {
   }
 
   void getStruct(SharedStruct &ret, const int32_t logid) {
-    printf("getStruct(%d)\n", logid);
+    cout << "getStruct(" << logid << ")" << endl;
     ret = log[logid];
   }
 
   void zip() {
-    printf("zip()\n");
+    cout << "zip()" << endl;
   }
 
 protected:
@@ -113,11 +111,11 @@ protected:
 
 int main(int argc, char **argv) {
 
-  shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-  shared_ptr<CalculatorHandler> handler(new CalculatorHandler());
-  shared_ptr<TProcessor> processor(new CalculatorProcessor(handler));
-  shared_ptr<TServerTransport> serverTransport(new TServerSocket(9090));
-  shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+  boost::shared_ptr<CalculatorHandler> handler(new CalculatorHandler());
+  boost::shared_ptr<TProcessor> processor(new CalculatorProcessor(handler));
+  boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(9090));
+  boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
 
   TSimpleServer server(processor,
                        serverTransport,
@@ -128,10 +126,12 @@ int main(int argc, char **argv) {
   /**
    * Or you could do one of these
 
-  shared_ptr<ThreadManager> threadManager =
+  const int workerCount = 4;
+
+  boost::shared_ptr<ThreadManager> threadManager =
     ThreadManager::newSimpleThreadManager(workerCount);
-  shared_ptr<PosixThreadFactory> threadFactory =
-    shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
+  boost::shared_ptr<PosixThreadFactory> threadFactory =
+    boost::shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
   threadManager->threadFactory(threadFactory);
   threadManager->start();
   TThreadPoolServer server(processor,
@@ -147,8 +147,8 @@ int main(int argc, char **argv) {
 
   */
 
-  printf("Starting the server...\n");
+  cout << "Starting the server..." << endl;
   server.serve();
-  printf("done.\n");
+  cout << "Done." << endl;
   return 0;
 }

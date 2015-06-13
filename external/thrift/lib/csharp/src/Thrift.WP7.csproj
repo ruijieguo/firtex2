@@ -31,7 +31,7 @@
     <AssemblyName>Thrift.WP7</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
-    <TargetFrameworkProfile>WindowsPhone</TargetFrameworkProfile>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <SilverlightApplication>false</SilverlightApplication>
     <ValidateXaml>true</ValidateXaml>
@@ -70,8 +70,10 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\TCollections.cs" />
     <Compile Include="Collections\THashSet.cs" />
     <Compile Include="Properties\AssemblyInfo.WP7.cs" />
+    <Compile Include="Protocol\TAbstractBase.cs" />
     <Compile Include="Protocol\TBase.cs" />
     <Compile Include="Protocol\TBase64Utils.cs" />
     <Compile Include="Protocol\TBinaryProtocol.cs" />
@@ -81,26 +83,32 @@
     <Compile Include="Protocol\TMap.cs" />
     <Compile Include="Protocol\TMessage.cs" />
     <Compile Include="Protocol\TMessageType.cs" />
+    <Compile Include="Protocol\TMultiplexedProcessor.cs" />
+    <Compile Include="Protocol\TMultiplexedProtocol.cs" />
     <Compile Include="Protocol\TProtocol.cs" />
+    <Compile Include="Protocol\TProtocolDecorator.cs" />
     <Compile Include="Protocol\TProtocolException.cs" />
     <Compile Include="Protocol\TProtocolFactory.cs" />
     <Compile Include="Protocol\TProtocolUtil.cs" />
     <Compile Include="Protocol\TSet.cs" />
     <Compile Include="Protocol\TStruct.cs" />
     <Compile Include="Protocol\TType.cs" />
+    <Compile Include="TException.cs" />
     <Compile Include="TApplicationException.cs" />
     <Compile Include="TProcessor.cs" />
     <Compile Include="Transport\TFramedTransport.cs" />
     <Compile Include="Transport\THttpClient.cs" />
+    <Compile Include="Transport\TSilverlightSocket.cs" />
     <Compile Include="Transport\TStreamTransport.cs" />
     <Compile Include="Transport\TTransport.cs" />
     <Compile Include="Transport\TTransportException.cs" />
     <Compile Include="Transport\TTransportFactory.cs" />
+    <Compile Include="Transport\TMemoryBuffer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

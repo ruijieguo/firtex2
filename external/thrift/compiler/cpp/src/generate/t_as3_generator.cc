@@ -29,8 +29,15 @@
 
 #include "platform.h"
 #include "t_oop_generator.h"
-using namespace std;
 
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::string;
+using std::stringstream;
+using std::vector;
+
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /**
  * AS3 code generator.
@@ -208,7 +215,7 @@ class t_as3_generator : public t_oop_generator {
   std::ofstream f_service_;
   std::string package_dir_;
   
-  bool bindable_;	
+  bool bindable_; 
 };
 
 
@@ -248,7 +255,7 @@ string t_as3_generator::as3_package() {
   if (!package_name_.empty()) {
     return string("package ") + package_name_ + " ";
   }
-  return "";
+  return "package ";
 }
 
 /**
@@ -325,8 +332,8 @@ string t_as3_generator::as3_thrift_gen_imports(t_service* tservice) {
       }
     }
 
-    as3_thrift_gen_imports((*f_iter)->get_arglist(), imports);	    
-    as3_thrift_gen_imports((*f_iter)->get_xceptions(), imports);	    
+    as3_thrift_gen_imports((*f_iter)->get_arglist(), imports);      
+    as3_thrift_gen_imports((*f_iter)->get_xceptions(), imports);      
 
   }
  
@@ -424,7 +431,7 @@ void t_as3_generator::generate_consts(std::vector<t_const*> consts) {
     return;
   }
 
-  string f_consts_name = package_dir_+"/Constants.as";
+  string f_consts_name = package_dir_+ "/" + program_name_ +  "Constants.as";
   ofstream f_consts;
   f_consts.open(f_consts_name.c_str());
 
@@ -440,7 +447,7 @@ void t_as3_generator::generate_consts(std::vector<t_const*> consts) {
  
   
   indent(f_consts) <<
-    "public class Constants {" << endl <<
+    "public class " << program_name_ << "Constants {" << endl <<
     endl;
   indent_up();
   vector<t_const*>::iterator c_iter;
@@ -1435,7 +1442,17 @@ void t_as3_generator::generate_service(t_service* tservice) {
   f_service_ << endl <<
     as3_type_imports() <<
     as3_thrift_imports() <<
-    as3_thrift_gen_imports(tservice) << endl;
+    as3_thrift_gen_imports(tservice);
+
+  if(tservice->get_extends() != NULL) {
+    t_type* parent = tservice->get_extends();
+    string parent_namespace = parent->get_program()->get_namespace("as3");
+    if(!parent_namespace.empty() && parent_namespace != package_name_) {
+      f_service_ << "import " << type_name(parent) << ";" << endl;
+    }
+  }
+
+  f_service_ << endl;
 
   generate_service_interface(tservice);
 
@@ -1454,15 +1471,28 @@ void t_as3_generator::generate_service(t_service* tservice) {
   f_service_ << endl <<
   as3_type_imports() <<
   as3_thrift_imports() <<
-  as3_thrift_gen_imports(tservice) << endl;
-  
+  as3_thrift_gen_imports(tservice);
+
+
+  if(tservice->get_extends() != NULL) {
+    t_type* parent = tservice->get_extends();
+    string parent_namespace = parent->get_program()->get_namespace("as3");
+    if(!parent_namespace.empty() && parent_namespace != package_name_) {
+      f_service_ << "import " << type_name(parent) << "Impl;" << endl;
+    }
+  }
+
+  f_service_ << endl;
+
   generate_service_client(tservice);
   scope_down(f_service_);
   
   f_service_ << as3_type_imports();
   f_service_ << as3_thrift_imports();
   f_service_ << as3_thrift_gen_imports(tservice);
-  f_service_ << "import " << package_name_ << ".*;" << endl;
+  if(!package_name_.empty()) {
+    f_service_ << "import " << package_name_ << ".*;" << endl;
+  }
   
   generate_service_helpers(tservice);
   
@@ -1488,7 +1518,9 @@ void t_as3_generator::generate_service(t_service* tservice) {
   f_service_ << as3_type_imports();
   f_service_ << as3_thrift_imports();
   f_service_ << as3_thrift_gen_imports(tservice) <<endl;
-  f_service_ << "import " << package_name_ << ".*;" << endl;
+  if(!package_name_.empty()) {
+    f_service_ << "import " << package_name_ << ".*;" << endl;
+  }
   
   generate_service_helpers(tservice);
   
@@ -1502,11 +1534,9 @@ void t_as3_generator::generate_service(t_service* tservice) {
  * @param tservice The service to generate a header definition for
  */
 void t_as3_generator::generate_service_interface(t_service* tservice) {
-  string extends = "";
   string extends_iface = "";
   if (tservice->get_extends() != NULL) {
-    extends = type_name(tservice->get_extends());
-    extends_iface = " extends " + extends;
+    extends_iface = " extends " + tservice->get_extends()->get_name();
   }
 
   generate_as3_doc(f_service_, tservice);
@@ -1560,7 +1590,7 @@ void t_as3_generator::generate_service_client(t_service* tservice) {
   string extends = "";
   string extends_client = "";
   if (tservice->get_extends() != NULL) {
-    extends = type_name(tservice->get_extends());
+    extends = tservice->get_extends()->get_name();
     extends_client = " extends " + extends + "Impl";
   }
 
@@ -1647,7 +1677,9 @@ void t_as3_generator::generate_service_client(t_service* tservice) {
 
     // Serialize the request
     f_service_ <<
-      indent() << "oprot_.writeMessageBegin(new TMessage(\"" << funname << "\", TMessageType.CALL, seqid_));" << endl <<
+      indent() << "oprot_.writeMessageBegin(new TMessage(\"" << funname << "\", " <<
+      ((*f_iter)->is_oneway() ? "TMessageType.ONEWAY" : "TMessageType.CALL") <<
+      ", seqid_));" << endl <<
       indent() << "var args:" << argsname << " = new " << argsname << "();" << endl;
 
     for (fld_iter = fields.begin(); fld_iter != fields.end(); ++fld_iter) {
@@ -2469,7 +2501,7 @@ string t_as3_generator::base_type_name(t_base_type* type,
   case t_base_type::TYPE_DOUBLE:
     return "Number";
   default:
-    throw "compiler error: no C++ name for base type " + t_base_type::t_base_name(tbase);
+    throw "compiler error: no As3 name for base type " + t_base_type::t_base_name(tbase);
   }
 }
 

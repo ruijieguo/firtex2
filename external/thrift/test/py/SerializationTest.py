@@ -32,7 +32,7 @@ from ThriftTest.ttypes import *
 from DebugProtoTest.ttypes import CompactProtoTestStruct, Empty
 from thrift.transport import TTransport
 from thrift.transport import TSocket
-from thrift.protocol import TBinaryProtocol, TCompactProtocol
+from thrift.protocol import TBinaryProtocol, TCompactProtocol, TJSONProtocol
 from thrift.TSerialization import serialize, deserialize
 import unittest
 import time
@@ -267,6 +267,16 @@ class AbstractTest(unittest.TestCase):
     rep = repr(self.compact_struct)
     self.assertTrue(len(rep) > 0)
 
+  def testIntegerLimits(self):
+    bad_values = [CompactProtoTestStruct(a_byte=128), CompactProtoTestStruct(a_byte=-129),
+                  CompactProtoTestStruct(a_i16=32768), CompactProtoTestStruct(a_i16=-32769),
+                  CompactProtoTestStruct(a_i32=2147483648), CompactProtoTestStruct(a_i32=-2147483649),
+                  CompactProtoTestStruct(a_i64=9223372036854775808), CompactProtoTestStruct(a_i64=-9223372036854775809)
+                ]
+
+    for value in bad_values:
+      self.assertRaises(Exception, self._serialize, value)
+
 class NormalBinaryTest(AbstractTest):
   protocol_factory = TBinaryProtocol.TBinaryProtocolFactory()
 
@@ -275,6 +285,9 @@ class AcceleratedBinaryTest(AbstractTest):
 
 class CompactProtocolTest(AbstractTest):
   protocol_factory = TCompactProtocol.TCompactProtocolFactory()
+
+class JSONProtocolTest(AbstractTest):
+  protocol_factory = TJSONProtocol.TJSONProtocolFactory()
 
 class AcceleratedFramedTest(unittest.TestCase):
   def testSplit(self):
@@ -349,6 +362,7 @@ def suite():
   suite.addTest(loader.loadTestsFromTestCase(NormalBinaryTest))
   suite.addTest(loader.loadTestsFromTestCase(AcceleratedBinaryTest))
   suite.addTest(loader.loadTestsFromTestCase(CompactProtocolTest))
+  suite.addTest(loader.loadTestsFromTestCase(JSONProtocolTest))
   suite.addTest(loader.loadTestsFromTestCase(AcceleratedFramedTest))
   suite.addTest(loader.loadTestsFromTestCase(SerializersTest))
   return suite

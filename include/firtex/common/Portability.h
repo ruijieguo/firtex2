@@ -3,7 +3,7 @@
 
 #include "firtex/common/Platform.h"
 #if !defined(FX_WINDOWS)
-#include "config.h"
+//#include "config.h"
 #endif
 #include <stdarg.h>
 

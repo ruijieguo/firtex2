@@ -30,8 +30,15 @@
 #include "platform.h"
 #include "version.h"
 
-using namespace std;
+using std::ios;
+using std::map;
+using std::ofstream;
+using std::ostringstream;
+using std::string;
+using std::stringstream;
+using std::vector;
 
+static const string endl = "\n";  // avoid ostream << std::endl flushes
 
 /**
  * OCaml code generator.
@@ -1098,7 +1105,9 @@ void t_ocaml_generator::generate_service_client(t_service* tservice) {
 
     // Serialize the request header
     f_service_ <<
-      indent() << "oprot#writeMessageBegin (\"" << (*f_iter)->get_name() << "\", Protocol.CALL, seqid);" << endl;
+      indent() << "oprot#writeMessageBegin (\"" << (*f_iter)->get_name() << "\", "
+               << ((*f_iter)->is_oneway() ? "Protocol.ONEWAY" : "Protocol.CALL")
+               << ", seqid);" << endl;
 
     f_service_ <<
       indent() << "let args = new " << argsname << " in" << endl;
@@ -1455,7 +1464,7 @@ void t_ocaml_generator::generate_deserialize_type(ofstream &out,
       out << "readDouble";
       break;
     default:
-      throw "compiler error: no PHP name for base type " + t_base_type::t_base_name(tbase);
+      throw "compiler error: no ocaml name for base type " + t_base_type::t_base_name(tbase);
     }
   } else if (type->is_enum()) {
     string ename = capitalize(type->get_name());
