@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<configure>
+  <!-- Global parameters -->
+  <global>
+    <general>
+      <!-- Dictionary directory -->
+      <dictionary_path>../../sysdata</dictionary_path>
+    </general>
+
+    <!-- Merge strategy parameters -->
+    <merge>
+      <!-- Merge strategy name, allowable values: nomerge/optimize -->
+      <!-- nomerge: best performance for building index -->
+      <!-- optimize: best performance for searching -->
+      <strategy>nomerge</strategy>
+    </merge>
+
+    <build>
+      <!-- Memory size(MB) for index building -->
+      <memory>32</memory>
+      <!-- Define index building thread count -->
+      <build_thread_count>1</build_thread_count>
+    </build>
+
+  </global>
+
+  <collection>
+    <!-- Collection name, allow empty -->
+    <name></name>
+    <!-- Collection identifier, allowable values: collection.directory/trec/trec.gz/filelist -->
+    <identifier>collection.directory</identifier>
+
+    <!-- source file path  -->
+    <source>./pdf</source>
+    <target>./pdf_index</target>
+    <!-- Index build mode, allowable values: batch/append -->
+    <!-- batch: build index from scratch  -->
+    <!-- append: build index increamentally -->
+    <build_mode>batch</build_mode>
+
+    <!-- Document type, allowable values: txt/html/pdf/doc/ppt/xsl -->
+    <doc_types>pdf</doc_types>
+    <!-- Filter .svn directory, and only process .txt files -->
+    <parameter>filter=.svn;file_extension=pdf</parameter>
+    <!-- Define document processing therad count -->
+    <process_thread_count>1</process_thread_count>
+  </collection>
+  <index_schema>
+    <fields>
+      <field>
+	<name>FILEPATH</name>
+	<store>true</store>
+      </field>
+      <field>
+	<name>BODY</name>
+	<type>TEXT</type>
+	<store>true</store>
+      </field>
+    </fields>
+  </index_schema>
+</configure>

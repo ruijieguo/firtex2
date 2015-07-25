@@ -1,0 +1,306 @@
+<html>
+<head>
+<title>FirteX 检索语法</title>
+<link type="text/css" href="style.css" rel="stylesheet">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+<!--
+body {
+	background-color: #FFFFFF;
+}
+.content{
+	text-align: left;
+	text-indent: 8px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:4px;
+	padding-bottom:4px;
+	border-top-width:0px;
+}
+-->
+</style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="780" border="0" cellpadding="0" cellspacing="0" align="center">
+<tr><td><a href="http://www.firtex.org"><img src="image/logo.gif" border=0/></a></td></tr>
+<tr><td><img src="image/logo_pad.gif" border=0/></td></tr>
+</table>
+<table width="780" border="0" cellpadding="0" cellspacing="0" align="center">
+<tr><td background="image/table_border.jpg">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+<tr><td width="18" valign="top"><img src="image/table_left_top.gif" border="0" /></td>
+<td width="100%" valign="top">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td width="193" rowspan="3" valign="top">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	  <tr>
+        <td><img src="image/nav_about.gif" border="0"></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_1.gif" valign="bottom" align="center"><a href="news.htm">最新消息</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_2.gif" valign="bottom" align="center"><a href="introduce.htm">简介</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_3.gif" valign="bottom" align="center"><a href="features.htm">特性</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_4.gif" valign="bottom" align="center"><a href="aboutus.htm">关于我们</a></td>
+      </tr>
+	  <tr>
+        <td height="23" background="image/nav_about_5.gif" valign="bottom" align="center"><a href="mailing_lists.htm">邮件列表</a></td>
+      </tr>
+      <tr>
+        <td height="22" background="image/nav_about_6.gif" valign="bottom" align="center"><a href="awards.htm">所获奖项</a><font color=#ff0000><sup>new</sup></font></td>
+      </tr>   
+      <tr>
+        <td><img src="image/nav_about_bottom.gif" border=0/></td>
+      </tr>
+	  <tr>
+        <td height="31">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td><img src="image/nav_res.gif" border="0"></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_1.gif" valign="bottom" align="center"><a href="begin.htm">开始使用</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_2.gif" valign="bottom" align="center"><a href="faq.htm">FAQ</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_3.gif" valign="bottom" align="center"><a href="querysyntax.htm">检索语法</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_4.gif" valign="bottom" align="center"><a href="index_format.htm">索引文件格式</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_5.gif" valign="bottom" align="center"><a href="api_doc/index.html" target="_blank">文档</a></td>
+      </tr>      
+	  <tr>
+        <td height="22" background="image/nav_about_6.gif" valign="bottom" align="center"><a href="../firtex_forum/" target="_blank">论坛</a></td>
+      </tr>
+       <tr>
+        <td><img src="image/nav_about_bottom.gif" border=0/></td>
+      </tr>
+	  <tr>
+	    <td height="31">&nbsp;</td>
+	    </tr>
+	  <tr>
+        <td><img src="image/nav_download.gif" border="0"></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_1.gif" valign="bottom" align="center"><a href="download_release.htm">程序&amp;源代码</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_2.gif" valign="bottom" align="center"><a href="download_plugin.htm">插件</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_3.gif" valign="bottom" align="center"><a href="download_related.htm">相关资料</a></td>
+      </tr>
+	  <tr>
+        <td height="22" background="image/nav_about_6.gif" valign="bottom" align="center"><a href="publication.htm">学术论文</a><font color=#ff0000><sup>new</sup></font></td>
+      </tr>
+	   <tr>
+        <td><img src="image/nav_about_bottom.gif" border=0/></td>
+      </tr>
+	  <tr>
+        <td height="31">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td><img src="image/nav_link.gif" border="0"></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_1.gif" valign="bottom" align="center"><a href="http://www.ict.ac.cn/" target="_blank">中科院计算所</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_2.gif" valign="bottom" align="center"><a href="http://www.searchforum.org.cn/seminar/index.html" target="_blank">学术讲座</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_3.gif" valign="bottom" align="center"><a href="http://www.searchforum.org.cn/" target="_blank">搜索论坛</a></td>
+      </tr>
+      <tr>
+        <td height="23" background="image/nav_about_3.gif" valign="bottom" align="center"><a href="http://www.i3s.com.cn" target="_blank">中科计算技术转移中心</a></td>
+      </tr>
+	  <tr>
+        <td height="22" background="image/nav_about_6.gif" valign="bottom" align="center"><a href="http://www.cnpack.org" target="_blank">CnPack开发网站</a></td>
+      </tr>
+	   <tr>
+        <td><img src="image/nav_about_bottom.gif" border=0/></td>
+      </tr>
+</table>
+</td>
+<td width="18" height="15" rowspan="3" valign="top">&nbsp;</td>
+<td width="536" height="86" valign="top" background="image/page_top.gif"><table height="49" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="16" height="25">&nbsp;</td>
+    <td height="25">您现在的位置：<a href="index.htm">首页 </a>&gt; <a href="querysyntax.htm">检索语法</a> &gt; 正文</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><p class="title">检索语法</p></td>
+  </tr>
+  <tr>
+    <td>
+      <p>&nbsp;</p></td>
+    <td width="421"><p>最后修改：2006-10-05</p></td>
+  </tr>
+</table></td>
+</tr>
+<tr>
+  <td width="536" height="800" valign="top" background="image/page_mid.gif"><table width="508" height="155" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="16">&nbsp;</td>
+      <td width="492"><table width="492" border="1" cellpadding="0" cellspacing="0" bordercolor="#E4ECF9">
+          <tr>
+            <td width="491" height="23" bordercolor="D2CCCC" background="image/contentbar.gif"> <strong><img src="image/nav_m.gif" width="8" height="8"> 词语和短语检索</strong></td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p>词语是指词典中收录的词，在解析的时候被当作一个独立的词语。短语由1个或多个词语组成。查询表达式是查询词或带引号的查询词，例如，词语查询： </p>
+              <blockquote>
+                <p><em>中国 </em> 或 <em>"中国" </em></p>
+              </blockquote>              <p> 短语查询： </p>
+              <blockquote>
+                <p><em>中国科学院计算技术研究所 </em> 或 <em>"中国科学院计算技术研究所" </em></p>
+              </blockquote>              <p> 对于短语检索，解析器会自动将短语切成多个词语，在检索时自动进行位置匹配，返回与查询精确匹配的结果。 </p></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="23" bordercolor="D2CCCC" background="image/contentbar.gif"><img src="image/nav_m.gif" width="8" height="8"><strong> 多字段检索</strong> </td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p>索引包含多个字段时，可以指定在某个特定的字段中进行检索，如果没有指定字段名，则使用默认的字段；也可以跨多个字段检索。例如，需要在TITLE字段中查找信息检索： </p>
+              <blockquote>
+                <p><em>TITLE:信息检索 </em> 或者 <em>TITLE:"信息检索" </em></p>
+              </blockquote>              <p> 查找在标题中包含中国科学院，在正文中包含信息检索： </p>
+              <blockquote>
+                <p><em>TITLE:中国科学院 AND CONTENTS:信息检索 </em></p>
+              </blockquote>              <p><em></em>如果CONTENTS设置的是默认字段，也可以表示如下： </p>
+              <blockquote>
+                <p><em> TITLE:中国科学院 AND 信息检索 </em></p>
+              </blockquote></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="23" bordercolor="D2CCCC" background="image/contentbar.gif"><img src="image/nav_m.gif" width="8" height="8"> <strong>布尔检索</strong></td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p><strong>OR 操作符： </strong></p>
+              <p><strong></strong>OR操作符是默认的查询连接符，如果两个词语或短语中间用空格隔开，则默认用OR连接这两个查询，例如： </p>
+              <blockquote>
+                <p><em>中国 北京 </em> 等同于 <em>中国 OR 北京 </em></p>
+              </blockquote>              <p> 查询在同一文档中出现 中科院 或者 中国科学院，表达式如下： </p>
+              <blockquote>
+                <p><em>中科院 OR 中国科学院 </em></p>
+              </blockquote>              <p> 不允许单独使用OR操作符，例如： </p>
+              <blockquote>
+                <p><em>OR 中科院 </em></p>
+              </blockquote>              <p> 将返回0个结果。 </p>
+              <p><strong>AND 操作符： </strong></p>
+              <p> AND操作符查询在同一个文档中同时出现查询词的文档，例如，查询在同一文档中同时出现 北京 和 奥运： </p>
+              <blockquote>
+                <p><em>北京 AND 奥运 </em></p>
+              </blockquote>              <p><strong>NOT 操作符： </strong></p>
+              <p> NOT操作符查询不出现查询词的文档，例如查询在同一文档中出现搜索引擎但不出现信息检索： </p>
+              <blockquote>
+                <p><em>搜索引擎 NOT 信息检索 </em></p>
+              </blockquote>              <p><strong>+ 操作符： </strong></p>
+              <p> +操作符查询必须出现查询词的文档，例如查询必须包含北京可以包含中国： </p>
+              <blockquote>
+                <p><em>+北京 中国 </em></p>
+              </blockquote>              <p><strong>- 操作符： </strong></p>
+              <p> -操作符查询不能出现查询词的文档，例如查询包含北京不能包含中国的文档： </p>
+              <blockquote>
+                <p><em>北京 -中国 </em></p>
+              </blockquote></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="23" bordercolor="D2CCCC" background="image/contentbar.gif"><img src="image/nav_m.gif" width="8" height="8"> <strong>范围查询 </strong> </td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p><strong>日期范围查询： </strong></p>
+              <p> 如果在建立索引时包含了时间日期字段或者指定了对文件的修改时间进行存储或建立索引，则可以使用时间日期范围检索，例如： </p>
+              <blockquote>
+                <p><em>modified:[2004-4-10 TO 2005-3-6] </em></p>
+              </blockquote>              <p> 将返回2004年4月10日至2005年3月6日的文档，包含边界值，如果要排除边界值则使用： </p>
+              <blockquote>
+                <p><em>modified:{2004-4-10 TO 2005-3-6} </em></p>
+              </blockquote>              <p><strong>数字范围查询： </strong></p>
+              <p> 对于数字类型的字段，同样可以指定范围查询，例如： </p>
+              <blockquote>
+                <p><em>vistit_count:[123 TO 456] </em></p>
+              </blockquote>              <p> 将检索visit_count字段值从123至456的文档，包含123和456。如果要排除123和456，则使用： </p>
+              <blockquote>
+                <p><em>vistit_count:{123 TO 456} </em></p>
+              </blockquote></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="23" bordercolor="D2CCCC" background="image/contentbar.gif"><img src="image/nav_m.gif" width="8" height="8"> <strong>查询分组 </strong> </td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p>FirteX支持对查询进行分组，这样可以避免查询歧义，实现"二取一"的查询，例如查询出现"中国" 并且出现"北京"或者"上海"可以使用下面的查询表达式： </p>
+              <blockquote>
+                <p><em>中国 AND (上海 OR 北京) </em></p>
+              </blockquote>              <p> 上述查询和查询： </p>
+              <blockquote>
+                <p><em>中国 AND 上海 OR 北京 </em></p>
+              </blockquote>              <p> 是不一样的，后一查询表达式查询出现中国和上海，或者同时出现北京的文档 </p></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="23" bordercolor="D2CCCC" background="image/contentbar.gif"><img src="image/nav_m.gif" width="8" height="8"> <strong>字段分组 </strong> </td>
+          </tr>
+          <tr>
+            <td bordercolor="D2CCCC" class="content"><p>FirteX支持对查询的字段进行分组，例如查询： </p>
+              <blockquote>
+                <p><em>TITLE:(中国 AND 北京) </em>等同于 <em> TITLE:中国 AND TITLE:北京 </em></p>
+              </blockquote></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+        </table></td>
+    </tr>
+  </table></td>
+</tr>
+<tr>
+  <td valign="top"><img src="image/page_bottom.gif" width="536" height="18"></td>
+</tr>
+</table>
+</td>
+<td width="18" valign="top"><img src="image/table_border_right.jpg" border="0" /></td></tr>
+</table>
+</td></tr>
+</table>
+<table width="780" border="0" cellpadding="0" cellspacing="0" align="center">
+<tr>
+  <td width="780" height="39" background="image/bottom_border.gif">
+    <table width="220" height="25" border="0" align="right" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><div align="center"></div>        <a href="license.html">软件许可证</a>|<a href="mailto:ruijieguo@software.ict.ac.cn">BUG报告</a>|<a href="mailto:ruijieguo@software.ict.ac.cn">联系我们</a> </td>
+      </tr>
+</table></td></tr>
+<tr>
+  <td align="center"><p>Copyright (c) 2005-2006 版权所有 中科院计算所智能软件部 </p>
+    <p><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=53489&type=1" alt="SourceForge.net Logo" width="88" height="31" border="0"></a><br>
+      查看在SourceForge.net上的<a href="http://www.sourceforge.net/projects/firtex"><u>FirteX's Project Page</u></a><br>
+      <br>
+    </p>    </td>
+</tr>
+</table>
+</body>
+</html>

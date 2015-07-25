@@ -34,9 +34,6 @@ public:
     virtual void handleRequest(FX_NS(network)::EvHttpRequestContext* pCtx);
 
 private:
-    void handleQuery(const FX_NS(search)::Statement& state,
-                     FX_NS(network)::EvHttpRequestContext* pCtx) const;
-
     void sendResponse(const std::string& sMsg,
                       FX_NS(network)::EvHttpRequestContext* pCtx) const;
 
@@ -44,8 +41,8 @@ private:
                           FX_NS(network)::EvHttpRequestContext* pCtx) const;
 
 private:
-    inline void doSearch(const std::string& sUri,
-                         FX_NS(network)::EvHttpRequestContext* pCtx) const;
+    void doSearch(const std::string& sUri,
+                  FX_NS(network)::EvHttpRequestContext* pCtx) const;
 
 
 private:
@@ -58,20 +55,6 @@ private:
 
 //////////////////////////////////////////
 //
-inline void HTTPSearchService::doSearch(const std::string& sUri,
-                                    FX_NS(network)::EvHttpRequestContext* pCtx) const
-{
-    FX_NS(search)::Statement state;
-    bool bValid = state.fromString(sUri);
-    if (!bValid)
-    {
-        sendErrorMessage(state.getErrorMessage(), pCtx);
-    }    
-    else
-    {
-        handleQuery(state, pCtx);
-    }
-}
 
 inline void HTTPSearchService::sendResponse(const std::string& sMsg,
         FX_NS(network)::EvHttpRequestContext* pCtx) const

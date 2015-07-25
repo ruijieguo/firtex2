@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configure>
+  <!-- Configuration for sysytem -->
+  <global>
+    <!-- Storage configuration -->
+    <storage>
+      <!-- Define file system type, allowable values: filesystem.mmap/filesystem.block -->
+      <filesystem>filesystem.mmap</filesystem>
+    </storage>
+
+    <!-- Merge strategy parameters -->
+    <merge>
+      <!-- Merge strategy name, allowable values: nomerge/optimize -->
+      <!-- nomerge: best performance for building index -->
+      <!-- optimize: best performance for searching -->
+      <!-- dbt: a good trade-off between indexing and seaching performance -->
+      <strategy>optimize</strategy>
+      <!--Set allowed open files for merging-->
+      <max_allowed_open_files>800</max_allowed_open_files>
+    </merge>
+    
+    <build>
+      <!-- Memory size(MB) for index building -->
+      <memory>32</memory>
+      <!-- Define index building thread count -->
+      <build_thread_count>1</build_thread_count>
+      <!-- Define index cleaner for cleaning staled index data -->
+      <index_cleaner>
+	<strategy>keep_by_commit</strategy>
+	<parameter>keep_count=2</parameter>
+      </index_cleaner>
+    </build>
+
+    <search>
+      <refresh_timer>0</refresh_timer>
+    </search>
+  </global>
+
+  <master>
+    <!-- zookeeper root path -->
+    <zk_root>zfs://127.0.0.1:2181</zk_root>
+    <!-- mesos master address -->
+    <mesos_master>127.0.0.1:8080</mesos_master>
+    <!-- bind address. default is 0.0.0.0 -->
+    <host>localhost</host>
+    <!-- listen port -->
+    <port>19801</port>
+  </master>
+
+  <clusters>
+    <cluster>
+      <!-- cluster name -->
+      <name>example</name>
+      <!-- remote directory where to index data-->
+      <remote_data_root>hdfs://10.250.8.137:9000/home/data</remote_data_root>
+      <number_of_shards>1</number_of_shards>
+      <number_of_replicas>0</number_of_replicas>
+
+      <number_of_proxy>1</number_of_proxy>
+      <number_of_blender>0</number_of_blender>
+    </cluster>
+  </clusters>
+
+  <path>
+    <!-- Path to working directory -->
+    <work_dir>../examples</work_dir>
+    <!-- Path to directory containing configuration (this file, logging.xml, schema.xml etc.), default is work_dir/conf -->
+    <conf_dir>../conf</conf_dir>
+    <!-- Path to directory where to store index data allocated for this node. default is work_dir/data -->
+    <data_dir>../data</data_dir>
+    <!-- Path to directory where to store dictionaries. default is work_dir/dict -->
+    <dict_dir>../dict</dict_dir>
+    <!-- Path to directory where to store plugins. default is work_dir/plugins -->
+    <plugin_dir>../plugins</plugin_dir>
+  </path>
+
+  <blender>
+    <port>19802</port>
+    <!-- Size of thread pool for processing request -->
+    <thread_pool>10</thread_pool>
+  </blender>
+
+  <proxy>
+    <port>19803</port>
+    <!-- Size of thread pool for processing request -->
+    <thread_pool>10</thread_pool>
+    <load_ballance>round_robin</load_ballance>
+  </proxy>
+
+  <searcher>
+    <port>19803</port>
+    <!-- Size of thread pool for processing request -->
+    <thread_pool>10</thread_pool>
+  </searcher>
+
+</configure>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+	<index_version>firtex2-0.3.0</index_version>
+	<encoding>utf-8</encoding>
+	<barrel_count>1</barrel_count>
+	<barrels>
+		<barrel>
+			<suffix>b0</suffix>
+			<base_docid>0</base_docid>
+			<doc_count>5</doc_count>
+			<deletion_count>0</deletion_count>
+			<index_meta>
+				<field_meta>
+					<field>FILEPATH</field>
+					<total_term_count>5</total_term_count>
+					<distinct_term_count>5</distinct_term_count>
+				</field_meta>
+				<field_meta>
+					<field>FILENAME</field>
+					<total_term_count>5</total_term_count>
+					<distinct_term_count>5</distinct_term_count>
+				</field_meta>
+				<field_meta>
+					<field>FILETYPE</field>
+					<total_term_count>5</total_term_count>
+					<distinct_term_count>1</distinct_term_count>
+				</field_meta>
+				<field_meta>
+					<field>BODY</field>
+					<total_term_count>36170</total_term_count>
+					<distinct_term_count>7380</distinct_term_count>
+				</field_meta>
+			</index_meta>
+		</barrel>
+	</barrels>
+</database>
+
