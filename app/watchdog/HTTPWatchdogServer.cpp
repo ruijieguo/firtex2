@@ -19,11 +19,6 @@ HTTPWatchdogServer::~HTTPWatchdogServer()
 {
 }
 
-ServerConfBase* HTTPWatchdogServer::createConf()
-{
-    return NULL;
-}
-
 bool HTTPWatchdogServer::init(const std::string& sConfFile)
 {
     try
@@ -58,7 +53,16 @@ void HTTPWatchdogServer::run()
                                  m_nListenPort,
                                  m_pServiceFactory,
                                  DEFAULT_THREAD_POOL_SIZE);
-    m_pServer->start(false);
+    try 
+    {
+        m_pServer->start(false);
+    }
+    catch (const FirteXException& e)
+    {
+        stop();
+        join();
+        FIRTEX_RETHROW(e);
+    }
 }
 
 void HTTPWatchdogServer::stop()

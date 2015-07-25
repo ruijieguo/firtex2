@@ -1,3 +1,5 @@
+include $(top_srcdir)/external/versions.am
+
 AM_CPPFLAGS = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/extension/include\
 	-I $(top_srcdir)/test/cppunit/include\
@@ -37,27 +39,25 @@ EXTRA_DIST = \
 	TextFileTestCase.h\
 	LooseBoundedPoolTestCase.h
 
-
 utility_test_LDADD= $(top_builddir)/extension/src/.libs/libfirtexext.la\
 	$(top_builddir)/src/.libs/libfirtex.la\
 	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
-	@FX_LIBEVENT_HOME@/libevent.la\
-	@FX_LIBEVENT_HOME@/libevent_pthreads.la\
+	$(top_builddir)/contrib/snowball/src/libfirtex_snowball.la\
+	$(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la\
 	 -lpthread -ldl
 
-if HAVE_SNOWBALL
-utility_test_LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+if WITH_BUNDLED_LIBEVENT
+utility_test_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+utility_test_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+else
+utility_test_LDADD += -llibevent
+utility_test_LDADD += -llibevent_pthreads
+endif
 
-if HAVE_HIGHLIGHTER
-utility_test_LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
 
-utility_test_LDFLAGS = $(LIBADD_DL)
-
-if HAVE_TCMALLOC
-utility_test_LDADD += @FX_TCMALLOC_HOME@/libtcmalloc.la
+if WITH_TCMALLOC
+utility_test_LDADD += -llibtcmalloc
 endif
 
 TESTS_ENVIRONMENT=LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64 \

@@ -56,7 +56,7 @@ AppRunner::Status WatchdogAppRunner::run()
     }
     catch(const FirteXException& e)
     {
-        FX_LOG(ERROR, "Run proxy server FAILED: [%s]", e.what().c_str());
+        FX_LOG(ERROR, "Run watchdog server FAILED: [%s]", e.what().c_str());
         return S_EXIT;
     }
     return S_EXIT;

@@ -1,6 +1,8 @@
-AM_CPPFLAGS = -I $(top_srcdir)/include -I@FX_BOOST_HOME@ -I@FX_THRIFT_HOME@/lib/cpp/src -I $(top_srcdir)/external -Ithrift/gen-cpp -I@FX_LIBEVENT_HOME@ -I@FX_LIBEVENT_HOME@/include -Wunused-local-typedefs
+include $(top_srcdir)/external/versions.am
 
-THRIFT_BIN = @FX_THRIFT_HOME@/compiler/cpp/thrift
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/external -Ithrift/gen-cpp
+
+AUTOMAKE_OPTIONS = subdir-objects
 
 EXTRA_DIST = \
 	ThriftSearchServiceHelper.h\
@@ -19,6 +21,21 @@ libthriftgen_la_SOURCES = \
 	gen-cpp/WatchdogService_types.cpp\
 	gen-cpp/WatchdogService_constants.cpp
 
+THRIFT_BIN = 
+external_srcdir = $(top_srcdir)/external
+
+if WITH_BUNDLED_BOOST
+AM_CPPFLAGS += -I$(external_srcdir)/$(BOOST)
+endif
+
+if WITH_BUNDLED_THRIFT
+AM_CPPFLAGS += -I$(external_srcdir)/$(THRIFT)/lib/cpp/src
+THRIFT_BIN += $(external_srcdir)/$(THRIFT)/compiler/cpp/thrift
+else
+THRIFT_BIN += /usr/bin/thrift
+endif
+
+
 gen-cpp/ThriftSearchService.cpp gen-cpp/ThriftSearchService.h: $(top_srcdir)/app/thrift/SearchService.thrift
 	$(THRIFT_BIN) -r --gen cpp:cob_style $<
 
@@ -26,5 +43,5 @@ gen-cpp/ThriftWatchdogService.cpp gen-cpp/WatchdogService_types.cpp gen-cpp/Watc
 	$(THRIFT_BIN) -r --gen cpp:cob_style $<
 
 
-distclean:
+distclean-local:
 	$(RM) gen-cpp -rf

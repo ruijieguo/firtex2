@@ -22,14 +22,11 @@ bool SearchServerBase::init(const std::string& sConfFile)
     }
     setupLogger();
 
-    SearchServerConfPtr pSearchConf = m_pConf.cast<SearchServerConf>();
     try
     {
-        FX_LOG(INFO, "Begin load index: [%s]", 
-               pSearchConf->resourceConf.index_data.c_str());
-        m_resource.init(*pSearchConf);
-        FX_LOG(INFO, "End load index: [%s]", 
-               pSearchConf->resourceConf.index_data.c_str());
+        FX_LOG(INFO, "Begin load search resources.");
+        m_resource.init(m_conf);
+        FX_LOG(INFO, "End load search resources.");
     }
     catch(const FirteXException& e)
     {
@@ -38,9 +35,9 @@ bool SearchServerBase::init(const std::string& sConfFile)
         return false;
     }
 
-    if (pSearchConf->resourceConf.refresh_timer > 0)
+    if (GLOBAL_CONF().Search.refresh_timer > 0)
     {
-        initRefreshThread();
+        initRefreshThread(GLOBAL_CONF().Search.refresh_timer);
     }
     return true;
 }
@@ -61,16 +58,10 @@ void SearchServerBase::join()
     }
 }
 
-ServerConfBase* SearchServerBase::createConf()
+void SearchServerBase::initRefreshThread(int32_t nRefreshTimer)
 {
-    return new SearchServerConf();
-}
-
-void SearchServerBase::initRefreshThread()
-{
-    SearchServerConfPtr pSearchConf = m_pConf.cast<SearchServerConf>();
     m_pRefreshRunner = new RefreshRunner(m_resource, 
-            pSearchConf->resourceConf.refresh_timer);
+            nRefreshTimer);
     m_pRefreshThread = new Thread();
     m_pRefreshThread->start(*m_pRefreshRunner);
 }

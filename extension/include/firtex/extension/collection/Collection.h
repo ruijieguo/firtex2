@@ -221,8 +221,8 @@ public:
      * @param bBlock block until the build is completed
      */
     static CollectionPtr buildIndex(const CollectionConfigurePtr& pConfigure,
-                           const ProgressObserverPtr& pProgressObserver = ProgressObserverPtr(),
-                           bool bBlock = true);
+                                    const ProgressObserverPtr& pProgressObserver = ProgressObserverPtr(),
+                                    bool bBlock = true);
 
     /**
      * Build a collection object by configure file

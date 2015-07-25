@@ -536,7 +536,7 @@ string IndexSearcherTestCase::getTestPath()
     string str = TestHelper::getTestDataPath();
     Path p(str);
     p.makeDirectory();
-    p.pushDirectory("/test_indexsearcher");
+    p.pushDirectory("test_indexsearcher");
     return p.toString();
 }
 

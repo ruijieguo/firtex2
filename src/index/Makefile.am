@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -I $(top_srcdir)/include
+AUTOMAKE_OPTIONS = subdir-objects
 
 noinst_LTLIBRARIES = libindex.la
 

@@ -14,7 +14,7 @@ HTTPPingService::HTTPPingService()
 
 std::string HTTPPingService::requestCanHandle() const
 {
-    return "/ping";
+    return "GET ^/_ping";
 }
 
 void HTTPPingService::handleRequest(EvHttpRequestContext* pCtx)

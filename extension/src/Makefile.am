@@ -1,3 +1,4 @@
+include $(top_srcdir)/external/versions.am
 SUBDIRS = processor collection com network plugin util .
 
 lib_LTLIBRARIES = libfirtexext.la
@@ -10,3 +11,9 @@ libfirtexext_la_LIBADD = \
 	network/libfirtexext_network.la\
 	plugin/libfirtexext_plugin.la\
 	util/libfirtexext_util.la
+
+external_srcdir = $(top_srcdir)/external
+
+if WITH_BUNDLED_PCRE2
+libfirtexext_la_LIBADD += $(external_srcdir)/$(PCRE2)/libpcre2-8.la
+endif

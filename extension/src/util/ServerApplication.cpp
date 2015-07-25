@@ -45,7 +45,6 @@ Application::Status ServerApplication::run()
     setupSignalHandler();
 
     Application::Status stat = Application::run();
-
     if (stat == AppRunner::S_RUNNING)
     {
         SignalHandler::instance()->wait();

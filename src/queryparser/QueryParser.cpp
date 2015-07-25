@@ -16,6 +16,10 @@ QueryParser::QueryParser(const AnalyzerMapper* pAnalyzerMapper,
     , m_sDefField(sDefaultField)
     , m_defOp(defOp)
 {
+    if (m_sDefField.empty())
+    {
+        m_sDefField = pAnalyzerMapper->getDefaultField();
+    }
 }
 
 QueryParser::~QueryParser() 

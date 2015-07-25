@@ -36,6 +36,7 @@ EvHttpServer::~EvHttpServer()
 
 void EvHttpServer::start(bool bBlocking)
 {
+    FX_TRACE("Starting server, block: [%s]", bBlocking ? "true":"false");
     EvThreadInitializer::instance();
     FX_EVENT_BASE_NEW(m_pEventBase);
     if (m_pEventBase == NULL)
@@ -88,11 +89,14 @@ void EvHttpServer::handleRequest(struct evhttp_request* pReq, void* self)
 {
     try 
     {
+        FX_DEBUG("Begin handle request");
         EvHttpServer* pThis = static_cast<EvHttpServer*>(self);
         pThis->process(pReq);
+        FX_DEBUG("End handle request");
     }
     catch(std::exception& e) 
     {
+        FX_DEBUG("Handle request FAILED");
         evhttp_send_error(pReq, HTTP_INTERNAL, e.what());
     }
 }
@@ -104,6 +108,7 @@ void EvHttpServer::process(struct evhttp_request* pReq)
                     &EvHttpServer::complete));
     if (!ctx->init(pReq))
     {
+        FX_LOG(WARN, "Init request context FAILED.");
         ctx->complete();
         return;
     }

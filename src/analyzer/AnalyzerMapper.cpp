@@ -123,20 +123,20 @@ Analyzer* AnalyzerMapper::createAnalyzer(const FieldType::Analyzer& analyzer)
     return pAnalyzer;
 }
 
-void AnalyzerMapper::mapForSearcher(fieldid_t fid, const tstring& sFieldName,
+void AnalyzerMapper::mapForSearcher(fieldid_t fid, const std::string& sFieldName,
                                     const AnalyzerPtr& pAnalyzer)
 {
     map(fid, sFieldName, pAnalyzer,
         m_analyzerForSearch, m_analyzerForSearchById);
 }
 
-void AnalyzerMapper::map(fieldid_t fid, const tstring& sFieldName,
+void AnalyzerMapper::map(fieldid_t fid, const std::string& sFieldName,
                          const AnalyzerPtr& pAnalyzer)
 {
     map(fid, sFieldName, pAnalyzer, m_analyzerForIndex, m_analyzerForIndexById);
 }
 
-void AnalyzerMapper::map(fieldid_t fid, const tstring& sFieldName, 
+void AnalyzerMapper::map(fieldid_t fid, const std::string& sFieldName, 
                          const AnalyzerPtr& pAnalyzer, AnalyzerMap& nameMap,
                          AnalyzerIdMap& idMap)
 {
@@ -166,7 +166,7 @@ const Analyzer* AnalyzerMapper::getAnalyzer(fieldid_t fid) const
     return NULL;
 }
 
-const Analyzer* AnalyzerMapper::getAnalyzer(const tstring& sFieldName) const
+const Analyzer* AnalyzerMapper::getAnalyzer(const std::string& sFieldName) const
 {
     AnalyzerMap::const_iterator iter = m_analyzerForIndex.find(sFieldName);
     if (iter != m_analyzerForIndex.end())
@@ -206,7 +206,7 @@ AnalyzerPtr AnalyzerMapper::getAnalyzerForSearcher(fieldid_t fid)
     return getAnalyzer(fid);
 }
 
-const Analyzer* AnalyzerMapper::getAnalyzerForSearcher(const tstring& sFieldName) const
+const Analyzer* AnalyzerMapper::getAnalyzerForSearcher(const std::string& sFieldName) const
 {
     AnalyzerMap::const_iterator iter = m_analyzerForSearch.find(sFieldName);
     if (iter != m_analyzerForSearch.end())
@@ -227,7 +227,7 @@ void AnalyzerMapper::clear()
     m_pDocSchema = NULL;
 }
 
-TokenFilter* AnalyzerMapper::createFilters(const tstring& sFilterStr)
+TokenFilter* AnalyzerMapper::createFilters(const std::string& sFilterStr)
 {
     StringTokenizer st(sFilterStr, ";", StringTokenizer::TOKEN_IGNORE_EMPTY 
                        | StringTokenizer::TOKEN_TRIM);
@@ -235,10 +235,10 @@ TokenFilter* AnalyzerMapper::createFilters(const tstring& sFilterStr)
     TokenFilter* pFilter = NULL;
     for (size_t i = 0; i < st.getNumTokens(); ++i)
     {
-        tstring sFilter = st[i];
-        tstring sIdent, sParam;
-        tstring::size_type pos = sFilter.find(',', 0);
-        if (pos != tstring::npos)
+        std::string sFilter = st[i];
+        std::string sIdent, sParam;
+        std::string::size_type pos = sFilter.find(',', 0);
+        if (pos != std::string::npos)
         {
             sIdent = sFilter.substr(0, pos);
             sParam = sFilter.substr(pos + 1);

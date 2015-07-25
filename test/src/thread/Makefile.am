@@ -20,19 +20,10 @@ thread_test_LDADD= \
 	$(top_builddir)/test/cppunit/libcppunit.la\
 	 -lpthread -ldl
 
-if HAVE_SNOWBALL
-thread_test_LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
-
-if HAVE_HIGHLIGHTER
-thread_test_LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-
 thread_test_LDFLAGS = $(LIBADD_DL)
 
-if HAVE_TCMALLOC
-thread_test_LDADD += @FX_TCMALLOC_HOME@/libtcmalloc.la
+if WITH_TCMALLOC
+thread_test_LDADD += -llibtcmalloc
 endif
 
 

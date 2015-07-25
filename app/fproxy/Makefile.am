@@ -1,4 +1,6 @@
-AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include -I@FX_BOOST_HOME@ -I@FX_THRIFT_HOME@/lib/cpp/src -Ithrift/gen-cpp -I@FX_LIBEVENT_HOME@ -I@FX_LIBEVENT_HOME@/include
+include $(top_srcdir)/external/versions.am
+
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include -Ithrift/gen-cpp
 
 appsrcdir = $(top_srcdir)/app/fproxy
 common_incdir = $(top_srcdir)/app/common
@@ -33,7 +35,6 @@ fproxy_SOURCES = \
 	RoundRobinPolicy.cpp\
 	LoadBallancePolicyFactory.cpp
 
-if HAVE_THRIFT
 fproxy_SOURCES += \
 	RPCBlenderService.cpp\
 	RPCProxyServer.cpp\
@@ -44,28 +45,38 @@ fproxy_SOURCES += \
 	RPCSearchShard.cpp\
 	RPCSearchShards.cpp
 
-endif
 
 LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\
-	$(top_builddir)/app/common/libappcommon.la
+	$(top_builddir)/app/common/libappcommon.la\
+	$(top_builddir)/contrib/snowball/src/libfirtex_snowball.la\
+	$(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
 
-if HAVE_SNOWBALL
-LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+external_srcdir = $(top_srcdir)/external
 
-if HAVE_HIGHLIGHTER
-LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-if HAVE_THRIFT
-LDADD += $(top_builddir)/app/thrift/libthriftgen.la
-LDADD += @FX_THRIFT_HOME@/lib/cpp/.libs/libthrift.la
-LDADD += @FX_THRIFT_HOME@/lib/cpp/.libs/libthriftnb.la
+if WITH_BUNDLED_BOOST
+AM_CPPFLAGS += -I$(external_srcdir)/$(BOOST)
 endif
 
-LDADD += @FX_LIBEVENT_HOME@/libevent.la
-LDADD += @FX_LIBEVENT_HOME@/libevent_pthreads.la
+if WITH_BUNDLED_LIBEVENT
+AM_CPPFLAGS += -I$(external_srcdir)/$(LIBEVENT)\
+	-I$(external_srcdir)/$(LIBEVENT)/include
+
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+else
+LDADD += -llibevent
+LDADD += -llibevent_pthreads
+endif
+
+if WITH_BUNDLED_THRIFT
+LDADD += $(top_builddir)/$(THRIFT)/lib/cpp/libthrift.la
+LDADD += $(top_builddir)/$(THRIFT)/lib/cpp/libthriftnb.la
+AM_CPPFLAGS += $(external_srcdir)/$(THRIFT)/lib/cpp/src
+else
+LDADD += -llibthrift
+LDADD += -llibthriftnb
+endif
 
 fproxy_LDFLAGS = $(LINKER_OPTIONS)
 

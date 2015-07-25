@@ -19,7 +19,7 @@
 #include "firtex/utility/NonCopyable.h"
 #include "firtex/thread/AtomicCount.h"
 #include "firtex/thread/RWLock.h"
-#include "zookeeper_c/include/zookeeper.h"
+#include <zookeeper.h>
 #include "firtex/extension/network/FunctionBinder.h"
 
 FX_NS_DEF(common);

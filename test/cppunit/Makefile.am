@@ -1,5 +1,6 @@
 SUBDIRS = .
 AM_CPPFLAGS = -I $(top_srcdir)/test/cppunit/include
+AUTOMAKE_OPTIONS = subdir-objects
 
 noinst_LTLIBRARIES = libcppunit.la
 

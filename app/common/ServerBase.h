@@ -16,7 +16,7 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
-#include "ServerConfBase.h"
+#include "ServiceConf.h"
 
 FX_NS_DEF(app);
 
@@ -44,11 +44,7 @@ protected:
     void setupLogger();
 
 protected:
-    /// Create server configure
-    virtual ServerConfBase* createConf() = 0;
-
-protected:
-    ServerConfBasePtr m_pConf;
+    ServiceConf m_conf;
 
 private:
     DECLARE_LOGGER();

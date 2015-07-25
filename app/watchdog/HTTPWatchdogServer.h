@@ -43,10 +43,6 @@ public:
     /// Wait for finish
     virtual void join();
 
-protected:
-    /// Create server configure
-    virtual ServerConfBase* createConf();
-
 private:
     FX_NS(network)::EvHttpServerPtr m_pServer;
     FX_NS(network)::EvHttpServiceFactoryPtr m_pServiceFactory;

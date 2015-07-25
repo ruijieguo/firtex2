@@ -38,11 +38,11 @@
     <name></name>
     <!-- Collection identifier, allowable values: collection.directory/trec/trec.gz/filelist -->
     <identifier>collection.directory</identifier>
-
+    
     <!-- source file path -->
-    <source>../examples/data/plain_utf8</source>
+    <source>../examples/raw_data/plain_utf8</source>
     <!-- target index path -->
-    <target>../examples/data/plain_utf8_index</target>
+    <target>../examples/data/example/Type1/0</target>
     <!-- Index build mode, allowable values: batch/append -->
     <!-- batch: build index from scratch -->
     <!-- append: build index increamentally -->

@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -I../../../include -I../include
-# -I../src/stemmer
+AUTOMAKE_OPTIONS = subdir-objects
 
 lib_LTLIBRARIES = libfirtex_snowball.la
 

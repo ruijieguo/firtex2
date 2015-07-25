@@ -1,6 +1,8 @@
 SUBDIRS = .
 xpdf_srcdir = xpdf
 
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = -I $(top_srcdir)/include\
 	-I $(top_srcdir)/extension/include\
 	-I $(top_srcdir)/plugins/PDFParserPlugin/xpdf\

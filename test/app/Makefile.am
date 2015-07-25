@@ -1,1 +1,1 @@
-SUBDIRS = common fproxy watchdog
+SUBDIRS = common fproxy watchdog searcher

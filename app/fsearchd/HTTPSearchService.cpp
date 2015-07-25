@@ -1,5 +1,5 @@
 #include "HTTPSearchService.h"
-#include "../common/SnippetGenerator.h"
+#include "SearchExecutor.h"
 #include "firtex/search/XMLResultFormatter.h"
 #include "firtex/index/IndexReader.h"
 #include "firtex/index/Index.h"
@@ -23,14 +23,12 @@ const std::string HTTPSearchService::URLENCODE_PRIFIX = "urlencode=";
 HTTPSearchService::HTTPSearchService(const SearchResource& searchRes)
     : m_searchRes(searchRes)
 {
-    IndexReaderPtr pIndexReader = m_searchRes.getIndexReader();
-    FIRTEX_ASSERT2(pIndexReader.isNotNull());
-    m_sEncoding = pIndexReader->getEncoding();
 }
+
 
 std::string HTTPSearchService::requestCanHandle() const
 {
-    return "/search";
+    return "GET ^/([\\w,]{1,})(/[\\w,]{1,}){0,1}/_search$";
 }
 
 void HTTPSearchService::handleRequest(EvHttpRequestContext* pCtx)
@@ -57,88 +55,59 @@ void HTTPSearchService::handleRequest(EvHttpRequestContext* pCtx)
     return doSearch(pCtx->getQuery(), pCtx);
 }
 
-void HTTPSearchService::handleQuery(const Statement& state,
-                                EvHttpRequestContext* pCtx) const
+void HTTPSearchService::doSearch(const string& sUri,
+                                 EvHttpRequestContext* pCtx) const
 {
-    IndexReaderPtr pIndexReader = m_searchRes.getIndexReader();
-    FIRTEX_ASSERT2(pIndexReader.isNotNull());
+    const EvHttpRequestContext::Resources& res = pCtx->getResources();
+    if (res.size() == 0)
+    {
+        sendErrorMessage("Invalid request", pCtx);
+        return;
+    }
 
+    Statement state;
+    bool bValid = state.fromString(pCtx->getQuery());
+    if (!bValid)
+    {
+        sendErrorMessage(state.getErrorMessage(), pCtx);
+        return;
+    }    
+    
+    string sCluster = res[0];
+    string sType;
+    if (res.size() >= 3)
+    {
+        sType = res[1];
+    }
+
+    IndexReaderPtr pIndexReader = m_searchRes.getIndexReader(sCluster, sType);
+    if (pIndexReader.isNull())
+    {
+        sendErrorMessage("No such cluster [" + sCluster + "] or type ["
+                         +sType + "]", pCtx);
+        return;
+    }
+
+    IndexSearcher searcher(pIndexReader);
+    XMLResultFormatter formatter;
+    stringstream ss;
+
+    SearchExecutor executor(searcher, formatter);
     try
     {
-        TimeProbe probe;
-        probe.start();
-
-        QueryParser parser(pIndexReader->getAnalyzerMapper(),
-                           m_searchRes.getDefaultField());
-
-        IndexSearcher searcher(pIndexReader);
-        QueryHitsPtr pHits = searcher.search(state, parser);
-
-        QueryResult result;
-
-        if (pHits.isNotNull())
-        {
-            FieldSelectClausePtr pFieldClause = state.getFieldSelectClause();
-            QueryClausePtr pQueryClause = state.getQueryClause();
-            if (pFieldClause.isNotNull() && pQueryClause.isNotNull())
-            {
-                QueryPtr pQuery = parser.parse(pQueryClause->getQueryString());
-                FIRTEX_ASSERT2(pQuery.isNotNull());
-
-                FieldSelector selector(pIndexReader->getDocSchema());
-                
-                for (size_t i = 0; i < pFieldClause->getFieldCount(); ++i)
-                {
-                    const FieldSelectClause::SnippetParam& param = pFieldClause->getField(i);
-                    FieldFilterPtr pFieldFilter;
-                    if (param.snippet)
-                    {
-                        SnippetGenerator* pSnippetGen = new SnippetGenerator();
-                        pFieldFilter.reset(pSnippetGen);
-                        
-                        if (!pSnippetGen->init(pQuery, parser.getAnalyzerMapper(), param.field,
-                                        param.preTag, param.postTag, param.separator))
-                        {
-                            FX_LOG(ERROR, "Init snippet generator for field: [%s] FAILED", param.field.c_str());
-                            sendErrorMessage("Init snippet generator for field: " + 
-                                    param.field + " FAILED", pCtx);
-                            return;
-                        }                        
-                    }
-
-                    if (!selector.addField(param.field, pFieldFilter))
-                    {
-                        FX_LOG(ERROR, "Invalid field: [%s]", param.field.c_str());
-                    }
-                }
-                result.init(selector, pIndexReader, *pHits);
-            }
-            else
-            {
-                result.init(pIndexReader, *pHits);
-            }
-        }
-
-        probe.stop();
-        result.setTimeCost(probe.elapsed() / 1000);
-        FX_QUERY_TRACE(INFO, result.getTracer(), "search phase time [%d]",
-                       (int32_t)result.getTimeCost());
-
-        stringstream ss;
-        XMLResultFormatter formatter;
-        formatter.format(result, ss);
+        executor.search(ss, sUri);
         sendResponse(ss.str(), pCtx);
     }
     catch(const FirteXException& e)
     {
         FX_LOG(ERROR, "Handle request FAILED: [%s], reason: [%s]",
                pCtx->getQuery().c_str(), e.what().c_str());
-        sendErrorMessage("Handle request failed", pCtx);
+        sendErrorMessage("Handle request FAILED: " + e.what(), pCtx);
     }
 }
 
 void HTTPSearchService::sendErrorMessage(const string& sErrorMsg,
-                                     EvHttpRequestContext* pCtx) const
+        EvHttpRequestContext* pCtx) const
 {
     stringstream ss;
     QueryResult result;

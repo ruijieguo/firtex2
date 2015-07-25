@@ -25,7 +25,7 @@ FX_NS_DEF(analyzer);
 class TokenFilter;
 class AnalyzerMapper
 {
-    typedef std::map<tstring, AnalyzerPtr> AnalyzerMap;
+    typedef std::map<std::string, AnalyzerPtr> AnalyzerMap;
     typedef std::map<fieldid_t, AnalyzerPtr> AnalyzerIdMap;
 
 public:
@@ -51,7 +51,7 @@ public:
      * @param szFieldName field name
      * @param pAnalyzer analyzer
      */
-    void map(fieldid_t fid, const tstring& sFieldName,
+    void map(fieldid_t fid, const std::string& sFieldName,
              const AnalyzerPtr& pAnalyzer);
 
     /**
@@ -60,7 +60,7 @@ public:
      * @param szFieldName field name
      * @param pAnalyzer analyzer
      */
-    void mapForSearcher(fieldid_t fid, const tstring& sFieldName,
+    void mapForSearcher(fieldid_t fid, const std::string& sFieldName,
                         const AnalyzerPtr& pAnalyzer);
 
 public:
@@ -76,7 +76,7 @@ public:
      * @param sFieldName field name
      * @return internal analyzer object
      */
-    const Analyzer* getAnalyzer(const tstring& sFieldName) const;
+    const Analyzer* getAnalyzer(const std::string& sFieldName) const;
 
     /**
      * Return analyzer for searcher by field id
@@ -90,7 +90,7 @@ public:
      * @param sFieldName field name
      * @return internal analyzer object
      */
-    const Analyzer* getAnalyzerForSearcher(const tstring& sFieldName) const;
+    const Analyzer* getAnalyzerForSearcher(const std::string& sFieldName) const;
 
     /**
      * Return analyzer by field id
@@ -109,12 +109,17 @@ public:
     /**
      * Return true if the specified field is an analyzed field
      */
-    bool isAnalyzed(const tstring& sField) const;
+    bool isAnalyzed(const std::string& sField) const;
 
     /**
      * Return true if the specified field is an indexed field
      */
-    bool isIndexed(const tstring& sField) const;
+    bool isIndexed(const std::string& sField) const;
+
+    /**
+     * Return default field 
+     */
+    std::string getDefaultField() const;
 
     /**
      * clear analyzers
@@ -130,7 +135,7 @@ protected:
     /**
      * Create pipelined token filters
      */
-    TokenFilter* createFilters(const tstring& sFilterStr);
+    TokenFilter* createFilters(const std::string& sFilterStr);
 
     Analyzer* createAnalyzer(const FX_NS(document)::FieldType::Analyzer& analyzer);
     Analyzer* createAnalyzer(const std::string& sIdent,
@@ -144,7 +149,7 @@ protected:
      * @param nameMap field name to analyzer map
      * @param idMap field id to analyzer map
      */
-    void map(fieldid_t fid, const tstring& sFieldName, const AnalyzerPtr& pAnalyzer,
+    void map(fieldid_t fid, const std::string& sFieldName, const AnalyzerPtr& pAnalyzer,
              AnalyzerMap& nameMap, AnalyzerIdMap& idMap);
 
 private:			
@@ -164,16 +169,21 @@ DEFINE_TYPED_PTR(AnalyzerMapper);
 
 /////////////////////////////////////////////////
 //
-inline bool AnalyzerMapper::isAnalyzed(const tstring& sField) const
+inline bool AnalyzerMapper::isAnalyzed(const std::string& sField) const
 {
     const FX_NS(document)::FieldSchema* pSchema = m_pDocSchema->getSchema(sField);
     return pSchema ? pSchema->isAnalyzed() : false;
 }
 
-inline bool AnalyzerMapper::isIndexed(const tstring& sField) const
+inline bool AnalyzerMapper::isIndexed(const std::string& sField) const
 {
     const FX_NS(document)::FieldSchema* pSchema = m_pDocSchema->getSchema(sField);
     return pSchema ? pSchema->isIndexed() : false;
+}
+
+inline std::string AnalyzerMapper::getDefaultField() const
+{
+    return m_pDocSchema->getDefaultField();
 }
 
 FX_NS_END

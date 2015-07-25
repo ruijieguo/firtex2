@@ -1,283 +1,351 @@
-
-AC_INIT(firtex, [0.5.1])
-AC_CANONICAL_TARGET
-AM_CONFIG_HEADER(include/firtex/config.h)
-AM_INIT_AUTOMAKE([subdir-objects]) 
-
-# gruard against pre defined config.h
-AH_TOP([
-#ifndef __CONFIG_H
-#define __CONFIG_H
-])
-AH_BOTTOM([
-#endif
-])
-
+AC_PREREQ([2.69])
+AC_INIT([firtex],[0.5.1])
 
 AC_CANONICAL_HOST
 AC_CANONICAL_BUILD
+AC_CANONICAL_TARGET
+AC_DISABLE_STATIC
 
 AC_LANG([C++])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+# Initialize automake.
+# -Wno-portability, since we require GNU Make for % patterns
+# Removal of -Werror due warnings introduced by automake 1.14.
+AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign])
+
+# This is required for linking non-POSIX libs.
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 LT_PREREQ([2.2])
 LT_INIT
 LT_LANG([C++])
 LT_OUTPUT
 
-
-AC_PROG_CXX
-AC_PROG_CC
-AC_PROG_CPP
-AM_PROG_CC_C_O
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
-_LT_SET_OPTION([LT_INIT],[dlopen])
-AC_DIAGNOSE([obsolete],[_LT_SET_OPTION([LT_INIT],[dlopen])
-AC_DIAGNOSE([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
-put the `dlopen' option into LT_INIT's first parameter.])
-: Remove this warning and the call to _LT_SET_OPTION when you
-put the `dlopen' option into LT_INIT's first parameter.])
-
-LT_INIT
 AC_PROG_YACC
 AC_PROG_LEX
 AM_PROG_LEX
-AC_LANG([C++]) 
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
 
-ac_cv_use_rtlib=yes
+CONFIGURE_ARGS="$ac_configure_args"
+AC_SUBST(CONFIGURE_ARGS)
 
-dnl Setup compiler/linker options based on the target type
-case "$target" in
-*-*-mingw32*)
-    dnl MingW32 should use native win32 threads
-    ;;
-*-apple-darwin*)
-    dnl Use the Mac multiprocessing library
-    LINKER_OPTIONS="-framework CoreServices"
-    ac_cv_use_rtlib=no
-    ;;
-*)
-    dnl Assume pthreads
-    if test x"$PTHREAD_CFLAGS" != x; then
-      COMPILER_OPTIONS="$PTHREAD_CFLAGS"
-    fi
-    if test x"$PTHREAD_LIBS" != x; then
-      LINKER_OPTIONS="$PTHREAD_LIBS"
-    fi
-    ;;
-esac
+ac_configure_args_pre="$ac_configure_args"
+ac_configure_args_post="$ac_configure_args --enable-shared=no --with-pic"
+ac_configure_args="$ac_configure_args_post"
 
-dnl Set debug compilation flags
-AC_ARG_WITH([debug], 
-	AS_HELP_STRING([--with-debug],[compile debug version (default is disabled)]),
-	[ac_cv_use_debug=$withval], [ac_cv_use_debug=no])
+AC_CONFIG_COMMANDS_PRE([ac_configure_args="$ac_configure_args_pre"])
+AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args_post"])
 
-AC_MSG_CHECKING([whether to compile debug version])
-		
-if test x$ac_cv_use_debug != xno; then
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_DEBUG -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -Wno-unused-local-typedefs -Wno-parentheses -msse2"
-   REQUIRED_OPTIONS="-D_DEBUG -D_FILE_OFFSET_BITS=64"
-   AC_MSG_RESULT([yes])
-else
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -Wall -g -D_FILE_OFFSET_BITS=64 -O3 -DNDEBUG -fno-strict-aliasing -Wno-unused-local-typedefs -Wno-parentheses -msse2"
-   REQUIRED_OPTIONS="-DNDEBUG -D_FILE_OFFSET_BITS=64"
-   AC_MSG_RESULT([no])
-fi
+AC_ARG_ENABLE([debug],
+              AS_HELP_STRING([--enable-debug],
+                             [enable debugging. If CFLAGS/CXXFLAGS are set, this
+                              option won't change them default: no]),
+              [enable_debug=yes], [])
 
-dnl Set profile compilation flags
+AC_ARG_ENABLE([optimize],
+              AS_HELP_STRING([--enable-optimize],
+                             [enable optimizations. If CFLAGS/CXXFLAGS are set,
+                              this option won't change them default: no]),
+              [enable_optimize=yes], [])
+
+AC_ARG_ENABLE([bundled],
+              AS_HELP_STRING([--disable-bundled],
+                             [build against preinstalled dependencies instead
+                              of bundled libraries]),
+              [enable_bundled=no], [enable_bundled=yes])
+
+AC_ARG_WITH([zookeeper],
+            AS_HELP_STRING([--with-zookeeper@<:@=DIR@:>@],
+                           [excludes building and using the bundled ZooKeeper
+                            package in lieu of an installed version at a
+                            location prefixed by the given path]),
+            [without_bundled_zookeeper=yes], [])
+
+AC_ARG_WITH([libevent],
+            AS_HELP_STRING([--with-libevent@<:@=DIR@:>@],
+                           [excludes building and using the bundled libevent
+                            package in lieu of an installed version at a
+                            location prefixed by the given path]),
+            [without_bundled_libevent=yes], [])
+
+AC_ARG_WITH([boost],
+            AS_HELP_STRING([--with-boost@<:@=DIR@:>@],
+                           [excludes building and using the bundled Boost
+                           package in lieu of an installed version at a
+                           location prefixed by the given path]),
+            [without_bundled_boost=yes], [])
+
+AC_ARG_WITH([thrift],
+            AS_HELP_STRING([--with-thrift@<:@=DIR@:>@],
+                           [excludes building and using the bundled Thrift
+                           package in lieu of an installed version at a
+                           location prefixed by the given path]),
+            [without_bundled_thrift=yes], [])
+
+AC_ARG_WITH([pcre2],
+            AS_HELP_STRING([--with-pcre2@<:@=DIR@:>@],
+                           [excludes building and using the bundled pcre2
+                           package in lieu of an installed version at a
+                           location prefixed by the given path]),
+            [without_bundled_pcre2=yes], [])
+
 AC_ARG_WITH([profile], 
 	AS_HELP_STRING([--with-profile],[compile profile version (default is disabled)]),
-	[ac_cv_use_profile=$withval], [ac_cv_use_profile=no])
+	[], [])
 
-AC_MSG_CHECKING([whether to compile profile version])
-		
-if test x$ac_cv_use_profile != xno; then
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -pg"
-   AC_MSG_RESULT([yes])
-else
-   AC_MSG_RESULT([no])
-fi
-
-dnl Set tcmalloc compilation flags
-FX_TCMALLOC_HOME=/usr/lib
 AC_ARG_WITH([tcmalloc], 
 	AS_HELP_STRING([--with-tcmalloc],[compile tcmalloc version (default is disabled)]),
-	[ac_cv_use_tcmalloc=$withval], [ac_cv_use_tcmalloc=no])
+	[], [])
 
+
+AC_MSG_NOTICE([Setting up build environment for ${target_cpu} ${target_os}])
+# Determine the current OS (TODO(benh): Does autotools do this for us?).
+case "${target_os}" in
+  linux*)
+    OS_NAME=linux
+    LIBS="$LIBS -lrt -ldl"
+    ;;
+  darwin*)
+    OS_NAME=darwin
+    ;;
+  *)
+    AC_MSG_ERROR("FirteX2 is currently unsupported on your platform.")
+esac
+
+# Used for conditionally including source files.
+AM_CONDITIONAL([OS_LINUX], [test "x$OS_NAME" = "xlinux"])
+
+
+# Default to gcc toolchain (we rely on some atomic builtins for now,
+# that are also present with clang).
+AC_PROG_CXX([g++])
+AC_PROG_CC([gcc])
+
+AX_COMPILER_VERSION
+AX_COMPILER_VENDOR
+
+# Check if we should enable debugging, optimization. Note we only
+# update CFLAGS and CXXFLAGS if none are provided.
+AM_CONDITIONAL([DEBUG], [test x"$enable_debug" = "xyes"])
+AM_CONDITIONAL([OPTIMIZE], [test x"$enable_optimize" = "xyes"])
+
+
+debug_flags="-g1"
+if test "x$enable_debug" = "xyes"; then
+  debug_flags="-g -D_DEBUG"
+elif test "x$enable_optimize" = "xyes"; then
+  debug_flags=""
+fi
+
+if test "x$enable_optimize" = "xyes"; then
+  optimize_flags="-O2"
+else
+  optimize_flags="-O0"
+fi
+
+AS_IF([test "x${ac_cv_env_CFLAGS_set}" = "x"],
+      [CFLAGS="$debug_flags $optimize_flags"])
+AS_IF([test "x${ac_cv_env_CXXFLAGS_set}" = "x"],
+      [CXXFLAGS="$debug_flags $optimize_flags"])
+
+# Check zookeeper
+if test -n "`echo $with_zookeeper`"; then
+  CPPFLAGS="$CPPFLAGS -I${with_zookeeper}/include/zookeeper"
+  LDFLAGS="$LDFLAGS -L${with_zookeeper}/lib"
+elif test "x$enable_bundled" = "xno"; then
+  CPPFLAGS="$CPPFLAGS -I/usr/include/zookeeper"
+fi
+
+if test "x$without_bundled_zookeeper" = "xyes" || \
+   test "x$enable_bundled" != "xyes"; then
+  # Check if headers and library were located.
+  AC_CHECK_HEADERS([zookeeper.h],
+                   [AC_CHECK_LIB([zookeeper_mt],
+                                 [zookeeper_init],
+                                 [found_zookeeper=yes])])
+
+  if test "x$found_zookeeper" = "xyes"; then
+    with_bundled_zookeeper=no
+  else
+    AC_MSG_ERROR([cannot find ZooKeeper
+-------------------------------------------------------------------
+You have requested the use of a non-bundled ZooKeeper but no suitable
+ZooKeeper could be found.
+
+You may want specify the location of ZooKeeper by providing a prefix
+path via --with-zookeeper=DIR, or check that the path you provided is
+correct if you're already doing this
+-------------------------------------------------------------------
+])
+  fi
+else
+  with_bundled_zookeeper=yes
+fi
+
+AM_CONDITIONAL([WITH_BUNDLED_ZOOKEEPER],
+               [test "x$with_bundled_zookeeper" = "xyes"])
+
+# Check boost
+if test -n "`echo $with_boost`"; then
+  CPPFLAGS="$CPPFLAGS -I${with_boost}/include"
+fi
+
+if test "x$without_bundled_boost" = "xyes" || \
+   test "x$enable_bundled" != "xyes"; then
+  # Check if headers and library were located.
+  AC_CHECK_HEADERS([boost/version.hpp], [found_boost=yes])
+
+  if test "x$found_boost" = "xyes"; then
+    with_bundled_boost=no
+  else
+    AC_MSG_ERROR([cannot find Boost
+-------------------------------------------------------------------
+You have requested the use of a non-bundled Boost but no suitable
+Boost could be found.
+
+You may want specify the location of Boost by providing a prefix
+path via --with-boost=DIR, or check that the path you provided is
+correct if you're already doing this.
+-------------------------------------------------------------------
+])
+  fi
+else
+  with_bundled_boost=yes
+fi
+
+AM_CONDITIONAL([WITH_BUNDLED_BOOST], [test "x$with_bundled_boost" = "xyes"])
+
+
+if test "x$without_bundled_libevent" = "xyes" || \
+   test "x$enable_bundled" != "xyes"; then
+   AC_CHECK_HEADERS([event2/event.h],
+		    [AC_CHECK_LIB([event],
+                                  [event_base_new],
+                                  [found_libevent=yes])])
+   
+  if test "x$found_libevent" = "xyes"; then
+    with_bundled_libevent=no
+  else
+    AC_MSG_ERROR([cannot find Libevent
+-------------------------------------------------------------------
+You have requested the use of a non-bundled Libevent but no suitable
+Libevent could be found.
+
+You may want specify the location of Libevent by providing a prefix
+path via --with-libevent=DIR, or check that the path you provided is
+correct if you're already doing this
+-------------------------------------------------------------------
+])
+  fi
+else
+  with_bundled_libevent=yes
+fi
+
+AM_CONDITIONAL([WITH_BUNDLED_LIBEVENT],
+               [test "x$with_bundled_libevent" = "xyes"])
+
+
+# Check thrift
+if test -n "`echo $with_thrift`"; then
+  CPPFLAGS="-I${with_thrift}/include $CPPFLAGS"
+  LDFLAGS="-L${with_thrift}/lib $LDFLAGS"
+fi
+
+if test "x$without_bundled_thrift" = "xyes" || \
+   test "x$enable_bundled" != "xyes"; then
+   AC_CHECK_HEADERS([thrift/Thrift.h],
+		    [AC_CHECK_LIB([thrift],
+                                  [exit],
+                                  [found_thrift=yes])])
+   
+  if test "x$found_thrift" = "xyes"; then
+    with_bundled_thrift=no
+  else
+    AC_MSG_ERROR([cannot find Thrift
+-------------------------------------------------------------------
+You have requested the use of a non-bundled Thrift but no suitable
+Thrift could be found.
+
+You may want specify the location of Thrift by providing a prefix
+path via --with-thrift=DIR, or check that the path you provided is
+correct if you're already doing this
+-------------------------------------------------------------------
+])
+  fi
+else
+  with_bundled_thrift=yes
+fi
+
+AM_CONDITIONAL([WITH_BUNDLED_THRIFT],
+               [test "x$with_bundled_thrift" = "xyes"]) 
+
+# Check pcre2
+if test -n "`echo $with_pcre2`"; then
+  CPPFLAGS="-I${with_pcre2}/include $CPPFLAGS"
+  LDFLAGS="-L${with_pcre2}/lib $LDFLAGS"
+fi
+
+if test "x$without_bundled_pcre2" = "xyes" || \
+   test "x$enable_bundled" != "xyes"; then
+   AC_CHECK_HEADERS([pcre2.h],
+		    [AC_CHECK_LIB([pcre2],
+                                  [exit],
+                                  [found_pcre2=yes])])
+   
+  if test "x$found_pcre2" = "xyes"; then
+    with_bundled_pcre2=no
+  else
+    AC_MSG_ERROR([cannot find Pcre2
+-------------------------------------------------------------------
+You have requested the use of a non-bundled Pcre2 but no suitable
+Pcre2 could be found.
+
+You may want specify the location of pcre2 by providing a prefix
+path via --with-pcre2=DIR, or check that the path you provided is
+correct if you're already doing this
+-------------------------------------------------------------------
+])
+  fi
+else
+  with_bundled_pcre2=yes
+fi
+
+AM_CONDITIONAL([WITH_BUNDLED_PCRE2],
+               [test "x$with_bundled_pcre2" = "xyes"]) 
+
+       
+
+# Check profile
+AC_MSG_CHECKING([whether to compile profile version])
+		
+if test -n "`echo $with_profile`"; then
+   CPPFLAGS="$CPPFLAGS -pg"
+   AC_MSG_RESULT([yes])
+else
+   AC_MSG_RESULT([no])
+fi
+
+# Check tcmalloc
 AC_MSG_CHECKING([whether to compile with tcmalloc for heap checking])
 		
-if test x$ac_cv_use_tcmalloc != xno; then
-   if test x$ac_cv_use_tcmalloc != xyes; then
-      FX_TCMALLOC_HOME=$ac_cv_use_tcmalloc
-   fi
+if test -n "`echo $with_tcmalloc`"; then
+   LDFLAGS="$LDFLAGS -L${with_tcmalloc}/lib"
+   with_tcmalloc=yes
    AC_MSG_RESULT([yes])
 else
+   with_tcmalloc=no
    AC_MSG_RESULT([no])
 fi
 
-AC_SUBST(FX_TCMALLOC_HOME)
-AM_CONDITIONAL([HAVE_TCMALLOC], [test x$ac_cv_use_tcmalloc != xno])
+AM_CONDITIONAL([WITH_TCMALLOC], [test "x$with_tcmalloc" = "xyes"]) 
 
-dnl Set snowball compilation flags
-AC_ARG_WITH([snowball], 
-	AS_HELP_STRING([--with-snowball],[compile version with snowball stemmer (default is disabled)]),
-	[ac_cv_use_snowball=yes], [ac_cv_use_snowball=no])
+CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -msse2"
 
-AC_MSG_CHECKING([whether to compile snowball version])
-		
-if test x$ac_cv_use_snowball != xno; then
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_SNOWBALL"
-   REQUIRED_OPTIONS="$REQUIRED_OPTIONS -DHAVE_SNOWBALL"
-   AC_MSG_RESULT([yes])
-else
-   AC_MSG_RESULT([no])
-fi
-
-AM_CONDITIONAL([HAVE_SNOWBALL], [test x$ac_cv_use_snowball != xno])
-
-dnl Set highlighter compilation flags
-AC_ARG_WITH([highlighter], 
-	AS_HELP_STRING([--without-highlighter],[compile version without highlighter (default is enable)]),
-	[ac_cv_use_highlighter=no], [ac_cv_use_highlighter=yes])
-
-AC_MSG_CHECKING([whether to compile highlighter version])
-		
-if test x$ac_cv_use_highlighter == xno; then
-   AC_MSG_RESULT([no])
-else
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_HIGHLIGHTER"
-   REQUIRED_OPTIONS="-DHAVE_HIGHLIGHTER"
-   AC_MSG_RESULT([yes])
-fi
-
-AM_CONDITIONAL([HAVE_HIGHLIGHTER], [test x$ac_cv_use_highlighter != xno])
-
-dnl Set user specified boost path
-FX_BOOST_HOME=`pwd`/external
-AC_ARG_WITH([boost], 
-	AS_HELP_STRING([--with-boost],[specify boost home path (default using the built-in mini boost)]),
-	[ac_cv_use_boost=$withval], [ac_cv_use_boost=no])
-
-AC_MSG_CHECKING([whether to compile with user specified boost])
-		
-if test x$ac_cv_use_boost != xno; then
-   FX_BOOST_HOME=$ac_cv_use_boost
-   AC_MSG_RESULT([yes])
-else
-   AC_MSG_RESULT([no])
-fi
-
-AC_SUBST(FX_BOOST_HOME)
-
-dnl Set user specified libevent path
-FX_LIBEVENT_HOME=`pwd`/external/libevent
-AC_ARG_WITH([libevent], 
-	AS_HELP_STRING([--with-libevent],[specify libevent home path (default using the built-in libevent)]),
-	[ac_cv_use_libevent=$withval], [ac_cv_use_libevent=yes])
-
-AC_MSG_CHECKING([whether to compile with libevent])
-
-FX_LIBEVENT_DIR=
-if test x$ac_cv_use_libevent = xyes; then
-   FX_LIBEVENT_DIR=libevent
-   AC_MSG_RESULT([built-in])
-elif test x$ac_cv_use_libevent != xno; then
-   FX_LIBEVENT_HOME=$ac_cv_use_libevent
-   AC_MSG_RESULT([yes])
-else
-   AC_MSG_RESULT([no])
-fi
-
-AM_CONDITIONAL([HAVE_LIBEVENT], [test x$ac_cv_use_libevent != xno])
-AC_SUBST(FX_LIBEVENT_HOME)
-AC_SUBST(FX_LIBEVENT_DIR)
-
-dnl Set user specified libevent path
-FX_ZOOKEEPER_C_HOME=`pwd`/external/zookeeper_c
-AC_ARG_WITH([zookeeper], 
-	AS_HELP_STRING([--with-zookeeper],[specify zookeeper home path (default using the built-in zookeeper)]),
-	[ac_cv_use_zookeeper=$withval], [ac_cv_use_zookeeper=yes])
-
-AC_MSG_CHECKING([whether to compile with zookeeper])
-
-FX_ZOOKEEPER_C_DIR=
-if test x$ac_cv_use_zookeeper = xyes; then
-   FX_ZOOKEEPER_C_DIR=zookeeper_c
-   AC_MSG_RESULT([built-in])
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_ZOOKEEPER"
-elif test x$ac_cv_use_zookeeper != xno; then
-   FX_ZOOKEEPER_C_HOME=$ac_cv_use_zookeeper
-   AC_MSG_RESULT([yes])
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_ZOOKEEPER"
-else
-   AC_MSG_RESULT([no])
-fi
-
-AM_CONDITIONAL([HAVE_ZOOKEEPER], [test x$ac_cv_use_zookeeper != xno])
-AC_SUBST(FX_ZOOKEEPER_C_HOME)
-AC_SUBST(FX_ZOOKEEPER_C_DIR)
-
-dnl Set user specified thrift path
-FX_THRIFT_HOME=`pwd`/external/thrift
-AC_ARG_WITH([thrift], 
-	AS_HELP_STRING([--with-thrift],[specify thrift home path (default using the built-in thrift)]),
-	[ac_cv_use_thrift=$withval], [ac_cv_use_thrift=yes])
-
-AC_MSG_CHECKING([whether to compile with thrift])
-
-FX_THRIFT_DIR=
-if test x$ac_cv_use_thrift = xyes; then
-   FX_THRIFT_DIR=thrift
-   AC_MSG_RESULT([built-in])   
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_THRIFT"
-elif test x$ac_cv_use_thrift != xno; then
-   FX_THRIFT_HOME=$ac_cv_use_thrift
-   AC_MSG_RESULT([yes])
-   COMPILER_OPTIONS="$COMPILER_OPTIONS -DHAVE_THRIFT"
-else
-   AC_MSG_RESULT([no])
-fi
-
-AM_CONDITIONAL([HAVE_THRIFT], [test x$ac_cv_use_thrift != xno])
-AC_SUBST(FX_THRIFT_HOME)
-AC_SUBST(FX_THRIFT_DIR)
-
-dnl set flags for C compiler if there are no user overrides
-if test x$ac_env_CFLAGS_set != xset; then
-   CFLAGS=$COMPILER_OPTIONS
-else 
-   CFLAGS="$CFLAGS $REQUIRED_OPTIONS"
-fi
-
-dnl set flags for C++ compiler if there are no user overrides
-if test x$ac_env_CXXFLAGS_set != xset; then
-   CXXFLAGS=$COMPILER_OPTIONS
-else
-   CXXFLAGS="$CXXFLAGS $REQUIRED_OPTIONS"
-fi
-
-dnl Check for dl
-dnl AC_CHECK_LIB(dl, dlopen, [LIBS="$LIBS -ldl"], exit 1)
-
-
-dnl Check for rt
-if test x$ac_cv_use_rtlib != xno; then
-   AC_CHECK_LIB(rt, shm_open, [LIBS="$LIBS -lrt"], exit 1)
-else 
-   AC_CHECK_LIB(c, shm_open, [LIBS="$LIBS -lc"], exit 1)
-fi
-
-
-dnl Check for pthread
-dnl AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"], exit 1)
-
-LIBS="$LIBS -ldl"
+CONFIGURE_ARGS="$CONFIGURE_ARGS CXXFLAGS='$CXXFLAGS'"
 
 dnl #######################################################################
 dnl # Doxygen Stuff
@@ -301,25 +369,6 @@ AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
 
 AC_CONFIG_SUBDIRS([contrib])
-
-if test x$ac_cv_use_libevent != xno; then
-   AC_CONFIG_SUBDIRS([external/libevent])
-fi   
-
-dnl if test x$ac_cv_use_zookeeper != xno; then
-dnl   AC_CONFIG_SUBDIRS([external/zookeeper_c])
-dnl fi   
-
-if test x$ac_cv_use_thrift = xyes; then
-   AC_CONFIG_SUBDIRS([external/thrift])
-
-dnl hack solution
-    thrift_cppflags="CPPFLAGS=-I$FX_LIBEVENT_HOME -I$FX_LIBEVENT_HOME/include -I$FX_LIBEVENT_HOME/include/event2 -I$FX_BOOST_HOME -I/usr/local"
-   if test x$ac_cv_use_debug != xno; then
-      thrift_cppflags="$thrift_cppflags -g -D_DEBUG"
-   fi
-   ac_configure_args="$ac_configure_args --enable-tests=no --with-boost=$FX_BOOST_HOME '$thrift_cppflags' 'LDFLAGS=-L$FX_LIBEVENT_HOME/.libs' 'LD_LIBRARY_PATH=$FX_LIBEVENT_HOME/.libs'"
-fi  
 
 AC_CONFIG_FILES([Makefile                
 		include/Makefile
@@ -392,6 +441,7 @@ AC_CONFIG_FILES([Makefile
 	        test/app/common/Makefile
 	        test/app/fproxy/Makefile
 	        test/app/watchdog/Makefile
+	        test/app/searcher/Makefile
 	        bin/Makefile		        
 	        sysdata/Makefile
 	        conf/Makefile

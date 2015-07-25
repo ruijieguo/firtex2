@@ -38,7 +38,7 @@ public:
     /**
      * Process http request asynchronously
      *
-     * @param pCtx http request contex
+     * @param pCtx http request context
      */ 
     void process(EvHttpRequestContext* pCtx);
 

@@ -30,7 +30,8 @@ int main(int argc,char* argv[])
     app.addAppRunner(new WatchdogAppRunner);
     if (app.parse(argc, (const char**)argv))
     {
-        return app.run();
+        Application::Status stat =  app.run();
+        return stat;
     }
     return 0;
 }

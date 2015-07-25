@@ -1,25 +1,33 @@
+include $(top_srcdir)/external/versions.am
 AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include
+AUTOMAKE_OPTIONS = subdir-objects
+
 appsrcdir = $(top_srcdir)/app/fbuilder
 
 bindir = ${exec_prefix}/firtex2/bin
 
 bin_PROGRAMS = fbuilder
 
-fbuilder_SOURCES = $(appsrcdir)/main.cpp \
-	$(appsrcdir)/BuilderAppRunner.cpp
+fbuilder_SOURCES = main.cpp \
+	BuilderAppRunner.cpp
 
 LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\
-	 @FX_LIBEVENT_HOME@/libevent.la\
-	 @FX_LIBEVENT_HOME@/libevent_pthreads.la
+	$(top_builddir)/contrib/snowball/src/libfirtex_snowball.la\
+	$(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
 
-if HAVE_SNOWBALL
-LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+external_srcdir = $(top_srcdir)/external
 
-if HAVE_HIGHLIGHTER
-LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
+if WITH_BUNDLED_LIBEVENT
+AM_CPPFLAGS += -I$(external_srcdir)/$(LIBEVENT)\
+	-I$(external_srcdir)/$(LIBEVENT)/include
+
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+else
+LDADD += -llibevent
+LDADD += -llibevent_pthreads
+endif
 
 fbuilder_LDFLAGS = $(LINKER_OPTIONS)
 

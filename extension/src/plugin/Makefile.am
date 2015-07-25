@@ -1,8 +1,6 @@
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/extension/include
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/extension/include -Wno-invalid-offsetof
 
 noinst_LTLIBRARIES = libfirtexext_plugin.la libfirtexext_plugin_firtexcom.la
-
-libfirtexext_plugin_la_CPPFLAGS = -Wno-invalid-offsetof
 
 plugin_sources = \
 	ComObject.cpp\

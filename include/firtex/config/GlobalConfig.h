@@ -104,6 +104,19 @@ public:
     };
     sMerge Merge;
 
+    struct sSearch : public Configurable 
+    {
+        /// refresh timer in seconds, <=0 means no refresh
+        int32_t refresh_timer;
+
+    public:
+        void configure(Configurator& conf)
+        {
+            conf.configure("refresh_timer", refresh_timer, 0);
+        }
+    };
+    sSearch Search;
+
     struct sAdvance  : public Configurable
     {
         struct sPosting  : public Configurable

@@ -5,6 +5,7 @@
 
 using namespace std;
 FX_NS_USE(network);
+FX_NS_USE(utility);
 
 FX_NS_DEF(app);
 
@@ -23,11 +24,20 @@ void HTTPSearchServer::run()
     m_pServiceFactory = new EvHttpServiceFactory();
     m_pServiceFactory->registerService(new HTTPSearchService(m_resource));
     m_pServiceFactory->registerService(new HTTPPingService());
-    m_pServer = new EvHttpServer(m_pConf->serverConf.host,
-                                 m_pConf->serverConf.listen_port,
+    m_pServer = new EvHttpServer("localhost",
+                                 m_conf.Searcher.port,
                                  m_pServiceFactory,
-                                 m_pConf->serverConf.thread_pool);    
-    m_pServer->start(false);
+                                 m_conf.Searcher.thread_pool);    
+    try 
+    {
+        m_pServer->start(false);
+    }
+    catch (const FirteXException& e)
+    {
+        stop();
+        join();
+        FIRTEX_RETHROW(e);
+    }
 }
 
 void HTTPSearchServer::stop()

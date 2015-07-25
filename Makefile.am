@@ -1,4 +1,4 @@
-SUBDIRS = include src extension contrib app plugins test bin win32 documentation sysdata conf bindings 
+SUBDIRS = include src external extension contrib app plugins test bin win32 documentation sysdata conf bindings 
 
 EXTRA_DIST =\
 	bootstrap.sh\

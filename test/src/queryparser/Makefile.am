@@ -27,21 +27,9 @@ queryparser_test_LDADD= $(top_builddir)/extension/src/libfirtexext.la\
 	$(top_builddir)/src/libfirtex.la\
 	$(top_builddir)/test/src/libfirtextest_main.la\
 	$(top_builddir)/test/cppunit/libcppunit.la\
-	@FX_LIBEVENT_HOME@/libevent.la\
-	@FX_LIBEVENT_HOME@/libevent_pthreads.la\
 	 -lpthread -ldl
 
-if HAVE_SNOWBALL
-queryparser_test_LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
-
-if HAVE_HIGHLIGHTER
-queryparser_test_LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-queryparser_test_LDFLAGS = $(LIBADD_DL)
-
-if HAVE_TCMALLOC
+if WITH_TCMALLOC
 queryparser_test_LDADD += @FX_TCMALLOC_HOME@/libtcmalloc.la
 endif
 

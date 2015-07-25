@@ -29,15 +29,15 @@ bool ServerBase::loadConf(const string& sConfFile)
         XMLConfigurator conf;
         conf.load(sConfFile);
 
-        m_pConf = createConf();
-        m_pConf->configure(conf);
-        m_pConf->makePathAbsolute(conf.getDir());
+        m_conf.configure(conf);
+        m_conf.makePathAbsolute(conf.getDir());
 
         FX_LOG(INFO, "Load configure file: [%s] succeed", sConfFile.c_str());
     }
     catch(const FirteXException& e)
     {
-		FX_LOG(ERROR, "Load configure file: [%s] FAILED: [%s]", sConfFile.c_str(), e.what().c_str());
+        FX_LOG(ERROR, "Load configure file: [%s] FAILED: [%s]",
+               sConfFile.c_str(), e.what().c_str());
         return false;
     }
     return true;
@@ -45,10 +45,10 @@ bool ServerBase::loadConf(const string& sConfFile)
 
 void ServerBase::setupLogger()
 {
-    string sLogConf;
-    if (m_pConf.isNotNull())
-        sLogConf = m_pConf->serverConf.logger_conf;
-    else sLogConf = "logger_conf.xml";
+    string sLogConf = m_conf.Path.conf_dir;
+    if (sLogConf.empty())
+        sLogConf = m_conf.Path.work_dir + "/logger_conf.xml";
+    else sLogConf += "/logger_conf.xml";
     File logConf(sLogConf);
     if (!sLogConf.empty() && logConf.exists())
     {

@@ -36,7 +36,7 @@ void EvHttpRequestHandler::run()
         EvHttpRequestContext* pCtx = m_requests.waitDequeue();
         if (pCtx)
         {
-            EvHttpService* pService = m_pServiceFactory->findService(pCtx->getResource());
+            EvHttpService* pService = m_pServiceFactory->findService(pCtx);
             if (pService)
             {
                 FX_DEBUG("Found request handler for resource: [%s]",

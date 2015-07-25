@@ -364,6 +364,7 @@ void DocumentSchema::configure(Configurator& conf)
         }
 
         Configurator fieldsConf;
+        fieldsConf.configure("default_field", m_sDefField);
         for (FieldSchemaVector::const_iterator it = m_fields.begin();
              it != m_fields.end(); ++it)
         {
@@ -400,7 +401,11 @@ void DocumentSchema::configure(Configurator& conf)
                 while (it.hasNext())
                 {
                     Configurator::KeyValuePair kv = it.next();
-                    if (kv.first == _T("field"))
+                    if (kv.first == "default_field")
+                    {
+                        m_sDefField = AnyCast<std::string>(kv.second);
+                    } 
+                    else if (kv.first == "field")
                     {
                         FieldSchema fs;
                         Configurator fieldConf(AnyCast<Configurator::ConfMap>(kv.second));

@@ -1,13 +1,12 @@
 #include "firtex/extension/util/Application.h"
 #include "firtex/utility/Path.h"
 #include "firtex/config/XMLConfigurator.h"
-
-#ifdef HAVE_THRIFT
 #include "RPCSearchClientAppRunner.h"
-#endif
+
+
+FX_NS_USE(app);
 
 using namespace std;
-FX_NS_USE(app);
 FX_NS_USE(util);
 FX_NS_USE(common);
 FX_NS_USE(config);

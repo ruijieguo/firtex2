@@ -2,8 +2,6 @@ AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/contrib/highlighter/incl
 
 noinst_LTLIBRARIES = libsearch.la
 
-search_srcdir= $(top_srcdir)/src/search
-
 libsearch_la_SOURCES = AndQueryExecutor.cpp\
 	BooleanQuery.cpp\
 	BooleanQueryExecutorBuilder.cpp\

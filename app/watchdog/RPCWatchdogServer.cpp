@@ -20,11 +20,6 @@ RPCWatchdogServer::~RPCWatchdogServer()
 {
 }
 
-ServerConfBase* RPCWatchdogServer::createConf()
-{
-    return NULL;
-}
-
 bool RPCWatchdogServer::init(const std::string& sConfFile)
 {
     try

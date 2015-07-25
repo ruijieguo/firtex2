@@ -116,6 +116,12 @@ public:
      */
     fieldid_t addField(const FieldSchema& fieldSchema);
 
+    /**
+     * set/get default field
+     */
+    void setDefaultField(const std::string& sDefField);
+    std::string getDefaultField() const;
+
 public:
     /**
      * add items
@@ -192,6 +198,7 @@ private:
                                   bool bSortAndFilterable);
 
 private:
+    std::string m_sDefField;
     FieldSchemaVector m_fields;
     FieldDefinition* m_pFieldDefinition;
 
@@ -223,6 +230,17 @@ inline const FieldSchema* DocumentSchema::operator[](const size_t idx) const
         return NULL;
     return m_fields[idx];
 }
+
+inline void DocumentSchema::setDefaultField(const std::string& sDefField)
+{
+    m_sDefField = sDefField;
+}
+
+inline std::string DocumentSchema::getDefaultField() const
+{
+    return m_sDefField;
+}
+
 
 FX_NS_END
 

@@ -84,6 +84,7 @@ public:
             return false;
         }
         m_sResource = decodedPath;
+        parseResources();
         free(decodedPath);
         
         const char* query = evhttp_uri_get_query(decoded);
@@ -101,6 +102,33 @@ public:
         }
         evhttp_uri_free(decoded);
         return true;
+    }
+
+    void parseResources()
+    {
+        m_resources.clear();
+
+        std::size_t startPos = 1;
+        while (true)
+        {
+            std::size_t n = m_sResource.find("/", startPos);
+            if (n != std::string::npos)
+            {
+                if (n - startPos > 0)
+                {
+                    m_resources.push_back(m_sResource.substr(startPos, n - startPos));
+                }
+                startPos = n + 1;
+            }
+            else
+            {
+                if (m_sResource.size() - startPos > 0)
+                {
+                    m_resources.push_back(m_sResource.substr(startPos, m_sResource.size() - startPos));
+                }
+                break;
+            }
+        }
     }
 
     EvDataBuffer* getInBuffer()
@@ -139,6 +167,11 @@ public:
     const std::string& getResource() const
     {
         return m_sResource;
+    }
+
+    const Resources& getResources() const
+    {
+        return m_resources;
     }
 
     const std::string& getQuery() const
@@ -180,6 +213,8 @@ private:
 
     std::string m_sResource;
     std::string m_sQuery;
+
+    Resources m_resources;
 
 private:
     DECLARE_LOGGER();

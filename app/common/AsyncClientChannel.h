@@ -26,6 +26,8 @@
 #include <thrift/async/TAsyncChannel.h>
 #include <event.h>
 
+struct evdns_base;
+
 namespace apache { namespace thrift { namespace transport {
 class TMemoryBuffer;
 }}}
@@ -105,7 +107,7 @@ private:
         }
 
     private:
-        struct event_base* m_evbase;
+        event_base* m_evbase;
 
     private:
         DECLARE_LOGGER();
@@ -141,9 +143,9 @@ private:
     int32_t m_nConnFailCount;
     int32_t m_nErrorCount;
 
-    struct event_base* m_evbase;
-    struct evdns_base * m_dnsbase;
-    struct bufferevent* m_bev;
+    event_base* m_evbase;
+    evdns_base * m_dnsbase;
+    bufferevent* m_bev;
 
     FX_NS(network)::EvDataBuffer m_buffer;
     int32_t m_nReceived;

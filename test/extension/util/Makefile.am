@@ -1,3 +1,4 @@
+include $(top_srcdir)/external/versions.am
 AM_CPPFLAGS = -I $(top_srcdir)/include \
 	-I $(top_srcdir)/test/src\
 	-I $(top_srcdir)/extension/include \
@@ -8,7 +9,8 @@ EXTRA_DIST = OptionParserTestCase.h
 check_PROGRAMS  = ext_util_test
 
 ext_util_test_SOURCES = \
-	OptionParserTestCase.cpp
+	OptionParserTestCase.cpp\
+	RegexTestCase.cpp
 
 ext_util_test_LDADD= $(top_builddir)/extension/src/util/libfirtexext_util.la \
 	$(top_builddir)/src/libfirtex.la\
@@ -17,19 +19,14 @@ ext_util_test_LDADD= $(top_builddir)/extension/src/util/libfirtexext_util.la \
 	$(top_builddir)/extension/src/com/libfirtexext_com.la \
 	 -lpthread -ldl
 
-if HAVE_SNOWBALL
-ext_util_test_LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+external_srcdir = $(top_srcdir)/external
+if WITH_BUNDLED_PCRE2
+AM_CPPFLAGS += -I$(external_srcdir)/$(PCRE2)/src
+ext_util_test_LDADD += $(external_srcdir)/$(PCRE2)/libpcre2-posix.la
+endif
 
-if HAVE_HIGHLIGHTER
-ext_util_test_LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-
-ext_util_test_LDFLAGS = $(LIBADD_DL)
-
-if HAVE_TCMALLOC
-ext_util_test_LDADD += @FX_TCMALLOC_HOME@/libtcmalloc.la
+if WITH_TCMALLOC
+ext_util_test_LDADD += -llibtcmalloc
 endif
 
 

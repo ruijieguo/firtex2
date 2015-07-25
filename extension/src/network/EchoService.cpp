@@ -15,7 +15,7 @@ EchoService::~EchoService()
 
 std::string EchoService::requestCanHandle() const
 {
-    return "/echo";
+    return "GET ^/_echo";
 }
 
 void EchoService::handleRequest(EvHttpRequestContext* pCtx)

@@ -16,7 +16,6 @@
 #include "firtex/common/StdHeader.h"
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
-#include "SearchServerConf.h"
 #include "SearchResource.h"
 #include "../common/ServerBase.h"
 
@@ -38,12 +37,8 @@ public:
     /// Wait for finish
     virtual void join();
 
-protected:
-    /// Create server configure
-    virtual ServerConfBase* createConf();
-
 private:
-    void initRefreshThread();
+    void initRefreshThread(int32_t nRefreshTimer);
 
 private:
     class RefreshRunner : public FX_NS(thread)::Runnable
@@ -60,7 +55,7 @@ private:
         {
             while (!m_bStopRequested)
             {
-                m_resource.reopenIndex();
+                m_resource.refresh();
                 FX_NS(thread)::Thread::sleep(m_nInterval * 1000);
             }
         }

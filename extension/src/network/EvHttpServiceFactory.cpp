@@ -3,6 +3,8 @@
 
 using namespace std;
 
+FX_NS_USE(util);
+
 FX_NS_DEF(network);
 
 std::string EvHttpServiceFactory::NOT_FOUND_SERVICE_NAME = "NotFoundService";
@@ -17,36 +19,37 @@ EvHttpServiceFactory::EvHttpServiceFactory()
 
 EvHttpServiceFactory::~EvHttpServiceFactory() 
 {
-    for (ServiceMap::iterator it = m_services.begin();
-         it != m_services.end(); ++it)
-    {
-        delete it->second;
-    }
     m_services.clear();
 }
 
 void EvHttpServiceFactory::registerService(EvHttpService* pService)
 {
+    EvHttpServicePtr pServicePtr(pService);
+
     string sRequest = pService->requestCanHandle();
-    ServiceMap::iterator it = m_services.find(sRequest);
-    if (it != m_services.end())
+    RouterPtr pRouter = new Router();
+    if (pRouter->init(sRequest))
     {
-        FX_LOG(WARN, "The service for request: [%s] already exists, "
-               "update to new service", sRequest.c_str());
-        delete it->second;
-        m_services.erase(it);
+        FX_LOG(INFO, "Register service for [%s] SUCCESS.", sRequest.c_str());
+        m_services.push_back(make_pair(pRouter, pServicePtr));
     }
-    
-    m_services.insert(make_pair(sRequest, pService));
+    else
+    {
+        FX_LOG(ERROR, "Register service for [%s] FAILED.", sRequest.c_str());
+    }
 }
 
 EvHttpService* EvHttpServiceFactory::findService(
-        const std::string& sRequest) const
+        const EvHttpRequestContext* pCtx) const
 {
-    ServiceMap::const_iterator it = m_services.find(sRequest);
-    if (it != m_services.end())
+    string sRequest = pCtx->getResource();
+    for (ServiceVector::const_iterator it = m_services.begin();
+         it != m_services.end(); ++it)
     {
-        return it->second;
+        if ((*it).first->match(pCtx->getMethodType(), sRequest))
+        {
+            return const_cast<EvHttpService*>((*it).second.get());
+        }
     }
     return NULL;
 }

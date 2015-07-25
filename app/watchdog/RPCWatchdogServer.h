@@ -32,10 +32,6 @@ public:
     /// Wait for finish
     virtual void join();
 
-protected:
-    /// Create server configure
-    virtual ServerConfBase* createConf();
-
 private:
     TProcessorPtr m_pProcessor;
     RPCServerPtr m_pServer;

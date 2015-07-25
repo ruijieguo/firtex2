@@ -1,3 +1,4 @@
+include $(top_srcdir)/external/versions.am
 AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include
 
 bindir = ${exec_prefix}/firtex2/bin
@@ -24,17 +25,15 @@ fxist4c_SOURCES = \
 LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la \
 	$(top_builddir)/app/common/libappcommon.la\
-	 @FX_LIBEVENT_HOME@/libevent.la\
-	 @FX_LIBEVENT_HOME@/libevent_pthreads.la
+	$(top_builddir)/contrib/snowball/src/libfirtex_snowball.la\
+	$(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
 
-if HAVE_SNOWBALL
-LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+external_srcdir = $(top_srcdir)/external
 
-if HAVE_HIGHLIGHTER
-LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-fxist4c_LDFLAGS = $(LINKER_OPTIONS)
-
-
+if WITH_BUNDLED_LIBEVENT
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+else
+LDADD += -llibevent
+LDADD += -llibevent_pthreads
+endif

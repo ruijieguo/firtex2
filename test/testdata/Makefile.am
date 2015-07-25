@@ -1,4 +1,4 @@
-testdata_dir = $(top_srcdir)/test/testdata
+testdata_dir = testdata
 
 EXTRA_DIST += $(testdata_dir)/conf/test_config.xml\
 	$(testdata_dir)/conf/logger_conf.xml\

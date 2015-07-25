@@ -26,7 +26,7 @@ BlenderServiceBase::~BlenderServiceBase()
 
 bool BlenderServiceBase::init(const BlenderServerConfPtr& pConf)
 {
-    FX_LOG(INFO, "Initialize RPC blender service, work thread count: [%d]",
+    FX_LOG(INFO, "Initialize blender service, work thread count: [%d]",
            pConf->serverConf.thread_pool);
 
     int32_t nThreadCount = pConf->serverConf.thread_pool;

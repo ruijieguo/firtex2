@@ -48,14 +48,16 @@ SETUP_STREAM_LOGGER(config, GlobalConfig);
 GlobalConfig::GlobalConfig()
 {
     Storage.filesystem = "filesystem.mmap";
-    Merge.strategy = "nomerge";
 
     Build.memory = 16; //16 MB
     Build.buildThreadCount = DEFAULT_BUILDING_THEAD_COUNT;
     Build.documentQueueSize = DEFAULT_DOCUMENT_QUEUE_SIZE;
     Build.maxIndexTermsPerDoc = 100000;
 
+    Merge.strategy = "nomerge";
     Merge.maxAllowedOpenFiles = 1024;
+
+    Search.refresh_timer = 0;
 
     Advance.Posting.skipInterval = 8;
     Advance.Posting.maxLevel = 2;
@@ -133,6 +135,10 @@ void GlobalConfig::configure(Configurator& conf)
         Merge.configure(mergeConf);
         rootConf.configure("merge", mergeConf.getMap());
 
+        Configurator searchConf;
+        Search.configure(searchConf);
+        rootConf.configure("search", searchConf.getMap());
+
         Configurator advanceConf;
         Advance.configure(advanceConf);
         rootConf.configure("advance", advanceConf.getMap());
@@ -173,6 +179,13 @@ void GlobalConfig::configure(Configurator& conf)
             {
                 Configurator mergeConf(AnyCast<Configurator::ConfMap>(it.next().second));
                 Merge.configure(mergeConf);
+            }
+
+            it = c.findConf("search");
+            if (it.hasNext())
+            {
+                Configurator searchConf(AnyCast<Configurator::ConfMap>(it.next().second));
+                Search.configure(searchConf);
             }
         
             it = c.findConf("advance");

@@ -32,6 +32,9 @@ void DocumentSchemaTestCase::testReadSchema()
                      "<configure>"
                      "<index_schema>"
                      "<fields>"
+                     "<default_field>"
+                     "BODY"
+                     "</default_field>"
                      "<field>"
                      "<name>Number1</name>"
                      "<type>INT32</type>"
@@ -64,6 +67,8 @@ void DocumentSchemaTestCase::testReadSchema()
     DocumentSchema schema;
     schema.configure(configurator);
 
+    CPPUNIT_ASSERT_EQUAL(schema.getDefaultField(), "BODY");
+        
     const FieldSchema* pFieldSchema = schema.getSchema("Number1");
     CPPUNIT_ASSERT(pFieldSchema != NULL);
     CPPUNIT_ASSERT(pFieldSchema->hasForwardIndex() == true);

@@ -1,28 +1,24 @@
-AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include -I@FX_BOOST_HOME@ -I@FX_THRIFT_HOME@/lib/cpp/src -Ithrift/gen-cpp -I@FX_LIBEVENT_HOME@ -I@FX_LIBEVENT_HOME@/include
+include $(top_srcdir)/external/versions.am
+
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/extension/include -I $(top_srcdir)/contrib/highlighter/include -Ithrift/gen-cpp 
 
 appsrcdir = $(top_srcdir)/app/fsearchd
 common_incdir = $(top_srcdir)/app/common
 
 bindir = ${exec_prefix}/firtex2/bin
 
-bin_PROGRAMS = fsearchd
-if HAVE_THRIFT
-bin_PROGRAMS += frpcclient
-endif
+bin_PROGRAMS = fsearchd frpcclient
 
 fsearchd_SOURCES = \
-	SearchServerBase.cpp\
 	HTTPSearchServer.cpp\
 	SearchServerAppRunner.cpp\
-	SearchServerConf.cpp\
 	SearchServerMain.cpp\
 	SearchResource.cpp\
+	SearchExecutor.cpp\
+	SearchServerBase.cpp\
 	HTTPSearchService.cpp
-
-if HAVE_THRIFT
-fsearchd_SOURCES += \
-	RPCSearchServer.cpp\
-	RPCSearchService.cpp
+#	RPCSearchServer.cpp\
+#	RPCSearchService.cpp
 
 frpcclient_SOURCES = \
 	RPCSearchClientAppRunner.cpp\
@@ -30,36 +26,57 @@ frpcclient_SOURCES = \
 
 frpcclient_LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\
-	$(top_builddir)/app/common/libappcommon.la
-endif
+	$(top_builddir)/app/common/libappcommon.la\
+	$(top_builddir)/app/thrift/libthriftgen.la
 
 fsearchd_LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\
-	$(top_builddir)/app/common/libappcommon.la
+	$(top_builddir)/app/common/libappcommon.la\
+	$(top_builddir)/contrib/snowball/src/libfirtex_snowball.la\
+	$(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la\
+	$(top_builddir)/app/thrift/libthriftgen.la
 
-if HAVE_SNOWBALL
-fsearchd_LDADD += $(top_builddir)/contrib/snowball/src/libfirtex_snowball.la
-endif 
+external_srcdir = $(top_srcdir)/external
 
-if HAVE_HIGHLIGHTER
-fsearchd_LDADD += $(top_builddir)/contrib/highlighter/src/libfirtex_highlighter.la
-endif 
-
-fsearchd_LDADD += @FX_LIBEVENT_HOME@/libevent.la
-fsearchd_LDADD += @FX_LIBEVENT_HOME@/libevent_pthreads.la
-
-if HAVE_THRIFT
-fsearchd_LDADD += $(top_builddir)/app/thrift/libthriftgen.la
-fsearchd_LDADD += @FX_THRIFT_HOME@/lib/cpp/.libs/libthrift.la
-fsearchd_LDADD += @FX_THRIFT_HOME@/lib/cpp/.libs/libthriftnb.la
-
-frpcclient_LDADD += $(top_builddir)/app/thrift/libthriftgen.la
-frpcclient_LDADD += @FX_THRIFT_HOME@/lib/cpp/.libs/libthrift.la
-frpcclient_LDADD += @FX_LIBEVENT_HOME@/libevent.la
-frpcclient_LDADD += @FX_LIBEVENT_HOME@/libevent_pthreads.la
+if WITH_BUNDLED_PCRE2
+AM_CPPFLAGS += -I$(external_srcdir)/$(PCRE2)/src
 endif
 
 
-fsearchd_LDFLAGS = $(LINKER_OPTIONS)
+if WITH_BUNDLED_BOOST
+AM_CPPFLAGS += -I$(external_srcdir)/$(BOOST)
+fsearchd_LDADD += $(external_srcdir)/$(PCRE2)/libpcre2-8.la
+endif
 
+if WITH_BUNDLED_LIBEVENT
+AM_CPPFLAGS += -I$(external_srcdir)/$(LIBEVENT)\
+	-I$(external_srcdir)/$(LIBEVENT)/include
+
+fsearchd_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+fsearchd_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+
+frpcclient_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+frpcclient_LDADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+else
+fsearchd_LDADD += -llibevent
+fsearchd_LDADD += -llibevent_pthreads
+frpcclient_LDADD += -llibevent
+frpcclient_LDADD += -llibevent_pthreads
+endif
+
+if WITH_BUNDLED_THRIFT
+frpcclient_LDADD += $(external_srcdir)/$(THRIFT)/lib/cpp/libthrift.la
+frpcclient_LDADD += $(external_srcdir)/$(THRIFT)/lib/cpp/libthriftnb.la
+
+fsearchd_LDADD += $(external_srcdir)/$(THRIFT)/lib/cpp/libthrift.la
+fsearchd_LDADD += $(external_srcdir)/$(THRIFT)/lib/cpp/libthriftnb.la
+
+AM_CPPFLAGS += -I$(external_srcdir)/$(THRIFT)/lib/cpp/src
+else
+frpcclient_LDADD += -llibthrift
+frpcclient_LDADD += -llibthriftnb
+
+fsearchd_LDADD += -llibthrift
+fsearchd_LDADD += -llibthriftnb
+endif
 
