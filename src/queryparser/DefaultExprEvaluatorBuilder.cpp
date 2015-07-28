@@ -329,13 +329,13 @@ void DefaultExprEvaluatorBuilder::swapArglist(ExprEvaluator*& pLeftEva,
 ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
         const ExprNode& exprNode)
 {
-    if (m_pIndexReader.isNull())
+    if (!m_pIndexReader)
     {
         return NULL;
     }
     ForwardIndexIteratorPtr pAttrIter =
         m_pIndexReader->forwardIndexReader(exprNode.attrId);
-    if (pAttrIter.isNull())
+    if (!pAttrIter)
     {
         FX_LOG(ERROR, "Create forward index iterator for field: [%d] FAILED",
                (int32_t)exprNode.attrId);
@@ -349,15 +349,15 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
         if (exprNode.argType == VALUE_INT32)
         {
             Int32ForwardIndexIteratorPtr pInt32AttrIt = 
-                pAttrIter.cast<Int32ForwardIndexIterator>();
-            FIRTEX_ASSERT2(pInt32AttrIt.isNotNull());
+                std::dynamic_pointer_cast<Int32ForwardIndexIterator>(pAttrIter);
+            FIRTEX_ASSERT2(pInt32AttrIt);
             return new AttrExprEvaluator<int32_t>(pInt32AttrIt);
         }
         else if (exprNode.argType == VALUE_UINT32)
         {
             UInt32ForwardIndexIteratorPtr pUInt32AttrIt = 
-                pAttrIter.cast<UInt32ForwardIndexIterator>();
-            FIRTEX_ASSERT2(pUInt32AttrIt.isNotNull());
+                std::dynamic_pointer_cast<UInt32ForwardIndexIterator>(pAttrIter);
+            FIRTEX_ASSERT2(pUInt32AttrIt);
             return new AttrExprEvaluator<int32_t,
                 UInt32ToInt32AttrExprEvaluatorCastTraits<int32_t> >(pUInt32AttrIt);
         }
@@ -369,15 +369,15 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
         if (exprNode.argType == VALUE_INT64)
         {
             Int64ForwardIndexIteratorPtr pInt64AttrIt = 
-                pAttrIter.cast<Int64ForwardIndexIterator>();
-            FIRTEX_ASSERT2(pInt64AttrIt.isNotNull());
+                std::dynamic_pointer_cast<Int64ForwardIndexIterator>(pAttrIter);
+            FIRTEX_ASSERT2(pInt64AttrIt);
             return new AttrExprEvaluator<int64_t>(pInt64AttrIt);
         }
         else if (exprNode.argType == VALUE_UINT64)
         {
             UInt64ForwardIndexIteratorPtr pUInt64AttrIt = 
-                pAttrIter.cast<UInt64ForwardIndexIterator>();
-            FIRTEX_ASSERT2(pUInt64AttrIt.isNotNull());
+                std::dynamic_pointer_cast<UInt64ForwardIndexIterator>(pAttrIter);
+            FIRTEX_ASSERT2(pUInt64AttrIt);
             return new AttrExprEvaluator<int64_t,
                 UInt64ToInt64AttrExprEvaluatorCastTraits<int64_t> >(pUInt64AttrIt);
         }
@@ -387,16 +387,16 @@ ExprEvaluator* DefaultExprEvaluatorBuilder::createAttrEvaluator(
     case VALUE_FLOAT:
     {
         FloatForwardIndexIteratorPtr pFloatAttrIt = 
-            pAttrIter.cast<FloatForwardIndexIterator>();
-        FIRTEX_ASSERT2(pFloatAttrIt.isNotNull());
+            std::dynamic_pointer_cast<FloatForwardIndexIterator>(pAttrIter);
+        FIRTEX_ASSERT2(pFloatAttrIt);
         return new AttrExprEvaluator<float>(pFloatAttrIt);
         break;
     }
     case VALUE_DOUBLE:
     {
         DoubleForwardIndexIteratorPtr pDoubleAttrIt = 
-            pAttrIter.cast<DoubleForwardIndexIterator>();
-        FIRTEX_ASSERT2(pDoubleAttrIt.isNotNull());
+            std::dynamic_pointer_cast<DoubleForwardIndexIterator>(pAttrIter);
+        FIRTEX_ASSERT2(pDoubleAttrIt);
         return new AttrExprEvaluator<double>(pDoubleAttrIt);
         break;
     }

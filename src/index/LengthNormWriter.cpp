@@ -49,7 +49,7 @@ void LengthNormWriter::init(const DocumentSchema* pDocSchema)
             {
                 m_lengthNorm.resize((size_t)fieldId + 1);
             }
-            m_lengthNorm[fieldId].assign(new LengthNorm(FdIndexType::INT32));
+            m_lengthNorm[fieldId].reset(new LengthNorm(FdIndexType::INT32));
             m_lengthNorm[fieldId]->init(pFieldSchema);
         }
     }
@@ -58,7 +58,7 @@ void LengthNormWriter::init(const DocumentSchema* pDocSchema)
 void LengthNormWriter::addField(docid_t docId, const AnalyzedField* pField)
 {
     fieldid_t fieldId = pField->getId();
-    FIRTEX_ASSERT2(m_lengthNorm[fieldId].isNotNull());
+    FIRTEX_ASSERT2(m_lengthNorm[fieldId]);
 
     const AnalyzedField::TokenView* pTokenView = pField->getTokenView();
 
@@ -75,7 +75,7 @@ void LengthNormWriter::commitBarrel(const std::string& sSuffix)
     for (fieldid_t fieldId = 0; fieldId < (fieldid_t)m_lengthNorm.size();
          fieldId++)
     {
-        if (m_lengthNorm[fieldId].isNotNull())
+        if (m_lengthNorm[fieldId])
         {
             m_lengthNorm[fieldId]->commit(m_pFileSys, NORM_FILEEXT, sSuffix);
         }
@@ -88,8 +88,8 @@ LengthNormIteratorPtr LengthNormWriter::iterator(fieldid_t fieldId) const
     if (fieldId > 0 && fieldId < (fieldid_t)m_lengthNorm.size())
     {
         ForwardIndexIteratorPtr pIt = m_lengthNorm[fieldId]->iterator();
-        LengthNormIteratorPtr pNormIt = pIt.cast<LengthNormIterator>();
-        if (pNormIt.isNull())
+        LengthNormIteratorPtr pNormIt = std::dynamic_pointer_cast<LengthNormIterator>(pIt);
+        if (!pNormIt)
         {
             FIRTEX_THROW(CastException, "Invalid length norm iterator for field: [%d]",
                          fieldId);

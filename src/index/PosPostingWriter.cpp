@@ -28,7 +28,7 @@ PostingDecoderPtr PosPostingWriter::createDecoder() const
     {
         DocSkipListReader* p = dynamic_cast<DocSkipListReader*>(
                 m_streammer.m_pDocSkipListWriter->createReader());
-        pDocSkipReader.assign(p);
+        pDocSkipReader.reset(p);
     }
 
     PosSkipListReaderPtr pPosSkipReader;
@@ -36,7 +36,7 @@ PostingDecoderPtr PosPostingWriter::createDecoder() const
     {
         PosSkipListReader* p = dynamic_cast<PosSkipListReader*>(
                 m_streammer.m_pPosSkipListWriter->createReader());
-        pPosSkipReader.assign(p);
+        pPosSkipReader.reset(p);
     }
 
     InputStreamPtr pDocInStreamPtr;
@@ -45,14 +45,14 @@ PostingDecoderPtr PosPostingWriter::createDecoder() const
     {
         ByteSliceInputStream* pDocInStream = new ByteSliceInputStream(
                 m_streammer.m_pDocListWriter->getHeadSlice(), false);
-        pDocInStreamPtr.assign(pDocInStream);
+        pDocInStreamPtr.reset(pDocInStream);
     }
 
     if (m_streammer.m_pPosListWriter)
     {
         ByteSliceInputStream* pPosInStream = new ByteSliceInputStream(
                 m_streammer.m_pPosListWriter->getHeadSlice(), false);
-        pPosInStreamPtr.assign(pPosInStream);
+        pPosInStreamPtr.reset(pPosInStream);
     }
 
     pDecoder->init(m_termMeta, pDocInStreamPtr, pPosInStreamPtr,

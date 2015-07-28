@@ -77,7 +77,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<AndQueryExecutor> AndQueryExecutorPtr;
+DEFINE_TYPED_PTR(AndQueryExecutor);
 
 ///////////////////////////////////////////////////////
 //

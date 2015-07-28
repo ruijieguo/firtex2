@@ -58,7 +58,8 @@ bool DocumentProcessorPlugins::loadPlugin(const PluginPtr& pPlugin)
             NULL, IDocumentProcessorPlugin::iid, (void**)&pInterface);
     if (ret)
     {
-        DocumentProcessorFactory::instance()->registerProcessor(new DocumentProcessorPlugin::Creator(pInterface));
+        DocumentProcessorPlugin::CreatorPtr p(new DocumentProcessorPlugin::Creator(pInterface));
+        DocumentProcessorFactory::instance()->registerProcessor(p);
 
         return true;
     }

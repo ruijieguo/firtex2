@@ -27,7 +27,7 @@ PostingDecoderPtr DocPostingWriter::createDecoder() const
     {
         DocSkipListReader* p = dynamic_cast<DocSkipListReader*>(
                 m_streammer.m_pDocSkipListWriter->createReader());
-        pSkipReader.assign(p);
+        pSkipReader.reset(p);
     }
 
     InputStreamPtr pInStreamPtr;
@@ -35,7 +35,7 @@ PostingDecoderPtr DocPostingWriter::createDecoder() const
     {
         ByteSliceInputStream* pInStream = new ByteSliceInputStream(
                 m_streammer.m_pDocListWriter->getHeadSlice(), false);
-        pInStreamPtr.assign(pInStream);
+        pInStreamPtr.reset(pInStream);
     }
 
     pDecoder->init(m_termMeta, pInStreamPtr, pSkipReader,

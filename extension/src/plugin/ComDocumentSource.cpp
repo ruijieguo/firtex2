@@ -52,7 +52,7 @@ IMPLEMENT_UNKNOWN(ComDocumentSource, DocumentSource)
 FX_STDMETHODIMP ComDocumentSource::XDocumentSource::setRawDocument(/* [in] */ IRawDocument* pRawDoc)
 {
     FX_METHOD_PROLOGUE(ComDocumentSource, DocumentSource);
-    RawDocument* pUnwrappedRawDoc = ComRawDocument::unwrap(pRawDoc);
+    RawDocumentPtr pUnwrappedRawDoc(ComRawDocument::unwrap(pRawDoc));
     pThis->m_pDocSrc->setRawDocument(pUnwrappedRawDoc);
     return FX_S_OK;
 }

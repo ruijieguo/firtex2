@@ -41,4 +41,5 @@ else
     AUTOMAKE="$(which automake)"
 fi
 
+autoheader
 autoreconf --install -Wall --verbose "${@}"

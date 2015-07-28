@@ -43,8 +43,8 @@ IndexBarrelWriter::IndexBarrelWriter(IndexBarrelKeeper* pBarrelKeeper,
     , m_state(STATE_UNSEALED)
     , m_nUncommittedDocs(0)
 {
-    m_pLengthNormWriter = new LengthNormWriter(m_pKeeper->getFileSystem());
-    m_pTokenSource = new FX_NS(analyzer)::TokenSource();
+    m_pLengthNormWriter.reset(new LengthNormWriter(m_pKeeper->getFileSystem()));
+    m_pTokenSource.reset(new FX_NS(analyzer)::TokenSource());
 
     m_barrelInfo.setCommitId(cachedBarrelId);
     m_barrelInfo.setState(BarrelInfo::BUILDING);
@@ -61,20 +61,20 @@ IndexBarrelWriter::~IndexBarrelWriter()
 
 bool IndexBarrelWriter::init(const SyncSegregatedAllocatorPtr& pAllocator)
 {
-    m_pBoundedAllocator = new BoundedChunkAllocator(pAllocator);
+    m_pBoundedAllocator.reset(new BoundedChunkAllocator(pAllocator));
     if (!m_pBoundedAllocator->init(MAX_CHUNK_COUNT_PER_SEGMENT))
     {
         return false;
     }
 
-    m_pPostingPool = new PostingPool(new LooseBoundedPool(m_pBoundedAllocator),
-            new LooseBoundedPool(m_pBoundedAllocator));
+    m_pPostingPool.reset(new PostingPool(new LooseBoundedPool(m_pBoundedAllocator),
+                    new LooseBoundedPool(m_pBoundedAllocator)));
 
     //Init stored field writer
-    m_pStoredFieldsWriter = new StoredFieldsWriter(
-            m_pKeeper->getFileSystem(), m_barrelInfo.getSuffix());
+    m_pStoredFieldsWriter.reset(new StoredFieldsWriter(
+                    m_pKeeper->getFileSystem(), m_barrelInfo.getSuffix()));
     const DocumentSchema* pDocSchema = m_pKeeper->getDocSchema();
-    m_pAnalyzedDoc = new AnalyzedDocument(pDocSchema);
+    m_pAnalyzedDoc.reset(new AnalyzedDocument(pDocSchema));
 
     //Init index/forward index
     DocumentSchema::Iterator iter = pDocSchema->iterator();
@@ -93,7 +93,7 @@ bool IndexBarrelWriter::init(const SyncSegregatedAllocatorPtr& pAllocator)
         }
     }
     m_pLengthNormWriter->init(pDocSchema);
-    m_pInMemDocFilter = new BitVector();
+    m_pInMemDocFilter.reset(new BitVector());
 
     string sCacheDir = m_barrelInfo.getSuffix();
     FX_DEBUG("Create cache directory: [%s]", sCacheDir.c_str());
@@ -126,12 +126,12 @@ void IndexBarrelWriter::addIndex(fieldid_t fieldId)
 
         BarrelsInfoPtr pEmptyBarrelsInfo(new BarrelsInfo);
         pEmptyBarrelsInfo->newBarrel();
-        m_pPrimaryKeyIndex = new PrimaryKeyIndex(pFieldSchema->getName());
+        m_pPrimaryKeyIndex.reset(new PrimaryKeyIndex(pFieldSchema->getName()));
         m_pPrimaryKeyIndex->open(m_pKeeper->getFileSystem(),
                 pEmptyBarrelsInfo, pPkIndexer->getPostingTable());
     }
 
-    m_indexers[fieldId].assign(pIndexer);
+    m_indexers[fieldId].reset(pIndexer);
 
     pIndexer->init(m_pPostingPool);
 }
@@ -150,7 +150,7 @@ void IndexBarrelWriter::addForwardIndex(fieldid_t fieldId)
                      "field [%d] FAILED.", fieldId);
     }
     pFDIndex->init(m_pKeeper->getDocSchema()->getSchema(fieldId));
-    m_forwardIndices[fieldId].assign(pFDIndex);
+    m_forwardIndices[fieldId].reset(pFDIndex);
 }
 
 void IndexBarrelWriter::sealBarrel()
@@ -176,7 +176,7 @@ void IndexBarrelWriter::sealIndex()
 
     for (fieldid_t i = 0; i < (fieldid_t)m_indexers.size(); i++)
     {
-        if (m_indexers[i].isNull())
+        if (!m_indexers[i])
             continue;
 
         m_indexers[i]->sealIndex();
@@ -192,7 +192,7 @@ void IndexBarrelWriter::sealForwardIndex()
 
     for (fieldid_t i = 0; i < (fieldid_t)m_forwardIndices.size(); i++)
     {
-        if (m_forwardIndices[i].isNull())
+        if (!m_forwardIndices[i])
             continue;
         m_forwardIndices[i]->seal((docid_t)(m_nUncommittedDocs - 1));
     }
@@ -249,8 +249,8 @@ void IndexBarrelWriter::commit()
         return;
     }
     
-    if ((m_pInMemDocFilter.isNotNull() && m_pInMemDocFilter->any())
-        || m_pDocFilterNeedCommit.isNotNull())
+    if ((m_pInMemDocFilter && m_pInMemDocFilter->any())
+        || m_pDocFilterNeedCommit)
     {
         BarrelsInfo barrelsInfo;
         barrelsInfo.read(pFileSys);
@@ -302,7 +302,7 @@ bool IndexBarrelWriter::commitBarrelInfo(BarrelsInfoPtr& pBarrelsInfo)
         return true;
     }
 
-    if (pDocFilter.isNotNull() && pDocFilter->isDirty() && !pDocFilter->hasSealed())
+    if (pDocFilter && pDocFilter->isDirty() && !pDocFilter->hasSealed())
     {
         updateBarrelInfo(pBarrelsInfo);
         m_barrelInfo.setDocCount(0);
@@ -323,7 +323,7 @@ void IndexBarrelWriter::addDocument(const Document* pDoc)
     m_pAnalyzedDoc->clear();
     m_pAnalyzedDoc->setDocId(docId);
 
-    if (m_pPrimaryKeyIndex.isNotNull())
+    if (m_pPrimaryKeyIndex)
     {
         const char* szPk = pDoc->getPrimaryKey();
         docid_t oldDocId = m_pPrimaryKeyIndex->lookup(szPk);
@@ -401,7 +401,7 @@ void IndexBarrelWriter::addDocument(const Document* pDoc)
 
     for (size_t i = 0; i < m_indexers.size(); ++i)
     {
-        if (m_indexers[i].isNotNull())
+        if (m_indexers[i])
         {
             m_indexers[i]->commitDocument(docId);
         }
@@ -411,7 +411,7 @@ void IndexBarrelWriter::addDocument(const Document* pDoc)
 bool IndexBarrelWriter::deleteDocument(const FX_NS(document)::Document* pDoc)
 {
     const char* szPk = pDoc->getPrimaryKey();
-    if(szPk && m_pPrimaryKeyIndex.isNotNull())
+    if(szPk && m_pPrimaryKeyIndex)
     {
         FX_TRACE("Try delete in-memory document: [%s]", szPk);
         docid_t docId = m_pPrimaryKeyIndex->lookup(szPk);
@@ -439,7 +439,7 @@ void IndexBarrelWriter::commitIndex(const std::string& sSuffix)
     FileSystemPtr pFileSys = m_pKeeper->getFileSystem();
     for (fieldid_t i = 0; i < (fieldid_t)m_indexers.size(); i++)
     {
-        if (m_indexers[i].isNull())
+        if (!m_indexers[i])
             continue;
 
         m_indexers[i]->commit(pFileSys, sSuffix);
@@ -454,7 +454,7 @@ void IndexBarrelWriter::commitIndexMeta(IndexMeta& indexMeta)
     const DocumentSchema* pDocSchema = m_pKeeper->getDocSchema();
     for (fieldid_t i = 0; i < (fieldid_t)m_indexers.size(); i++)
     {
-        if (m_indexers[i].isNull())
+        if (!m_indexers[i])
             continue;
 
         const FieldSchema* pFieldSchema = pDocSchema->getSchema(i);
@@ -474,7 +474,7 @@ void IndexBarrelWriter::commitForwardIndex(const std::string& sSuffix)
         FileSystemPtr pFileSys = m_pKeeper->getFileSystem();
         for (fieldid_t i = 0; i < (fieldid_t)m_forwardIndices.size(); i++)
         {
-            if (m_forwardIndices[i].isNull())
+            if (!m_forwardIndices[i])
             {
                 continue;
             }
@@ -485,7 +485,7 @@ void IndexBarrelWriter::commitForwardIndex(const std::string& sSuffix)
 
 void IndexBarrelWriter::commitDeletion(const BarrelInfo& barrelInfo)
 {
-    if (m_pDocFilterNeedCommit.isNotNull())
+    if (m_pDocFilterNeedCommit)
     {
         m_pDocFilterNeedCommit->commit(barrelInfo);
         m_pDocFilterNeedCommit.reset();
@@ -533,7 +533,7 @@ void IndexBarrelWriter::updateBarrelInfo(BarrelsInfoPtr& pBarrelsInfo)
         m_barrelInfo.setBaseDocId(lastBarrel.getBaseDocId() + lastBarrel.getDocCount());
     }
     m_barrelInfo.setDocCount((df_t)m_nUncommittedDocs);
-    if (m_pInMemDocFilter.isNotNull())
+    if (m_pInMemDocFilter)
     {
         m_barrelInfo.setDeletedDocs((df_t)m_pInMemDocFilter->count());
     }

@@ -31,10 +31,10 @@ InputStreamPtr MMapFileSystem::openFile(const std::string& sFileName)
         pMMapFile = it->second.second;
     }
 
-    if (pFile.isNull())
+    if (!pFile)
     {
         pFile = doOpenFile(sFileName);
-        if (pFile.isNull())
+        if (!pFile)
         {
             return InputStreamPtr();
         }
@@ -44,7 +44,7 @@ InputStreamPtr MMapFileSystem::openFile(const std::string& sFileName)
             return InputStreamPtr();
         }
 
-        pMMapFile = new MMapFile();
+        pMMapFile.reset(new MMapFile());
         pMMapFile->open(pFile->fileHandle, MMapFile::AM_READ,
                         (size_t)pFile->fileActualSize);
         
@@ -52,10 +52,10 @@ InputStreamPtr MMapFileSystem::openFile(const std::string& sFileName)
                         make_pair(pFile, pMMapFile)));
     }
     
-    MMapFileInputStreamPtr pMMpInStream = new MMapFileInputStream(
-            *this, pFile, pMMapFile);
+    MMapFileInputStreamPtr pMMpInStream(new MMapFileInputStream(
+                    *this, pFile, pMMapFile));
     
-    return pMMpInStream.cast<InputStream>();
+    return std::dynamic_pointer_cast<InputStream>(pMMpInStream);
 }
 
 void MMapFileSystem::closeFile(FilePtr& pFile)
@@ -64,7 +64,7 @@ void MMapFileSystem::closeFile(FilePtr& pFile)
     MMapFileMap::iterator it = m_mmapfiles.find(pFile->fileName);
     if (it != m_mmapfiles.end())
     {
-        if (it->second.second.referenceCount() == 1)
+        if (it->second.second.use_count() == 1)
         {
             m_mmapfiles.erase(it);
             BlockFileSystem::closeFile(pFile);

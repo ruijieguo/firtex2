@@ -35,7 +35,8 @@ MultiStoredFieldsReader::MultiStoredFieldsReader(const MultiStoredFieldsReader& 
 {
     for (size_t i = 0; i < src.m_readers.size(); ++i)
     {
-        m_readers.push_back(src.m_readers[i]->clone());
+        StoredFieldsReaderPtr pTmp(src.m_readers[i]->clone());
+        m_readers.push_back(pTmp);
     }
 }
 
@@ -49,7 +50,7 @@ bool MultiStoredFieldsReader::getDocument(const FieldSelector& selector, ResultD
     docid_t docId = resultDoc.getDocId();
     StoredFieldsReaderPtr& pReader = getReaderByDocId(docId);
 	resultDoc.setDocId(docId);
-    if (pReader.isNotNull())
+    if (pReader)
     {
         return pReader->getDocument(selector, resultDoc);
     }

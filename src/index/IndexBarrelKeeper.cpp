@@ -57,7 +57,7 @@ void IndexBarrelKeeper::init(const BarrelsInfoPtr& pBarrelsInfo, Mode mode)
 
 void IndexBarrelKeeper::loadOnDiskBarrel(const BarrelsInfoPtr& pBarrelsInfo)
 {
-    BarrelsInfoPtr pBarrelsInfo2 = pBarrelsInfo->clone();
+    BarrelsInfoPtr pBarrelsInfo2(pBarrelsInfo->clone());
     createOnDiskBarrelReader(pBarrelsInfo2);
 }
 
@@ -66,7 +66,7 @@ commitid_t IndexBarrelKeeper::createOnDiskBarrelReader(const BarrelsInfoPtr& pBa
     commitid_t latestCommit = pBarrelsInfo->getCommitId();
     FIRTEX_ASSERT2(latestCommit != INVALID_COMMIT);
 
-    DeletedDocumentFilterPtr pDocFilter = new DeletedDocumentFilter(m_pFileSys);
+    DeletedDocumentFilterPtr pDocFilter(new DeletedDocumentFilter(m_pFileSys));
     pDocFilter->open(pBarrelsInfo);
 
     PrimaryKeyIndexPtr pPrimKeyIndex = createPrimaryKeyIndex();
@@ -80,17 +80,17 @@ commitid_t IndexBarrelKeeper::createOnDiskBarrelReader(const BarrelsInfoPtr& pBa
             pDocFilter->getDocFilter(lastBarrel.getBaseDocId());
         SingleIndexBarrelReader* pSingleReader = new SingleIndexBarrelReader(
                 m_pFileSys, m_pDocSchema, m_pComponentBuilder);
-        pReader.assign(pSingleReader);
+        pReader.reset(pSingleReader);
 
         pSingleReader->open(&lastBarrel, pBitVector);
 
-        if (pPrimKeyIndex.isNotNull())
+        if (pPrimKeyIndex)
         {
             TermReaderPtr pTermReader = pSingleReader->termReader(
                     pPrimKeyIndex->getPrimKeyField());
             PrimaryKeyTermReaderPtr pPrimKeyTermReader =
-                pTermReader.cast<PrimaryKeyTermReader>();
-            FIRTEX_ASSERT2(!pPrimKeyTermReader.isNull());
+                dynamic_pointer_cast<PrimaryKeyTermReader>(pTermReader);
+            FIRTEX_ASSERT2(pPrimKeyTermReader);
             
             pPrimKeyIndex->open(m_pFileSys, pBarrelsInfo,
                     pPrimKeyTermReader->getPostingTable());
@@ -100,11 +100,11 @@ commitid_t IndexBarrelKeeper::createOnDiskBarrelReader(const BarrelsInfoPtr& pBa
     {
         MultiIndexBarrelReader* pMultiReader = new MultiIndexBarrelReader(
                 m_pFileSys, m_pDocSchema, m_pComponentBuilder);
-        pReader.assign(pMultiReader);
+        pReader.reset(pMultiReader);
 
         pMultiReader->open(pBarrelsInfo, pDocFilter);
 
-        if (pPrimKeyIndex.isNotNull())
+        if (pPrimKeyIndex)
         {
             pPrimKeyIndex->open(m_pFileSys, pBarrelsInfo);
         }
@@ -137,11 +137,11 @@ commitid_t IndexBarrelKeeper::loadOnDiskDataForUpdate(const BarrelsInfoPtr& pBar
 {
     commitid_t latestCommit = pBarrelsInfo->getCommitId();
 
-    DeletedDocumentFilterPtr pDocFilter = new DeletedDocumentFilter(m_pFileSys);
+    DeletedDocumentFilterPtr pDocFilter(new DeletedDocumentFilter(m_pFileSys));
     pDocFilter->open(pBarrelsInfo);
 
     PrimaryKeyIndexPtr pPrimKeyIndex = createPrimaryKeyIndex();
-    if (pPrimKeyIndex.isNotNull())
+    if (pPrimKeyIndex)
     {
         pPrimKeyIndex->open(m_pFileSys, pBarrelsInfo);
     }
@@ -220,13 +220,13 @@ commitid_t IndexBarrelKeeper::refreshDataForRead()
 
     IndexBarrelReaderPtr pReader;
 
-    DeletedDocumentFilterPtr pDocFilter = pLastBarrel->getDeletedDocFilter()->clone();
+    DeletedDocumentFilterPtr pDocFilter(pLastBarrel->getDeletedDocFilter()->clone());
     pDocFilter->reopen(pBarrelsInfo);
 
     PrimaryKeyIndexPtr pPrimKey;
-    if (m_pOnDiskPrimKeyIndex.isNotNull())
+    if (m_pOnDiskPrimKeyIndex)
     {
-        pPrimKey = m_pOnDiskPrimKeyIndex->clone();
+        pPrimKey.reset(m_pOnDiskPrimKeyIndex->clone());
         pPrimKey->reopen(pBarrelsInfo);
     }
 
@@ -244,7 +244,7 @@ commitid_t IndexBarrelKeeper::refreshDataForRead()
                 pDocFilter->getDocFilter(lastBarrelInfo.getBaseDocId());
             SingleIndexBarrelReader* pSingleReader = new SingleIndexBarrelReader(
                     m_pFileSys, m_pDocSchema, m_pComponentBuilder);
-            pReader.assign(pSingleReader);
+            pReader.reset(pSingleReader);
             
             pSingleReader->open(&lastBarrelInfo, pBitVector);
         }
@@ -254,11 +254,11 @@ commitid_t IndexBarrelKeeper::refreshDataForRead()
             const BitVector* pBitVector =
                 pDocFilter->getDocFilter(lastBarrelInfo.getBaseDocId());
                 
-            pReader = pLastReader->clone();
+            pReader.reset(pLastReader->clone());
             SingleIndexBarrelReaderPtr pSingleReader =
-                pReader.cast<SingleIndexBarrelReader>();
+                std::dynamic_pointer_cast<SingleIndexBarrelReader>(pReader);
 
-            FIRTEX_ASSERT2(pSingleReader.isNotNull());
+            FIRTEX_ASSERT2(pSingleReader);
             pSingleReader->reopen(&lastBarrelInfo, pBitVector);
         }
     }
@@ -266,10 +266,10 @@ commitid_t IndexBarrelKeeper::refreshDataForRead()
     {
         if (pLastBarrelsInfo->getBarrelCount() > 1)
         {
-            pReader = pLastReader->clone();
+            pReader.reset(pLastReader->clone());
             MultiIndexBarrelReaderPtr pMultiReader =
-                pReader.cast<MultiIndexBarrelReader>();
-            FIRTEX_ASSERT2(pMultiReader.isNotNull());
+                std::dynamic_pointer_cast<MultiIndexBarrelReader>(pReader);
+            FIRTEX_ASSERT2(pMultiReader);
             pMultiReader->reopen(pBarrelsInfo, pDocFilter);
         }
         else
@@ -277,7 +277,7 @@ commitid_t IndexBarrelKeeper::refreshDataForRead()
             //TODO: optimize?
             MultiIndexBarrelReader* pMultiReader = new MultiIndexBarrelReader(
                     m_pFileSys, m_pDocSchema, m_pComponentBuilder);
-            pReader.assign(pMultiReader);
+            pReader.reset(pMultiReader);
 
             pMultiReader->open(pBarrelsInfo, pDocFilter);
         }
@@ -327,13 +327,13 @@ commitid_t IndexBarrelKeeper::refreshDataForUpdate()
 
     IndexBarrelReaderPtr pReader;
 
-    DeletedDocumentFilterPtr pDocFilter = pLastBarrel->getDeletedDocFilter()->clone();
+    DeletedDocumentFilterPtr pDocFilter(pLastBarrel->getDeletedDocFilter()->clone());
     pDocFilter->reopen(pBarrelsInfo);
 
     PrimaryKeyIndexPtr pPrimKey;
-    if (m_pOnDiskPrimKeyIndex.isNotNull())
+    if (m_pOnDiskPrimKeyIndex)
     {
-        pPrimKey = m_pOnDiskPrimKeyIndex->clone();
+        pPrimKey.reset(m_pOnDiskPrimKeyIndex->clone());
         pPrimKey->reopen(pBarrelsInfo);
     }
 
@@ -415,7 +415,7 @@ PrimaryKeyIndexPtr IndexBarrelKeeper::createPrimaryKeyIndex()
 bool IndexBarrelKeeper::deleteOnDiskDocument(const char* szPrimKey)
 {
     ScopedRWLock lock(m_lock, false);
-    if (m_pOnDiskPrimKeyIndex.isNull())
+    if (!m_pOnDiskPrimKeyIndex)
     {
         return false;
     }
@@ -447,13 +447,13 @@ void IndexBarrelKeeper::sealBarrel(const IndexBarrelWriterPtr& pInMemBarrel)
         }
     
         BarrelsInfoPtr pNewBarrelsInfo;
-        if (pLastBarrel.isNotNull())
+        if (pLastBarrel)
         {
-            pNewBarrelsInfo = pLastBarrel->getBarrelsInfo()->clone();
+            pNewBarrelsInfo.reset(pLastBarrel->getBarrelsInfo()->clone());
         }
         else 
         {
-            pNewBarrelsInfo.assign(new BarrelsInfo);
+            pNewBarrelsInfo.reset(new BarrelsInfo);
         }
 
         /// Commit barrel to barrels info
@@ -468,19 +468,19 @@ void IndexBarrelKeeper::sealBarrel(const IndexBarrelWriterPtr& pInMemBarrel)
 
         //TODO: implement real-time search
         IndexBarrelReaderPtr pReader;
-        if (pLastBarrel.isNotNull())
+        if (pLastBarrel)
         {
             pReader = pLastBarrel->getReader();
         }
 
         PrimaryKeyIndexPtr pPrimKey;
-        if (m_pOnDiskPrimKeyIndex.isNotNull())
+        if (m_pOnDiskPrimKeyIndex)
         {
-            pPrimKey = m_pOnDiskPrimKeyIndex->clone();
-            if (pPrimKey.isNotNull())
+            pPrimKey.reset(m_pOnDiskPrimKeyIndex->clone());
+            if (pPrimKey)
             {
                 const PrimaryKeyIndexPtr& pPkIndex = pBarrelWriter->getPrimaryKey();
-                if (pPkIndex.isNotNull())
+                if (pPkIndex)
                 {
                     pPrimKey->reopen(pNewBarrelsInfo, pPkIndex->getHashMap());
                 }
@@ -489,10 +489,10 @@ void IndexBarrelKeeper::sealBarrel(const IndexBarrelWriterPtr& pInMemBarrel)
         else
         {
             pPrimKey = createPrimaryKeyIndex();
-            if (pPrimKey.isNotNull())
+            if (pPrimKey)
             {
                 const PrimaryKeyIndexPtr& pPkIndex = pBarrelWriter->getPrimaryKey();
-                FIRTEX_ASSERT2(pPkIndex.isNotNull());
+                FIRTEX_ASSERT2(pPkIndex);
                 pPrimKey->open(m_pFileSys, pNewBarrelsInfo, pPkIndex->getHashMap());
             }
         }
@@ -504,12 +504,12 @@ void IndexBarrelKeeper::sealBarrel(const IndexBarrelWriterPtr& pInMemBarrel)
         (void)bInserted;
         FIRTEX_ASSERT2(bInserted);
 
-        m_pOnDiskDocFilter.assign(m_pOnDiskDocFilter->clone());
+        m_pOnDiskDocFilter.reset(m_pOnDiskDocFilter->clone());
         m_pOnDiskPrimKeyIndex = pPrimKey;
 
-        if (m_pInMemBarrelMerger.isNull())
+        if (!m_pInMemBarrelMerger)
         {
-            m_pInMemBarrelMerger.assign(new InMemIndexMerger(this));
+            m_pInMemBarrelMerger.reset(new InMemIndexMerger(this));
         }
         m_pInMemBarrelMerger->addToMerge(pNewBarrelsInfo->getLastBarrel(), 
                 pBarrelWriter);
@@ -520,9 +520,9 @@ void IndexBarrelKeeper::sealBarrel(const IndexBarrelWriterPtr& pInMemBarrel)
         }
     }
     
-    if (pInMemBarrelMerger.isNotNull())
+    if (pInMemBarrelMerger)
     {
-        CommittablePtr pCommitObj = pInMemBarrelMerger.cast<Committable>();
+        CommittablePtr pCommitObj = std::dynamic_pointer_cast<Committable>(pInMemBarrelMerger);
         m_pCommitScheduler->commit(pCommitObj);
     }
 }
@@ -545,17 +545,17 @@ void IndexBarrelKeeper::forceCommit()
 
 	{
 		ScopedRWLock lock(m_lock, true);
-		if (m_pInMemBarrelMerger.isNotNull())
+		if (m_pInMemBarrelMerger)
 		{
 			pInMemBarrelMerger = m_pInMemBarrelMerger;
 			m_pInMemBarrelMerger.reset(); 
 		}
 	}
 
-	if (pInMemBarrelMerger.isNotNull())
+	if (pInMemBarrelMerger)
 	{
-		CommittablePtr pCommitObj = pInMemBarrelMerger.cast<Committable>();
-		m_pCommitScheduler->commit(pCommitObj);
+            CommittablePtr pCommitObj = std::dynamic_pointer_cast<Committable>(pInMemBarrelMerger);
+            m_pCommitScheduler->commit(pCommitObj);
 	}
 }
 
@@ -572,8 +572,8 @@ void IndexBarrelKeeper::setupIndexCleaner()
         sParam = "keep_count=";
         NumberFormatter::append(sParam, DEFAULT_COMMIT_KEEP_COUNT);
     }
-    m_pIndexCleaner = IndexCleanerFactory::instance()->createIndexCleaner(sCleaner);
-    if (m_pIndexCleaner.isNull())
+    m_pIndexCleaner.reset(IndexCleanerFactory::instance()->createIndexCleaner(sCleaner));
+    if (!m_pIndexCleaner)
     {
         FX_LOG(ERROR, "Create index cleaner: [%s] FAILED.", sCleaner.c_str());
         return;
@@ -584,7 +584,7 @@ void IndexBarrelKeeper::setupIndexCleaner()
 
 void IndexBarrelKeeper::cleanStaledIndex()
 {
-    if (m_pIndexCleaner.isNotNull())
+    if (m_pIndexCleaner)
     {
         m_pIndexCleaner->cleanup();
     }
@@ -624,7 +624,7 @@ void IndexBarrelKeeper::housekeep()
 
     for (; it != m_commitMap.rend(); it++)
     {
-        if (it->second.referenceCount() > 1)
+        if (it->second.use_count() > 1)
         {
             FX_LOG(INFO, "Staled commit is in use: [%d]", it->first);
             toReserve.insert(*it);

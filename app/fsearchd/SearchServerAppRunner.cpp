@@ -8,9 +8,7 @@
 #include "firtex/common/Logger.h"
 #include "firtex/extension/network/NetworkException.h"
 #include "HTTPSearchServer.h"
-#ifdef HAVE_THRIFT
-#include "RPCSearchServer.h"
-#endif
+//#include "RPCSearchServer.h"
 
 using namespace std;
 
@@ -72,7 +70,7 @@ AppRunner::Status SearchServerAppRunner::run()
 
 bool SearchServerAppRunner::initHttpServer()
 {
-    m_pServer = new HTTPSearchServer();
+    m_pServer.reset(new HTTPSearchServer());
     if (!m_pServer->init(m_sConfFile))
     {
         return false;
@@ -82,17 +80,12 @@ bool SearchServerAppRunner::initHttpServer()
 
 bool SearchServerAppRunner::initRPCServer()
 {
-#ifdef HAVE_THRIFT
-    m_pServer = new RPCSearchServer();
-    if (!m_pServer->init(m_sConfFile))
-    {
-        return false;
-    }
+    // m_pServer.reset(new RPCSearchServer());
+    // if (!m_pServer->init(m_sConfFile))
+    // {
+    //     return false;
+    // }
     return true;
-#else
-    FX_LOG(ERROR, "No RPC server, please re-compile with thrift");
-    return false;
-#endif
 }
 
 void SearchServerAppRunner::registerOption(Application* pApp)
@@ -142,7 +135,7 @@ void SearchServerAppRunner::optionCallback(const Option& option,
 
 void SearchServerAppRunner::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -150,7 +143,7 @@ void SearchServerAppRunner::stop()
  
 void SearchServerAppRunner::waitStop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

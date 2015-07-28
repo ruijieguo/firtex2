@@ -25,11 +25,11 @@ CollectionConfigure::CollectionConfigure(const CollectionConfigure& src)
     Collection.inputDocQueueSize = src.Collection.inputDocQueueSize;
     Collection.processThreadCount = src.Collection.processThreadCount;
 
-    if (src.m_pTemplate.isNotNull())
+    if (src.m_pTemplate)
     {
-        m_pTemplate = new DocumentTemplate(*(src.m_pTemplate));
+        m_pTemplate.reset(new DocumentTemplate(*(src.m_pTemplate)));
     }
-    m_pDocSchema = new DocumentSchema(*src.m_pDocSchema);
+    m_pDocSchema.reset(new DocumentSchema(*src.m_pDocSchema));
 }
 
 CollectionConfigure::~CollectionConfigure(void)
@@ -73,13 +73,13 @@ void CollectionConfigure::configure(Configurator& conf)
         colConf.configure("document_queue_size", Collection.inputDocQueueSize);
         colConf.configure("process_thread_count", Collection.processThreadCount);
 
-        if (m_pTemplate.isNotNull())
+        if (m_pTemplate)
         {
             m_pTemplate->configure(conf);
         }
         conf.configure("collection", colConf.getMap());
         
-        if (m_pDocSchema.isNotNull())
+        if (m_pDocSchema)
         {
             m_pDocSchema->configure(conf);
         }
@@ -122,14 +122,14 @@ void CollectionConfigure::configure(Configurator& conf)
         Configurator::Iterator tempIt = colConf.findConf("template");
         if (tempIt.hasNext())
         {
-            m_pTemplate = new DocumentTemplate();
+            m_pTemplate.reset(new DocumentTemplate());
             m_pTemplate->configure(colConf);
         }
 
         Configurator::Iterator schemaIt = conf.findConf("index_schema");
         if (schemaIt.hasNext())
         {
-            m_pDocSchema = new DocumentSchema();
+            m_pDocSchema.reset(new DocumentSchema());
             m_pDocSchema->configure(conf);
         }
     }

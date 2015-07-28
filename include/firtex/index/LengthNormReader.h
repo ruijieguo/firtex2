@@ -30,7 +30,7 @@ class LengthNormReader
 {
 public:
     typedef PrimitiveTypeForwardIndexReaderMMapImpl<int32_t> LengthNorm;
-    typedef FX_NS(common)::SharedPtr<LengthNorm> LengthNormPtr;
+    DEFINE_TYPED_PTR(LengthNorm);
 
     typedef std::vector<LengthNormPtr> NormVector;
     typedef std::vector<LengthNormIteratorPtr> NormItVector;

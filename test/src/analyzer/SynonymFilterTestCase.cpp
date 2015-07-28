@@ -47,7 +47,7 @@ void SynonymFilterTestCase::testFilter()
 
     sf.filter(tokenSource);
     TokenViewPtr pSynTokens = tokenSource->getLastView();
-    CPPUNIT_ASSERT(pSynTokens.isNull() != true);
+    CPPUNIT_ASSERT(pSynTokens);
     TokenView::Iterator iter = pSynTokens->iterator();	
     CPPUNIT_ASSERT(iter.hasNext());
     Token token = iter.next();

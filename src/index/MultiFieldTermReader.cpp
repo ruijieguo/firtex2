@@ -54,8 +54,9 @@ void MultiFieldTermReader::open(const FileSystemPtr& pFileSys,
             {
                 pTermReader->open(pFileSys, pStreamPool, sBarrel, 
                         pFieldSchema, pDocFilter);
+                TermReaderPtr pTmp(pTermReader);
                 m_fieldsTermReaders.insert(make_pair(
-                                pFieldSchema->getName(), pTermReader));
+                                pFieldSchema->getName(), pTmp));
             }
         }
     }
@@ -124,8 +125,9 @@ TermReader* MultiFieldTermReader::clone() const
     ReaderMap::const_iterator iter = m_fieldsTermReaders.begin();
     while (iter != m_fieldsTermReaders.end())
     {
+        TermReaderPtr pTmp(iter->second->clone());
         pReader->m_fieldsTermReaders.insert(
-                make_pair(iter->first,iter->second->clone()));
+                make_pair(iter->first, pTmp));
         iter++;
     }
     return pReader;

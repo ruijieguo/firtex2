@@ -17,10 +17,11 @@
 #include "firtex/common/Logger.h"
 #include "firtex/common/SharedPtr.h"
 #include "firtex/utility/NonCopyable.h"
-#include "firtex/thread/AtomicCount.h"
 #include "firtex/thread/RWLock.h"
-#include <zookeeper.h>
 #include "firtex/extension/network/FunctionBinder.h"
+#include <zookeeper.h>
+#include <atomic>
+
 
 FX_NS_DEF(common);
 
@@ -369,7 +370,7 @@ private:
     FX_NS(thread)::FastMutex m_closingMutex;
 
     /// watch id counter
-    FX_NS(thread)::AtomicCount m_watchCounter;
+    std::atomic_long m_watchCounter;
 
 private:
     DECLARE_LOGGER();

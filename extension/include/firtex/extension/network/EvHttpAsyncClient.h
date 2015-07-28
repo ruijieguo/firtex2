@@ -26,7 +26,7 @@
 #include <event2/http.h>
 #include <event2/http_struct.h>
 
-#include "firtex/thread/AtomicCount.h"
+#include <atomic>
 
 FX_NS_DEF(network);
 
@@ -162,9 +162,9 @@ private:
 
     bool m_bStopRequested;
 
-    FX_NS(thread)::AtomicCount m_inCount;
-    FX_NS(thread)::AtomicCount m_procCount;
-    FX_NS(thread)::AtomicCount m_compCount;
+    std::atomic_long m_inCount;
+    std::atomic_long m_procCount;
+    std::atomic_long m_compCount;
 
 private:
     DECLARE_LOGGER();
@@ -177,7 +177,7 @@ DEFINE_TYPED_PTR(EvHttpAsyncClient);
 inline void EvHttpAsyncClient::done(struct evhttp_request* req)
 {
     m_compCount++;
-    FX_DEBUG("complete count : [%d]", m_compCount.value());
+    FX_DEBUG("complete count : [%d]", std::atomic_load(&m_compCount));
 
     m_pLastRequest = req;
     if (!req)

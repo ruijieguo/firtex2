@@ -81,7 +81,7 @@ void HTMLParser::parse(const char *szHTML, size_t nLen)
         m_pContentBuffer = new char[m_nContentBufferSize];
     }
 
-    register char* pCur = (char*)szHTML;
+    char* pCur = (char*)szHTML;
     char* pEnd = (char*)szHTML + nLen;
     parseBody(pCur, pEnd);
     m_pContentBuffer[m_nContentLength] = 0;

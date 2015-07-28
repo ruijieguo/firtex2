@@ -150,19 +150,19 @@ inline bool NumberParser::tryParseHexUInt32(const std::string& s, uint32_t& valu
 inline bool NumberParser::tryParseInt64(const std::string& s, int64_t& value)
 {
     char temp;
-    return std::sscanf(s.c_str(), "%"I64_FMT"d%c", (long long unsigned int*)&value, &temp) >= 1;
+    return std::sscanf(s.c_str(), "%" I64_FMT"d%c", (long long unsigned int*)&value, &temp) >= 1;
 }
 
 inline bool NumberParser::tryParseUInt64(const std::string& s, uint64_t& value)
 {
     char temp;
-    return std::sscanf(s.c_str(), "%"I64_FMT"u%c", (long long unsigned int*)&value, &temp) >= 1;
+    return std::sscanf(s.c_str(), "%" I64_FMT"u%c", (long long unsigned int*)&value, &temp) >= 1;
 }
 
 inline bool NumberParser::tryParseHexUInt64(const std::string& s, uint64_t& value)
 {
     char temp;
-    return std::sscanf(s.c_str(), "%"I64_FMT"x%c", (long long unsigned int*)&value, &temp) >= 1;
+    return std::sscanf(s.c_str(), "%" I64_FMT"x%c", (long long unsigned int*)&value, &temp) >= 1;
 }
 
 inline bool NumberParser::tryParseDouble(const std::string& s, double& value)

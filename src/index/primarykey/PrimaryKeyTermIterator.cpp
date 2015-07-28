@@ -39,7 +39,7 @@ void PrimaryKeyTermIterator::init(const PostingTablePtr& pPostTable)
     m_pPostingTable = pPostTable;
     m_curDocId = INVALID_DOCID;
     m_pCurPostIterator = new PrimaryKeyPostingIterator();
-    m_pIteratorPtr = m_pCurPostIterator;
+    m_pIteratorPtr.reset(m_pCurPostIterator);
     m_termIterator = pPostTable->iterator();
 }
 

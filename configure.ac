@@ -1,4 +1,4 @@
-AC_PREREQ([2.69])
+sAC_PREREQ([2.69])
 AC_INIT([firtex],[0.5.1])
 
 AC_CANONICAL_HOST
@@ -9,6 +9,8 @@ AC_DISABLE_STATIC
 AC_LANG([C++])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+AC_CONFIG_HEADERS(include/firtex/config.h)
 
 # Initialize automake.
 # -Wno-portability, since we require GNU Make for % patterns
@@ -128,6 +130,8 @@ AC_PROG_CC([gcc])
 AX_COMPILER_VERSION
 AX_COMPILER_VENDOR
 
+AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
+
 # Check if we should enable debugging, optimization. Note we only
 # update CFLAGS and CXXFLAGS if none are provided.
 AM_CONDITIONAL([DEBUG], [test x"$enable_debug" = "xyes"])
@@ -150,7 +154,7 @@ fi
 AS_IF([test "x${ac_cv_env_CFLAGS_set}" = "x"],
       [CFLAGS="$debug_flags $optimize_flags"])
 AS_IF([test "x${ac_cv_env_CXXFLAGS_set}" = "x"],
-      [CXXFLAGS="$debug_flags $optimize_flags"])
+      [CXXFLAGS="$CXXFLAGS $debug_flags $optimize_flags"])
 
 # Check zookeeper
 if test -n "`echo $with_zookeeper`"; then
@@ -367,6 +371,8 @@ fi
 
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+
+CONFIGURE_ARGS="$CONFIGURE_ARGS $ac_configure_args"
 
 AC_CONFIG_SUBDIRS([contrib])
 

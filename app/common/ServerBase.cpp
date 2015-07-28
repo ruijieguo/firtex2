@@ -26,6 +26,8 @@ bool ServerBase::loadConf(const string& sConfFile)
 {
     try
     {
+        FX_LOG(INFO, "Loading configure file: [%s]", sConfFile.c_str());
+
         XMLConfigurator conf;
         conf.load(sConfFile);
 

@@ -127,11 +127,11 @@ void IndexPrinterAppRunner::printIndex()
     while (iter.hasNext())
     {
         const Token& t = iter.next();
-        TermPtr pTerm = new Term(st[0], t.getTextValue());
+        TermPtr pTerm(new Term(st[0], t.getTextValue()));
         TermReaderPtr pTermReader = pReader->termReader();
         cout << _T("Term: ") << "<" << pTerm->toString() << ">" << endl;
         TermPostingIteratorPtr pPostIter = pTermReader->seek(pTerm.get());
-        if (pPostIter.isNotNull())
+        if (pPostIter)
         {
             if(!m_bPrintPosition)
             {

@@ -75,7 +75,7 @@ private:
 	SharedLibrary& operator = (const SharedLibrary&);
 };
 
-typedef FX_NS(common)::SharedPtr<SharedLibrary> SharedLibraryPtr;
+DEFINE_TYPED_PTR(SharedLibrary);
 
 FX_NS_END
 

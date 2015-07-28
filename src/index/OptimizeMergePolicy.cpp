@@ -15,7 +15,7 @@ OptimizeMergePolicy::~OptimizeMergePolicy()
 MergeProposalPtr OptimizeMergePolicy::createProposals(
         const BarrelsInfo& barrelsInfo)
 {
-    MergeProposalPtr pProp = new MergeProposal();
+    MergeProposalPtr pProp(new MergeProposal());
     pProp->push_back(BarrelsInfoPtr(barrelsInfo.clone()));
     return pProp;
 }

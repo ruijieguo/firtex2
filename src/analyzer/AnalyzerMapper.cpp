@@ -47,7 +47,7 @@ AnalyzerMapper::AnalyzerMapper(const AnalyzerMapper& src)
          it2 != src.m_analyzerForSearchById.end(); ++it2)
     {
         AnalyzerPtr pAnalyzer(it2->second->clone());
-        m_analyzerForSearchById.insert(make_pair(it2->first, it2->second->clone()));
+        m_analyzerForSearchById.insert(make_pair(it2->first, pAnalyzer));
         const FieldSchema* pFieldSchema = m_pDocSchema->getSchema(it2->first);
         FIRTEX_ASSERT2(pFieldSchema != NULL);
         m_analyzerForSearch.insert(make_pair(pFieldSchema->getName(), pAnalyzer));
@@ -82,8 +82,8 @@ void AnalyzerMapper::map(const DocumentSchema* pDocSchema)
                 pAnalyzer = &(pFieldType->getForwardIndexType().analyzer);
             }
             FIRTEX_ASSERT2(!pAnalyzer->isEmpty());
-
-            AnalyzerPtr pAnalyzerPtr = createAnalyzer(*pAnalyzer);
+            
+            AnalyzerPtr pAnalyzerPtr(createAnalyzer(*pAnalyzer));
 
             map(pFieldSchema->getId(), pFieldSchema->getName(), pAnalyzerPtr,
                 m_analyzerForIndex, m_analyzerForIndexById);
@@ -94,7 +94,7 @@ void AnalyzerMapper::map(const DocumentSchema* pDocSchema)
             const FieldType::Analyzer& analyzerForSearch = searchType.analyzer;
             if (!analyzerForSearch.identifier.empty())
             {
-                AnalyzerPtr pAnalyzer = createAnalyzer(analyzerForSearch);
+                AnalyzerPtr pAnalyzer(createAnalyzer(analyzerForSearch));
 
                 map(pFieldSchema->getId(), pFieldSchema->getName(), pAnalyzer,
                     m_analyzerForSearch, m_analyzerForSearchById);

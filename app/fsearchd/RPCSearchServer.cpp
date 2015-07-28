@@ -23,14 +23,14 @@ void RPCSearchServer::run()
     boost::shared_ptr<ThriftSearchServiceIf> service(new RPCSearchService(m_resource));
     boost::shared_ptr<TProcessor> processor(new ThriftSearchServiceProcessor(service));
 
-    m_pServer = new RPCServer(processor, m_pConf->serverConf.listen_port,
-                              m_pConf->serverConf.thread_pool);
+    m_pServer.reset(new RPCServer(processor, m_pConf->serverConf.listen_port,
+                                  m_pConf->serverConf.thread_pool));
     m_pServer->start(false);
 }
 
 void RPCSearchServer::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -40,7 +40,7 @@ void RPCSearchServer::stop()
 void RPCSearchServer::join()
 {
     SearchServerBase::join();
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

@@ -78,7 +78,7 @@ inline FilterPtr HitCollector::getFilter() const
 
 inline bool HitCollector::isFiltered(const ScoredDoc& scoredDoc)
 {
-    return (m_pFilter.isNull() || m_pFilter->isFiltered(scoredDoc));
+    return (!m_pFilter || m_pFilter->isFiltered(scoredDoc));
 }
 
 FX_NS_END

@@ -166,12 +166,14 @@ ExprEvaluatorPtr ExprParser::parse(std::istream& input,
     FX_TRACE("After optimize: [%s]", toString().c_str());
     if (pExprBuilder)
     {
-        return pExprBuilder->createExpr(m_nodes[m_iRootNode]);
+        ExprEvaluatorPtr pTmp(pExprBuilder->createExpr(m_nodes[m_iRootNode]));
+        return pTmp;
     }
     else 
     {
         DefaultExprEvaluatorBuilder builder(*this, m_pIndexReader);
-        return builder.createExpr(m_nodes[m_iRootNode]);
+        ExprEvaluatorPtr pTmp(builder.createExpr(m_nodes[m_iRootNode]));
+        return pTmp;
     }
 }
 
@@ -210,7 +212,7 @@ int32_t ExprParser::addFloatNode(double fValue)
 
 int32_t ExprParser::addAttrNode(const std::string& sAttrName)
 {
-    if (m_pIndexReader.isNull())
+    if (!m_pIndexReader)
     {
         return -1;
     }

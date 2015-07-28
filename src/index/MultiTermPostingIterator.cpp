@@ -31,7 +31,8 @@ MultiTermPostingIterator::~MultiTermPostingIterator(void)
 void MultiTermPostingIterator::add(const BarrelInfo* pBarrelInfo,
                                    const TermPostingIteratorPtr& pTermDocs)
 {
-    m_iterators.push_back(new MultiTermPostingIterator::Entry(pBarrelInfo, pTermDocs));
+    EntryPtr pTmp(new Entry(pBarrelInfo, pTermDocs));
+    m_iterators.push_back(pTmp);
     if(m_pCurrent == NULL)
     {
         m_pCurrent = m_iterators.front().get();
@@ -41,9 +42,9 @@ void MultiTermPostingIterator::add(const BarrelInfo* pBarrelInfo,
 void MultiTermPostingIterator::init()
 {
     MultiPostingDecoder* pMultiDecoder = new MultiPostingDecoder();
-    m_pPostingDecoder = pMultiDecoder;
-
-    m_pPostingIterQueue = new Queue(m_iterators.size());
+    m_pPostingDecoder.reset(pMultiDecoder);
+    
+    m_pPostingIterQueue.reset(new Queue(m_iterators.size()));
     for (PostingIteratorList::iterator iter = m_iterators.begin();
          iter != m_iterators.end(); iter++)
     {
@@ -132,11 +133,6 @@ docid_t MultiTermPostingIterator::doc() const
 tf_t MultiTermPostingIterator::freq()
 {
     return m_pCurrent->postingIterator->freq();
-}
-
-tf_t MultiTermPostingIterator::nextPositions(loc_t*& positions)
-{
-    return m_pCurrent->postingIterator->nextPositions(positions);
 }
 
 loc_t MultiTermPostingIterator::skipToPosition(loc_t pos)

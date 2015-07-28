@@ -12,7 +12,7 @@ EvHttpRequestHandler::EvHttpRequestHandler(const EvHttpServiceFactoryPtr& pServi
     : m_pServiceFactory(pServiceFactory)
     , m_requests(MAX_REQUEST_QUEUE_SIZE)
 {
-    m_pLoopThreads = new ThreadPool(nWorkThreadCount, nWorkThreadCount);
+    m_pLoopThreads.reset(new ThreadPool(nWorkThreadCount, nWorkThreadCount));
     for (size_t i = 0; i < nWorkThreadCount; ++i)
     {
         m_pLoopThreads->start(*this);
@@ -77,7 +77,7 @@ void EvHttpRequestHandler::run()
 
 void EvHttpRequestHandler::stop()
 {
-    if (m_pLoopThreads.isNotNull())
+    if (m_pLoopThreads)
     {
         for (size_t i = 0; i < m_pLoopThreads->numAllocatedThreads(); ++i)
         {
@@ -90,7 +90,7 @@ void EvHttpRequestHandler::stop()
 
 void EvHttpRequestHandler::join()
 {
-    if (m_pLoopThreads.isNotNull())
+    if (m_pLoopThreads)
     {
         m_pLoopThreads->joinAll();
     }

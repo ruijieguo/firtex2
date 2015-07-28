@@ -61,7 +61,7 @@ void ReqOptQueryExecutor::extractFeature(QueryFeature& queryFeature) const
     termQueryFeature.setNumSuccessors(size() - 1);
 
     m_pReqExecutor->extractFeature(queryFeature);
-    if (m_pOptExecutor.isNotNull())
+    if (m_pOptExecutor)
     {
         m_pOptExecutor->extractFeature(queryFeature);
     }
@@ -70,7 +70,7 @@ void ReqOptQueryExecutor::extractFeature(QueryFeature& queryFeature) const
 size_t ReqOptQueryExecutor::size() const
 {
     size_t size = m_pReqExecutor->size();
-    if (m_pOptExecutor.isNotNull())
+    if (m_pOptExecutor)
     {
         size += m_pOptExecutor->size();
     }

@@ -16,11 +16,11 @@ void TokenSource::setOriginalView(const char* szText, size_t length)
     {
         if (length > DEFAULT_ORIGINAL_TEXT_SIZE)
         {
-            m_pOrgView.assign(new TokenView(length + 1));
+            m_pOrgView.reset(new TokenView(length + 1));
         }
         else 
         {
-            m_pOrgView.assign(new TokenView(DEFAULT_ORIGINAL_TEXT_SIZE));
+            m_pOrgView.reset(new TokenView(DEFAULT_ORIGINAL_TEXT_SIZE));
         }
     }
     else 
@@ -74,7 +74,7 @@ TokenViewPtr TokenSource::acquireCustomView(const tstring& sViewName)
 
 void TokenSource::reset()
 {
-    if (m_pOrgView.isNotNull())
+    if (m_pOrgView)
     {
         m_pOrgView->clear();
     }

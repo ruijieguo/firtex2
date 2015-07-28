@@ -30,7 +30,7 @@ IndexBarrelReader::IndexBarrelReader(const FileSystemPtr& pFileSys,
     , m_pDocSchema(pDocSchema)
     , m_pComponentBuilder(pComponentBuilder)
 {
-    m_pInStreamPool = new InputStreamPool(pFileSys);
+    m_pInStreamPool.reset(new InputStreamPool(pFileSys));
 }
 
 IndexBarrelReader::IndexBarrelReader(const IndexBarrelReader& src)

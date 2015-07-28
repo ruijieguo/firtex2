@@ -44,7 +44,7 @@ class MultiTermIterator : public TermIterator
 
         bool next()
         {
-            if (termIterator.isNull())
+            if (!termIterator)
                 return false;
             bool ret = termIterator->hasNext();
             if (ret == false)

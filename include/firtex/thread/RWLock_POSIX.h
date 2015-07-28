@@ -52,7 +52,7 @@ inline bool RWLockImpl::tryReadLock()
     {
         handleError(rc);
     }
-
+    return false;
 }
 
 inline void RWLockImpl::writeLock()
@@ -72,7 +72,7 @@ inline bool RWLockImpl::tryWriteLock()
     {
         handleError(rc);
     }
-
+    return false;
 }
 
 inline void RWLockImpl::unlock()

@@ -13,7 +13,7 @@ typedef boost::shared_ptr<apache::thrift::TProcessor> TProcessorPtr;
 class RPCProxyServer : public ServerBase
 {
 public:
-    typedef FX_NS(common)::SharedPtr<apache::thrift::server::TServer> TServerPtr;
+    DEFINE_TYPED_PTR(apache::thrift::server::TServer);
 
 public:
     RPCProxyServer(const std::string& sRole);

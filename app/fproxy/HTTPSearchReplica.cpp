@@ -20,7 +20,7 @@ HTTPSearchReplica::HTTPSearchReplica()
 
 HTTPSearchReplica::~HTTPSearchReplica()
 {
-    if (m_pSearchClient.isNotNull())
+    if (m_pSearchClient)
     {
         m_pSearchClient->close();
     }
@@ -30,7 +30,7 @@ void HTTPSearchReplica::initClient(const std::string& sAddr, int32_t nPort)
 {
     FX_DEBUG("Setup connection to [%s : %u].", sAddr.c_str(), nPort);
 
-    m_pSearchClient = new EvHttpSyncClient();
+    m_pSearchClient.reset(new EvHttpSyncClient());
     m_pSearchClient->open(sAddr, nPort);
 }
 

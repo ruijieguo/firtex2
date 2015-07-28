@@ -22,7 +22,7 @@ std::string IndexSearcher::PHASE_RETRIEVE_DOCID_STR = "2";
 IndexSearcher::IndexSearcher(const IndexReaderPtr& pIndexReader)
     : m_pIndexReader(pIndexReader)
 {
-    m_pPool = new LooseBoundedPool(RANK_MEMORY_POOL_SIZE);
+    m_pPool.reset(new LooseBoundedPool(RANK_MEMORY_POOL_SIZE));
     initFeatureProvider();
 }
 
@@ -32,7 +32,7 @@ IndexSearcher::~IndexSearcher()
 
 void IndexSearcher::initFeatureProvider()
 {
-    m_pFeatureProvider = new FeatureProvider();
+    m_pFeatureProvider.reset(new FeatureProvider());
     m_pFeatureProvider->init(m_pIndexReader);
 }
 
@@ -58,11 +58,11 @@ QueryHitsPtr IndexSearcher::search(const Statement& statement,
     FilterClausePtr pFilterClause = statement.getFilterClause();
     ScorerProfileClausePtr pProfileClause = statement.getScorerProfileClause();
     QueryTracerPtr pTracer;
-    if (pParamClause.isNotNull())
+    if (pParamClause)
     {
         if (pParamClause->hasTrace())
         {
-            pTracer = new QueryTracer("searcher", pParamClause->getTraceLevel());
+            pTracer.reset(new QueryTracer("searcher", pParamClause->getTraceLevel()));
         }
 
         if ((pParamClause->getQueryPhase() == PHASE_RETRIEVE_ALL)
@@ -99,7 +99,7 @@ QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
                                    size_t nStart, size_t nTopDocs,
                                    phase_t phase)
 {
-    FIRTEX_ASSERT2(pQuery.isNotNull());
+    FIRTEX_ASSERT2(pQuery);
     if (nStart > nTopDocs)
     {
         nStart = 0;
@@ -107,7 +107,7 @@ QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
 
     QueryExecutorPtr pQueryExecutor = pQuery->createExecutor(
             m_pIndexReader, m_pFeatureProvider, m_pPool);
-    if (pQueryExecutor.isNull())
+    if (!pQueryExecutor)
     {
         return QueryHitsPtr();
     }
@@ -115,15 +115,15 @@ QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
     FX_QUERY_TRACE(DEBUG, pTracer, "Begin search");
 
     HitCollectorPtr pHitCollector;
-    if (pSort.isNull())
+    if (!pSort)
     {
-        pHitCollector.assign(new SimpleHitCollector(nTopDocs));
+        pHitCollector.reset(new SimpleHitCollector(nTopDocs));
     }
     else
     {
-        pHitCollector.assign(new SortedHitCollector(pSort, nTopDocs));
+        pHitCollector.reset(new SortedHitCollector(pSort, nTopDocs));
     }
-    if (pFilter.isNotNull())
+    if (pFilter)
     {
         pHitCollector->setFilter(pFilter);
     }
@@ -139,9 +139,9 @@ QueryHitsPtr IndexSearcher::search(const QueryPtr& pQuery,
 
     QueryHitsPtr pHits;
     HitQueuePtr pHitQu = pHitCollector->getHitQueue();
-    if (pHitQu.isNotNull() && pHitQu->size() > 0)
+    if (pHitQu && pHitQu->size() > 0)
     {
-        pHits.assign(new QueryHits());
+        pHits.reset(new QueryHits());
         if (phase == PHASE_RETRIEVE_DOCID)
         {
             pHits->init(pHitQu, nStart);
@@ -162,7 +162,7 @@ QueryHitsPtr IndexSearcher::doRetrieveDoc(
         const DocSelectClausePtr& pDocClause,
         QueryTracerPtr& pTracer)
 {
-    if (pDocClause.isNull())
+    if (!pDocClause)
     {
         return QueryHitsPtr();
     }
@@ -184,7 +184,7 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
                                      QueryTracerPtr& pTracer,
                                      QueryParser& queryParser)
 {
-    if (pQueryClause.isNull())
+    if (!pQueryClause)
     {
         return QueryHitsPtr();
     }
@@ -192,23 +192,23 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
     try
     {
         QueryPtr pQuery = queryParser.parse(pQueryClause->getValue());
-        if (pQuery.isNull())
+        if (!pQuery)
         {
             return QueryHitsPtr();
         }
 
         size_t nStart = 0;
         size_t nTop = ParameterClause::DEFAULT_TOPDOCS;
-        if (pParamClause.isNotNull())
+        if (pParamClause)
         {
             nStart = pParamClause->getStartDoc();
             nTop = pParamClause->getTopDocs();
         }
 
         SorterPtr pSort;
-        if (pSortClause.isNotNull())
+        if (pSortClause)
         {
-            pSort = new Sorter();
+            pSort.reset(new Sorter());
             if (!pSort->init(m_pIndexReader, pSortClause))
             {
                 FX_LOG(ERROR, "Create sort expression: [%s] FAILED, "
@@ -218,9 +218,9 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
         }
 
         FilterPtr pFilter;
-        if (pFilterClause.isNotNull())
+        if (pFilterClause)
         {
-            pFilter = new Filter();
+            pFilter.reset(new Filter());
             if (!pFilter->init(m_pIndexReader, pFilterClause))
             {
                 FX_LOG(ERROR, "Create filter expression evaluator: [%s] FAILED.",
@@ -228,14 +228,14 @@ QueryHitsPtr IndexSearcher::doSearch(const QueryClausePtr& pQueryClause,
                 return QueryHitsPtr();
             }
         }
-        string sProfile = pScorerProfileClause.isNull() ? "default" : 
-                          pScorerProfileClause->getProfileName();
+        string sProfile = pScorerProfileClause ?
+                          pScorerProfileClause->getProfileName() : "default"; 
+
         const ScorerProfile* pScorerProfile =
             ScorerProfileFactory::instance()->getProfile(sProfile);
 
         return search(pQuery, pSort, pFilter, pScorerProfile, pTracer, nStart,
-                      nTop, pParamClause.isNull() ? PHASE_RETRIEVE_ALL 
-                      : pParamClause->getQueryPhase());
+                      nTop, pParamClause ? pParamClause->getQueryPhase() : PHASE_RETRIEVE_ALL);
     }
     catch (const FirteXException& e)
     {

@@ -64,7 +64,7 @@ bool RPCSearchService::ping()
 void RPCSearchService::handleQuery(std::string& sResult, const Statement& state) const
 {
     IndexReaderPtr pIndexReader = m_searchRes.getIndexReader();
-    FIRTEX_ASSERT2(pIndexReader.isNotNull());
+    FIRTEX_ASSERT2(pIndexReader);
 
     try
     {
@@ -78,14 +78,14 @@ void RPCSearchService::handleQuery(std::string& sResult, const Statement& state)
         QueryHitsPtr pHits = searcher.search(state, parser);
         QueryResult result;
 
-        if (pHits.isNotNull())
+        if (pHits)
         {
             FieldSelectClausePtr pFieldClause = state.getFieldSelectClause();
             QueryClausePtr pQueryClause = state.getQueryClause();
-            if (pFieldClause.isNotNull() && pQueryClause.isNotNull())
+            if (pFieldClause && pQueryClause)
             {
                 QueryPtr pQuery = parser.parse(pQueryClause->getQueryString());
-                FIRTEX_ASSERT2(pQuery.isNotNull());
+                FIRTEX_ASSERT2(pQuery);
 
                 FieldSelector selector(pIndexReader->getDocSchema());
                 

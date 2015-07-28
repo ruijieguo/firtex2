@@ -22,7 +22,7 @@
 FX_NS_DEF(index);
 
 typedef TypedForwardIndexIterator<int32_t> LengthNormIterator;
-typedef FX_NS(common)::SharedPtr<LengthNormIterator> LengthNormIteratorPtr;
+DEFINE_TYPED_PTR(LengthNormIterator);
 
 FX_NS_END
 

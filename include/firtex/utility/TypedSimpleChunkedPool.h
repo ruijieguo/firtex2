@@ -24,7 +24,7 @@ class TypedSimpleChunkedPool
 {
 public:
     typedef Allocator AllocType;
-    typedef FX_NS(common)::SharedPtr<AllocType> AllocTypePtr;
+    DEFINE_TYPED_PTR(AllocType);
 
 public:
     TypedSimpleChunkedPool(const AllocTypePtr& pAlloc, size_t nChunkSize);

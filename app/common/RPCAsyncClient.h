@@ -32,7 +32,7 @@ public:
     typedef boost::shared_ptr<apache::thrift::protocol::TProtocolFactory> TProtocolFactoryPtr;
 
     typedef Client ClientType;
-    typedef FX_NS(common)::SharedPtr<ClientType> ClientTypePtr;
+    DEFINE_TYPED_PTR(ClientType);
 
 public:
     RPCAsyncClient(apache::thrift::protocol::TProtocolFactory* pProtocolFactory);
@@ -109,7 +109,7 @@ void RPCAsyncClient<Client>::open(const std::string& sHost, int32_t nPort)
     this->m_sHost = sHost;
     this->m_nPort = nPort;
 
-    m_pChannel = new AsyncClientChannel();
+    m_pChannel.reset(new AsyncClientChannel());
     this->channel_.reset(m_pChannel);
     m_pChannel->open(m_sHost, nPort);
 }

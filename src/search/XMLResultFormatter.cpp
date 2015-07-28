@@ -96,7 +96,7 @@ void XMLResultFormatter::format(const QueryResult& result,
         } // end while 
 
         const QueryTracerPtr& pTracer = result.getTracer();
-        if (pTracer.isNotNull())
+        if (pTracer)
         {
             formatTracer(pRootNode, pTracer);
         }
@@ -126,7 +126,7 @@ void XMLResultFormatter::formatTracer(XMLNodeWrapperPtr& pTraceRootNode,
     for (size_t i = 0; i < tracers.size(); ++i)
     {
         const QueryTracerPtr& pChildTracer = tracers[i];
-        if (pChildTracer.isNotNull())
+        if (pChildTracer)
         {
             formatTracer(pTraceNode, pChildTracer);
         }

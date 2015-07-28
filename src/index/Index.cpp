@@ -49,8 +49,8 @@ void Index::open(const std::string& sIndexPath, AccessMode am,
                  const DocumentSchema* pDocSchema)
 {
     std::string sFs = GLOBAL_CONF().Storage.filesystem;
-    FileSystemPtr pFileSys = FileSystemFactory::instance()->createFileSystem(sFs);
-    if (pFileSys.isNull())
+    FileSystemPtr pFileSys(FileSystemFactory::instance()->createFileSystem(sFs));
+    if (!pFileSys)
     {
         FIRTEX_THROW(InvalidConfigException, "Create file system: [%s] FAILED", sFs.c_str());
     }
@@ -81,7 +81,7 @@ void Index::open(const std::string& sIndexPath, AccessMode am,
 void Index::open(FileSystemPtr& pFileSys, AccessMode am,
                  const DocumentSchema* pDocSchema)
 {
-    FIRTEX_ASSERT2(m_pFileSys.isNull());
+    FIRTEX_ASSERT2(!m_pFileSys);
     m_pFileSys = pFileSys;
     m_accessMode = am;
 	
@@ -95,17 +95,17 @@ void Index::open(FileSystemPtr& pFileSys, AccessMode am,
             FIRTEX_THROW(InvalidConfigException, "Schema is empty in write mode.");
         }
 
-        m_pDocSchema = new DocumentSchema(*pDocSchema);
+        m_pDocSchema.reset(new DocumentSchema(*pDocSchema));
         writeSchema(m_pDocSchema, pFileSys);
 
         pBarrelsInfo->remove(m_pFileSys);
 
-        m_pComponentBuilder = new ComponentBuilder();
+        m_pComponentBuilder.reset(new ComponentBuilder());
         m_pComponentBuilder->init(m_pDocSchema);
         initAnalyzerMapper();
 
-        m_pIndexBarrelKeeper = new IndexBarrelKeeper(m_pFileSys, m_pDocSchema.get(),
-                m_pComponentBuilder.get(), m_pAnalyzerMapper.get());
+        m_pIndexBarrelKeeper.reset(new IndexBarrelKeeper(m_pFileSys, m_pDocSchema.get(),
+                        m_pComponentBuilder.get(), m_pAnalyzerMapper.get()));
         m_pIndexBarrelKeeper->init(pBarrelsInfo, IndexBarrelKeeper::WRITE);
 
         openWriter();
@@ -119,7 +119,7 @@ void Index::open(FileSystemPtr& pFileSys, AccessMode am,
         if (pBarrelsInfo->getBarrelCount() > 0)
         {
             DocumentSchemaPtr pSchemaExist = readSchema(m_pFileSys);
-            if (pSchemaExist.isNull())
+            if (!pSchemaExist)
             {
                 FIRTEX_THROW(IndexCollapseException, "Read schema FAILED.");
             }
@@ -137,15 +137,15 @@ void Index::open(FileSystemPtr& pFileSys, AccessMode am,
                 FIRTEX_THROW(IllegalArgumentException,
                         "No document schema is specified.");
             }
-            m_pDocSchema = new DocumentSchema(*pDocSchema);
+            m_pDocSchema.reset(new DocumentSchema(*pDocSchema));
         }
 
-        m_pComponentBuilder = new ComponentBuilder();
+        m_pComponentBuilder.reset(new ComponentBuilder());
         m_pComponentBuilder->init(m_pDocSchema);
         initAnalyzerMapper();
 
-        m_pIndexBarrelKeeper = new IndexBarrelKeeper(m_pFileSys, m_pDocSchema.get(),
-                m_pComponentBuilder.get(), m_pAnalyzerMapper.get());
+        m_pIndexBarrelKeeper.reset(new IndexBarrelKeeper(m_pFileSys, m_pDocSchema.get(),
+                        m_pComponentBuilder.get(), m_pAnalyzerMapper.get()));
 
         if (am == READ || am == RDWR)
         {
@@ -172,7 +172,7 @@ DocumentSchemaPtr Index::readSchema(FileSystemPtr& pFileSys)
     XMLConfigurator configurator;
     configurator.load(SCHEMA_FILENAME, pFileSys);
 
-    DocumentSchemaPtr pDocSchema = new DocumentSchema();
+    DocumentSchemaPtr pDocSchema(new DocumentSchema());
     pDocSchema->configure(configurator);
     return pDocSchema;
 }
@@ -205,8 +205,8 @@ void Index::remove(FileSystemPtr& pFileSys)
 void Index::remove(const std::string& sIndexPath)
 {
     std::string sFs =GLOBAL_CONF().Storage.filesystem;
-    FileSystemPtr pFileSys = FileSystemFactory::instance()->createFileSystem(sFs);
-    if (pFileSys.isNull())
+    FileSystemPtr pFileSys(FileSystemFactory::instance()->createFileSystem(sFs));
+    if (!pFileSys)
     {
         FIRTEX_THROW(InvalidConfigException, "Create file system: [%s] FAILED", sFs.c_str());
     }
@@ -227,13 +227,13 @@ bool Index::exists(const std::string& sIndexPath)
 
 void Index::close()
 {			
-    if (m_pReader.isNotNull())
+    if (m_pReader)
     {
         m_pReader->close();
         m_pReader.reset();
     }
 
-    if (m_pWriter.isNotNull())
+    if (m_pWriter)
     {
         m_pWriter->close();
         m_pWriter.reset();
@@ -246,7 +246,7 @@ void Index::close()
 
     m_pIndexBarrelKeeper.reset();
 
-    if (m_pFileSys.isNotNull())
+    if (m_pFileSys)
     {
         m_pFileSys->close();
         m_pFileSys.reset();
@@ -255,7 +255,7 @@ void Index::close()
 
 void Index::openReader()
 {
-    m_pReader.assign(new IndexReader());
+    m_pReader.reset(new IndexReader());
     m_pReader->open(m_pIndexBarrelKeeper);
 }
 
@@ -318,7 +318,7 @@ IndexWriterPtr Index::acquireWriter()
 
 void Index::openWriter()
 {
-    m_pWriter.assign(new IndexWriter());
+    m_pWriter.reset(new IndexWriter());
     m_pWriter->open(m_pIndexBarrelKeeper);
 }
 
@@ -330,7 +330,7 @@ const ComponentBuilder* Index::getComponentBuilder() const
 void Index::initAnalyzerMapper()
 {
     //init analyzer mapper
-    m_pAnalyzerMapper = new AnalyzerMapper();
+    m_pAnalyzerMapper.reset(new AnalyzerMapper());
     m_pAnalyzerMapper->init(m_pDocSchema.get());
 }
 

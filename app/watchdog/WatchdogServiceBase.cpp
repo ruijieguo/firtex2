@@ -14,9 +14,9 @@ FX_NS_USE(utility);
 FX_NS_DEF(app);
 
 #define IF_NULL_THEN_RETURN(node, tag)                                  \
-    if (node.isNull())                                                  \
+    if (!node)                                                          \
     {                                                                   \
-        FX_LOG(ERROR, "Missing "tag" tag in result string.");           \
+        FX_LOG(ERROR, "Missing " tag " tag in result string.");           \
         return false;                                                   \
     }
 
@@ -54,7 +54,7 @@ void WatchdogServiceBase::init(const std::string& sWorkDir)
         runOnce();
     }
     
-    m_pMonitorThread = new Thread();
+    m_pMonitorThread.reset(new Thread());
     m_pMonitorThread->start(*this);
 }
 
@@ -107,10 +107,10 @@ WatchdogServiceBase::PIDType WatchdogServiceBase::startProcess(
             errorInfo.errorMsg = e.what();
         }
         
-        ProcessInfoPtr pInfo = new ProcessInfo(task.command.processName,
-                task.command.parameters, task.envVariables,
-                task.processInfoKeepTime, sWorkDir, 
-                pProcHandle, task.restartAfterCrash);
+        ProcessInfoPtr pInfo(new ProcessInfo(task.command.processName,
+                        task.command.parameters, task.envVariables,
+                        task.processInfoKeepTime, sWorkDir, 
+                        pProcHandle, task.restartAfterCrash));
         {
             FastMutex::Guard g(m_mutex);
             if (m_processes.find(sEncodedProc) != m_processes.end())
@@ -468,12 +468,12 @@ bool WatchdogServiceBase::deserializeStatusFromFile()
         }
 
         XMLNodeWrapperPtr pRootNode = xmlDoc.firstNode("processes");
-        if (pRootNode.isNotNull())
+        if (pRootNode)
         {
             for (XMLNodeWrapperPtr pProcNode = pRootNode->firstNode("process");
-                 pProcNode.isNotNull(); pProcNode = pProcNode->nextSibling())
+                 pProcNode; pProcNode = pProcNode->nextSibling())
             {
-                ProcessInfoPtr pProcInfo = new ProcessInfo();
+                ProcessInfoPtr pProcInfo(new ProcessInfo());
 
                 XMLNodeWrapperPtr pNameNode  = pProcNode->firstNode("name");
                 IF_NULL_THEN_RETURN(pNameNode, "<name>");
@@ -482,7 +482,7 @@ bool WatchdogServiceBase::deserializeStatusFromFile()
                 XMLNodeWrapperPtr pArgsNode  = pProcNode->firstNode("arguments");
                 IF_NULL_THEN_RETURN(pArgsNode, "<arguments>");
                 for (XMLNodeWrapperPtr pArgNode = pArgsNode->firstNode("argument");
-                     pArgNode.isNotNull(); pArgNode = pArgNode->nextSibling())
+                     pArgNode; pArgNode = pArgNode->nextSibling())
                 {
                     XMLNodeWrapperPtr pDataNode = pArgNode->firstNode();
                     pProcInfo->parameters.push_back(pDataNode->getValue());
@@ -492,7 +492,7 @@ bool WatchdogServiceBase::deserializeStatusFromFile()
                 IF_NULL_THEN_RETURN(pEnvNode, "<environment>");
                 
                 for (XMLNodeWrapperPtr pValueNode = pEnvNode->firstNode("value");
-                     pValueNode.isNotNull(); pValueNode = pValueNode->nextSibling())
+                     pValueNode; pValueNode = pValueNode->nextSibling())
                 {
                     XMLAttributeWrapperPtr pNameAttr = pValueNode->firstAttribute("name");
                     XMLNodeWrapperPtr pDataNode = pValueNode->firstNode();
@@ -513,7 +513,7 @@ bool WatchdogServiceBase::deserializeStatusFromFile()
                 XMLNodeWrapperPtr pPIDNode = pProcNode->firstNode("pid");
                 IF_NULL_THEN_RETURN(pPIDNode, "pid");
                 PIDType pid = NumberParser::parseInt32(pPIDNode->getValue());
-                pProcInfo->procHandle = new ProcessHandle(pid);
+                pProcInfo->procHandle.reset(new ProcessHandle(pid));
 
                 XMLNodeWrapperPtr pStatusNode = pProcNode->firstNode("status");
                 IF_NULL_THEN_RETURN(pStatusNode, "<status>");

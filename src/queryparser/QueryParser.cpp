@@ -30,7 +30,7 @@ QueryPtr QueryParser::parse(const string& sQueryExpr)
 {
     QueryExprParser exprParser(m_sDefField);
     QueryExprPtr pExpr = exprParser.parse(sQueryExpr);
-    if (pExpr.isNull())
+    if (!pExpr)
     {
         FIRTEX_THROW(SyntaxException, "Bad query syntax: [%s]", 
                      exprParser.getErrorMessage().c_str());

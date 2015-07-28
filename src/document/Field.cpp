@@ -94,7 +94,7 @@ Field::~Field()
 
 void Field::clear()
 {
-    if (!m_pTokenView.isNull())
+    if (m_pTokenView)
     {
         m_pTokenView->clear();
     }

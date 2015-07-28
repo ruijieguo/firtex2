@@ -36,13 +36,13 @@ void PrimaryKeyIndex::open(const FileSystemPtr& pFileSys,
                            const HashTablePtr& pHashTable)
 {
     m_pFileSys = pFileSys;
-    m_pStreamPool = new InputStreamPool(pFileSys);
-    m_pBarrelsInfo = pBarrelsInfo->clone();
+    m_pStreamPool.reset(new InputStreamPool(pFileSys));
+    m_pBarrelsInfo.reset(pBarrelsInfo->clone());
 
-    m_pHashTable = new HashTable(std::numeric_limits<uint64_t>::max(),
-                                 INVALID_DOCID);
+    m_pHashTable.reset(new HashTable(std::numeric_limits<uint64_t>::max(),
+                    INVALID_DOCID));
     
-    if (pHashTable.isNotNull())
+    if (pHashTable)
     {
         mergeWith(pBarrelsInfo->getLastBarrel().getBaseDocId(), pHashTable);
         return;
@@ -56,7 +56,7 @@ void PrimaryKeyIndex::open(const FileSystemPtr& pFileSys,
         const BarrelInfo& barrelInfo = iter.next();
         if (barrelInfo.getDocCount() > 0)
         {
-            PrimaryKeyTermReaderPtr pTermReader = new PrimaryKeyTermReader();
+            PrimaryKeyTermReaderPtr pTermReader(new PrimaryKeyTermReader());
             pTermReader->open(m_pFileSys, m_pStreamPool,
                     barrelInfo.getSuffix(), m_sPrimKeyField, NULL);
             HashTablePtr pHashMap = pTermReader->getPostingTable();
@@ -76,10 +76,10 @@ void PrimaryKeyIndex::reopen(const BarrelsInfoPtr& pBarrelsInfo,
                              const HashTablePtr& pHashTable)
 {
     BarrelsInfoPtr pLastBarrelsInfo = m_pBarrelsInfo;
-    BarrelsInfoPtr pNewBarrelsInfo = pBarrelsInfo->clone();
+    BarrelsInfoPtr pNewBarrelsInfo(pBarrelsInfo->clone());
 
     m_pBarrelsInfo = pNewBarrelsInfo;
-    if (pHashTable.isNotNull())
+    if (pHashTable)
     {
         mergeWith(pBarrelsInfo->getLastBarrel().getBaseDocId(), pHashTable);
         return;
@@ -89,8 +89,9 @@ void PrimaryKeyIndex::reopen(const BarrelsInfoPtr& pBarrelsInfo,
     if (nBarrelCount == 1)
     {
         const BarrelInfo& barrelInfo = pNewBarrelsInfo->getLastBarrel();
-        PrimaryKeyTermReaderPtr pTermReader = new PrimaryKeyTermReader();
-        pTermReader->open(m_pFileSys, m_pStreamPool, barrelInfo.getSuffix(), m_sPrimKeyField, NULL);
+        PrimaryKeyTermReaderPtr pTermReader(new PrimaryKeyTermReader());
+        pTermReader->open(m_pFileSys, m_pStreamPool, barrelInfo.getSuffix(),
+                          m_sPrimKeyField, NULL);
         HashTablePtr pHashMap = pTermReader->getPostingTable();
         m_pHashTable = pHashMap;
     }
@@ -122,7 +123,7 @@ void PrimaryKeyIndex::reopen(const BarrelsInfoPtr& pBarrelsInfo,
                 }
                 if (newInfo.getDocCount() > 0)
                 {
-                    PrimaryKeyTermReaderPtr pTermReader = new PrimaryKeyTermReader();
+                    PrimaryKeyTermReaderPtr pTermReader(new PrimaryKeyTermReader());
                     pTermReader->open(m_pFileSys, m_pStreamPool, newInfo.getSuffix(),
                             m_sPrimKeyField, NULL);
                     HashTablePtr pHashMap = pTermReader->getPostingTable();
@@ -133,7 +134,7 @@ void PrimaryKeyIndex::reopen(const BarrelsInfoPtr& pBarrelsInfo,
         else
         {
             // Re-load all data
-            m_pHashTable.assign(new HashTable(std::numeric_limits<uint64_t>::max(),
+            m_pHashTable.reset(new HashTable(std::numeric_limits<uint64_t>::max(),
                             INVALID_DOCID));
 
             BarrelsInfo::Iterator iter = pNewBarrelsInfo->iterator();
@@ -141,7 +142,7 @@ void PrimaryKeyIndex::reopen(const BarrelsInfoPtr& pBarrelsInfo,
             {
                 const BarrelInfo& barrelInfo = iter.next();
                 
-                PrimaryKeyTermReaderPtr pTermReader = new PrimaryKeyTermReader();
+                PrimaryKeyTermReaderPtr pTermReader(new PrimaryKeyTermReader());
                 pTermReader->open(m_pFileSys, m_pStreamPool, barrelInfo.getSuffix(),
                         m_sPrimKeyField, NULL);
                 HashTablePtr pHashMap = pTermReader->getPostingTable();

@@ -135,7 +135,7 @@ DEFINE_TYPED_PTR(DocPostingMerger);
 inline void DocPostingMergerStreammer::init(const FX_NS(store)::OutputStreamPtr& pDocStream)
 {
     m_pDocListWriter = pDocStream;
-    if (m_pPool.isNotNull())
+    if (m_pPool)
     {
         m_pPool->clear();
     }
@@ -168,10 +168,10 @@ inline void DocPostingMergerStreammer::addDocSkip(docid_t docId, ctf_t cumSumOfT
 {
     if (!m_pDocSkipListWriter)
     {
-        if (m_pPool.isNull())
+        if (!m_pPool)
         {
             PoolType* pPool = new PoolType(DEFAULT_WRITE_BUFFER);
-            m_pPool.assign(pPool);
+            m_pPool.reset(pPool);
         }
         m_pDocSkipListWriter = new DocSkipListWriter(
                 GLOBAL_CONF().Advance.Posting.maxLevel,

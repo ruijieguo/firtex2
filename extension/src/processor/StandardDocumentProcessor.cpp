@@ -68,7 +68,7 @@ void StandardDocumentProcessor::doProcessFile(const std::string& sPath,
         }
     }
 
-    if (m_pDocReader.isNull())
+    if (!m_pDocReader)
     {
         FX_LOG(WARN, "Skip document: document reader for [%s] "
                "FAILED did not initialize.", 

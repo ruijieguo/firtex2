@@ -10,11 +10,8 @@
 #include "firtex/common/Logger.h"
 #include "firtex/utility/TimeProbe.h"
 
-
-#ifdef HAVE_THRIFT
 #include "../common/RPCSyncClient.h"
 #include "../thrift/gen-cpp/ThriftSearchService.h"
-#endif
 
 using namespace std;
 
@@ -103,7 +100,7 @@ void BenchmarkAppRunner::Result::addHits(const std::string& sRequest,
 
 void BenchmarkAppRunner::HttpRunner::run()
 {
-    EvHttpSyncClientPtr pClient = new EvHttpSyncClient();
+    EvHttpSyncClientPtr pClient(new EvHttpSyncClient());
     pClient->open(m_pMain->m_sHost, m_pMain->m_nPort);
     pClient->setTimeout(m_pMain->m_nTimeout);
 
@@ -151,7 +148,7 @@ void BenchmarkAppRunner::HttpRunner::run()
     }
 }
 
-#ifdef HAVE_THRIFT
+
 void BenchmarkAppRunner::RPCRunner::run()
 {
     typedef RPCSyncClient<ThriftSearchServiceClient> SearchServiceClient;
@@ -199,7 +196,6 @@ void BenchmarkAppRunner::RPCRunner::run()
         }
     }
 }
-#endif
 
 void BenchmarkAppRunner::doQuery()
 {
@@ -213,17 +209,15 @@ void BenchmarkAppRunner::doQuery()
         RunnerBasePtr pRunner;
         if (m_sServiceType == "http")
         {
-            pRunner = new HttpRunner(this, m_queries);
+            pRunner.reset(new HttpRunner(this, m_queries));
         }
         else 
         {
-#ifdef HAVE_THRIFT
-            pRunner = new RPCRunner(this, m_queries);
-#endif
+            pRunner.reset(new RPCRunner(this, m_queries));
         }
         m_runners.push_back(pRunner);
 
-        ThreadPtr pThread = new Thread();
+        ThreadPtr pThread(new Thread());
         m_threads.push_back(pThread);
         pThread->start(*pRunner);
     }
@@ -430,10 +424,8 @@ void BenchmarkAppRunner::optionCallback(const Option& option,
         }
         if (sValue == "rpc")
         {
-#ifndef HAVE_THRIFT
             FIRTEX_THROW(UnsupportedException, "Un-support rpc mode, "
                          "please re-compile with thrift.");
-#endif
         }
 
         m_sServiceType = sValue;

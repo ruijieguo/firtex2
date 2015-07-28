@@ -55,9 +55,9 @@ tstring Number::toString()
     else
     FX_IF_TOSTRING(uint32_t, str, "%u")
     else
-    FX_IF_TOSTRING(int64_t, str, "%"I64_FMT"d")
+    FX_IF_TOSTRING(int64_t, str, "%" I64_FMT"d")
     else
-    FX_IF_TOSTRING(uint64_t, str, "%"I64_FMT"u")
+    FX_IF_TOSTRING(uint64_t, str, "%" I64_FMT"u")
     else
     FX_IF_TOSTRING2(float, str, "%.*g", 8)
     else
@@ -81,9 +81,9 @@ tstring Number::toString(int nWidth)
     else
     FX_IF_TOSTRING2(uint32_t, str, "%*u", nWidth)
     else
-    FX_IF_TOSTRING2(int64_t, str, "%*"I64_FMT"d", nWidth)
+    FX_IF_TOSTRING2(int64_t, str, "%*" I64_FMT"d", nWidth)
     else
-    FX_IF_TOSTRING2(uint64_t, str, "%*"I64_FMT"u", nWidth)
+    FX_IF_TOSTRING2(uint64_t, str, "%*" I64_FMT"u", nWidth)
     else
     FX_IF_TOSTRING2(float, str, "%.*f", nWidth)
     else
@@ -107,9 +107,9 @@ tstring Number::toString(int nWidth, int precision)
     else
     FX_IF_TOSTRING2(uint32_t, str, "%*u", nWidth)
     else
-    FX_IF_TOSTRING2(int64_t, str, "%*"I64_FMT"d", nWidth)
+    FX_IF_TOSTRING2(int64_t, str, "%*" I64_FMT"d", nWidth)
     else
-    FX_IF_TOSTRING2(uint64_t, str, "%*"I64_FMT"u", nWidth)
+    FX_IF_TOSTRING2(uint64_t, str, "%*" I64_FMT"u", nWidth)
     else
     FX_IF_TOSTRING3(float, str, "%*.*f", nWidth, precision)
     else

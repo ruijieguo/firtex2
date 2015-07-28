@@ -161,12 +161,12 @@ void IndexSearcherAppRunner::search()
         probe.stop();
 
         stringstream ss;
-        if (pHits.isNotNull())
+        if (pHits)
         {
             QueryResult result;
 
             FieldSelectClausePtr pFieldClause = stat.getFieldSelectClause();
-            if (pFieldClause.isNotNull())
+            if (pFieldClause)
             {
                 FieldSelector selector(index.getDocSchema());
                 
@@ -181,7 +181,7 @@ void IndexSearcherAppRunner::search()
                         pFieldFilter.reset(pSnippetGen);
                         
                         QueryPtr pQuery = queryParser.parse(m_sQueryExpr);
-                        FIRTEX_ASSERT2(pQuery.isNotNull());
+                        FIRTEX_ASSERT2(pQuery);
 
                         if (!pSnippetGen->init(pQuery, queryParser.getAnalyzerMapper(),
                                         param.field, param.preTag, param.postTag, param.separator ))

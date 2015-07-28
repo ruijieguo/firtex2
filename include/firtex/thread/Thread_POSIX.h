@@ -106,7 +106,7 @@ private:
         Event       done;
         std::size_t stackSize;
     };
-    typedef FX_NS(common)::SharedPtr<ThreadData> ThreadDataPtr;
+    DEFINE_TYPED_PTR(ThreadData);
 
     ThreadDataPtr m_pData;
 
@@ -135,18 +135,21 @@ inline int ThreadImpl::getPriorityImpl() const
 
 inline void ThreadImpl::sleepImpl(long milliseconds)
 {
-#if defined(__VMS) || defined(__digital__)
     // This is specific to DECThreads
-    struct timespec interval;
+    timespec interval;
     interval.tv_sec  = milliseconds / 1000;
-    interval.tv_nsec = (milliseconds % 1000)*1000000; 
-    pthread_delay_np(&interval);
-#else 
-    struct timeval tv;
-    tv.tv_sec  = milliseconds / 1000;
-    tv.tv_usec = (milliseconds % 1000) * 1000;
-    select(0, NULL, NULL, NULL, &tv); 	
-#endif
+    interval.tv_nsec = (milliseconds % 1000)*1000000;
+    while (nanosleep(&interval, &interval) == -1)
+    {
+        if (errno == EINTR)
+        {
+            continue;
+        }
+        else
+        {
+            FIRTEX_THROW(SystemException, "nanosleep failed");
+        }
+    }
 }
 
 inline bool ThreadImpl::isRunningImpl() const

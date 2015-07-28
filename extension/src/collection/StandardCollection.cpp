@@ -92,8 +92,8 @@ void StandardCollection::waitStop()
         FileFetcherPtr& pFileFetcher = getFileFetcher();
         
         MonitorDirectoryFileFetcherPtr pMonFetcher =
-            pFileFetcher.cast<MonitorDirectoryFileFetcher>();
-        FIRTEX_ASSERT2(pMonFetcher.isNotNull());
+            std::dynamic_pointer_cast<MonitorDirectoryFileFetcher>(pFileFetcher);
+        FIRTEX_ASSERT2(pMonFetcher);
         pMonFetcher->stop();
     }
     Collection::waitStop();

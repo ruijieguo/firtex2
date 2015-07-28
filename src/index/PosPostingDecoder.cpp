@@ -18,7 +18,7 @@ PosPostingDecoder::PosPostingDecoder()
 
 PosPostingDecoder::~PosPostingDecoder() 
 {
-    if (m_pPosStream.isNotNull() && m_pInStreamPool)
+    if (m_pPosStream && m_pInStreamPool)
     {
         m_pInStreamPool->releaseInputStream(m_pPosStream);
     }
@@ -42,7 +42,7 @@ void PosPostingDecoder::init(InputStreamPtr& pDocStream,
     }
     if (m_termMeta.getCTF() >= RECORD_SIZE)
     {
-        m_pPosSkipListReader = new PosSkipListReader();
+        m_pPosSkipListReader.reset(new PosSkipListReader());
         m_pPosSkipListReader->init(m_pPosStream);
     }
     else
@@ -97,7 +97,7 @@ uint32_t PosPostingDecoder::decodePosRecord(loc_t* posBuffer,
         return 0;
     }
     uint32_t nNumSkipped = 0;
-    if (m_pPosSkipListReader.isNotNull())
+    if (m_pPosSkipListReader)
     {
         offset_t posOff = m_pPosSkipListReader->skipTo(nSkipPosCount);
         if (posOff != (offset_t)-1)

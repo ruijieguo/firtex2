@@ -105,7 +105,7 @@ inline score_t BM25TermScorer::score(docid_t docId,
     if (tf > 0.0)
     {
         uint32_t fieldLen = uAvgFieldLen;
-        if (m_pLengthNormIt.isNotNull())
+        if (m_pLengthNormIt)
         {
             m_pLengthNormIt->seek(docId, (int32_t&)fieldLen);
         }

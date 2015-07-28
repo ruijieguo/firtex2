@@ -85,7 +85,7 @@ void DBTMergePolicy::addToMerge(Tree& resultTree, Nodes& nodes, size_t nLevel)
 MergeProposalPtr DBTMergePolicy::makeProposal(const Tree& resultTree,
         const BarrelsInfo& barrelsInfo)
 {
-    MergeProposalPtr pProposal = new MergeProposal();
+    MergeProposalPtr pProposal(new MergeProposal());
 
     size_t nLastLevel = (size_t)-1;
     BarrelsInfoPtr pBarrelsInfo;
@@ -94,12 +94,12 @@ MergeProposalPtr DBTMergePolicy::makeProposal(const Tree& resultTree,
     {
         if (it->first > (nLastLevel + 1))
         {
-            if (pBarrelsInfo.isNotNull())
+            if (pBarrelsInfo)
             {
                 FX_TRACE("Add one merge proposal");
                 pProposal->push_back(pBarrelsInfo);
             }
-            pBarrelsInfo.assign(new BarrelsInfo());
+            pBarrelsInfo.reset(new BarrelsInfo());
         }
 
         const Nodes& nodes = it->second;
@@ -115,7 +115,7 @@ MergeProposalPtr DBTMergePolicy::makeProposal(const Tree& resultTree,
         nLastLevel = it->first;
     }
 
-    if (pBarrelsInfo.isNotNull())
+    if (pBarrelsInfo)
     {
         pProposal->push_back(pBarrelsInfo);
     }

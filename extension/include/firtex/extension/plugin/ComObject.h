@@ -21,7 +21,7 @@
 #include "firtex/common/StdHeader.h"
 #include <stddef.h>
 #include "firtex/extension/com/Com.h"
-#include "firtex/thread/AtomicCount.h"
+#include <atomic>
 
 FX_NS_DEF(plugin)
 	
@@ -36,7 +36,7 @@ public:
     FX_STDMETHOD_(uint32_t, Release)();
 
 private:
-    FX_NS(thread)::AtomicCount m_refCount;
+    std::atomic_long m_refCount;
 };
 
 #define FX_METHOD_PROLOGUE(theClass, localClass)                        \

@@ -21,9 +21,9 @@ bool Filter::init(const IndexReaderPtr& pIndexReader,
 {
     const string& sFilterStr = clause->getFilterString();
 
-    m_pParser = new ExprParser(pIndexReader);
+    m_pParser.reset(new ExprParser(pIndexReader));
     m_pEvaluator = m_pParser->parse(sFilterStr);
-    if (m_pEvaluator.isNull())
+    if (!m_pEvaluator)
     {
         return false;
     }

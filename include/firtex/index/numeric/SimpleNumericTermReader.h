@@ -76,7 +76,7 @@ TermIteratorPtr SimpleNumericTermReader<T>::createTermIterator(
 {
     InputStreamPtr pDocStream = pStreamPool->getInputStream(
             this->getFileName(DOC_POSTING_FILEEXT));
-    if (pDocStream.isNull())
+    if (!pDocStream)
     {
         FIRTEX_THROW(FileIOException, "Open posting-list file of [%s] FAILED.",
                      this->getFieldSchema()->getName().c_str());
@@ -101,7 +101,7 @@ TermPostingIteratorPtr SimpleNumericTermReader<T>::createTermPostingIterator(
 {
     InputStreamPtr pDocStream = pStreamPool->getInputStream(
                 this->getFileName(DOC_POSTING_FILEEXT));
-    if (pDocStream.isNull())
+    if (!pDocStream)
     {
         FIRTEX_THROW(FileIOException, _T("Open posting-list file of [%s] FAILED."),
                      this->getFieldSchema()->getName().c_str());

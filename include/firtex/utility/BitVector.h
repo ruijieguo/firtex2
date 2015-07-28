@@ -180,7 +180,7 @@ inline BitVector::~BitVector()
 
 inline BitVector& BitVector::toggle(size_t pos)
 {
-    if(pos < 0 || pos >= m_nBits)
+    if(pos == size_t(-1) || pos >= m_nBits)
         throw OutOfRangeException( _T("bool BitVector::test(size_t pos) const") );
 
     m_bits[word(pos)] ^= mask1(pos);
@@ -190,7 +190,7 @@ inline BitVector& BitVector::toggle(size_t pos)
 
 inline bool BitVector::test(size_t pos) const
 {
-    if(pos < 0)
+    if(pos >= NPOS)
         throw OutOfRangeException( _T("bool BitVector::test(size_t pos) const" ) );
     if(pos >= m_nBits)
         return false;

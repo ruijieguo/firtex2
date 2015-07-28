@@ -13,6 +13,7 @@
 #ifndef __FX_POSTING_TRAITS_H
 #define __FX_POSTING_TRAITS_H
 
+#include "firtex/common/SharedPtr.h"
 #include "firtex/index/DocPostingWriter.h"
 #include "firtex/index/PosPostingWriter.h"
 #include "firtex/index/DocPostingDecoder.h"
@@ -37,9 +38,11 @@ struct DocPostingTraits
     typedef DocPostingDecoder PostingDecoderType;
     typedef BarrelTermPostingIterator PostingIteratorType;
 
+    DEFINE_TYPED_PTR(PostingDecoderType);
+
     typedef PostingPool::PoolType PoolType;
     typedef FX_NS(utility)::HashMap<KeyType, PostingWriterType*, PoolType> PostingTableType;
-    typedef FX_NS(common)::SharedPtr<PostingTableType> PostingTableTypePtr;
+    DEFINE_TYPED_PTR(PostingTableType);
 
     typedef TypedDict<KeyType, PostingWriterType*> InMemDictType;
 
@@ -57,9 +60,11 @@ struct PosPostingTraits
     typedef PosPostingDecoder PostingDecoderType;
     typedef BarrelTermPositionIterator PostingIteratorType;
 
+    DEFINE_TYPED_PTR(PostingDecoderType);
+
     typedef PostingPool::PoolType PoolType;
     typedef FX_NS(utility)::HashMap<KeyType, PostingWriterType*, PoolType> PostingTableType;
-    typedef FX_NS(common)::SharedPtr<PostingTableType> PostingTableTypePtr;
+    DEFINE_TYPED_PTR(PostingTableType);
 
     typedef TypedDict<KeyType, PostingWriterType*> InMemDictType;
 

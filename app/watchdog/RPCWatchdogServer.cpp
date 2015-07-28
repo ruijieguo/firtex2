@@ -53,14 +53,14 @@ bool RPCWatchdogServer::init(const std::string& sConfFile)
 void RPCWatchdogServer::run()
 {
     FIRTEX_ASSERT2(m_pProcessor != NULL);
-    m_pServer = new RPCServer(m_pProcessor, m_nListenPort,
-                              DEFAULT_THREAD_POOL_SIZE);
+    m_pServer.reset(new RPCServer(m_pProcessor, m_nListenPort,
+                                  DEFAULT_THREAD_POOL_SIZE));
     m_pServer->start(false);
 }
 
 void RPCWatchdogServer::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -68,7 +68,7 @@ void RPCWatchdogServer::stop()
 
 void RPCWatchdogServer::join()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

@@ -111,7 +111,7 @@ void KeywordIndexTestCase::testPosting()
     IndexReaderPtr pReader = index.acquireReader();
     TermReaderPtr pTermReader = pReader->termReader();
     TermIteratorPtr pIterator = pTermReader->termIterator("Keyword1");
-    CPPUNIT_ASSERT(!pIterator.isNull());
+    CPPUNIT_ASSERT(pIterator);
 
     sort(hashVec.begin(), hashVec.end(), hashLess);
     int32_t j = 0;
@@ -136,7 +136,7 @@ void KeywordIndexTestCase::testPosting()
 
     //test abc term
     TermIteratorPtr pIterator2 = pTermReader->termIterator("Keyword2");
-    CPPUNIT_ASSERT(!pIterator2.isNull());
+    CPPUNIT_ASSERT(pIterator2);
     i = 0;
     while (pIterator2->hasNext())
     {

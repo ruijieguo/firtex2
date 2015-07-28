@@ -9,7 +9,7 @@ QueryTracer::QueryTracer(const std::string& sPath, LevelType lvl)
     : LoggerBase("query_tracer", AppenderPtr(new QueryTracerAppender), lvl)
     , m_sPath(sPath)
 {
-    m_pTraceAppender = getAppender().cast<QueryTracerAppender>();
+    m_pTraceAppender = std::dynamic_pointer_cast<QueryTracerAppender>(getAppender());
     FIRTEX_ASSERT2(lvl != LoggingLevel::LEVEL_MAX);
 }
 

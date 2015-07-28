@@ -68,7 +68,7 @@ TermIteratorPtr MultiTermReader::termIterator(const Term* pLowerTerm, const Term
          it != m_termReaders.end(); ++it)
     {
         TermIteratorPtr pIt((*it).second->termIterator(pLowerTerm, pUpperTerm));
-        if (!pIt.isNull())
+        if (pIt)
         {
             pTermIterator->addIterator((*it).first, pIt);
             bHasIterator = true;
@@ -91,7 +91,7 @@ TermIteratorPtr MultiTermReader::termIterator(const tstring& field) const
     for (TermReaderVector::const_iterator it = m_termReaders.begin(); it != m_termReaders.end(); ++it)
     {
         TermIteratorPtr pIt((*it).second->termIterator(field));
-        if (!pIt.isNull())
+        if (pIt)
         {
             pTermIterator->addIterator((*it).first, pIt);
             bHasIterator = true;
@@ -113,7 +113,7 @@ TermPostingIteratorPtr MultiTermReader::seek(const Term* pTerm) const
          it != m_termReaders.end(); ++it)
     {
         TermPostingIteratorPtr pSubIter = (*it).second->seek(pTerm);
-        if (pSubIter.isNotNull())
+        if (pSubIter)
         {
             pIter->add((*it).first, pSubIter);
         }
@@ -138,7 +138,7 @@ void MultiTermReader::loadTermReaders()
     {
         MultiIndexBarrelReader::EntryPtr pEntry = iter.next();
         TermReaderPtr pTermReader(pEntry->m_pBarrel->termReader());
-        if(!pTermReader.isNull())
+        if(pTermReader)
         {
             m_termReaders.push_back(make_pair(pEntry->m_pBarrelInfo, pTermReader));
         }

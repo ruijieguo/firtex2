@@ -126,7 +126,7 @@ inline void AnalyzedField::clear()
 {
     m_pField = NULL;
 
-    if (m_pTokenView.isNotNull())
+    if (m_pTokenView)
     {
         m_pTokenView->clear();
     }

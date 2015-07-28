@@ -36,7 +36,7 @@ protected:
 
             m_name = sTypeName;
             m_nGen = nGeneration;
-            m_pIndex = new FX_NS(index)::Index();
+            m_pIndex.reset(new FX_NS(index)::Index());
             m_pIndex->open(path.toString(), FX_NS(index)::Index::READ, NULL);
             m_pIndexReader = m_pIndex->acquireReader();
         }

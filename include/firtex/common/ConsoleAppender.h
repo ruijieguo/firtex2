@@ -17,6 +17,7 @@ class ConsoleAppender : public LayoutAppender
 public:
     ConsoleAppender();
     ConsoleAppender(std::ostream& str);
+    ~ConsoleAppender();
 
     DECLARE_APPENDER_CREATOR(ConsoleAppender, "console");
 
@@ -26,9 +27,6 @@ public:
 
     virtual void configure(FX_NS(config)::Configurator& conf);
 		
-protected:
-    ~ConsoleAppender();
-
 private:
     static FX_NS(thread)::FastMutex ms_mutex;
 

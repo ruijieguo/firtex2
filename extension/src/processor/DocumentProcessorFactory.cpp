@@ -12,9 +12,12 @@ SETUP_STREAM_LOGGER(processor, DocumentProcessorFactory);
 
 DocumentProcessorFactory::DocumentProcessorFactory() 
 {
-    registerProcessor(new PlainDocumentProcessor::Creator);
-    registerProcessor(new HTMLDocumentProcessor::Creator);
-    registerProcessor(new StandardDocumentProcessor::Creator);
+    CreatorPtr pTmp(new PlainDocumentProcessor::Creator);
+    registerProcessor(pTmp);
+    pTmp.reset(new HTMLDocumentProcessor::Creator);
+    registerProcessor(pTmp);
+    pTmp.reset(new StandardDocumentProcessor::Creator);
+    registerProcessor(pTmp);
 }
 
 DocumentProcessorFactory::~DocumentProcessorFactory() 

@@ -72,7 +72,7 @@ void NumberFormatter::append0(tstring& str, uint32_t value, int width)
 void NumberFormatter::append(tstring& str, int64_t value)
 {
     char buffer[64];
-    std::sprintf(buffer, "%"I64_FMT"d", (I64_VAL)value);
+    std::sprintf(buffer, "%" I64_FMT"d", (I64_VAL)value);
     str.append(buffer);
 }
 
@@ -81,7 +81,7 @@ void NumberFormatter::append(tstring& str, int64_t value, int width)
     FIRTEX_ASSERT2 (width > 0 && width < 64);
 
     char buffer[64];
-    std::sprintf(buffer, "%*"I64_FMT"d", width, (I64_VAL)value);
+    std::sprintf(buffer, "%*" I64_FMT"d", width, (I64_VAL)value);
     str.append(buffer);
 }
 
@@ -90,14 +90,14 @@ void NumberFormatter::append0(tstring& str, int64_t value, int width)
     FIRTEX_ASSERT2 (width > 0 && width < 64);
 
     char buffer[64];
-    std::sprintf(buffer, "%0*"I64_FMT"d", width, (I64_VAL)value);
+    std::sprintf(buffer, "%0*" I64_FMT"d", width, (I64_VAL)value);
     str.append(buffer);
 }
 
 void NumberFormatter::append(tstring& str, uint64_t value)
 {
     char buffer[64];
-    std::sprintf(buffer, "%"I64_FMT"u", (UI64_VAL)value);
+    std::sprintf(buffer, "%" I64_FMT"u", (UI64_VAL)value);
     str.append(buffer);
 }
 
@@ -106,7 +106,7 @@ void NumberFormatter::append(tstring& str, uint64_t value, int width)
     FIRTEX_ASSERT2 (width > 0 && width < 64);
 
     char buffer[64];
-    std::sprintf(buffer, "%*"I64_FMT"u", width, (UI64_VAL)value);
+    std::sprintf(buffer, "%*" I64_FMT"u", width, (UI64_VAL)value);
     str.append(buffer);
 }
 
@@ -115,7 +115,7 @@ void NumberFormatter::append0(tstring& str, uint64_t value, int width)
     FIRTEX_ASSERT2 (width > 0 && width < 64);
 
     char buffer[64];
-    std::sprintf(buffer, "%0*"I64_FMT"u", width, (UI64_VAL)value);
+    std::sprintf(buffer, "%0*" I64_FMT"u", width, (UI64_VAL)value);
     str.append(buffer);
 }
 

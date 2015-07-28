@@ -88,11 +88,12 @@ void ResultCollectorImpl::collect(const QueryResult& queryResults)
         }
         
         const QueryTracerPtr& pTracer = queryResults.getTracer();
-        if (pTracer.isNotNull())
+        if (pTracer)
         {
-            if (m_result.getTracer().isNull())
+            if (!m_result.getTracer())
             {
-                m_result.setTracer(new QueryTracer("proxy", pTracer->getLevel()));
+                QueryTracerPtr pTmp(new QueryTracer("proxy", pTracer->getLevel()));
+                m_result.setTracer(pTmp);
             }
             QueryTracerPtr& pResTracer = m_result.getTracer();
             string str;

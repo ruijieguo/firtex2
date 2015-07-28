@@ -96,12 +96,12 @@ SearchResource::ClusterPtr SearchResource::loadCluster(
         return NULL;
     }
 
-    SearchResource::ClusterPtr pCluster = new Cluster(sClusterName);
+    SearchResource::ClusterPtr pCluster(new Cluster(sClusterName));
     for (vector<string>::const_iterator it = dirs.begin();
          it != dirs.end(); ++it)
     {
         SearchResource::TypePtr pType = loadType(*it, path.toString());
-        if (pType.isNotNull())
+        if (pType)
         {
             pCluster->m_types.insert(make_pair(*it, pType));
         }
@@ -157,7 +157,7 @@ SearchResource::TypePtr SearchResource::loadType(const string& sTypeName,
     string sIndexPath = path.toString();
     try
     {
-        TypePtr pType = new Type();
+        TypePtr pType(new Type());
         FX_LOG(INFO, "Begin load type: [%s], [%s], [%d]",
                sDataRoot.c_str(), sTypeName.c_str(), nLastGen);
         pType->init(sTypeName, nLastGen, sDataRoot);
@@ -201,7 +201,7 @@ SearchResource::TypePtr SearchResource::reloadType(const TypePtr& pType,
         }
         else
         {
-            TypePtr pNewType = new Type();
+            TypePtr pNewType(new Type());
             FX_LOG(INFO, "Begin load type: [%s], [%s], [%d]",
                    sDataRoot.c_str(), pType->m_name.c_str(), nLastGen);
             pNewType->init(pType->m_name, nLastGen, sDataRoot);
@@ -242,7 +242,7 @@ void SearchResource::reloadClusters(const std::string& sDataRoot)
         {
             ClusterPtr pCluster = it2->second;
             pCluster = reloadCluster(pCluster, sDataRoot);
-            if (pCluster.isNotNull())
+            if (pCluster)
             {
                 newClusters.insert(make_pair(*it, pCluster));
             }
@@ -280,7 +280,7 @@ SearchResource::ClusterPtr SearchResource::reloadCluster(
         oldTypes = pCluster->m_types;
     }
 
-    SearchResource::ClusterPtr pNewCluster = new Cluster(pCluster->m_name);
+    SearchResource::ClusterPtr pNewCluster(new Cluster(pCluster->m_name));
 
     Path path(sDataRoot);
     path.makeDirectory();

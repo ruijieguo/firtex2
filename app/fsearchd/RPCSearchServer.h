@@ -24,7 +24,7 @@ FX_NS_DEF(app);
 class RPCSearchServer : public SearchServerBase
 {
 public:
-    typedef FX_NS(common)::SharedPtr<apache::thrift::server::TServer> TServerPtr;
+    typedef boost::shared_ptr<apache::thrift::server::TServer> TServerPtr;
 
 public:
     RPCSearchServer();

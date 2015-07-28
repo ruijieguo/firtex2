@@ -21,8 +21,8 @@ fsearchd_SOURCES = \
 #	RPCSearchService.cpp
 
 frpcclient_SOURCES = \
-	RPCSearchClientAppRunner.cpp\
-	SearchClientMain.cpp
+	SearchClientMain.cpp\
+	RPCSearchClientAppRunner.cpp
 
 frpcclient_LDADD = $(top_builddir)/extension/src/libfirtexext.la \
 	$(top_builddir)/src/libfirtex.la\

@@ -29,7 +29,7 @@ Query* DefaultQueryBuilder::createQuery(const TermQueryExpr& expr)
 {
     const string& sField = GET_FIELD_NAME(expr);
     TokenViewPtr pTokens = tokenize(sField, expr.getValue());
-    if (pTokens.isNull())
+    if (!pTokens)
     {
         return NULL;
     }
@@ -82,7 +82,7 @@ Query* DefaultQueryBuilder::createQuery(const PhraseQueryExpr& expr)
 {
     const string& sField = GET_FIELD_NAME(expr);
     TokenViewPtr pTokens = tokenize(sField, expr.getValue());
-    if (pTokens.isNull())
+    if (!pTokens)
     {
         return NULL;
     }
@@ -111,11 +111,11 @@ Query* DefaultQueryBuilder::createQuery(const BooleanQueryExpr& expr)
     QueryExpr* pLeftNode = expr.getLeftNode();
     QueryExpr* pRightNode = expr.getRightNode();
 
-    Query* pLeftQ = pLeftNode->accept(*this);
+    QueryPtr pLeftQ(pLeftNode->accept(*this));
     BooleanClause leftClause(pLeftQ, pLeftNode->isRequired(),
                              pLeftNode->isProhibited());
 
-    Query* pRightQ = pRightNode->accept(*this);
+    QueryPtr pRightQ(pRightNode->accept(*this));
     BooleanClause rightClause(pRightQ, pRightNode->isRequired(),
                               pRightNode->isProhibited());
 
@@ -134,11 +134,11 @@ Query* DefaultQueryBuilder::createQuery(const BooleanQueryExpr& expr)
     BooleanQuery* pBoolQuery = new BooleanQuery();
     auto_ptr<BooleanQuery> boolQueryPtr(pBoolQuery);
 
-    if (leftClause.query.isNotNull())
+    if (leftClause.query)
     {
         pBoolQuery->addClause(leftClause);
     }
-    if (rightClause.query.isNotNull())
+    if (rightClause.query)
     {
         pBoolQuery->addClause(rightClause);
     }

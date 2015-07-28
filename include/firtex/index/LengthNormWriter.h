@@ -63,7 +63,7 @@ public:
 
 protected:
     typedef PrimitiveTypeForwardIndexWriter<int32_t> LengthNorm;
-    typedef FX_NS(common)::SharedPtr<LengthNorm> LengthNormPtr;
+    DEFINE_TYPED_PTR(LengthNorm);
     typedef std::vector<LengthNormPtr> NormVector;
 
 protected:

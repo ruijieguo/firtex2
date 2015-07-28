@@ -152,16 +152,16 @@ tstring TypedTerm<TermT>::toString() const
 }
 
 typedef TypedTerm<int32_t> Int32Term;
-typedef FX_NS(common)::SharedPtr<Int32Term> Int32TermPtr;
+DEFINE_TYPED_PTR(Int32Term);
 
 typedef TypedTerm<int64_t> Int64Term;
-typedef FX_NS(common)::SharedPtr<Int64Term> Int64TermPtr;
+DEFINE_TYPED_PTR(Int64Term);
 
 typedef TypedTerm<uint32_t> UInt32Term;
-typedef FX_NS(common)::SharedPtr<UInt32Term> UInt32TermPtr;
+DEFINE_TYPED_PTR(UInt32Term);
 
 typedef TypedTerm<uint64_t> UInt64Term;
-typedef FX_NS(common)::SharedPtr<UInt64Term> UInt64TermPtr;
+DEFINE_TYPED_PTR(UInt64Term);
 
 FX_NS_END
 

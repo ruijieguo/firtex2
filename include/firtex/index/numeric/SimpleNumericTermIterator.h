@@ -50,8 +50,9 @@ public:
               const Term* pLowerTerm, const Term* pUpperTerm,
               const FX_NS(store)::InputStreamPool* pInStreamPool)
     {
+        FX_NS(store)::InputStreamPtr nullStream;
         return TypedTermIterator<KeyType, DocPostingTraits<KeyType> >::init(
-                pDict, pDocStream, NULL, pLowerTerm, pUpperTerm, pInStreamPool);
+                pDict, pDocStream, nullStream, pLowerTerm, pUpperTerm, pInStreamPool);
     }
 };
 

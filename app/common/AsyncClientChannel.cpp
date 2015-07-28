@@ -57,7 +57,7 @@ void AsyncClientChannel::open(const std::string& sHost, int nPort)
             FX_LOG(WARN, "evthread_make_base_notifiable FAILED");
         }
 
-        m_pLoopRunner = new EventLoopRunner(m_evbase);
+        m_pLoopRunner.reset(new EventLoopRunner(m_evbase));
         m_bOwnEventBase = true;
     }
     
@@ -80,7 +80,7 @@ void AsyncClientChannel::open(const std::string& sHost, int nPort)
         
     if (m_bOwnEventBase)
     {
-        m_pEventLoopThread = new Thread();
+        m_pEventLoopThread.reset(new Thread());
         m_pEventLoopThread->start(*m_pLoopRunner);
     }
 

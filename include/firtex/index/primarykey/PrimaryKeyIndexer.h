@@ -27,7 +27,7 @@ class PrimaryKeyIndexer : public FieldIndexer
 {
 public:
     typedef FX_NS(utility)::HashMap<uint64_t, docid_t> PostingTable;
-    typedef FX_NS(common)::SharedPtr<PostingTable> PostingTablePtr;
+    DEFINE_TYPED_PTR(PostingTable);
 
 public:
     PrimaryKeyIndexer(const FX_NS(document)::FieldSchema* pFieldSchema);

@@ -33,13 +33,13 @@ MultiTermIterator::~MultiTermIterator(void)
 
 void MultiTermIterator::init()
 {
-    if (m_pItersQueue.isNotNull() || m_iterators.size() == 0)
+    if (m_pItersQueue || m_iterators.size() == 0)
     {
         return ;
     }
     m_entryHolder.reserve(m_iterators.size());
 
-    m_pItersQueue = new IteratorQueue(m_iterators.size());
+    m_pItersQueue.reset(new IteratorQueue(m_iterators.size()));
 
     for (IteratorVector::iterator iter = m_iterators.begin();
          iter != m_iterators.end(); ++iter)
@@ -50,7 +50,7 @@ void MultiTermIterator::init()
 
 bool MultiTermIterator::hasNext()
 {
-    if (m_pItersQueue.isNotNull() && (m_entryHolder.size() > 0))
+    if (m_pItersQueue && (m_entryHolder.size() > 0))
     {
         for (size_t i = 0; i < m_entryHolder.size(); ++i)
         {
@@ -117,7 +117,8 @@ void MultiTermIterator::addIterator(const BarrelInfo* pBarrelInfo,
                      pBarrelInfo->getBaseDocId());
     }
 
-    m_iterators.push_back(new Entry(pBarrelInfo, iter));
+    EntryPtr pTmp(new Entry(pBarrelInfo, iter));
+    m_iterators.push_back(pTmp);
 }
 
 FX_NS_END

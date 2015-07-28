@@ -49,8 +49,9 @@ void PrimaryKeyMerger::merge(const IndexMergeInfos& mergeFieldInfos,
         const IndexMergeInfo& mergeFieldInfo = mergeFieldInfos[i];
 
         TermReaderPtr pTermReader = mergeFieldInfo.getTermReader();
-        PrimaryKeyTermReaderPtr pPkTermReader = pTermReader.cast<PrimaryKeyTermReader>();
-        FIRTEX_ASSERT2(!pPkTermReader.isNull());
+        PrimaryKeyTermReaderPtr pPkTermReader =
+            std::dynamic_pointer_cast<PrimaryKeyTermReader>(pTermReader);
+        FIRTEX_ASSERT2(pPkTermReader);
 
         mergeWith(mergeFieldInfo, pPkTermReader->getPostingTable());
     }

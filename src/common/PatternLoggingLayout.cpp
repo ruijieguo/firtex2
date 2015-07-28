@@ -384,7 +384,7 @@ void PatternLoggingLayout::setPattern(const std::string& sPattern)
                 if ((minWidth != 0) || (maxWidth != 0)) 
                 {
                     component = new FormatModifierComponent(component, 
-                            std::abs((int)minWidth), maxWidth, minWidth < 0);
+                            std::abs((int)minWidth), maxWidth, (int)minWidth < 0);
                     minWidth = maxWidth = 0;
                 }
                 m_components.push_back(component);

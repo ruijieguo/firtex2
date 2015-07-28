@@ -111,7 +111,7 @@ protected:
     friend class Highlighter;
 };
 
-typedef FX_NS(common)::SharedPtr<TokenGroup> TokenGroupPtr;
+DEFINE_TYPED_PTR(TokenGroup);
 
 FX_NS_END
 

@@ -46,6 +46,9 @@ class LinkedHashMap
 public:
     typedef K KeyType;
     typedef V ValueType;
+    
+    typedef HashFunc HashType;
+    typedef Comp CompType;
 
 public:
     struct Entry 
@@ -658,7 +661,7 @@ private:
         while (e != NULL) 
         {
             Entry* next = e->next;
-            if (e->hash == hash && m_comparator(e->kv.first, key));
+            if (e->hash == hash && m_comparator(e->kv.first, key))
             {
                 m_nModCount++;
                 m_nSize--;
@@ -675,7 +678,6 @@ private:
 
         return e;
     }
-
 
 
     /**
@@ -767,14 +769,21 @@ protected:
     ValueType m_emptyValue;
 
     /// Hash function
-    HashFunc m_hasher;
+    static HashType m_hasher;
     
     /// Key comparator
-    Comp m_comparator;
+    static CompType m_comparator;
 };
 
 template <typename K, typename V, typename HashFunc, typename Comp> 
 const float LinkedHashMap<K,V, HashFunc, Comp>::DEFAULT_LOAD_FACTOR = 0.75f;
+
+template <typename K, typename V, typename HashFunc, typename Comp> 
+typename LinkedHashMap<K,V, HashFunc, Comp>::CompType LinkedHashMap<K,V, HashFunc, Comp>::m_comparator;
+
+template <typename K, typename V, typename HashFunc, typename Comp> 
+typename LinkedHashMap<K,V, HashFunc, Comp>::HashType LinkedHashMap<K,V, HashFunc, Comp>::m_hasher;
+
 
 FX_NS_END
 

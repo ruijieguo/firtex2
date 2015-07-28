@@ -199,9 +199,9 @@ SETUP_LOGGER(index, DocFilterMergeTask);
 IndexMerger::IndexMerger(IndexBarrelKeeper* pBarrelKeeper)
     : m_pKeeper(pBarrelKeeper)
 {
-    m_pMergePolicy = new NoMergePolicy();
-    m_pMergeScheduler = new ConcurrentMergeScheduler(DEFAULT_CONCURRENT_MERGE_THREADS);
-    m_pTimeProbe = new TimeProbe;
+    m_pMergePolicy.reset(new NoMergePolicy());
+    m_pMergeScheduler.reset(new ConcurrentMergeScheduler(DEFAULT_CONCURRENT_MERGE_THREADS));
+    m_pTimeProbe.reset(new TimeProbe);
 }
 
 IndexMerger::IndexMerger(const MergePolicyPtr& pMergePolicy, 
@@ -209,7 +209,7 @@ IndexMerger::IndexMerger(const MergePolicyPtr& pMergePolicy,
     : m_pKeeper(pBarrelKeeper)
 {
     m_pMergePolicy = pMergePolicy;
-    m_pMergeScheduler = new ConcurrentMergeScheduler(4);
+    m_pMergeScheduler.reset(new ConcurrentMergeScheduler(4));
 }
 
 IndexMerger::~IndexMerger()
@@ -232,8 +232,7 @@ void IndexMerger::initMergers()
         fieldid_t fieldId = pFieldSchema->getId();
         if (pFieldSchema->isIndexed())
         {
-            FieldMergerPtr pFieldMerger =
-                pCompBuilder->buildMerger(fieldId);
+            FieldMergerPtr pFieldMerger(pCompBuilder->buildMerger(fieldId));
             FIRTEX_ASSERT2(pFieldMerger != NULL);
             
             pFieldMerger->init(pFileSys, pFieldSchema);
@@ -241,9 +240,8 @@ void IndexMerger::initMergers()
         }
         if (pFieldSchema->hasForwardIndex())
         {
-            ForwardIndexMergerPtr pFDIndexMerger =
-                pCompBuilder->buildForwardIndexMerger(pFieldSchema->getId());
-            FIRTEX_ASSERT2(pFDIndexMerger != NULL);
+            ForwardIndexMergerPtr pFDIndexMerger(pCompBuilder->buildForwardIndexMerger(pFieldSchema->getId()));
+            FIRTEX_ASSERT2(pFDIndexMerger);
 
             pFDIndexMerger->init(pFileSys, pFieldSchema);
             m_fdIndexMerges.push_back(pFDIndexMerger);
@@ -258,7 +256,7 @@ void IndexMerger::merge()
     for (;;)
     {
         BarrelsInfoPtr pBarrelsInfo = initBarrelsInfo();
-        if (pBarrelsInfo.isNull() || pBarrelsInfo->getBarrelCount() <= 1)
+        if (!pBarrelsInfo || pBarrelsInfo->getBarrelCount() <= 1)
         {
             /// Clean staled index data if possible
             m_pKeeper->cleanStaledIndex();
@@ -266,7 +264,7 @@ void IndexMerger::merge()
         }
 
         MergeProposalPtr pMergeProp = createMergeProposals(*pBarrelsInfo);
-        if (pMergeProp.isNull())
+        if (!pMergeProp)
         {
             /// Clean staled index data if possible
             m_pKeeper->cleanStaledIndex();
@@ -308,9 +306,10 @@ void IndexMerger::merge()
 
                     FieldMeta& fieldMeta = indexMeta.fieldMeta(pFieldSchema->getName());
                 
-                    IndexMergeTaskPtr pIndexMergeTask = new IndexMergeTask(
-                            pFieldSchema->getName(), *it, pIndexMergeInfos, fieldMeta);
-                    m_pMergeScheduler->merge(pIndexMergeTask.cast<Mergeable>());
+                    IndexMergeTaskPtr pIndexMergeTask(new IndexMergeTask(
+                                    pFieldSchema->getName(), *it,
+                                    pIndexMergeInfos, fieldMeta));
+                    m_pMergeScheduler->merge(std::dynamic_pointer_cast<Mergeable>(pIndexMergeTask));
                 }
             }
 
@@ -322,34 +321,36 @@ void IndexMerger::merge()
                     const FieldSchema* pFieldSchema = (*it)->getFieldSchema();
                     ForwardIndexMergeInfosPtr pFdMergeInfos(new ForwardIndexMergeInfos(sSuffix));
                     initForwardIndexMergeInfos(pFdMergeInfos, mergeInfos, pFieldSchema);
-                    ForwardIndexMergeTaskPtr pFdMergeTask = new ForwardIndexMergeTask(
-                            (*it)->getFieldSchema()->getName(), *it, pFdMergeInfos);
-                    m_pMergeScheduler->merge(pFdMergeTask.cast<Mergeable>());
+                    ForwardIndexMergeTaskPtr pFdMergeTask(new ForwardIndexMergeTask(
+                                    (*it)->getFieldSchema()->getName(), *it, pFdMergeInfos));
+                    m_pMergeScheduler->merge(std::dynamic_pointer_cast<Mergeable>(pFdMergeTask));
                 }
             }
 
             //merge stored fields
             {
-                StoredFieldsMergerPtr pStoredMerger = new StoredFieldsMerger();
-                StoredFieldMergeTaskPtr pStoredMergeTask = new StoredFieldMergeTask(
-                        pStoredMerger, pFileSys, mergeInfos);
-                m_pMergeScheduler->merge(pStoredMergeTask.cast<Mergeable>());
+                StoredFieldsMergerPtr pStoredMerger(new StoredFieldsMerger());
+                StoredFieldMergeTaskPtr pStoredMergeTask(new StoredFieldMergeTask(
+                                pStoredMerger, pFileSys, mergeInfos));
+                m_pMergeScheduler->merge(std::dynamic_pointer_cast<Mergeable>(pStoredMergeTask));
             }
 
             //merge length norm
             {
                 const DocumentSchema* pDocSchema = m_pKeeper->getDocSchema();
-                LengthNormMergerPtr pMerger = new LengthNormMerger();
+                LengthNormMergerPtr pMerger(new LengthNormMerger());
                 pMerger->init(pDocSchema);
-                LengthNormMergeTaskPtr pLenTask = new LengthNormMergeTask(pMerger, pFileSys, mergeInfos);
-                m_pMergeScheduler->merge(pLenTask.cast<Mergeable>());
+                LengthNormMergeTaskPtr pLenTask(new LengthNormMergeTask(pMerger,
+                                pFileSys, mergeInfos));
+                m_pMergeScheduler->merge(std::dynamic_pointer_cast<Mergeable>(pLenTask));
             }
 
             m_pMergeScheduler->waitFinish();
 
             //merge deletion filter
-            DocFilterMergeTaskPtr pDocFilterTask = new DocFilterMergeTask(pDocFilter, mergeInfos);
-            m_pMergeScheduler->merge(pDocFilterTask.cast<Mergeable>());
+            DocFilterMergeTaskPtr pDocFilterTask(new DocFilterMergeTask(
+                            pDocFilter, mergeInfos));
+            m_pMergeScheduler->merge(std::dynamic_pointer_cast<Mergeable>(pDocFilterTask));
             m_pMergeScheduler->waitFinish();
 
             IndexMeta& indexMeta = newBarrel.getIndexMeta();
@@ -374,7 +375,7 @@ MergeProposalPtr IndexMerger::checkAndSplitProposal(MergeProposalPtr& pMergeProp
     nMaxAllowedOpenFiles -= MAX_OPENED_FILES_PER_BARREL;
     size_t nMaxAllowedBarrels = nMaxAllowedOpenFiles/MAX_OPENED_FILES_PER_BARREL;
     
-    MergeProposalPtr pNewProprosal = new MergeProposal();
+    MergeProposalPtr pNewProprosal(new MergeProposal());
     for (size_t i = 0; i < pMergeProp->size(); ++i)
     {
         const BarrelsInfoPtr& pMergeBarrels = (*pMergeProp)[i];
@@ -387,11 +388,12 @@ MergeProposalPtr IndexMerger::checkAndSplitProposal(MergeProposalPtr& pMergeProp
         }
         
         FX_LOG(INFO, "Split merge proposal [%u], Barrel count: [%u], max allowed open files: [%u]",
-               (uint32_t)i, (uint32_t)nBarrelCount, (uint32_t)GLOBAL_CONF().Merge.maxAllowedOpenFiles);
+               (uint32_t)i, (uint32_t)nBarrelCount,
+               (uint32_t)GLOBAL_CONF().Merge.maxAllowedOpenFiles);
 
         for (size_t j = 0; j < nBarrelCount; )
         {
-            BarrelsInfoPtr pSplitBarrel = new BarrelsInfo;
+            BarrelsInfoPtr pSplitBarrel(new BarrelsInfo);
             for (size_t k = 0; j < nBarrelCount && k < nBarrelCount/nSplitCount; ++j, ++k)
             {
                 pSplitBarrel->addBarrel((*pMergeBarrels)[j]);
@@ -419,7 +421,7 @@ void IndexMerger::initMergeInfo(MergeInfos& mergeInfos,
         const BitVector* pFilter = (*pDocFilter)[j];
         df_t docCount = barrelInfo.getDocCount();
         
-        DocIdRecyclingPtr pDocIdRecy = new DocIdRecycling();
+        DocIdRecyclingPtr pDocIdRecy(new DocIdRecycling());
         pDocIdRecy->init(docCount, pFilter);
         
         mergedDocCount += pDocIdRecy->getDocCountAfterRecle();
@@ -442,7 +444,7 @@ void IndexMerger::initIndexMergeInfo(IndexMergeInfosPtr& pIndexMergeInfos,
                                      const FieldSchema* pFieldSchema)
 {
     FileSystemPtr pFileSys = m_pKeeper->getFileSystem();
-    m_pStreamPool = new InputStreamPool(pFileSys);
+    m_pStreamPool.reset(new InputStreamPool(pFileSys));
     const ComponentBuilder* pCompBuilder = m_pKeeper->getComponentBuilder();
 
     pIndexMergeInfos->reserve(mergeInfos.size());
@@ -456,7 +458,7 @@ void IndexMerger::initIndexMergeInfo(IndexMergeInfosPtr& pIndexMergeInfos,
         {
             const FieldComponentCreator* pFieldCompCreator = 
                 pCompBuilder->getFieldComponentCreator(pFieldSchema->getId());
-            pTermReader = pFieldCompCreator->createTermReader();
+            pTermReader.reset(pFieldCompCreator->createTermReader());
             pTermReader->open(pFileSys, m_pStreamPool, barrelInfo.getSuffix(),
                     pFieldSchema, NULL);
             IndexMergeInfo mergeFieldInfo(mergeInfo, pTermReader);
@@ -490,7 +492,7 @@ BarrelsInfoPtr IndexMerger::createMergedBarrelsInfo(
         const BarrelsInfoPtr& pOldBarrelsInfo,
         const BarrelsInfoPtr& pMergeBarrels)
 {
-    BarrelsInfoPtr pNewBarrelsInfo = new BarrelsInfo();
+    BarrelsInfoPtr pNewBarrelsInfo(new BarrelsInfo());
     pNewBarrelsInfo->setCommitId(pOldBarrelsInfo->getCommitId());
     BarrelsInfo::Iterator it = pOldBarrelsInfo->iterator();
     while (it.hasNext())
@@ -529,7 +531,7 @@ void IndexMerger::mergeIndexMeta(const MergeInfos& mergeInfos,
 
 void IndexMerger::setMergePolicy(const MergePolicyPtr& pMergePolicy)
 {
-    m_pMergePolicy.assign(pMergePolicy);
+    m_pMergePolicy = pMergePolicy;
 }
 
 void IndexMerger::commit() 
@@ -540,7 +542,7 @@ void IndexMerger::commit()
 BarrelsInfoPtr IndexMerger::initBarrelsInfo()
 {
     FileSystemPtr pFileSys = m_pKeeper->getFileSystem();
-    BarrelsInfoPtr pBarrelsInfo = new BarrelsInfo();
+    BarrelsInfoPtr pBarrelsInfo(new BarrelsInfo());
     pBarrelsInfo->read(pFileSys);
     return pBarrelsInfo;
 }

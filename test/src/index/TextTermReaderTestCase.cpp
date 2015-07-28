@@ -140,7 +140,7 @@ void TextTermReaderTestCase::testTermPosIterator()
 
     Term term("CONTENT", "hello");
     TermPostingIteratorPtr pPostIt = pTermReader->seek(&term);
-    CPPUNIT_ASSERT(pPostIt.isNotNull());
+    CPPUNIT_ASSERT(pPostIt);
 
     const TermMeta& termMeta = pPostIt->getTermMeta();
     CPPUNIT_ASSERT_EQUAL((df_t)3, termMeta.getDocFreq());
@@ -168,7 +168,7 @@ void TextTermReaderTestCase::testTermPosIterator()
 
     Term term2("CONTENT", "my");
     pPostIt = pTermReader->seek(&term2);
-    CPPUNIT_ASSERT(pPostIt.isNotNull());
+    CPPUNIT_ASSERT(pPostIt);
 
     const TermMeta& termMeta2 = pPostIt->getTermMeta();
     CPPUNIT_ASSERT_EQUAL((df_t)2, termMeta2.getDocFreq());
@@ -212,7 +212,7 @@ void TextTermReaderTestCase::testTermIterator()
                         m_pFieldSchema.get(), NULL);
     TermIteratorPtr pTermIt = m_pTermReader->termIterator(
             m_pFieldSchema->getName());
-    CPPUNIT_ASSERT(pTermIt.isNotNull());
+    CPPUNIT_ASSERT(pTermIt);
 
     checkIterator(pTermIt, m_answer);
 }
@@ -223,10 +223,10 @@ void TextTermReaderTestCase::testInMemTermIterator()
     makeData();
 
     TermReaderPtr pTermReader = m_pIndexer->termReader();
-    CPPUNIT_ASSERT(pTermReader.isNotNull());
+    CPPUNIT_ASSERT(pTermReader);
     TermIteratorPtr pTermIt = pTermReader->termIterator(
             m_pFieldSchema->getName());
-    CPPUNIT_ASSERT(pTermIt.isNotNull());
+    CPPUNIT_ASSERT(pTermIt);
 
     checkIterator(pTermIt, m_answer);
 }
@@ -252,7 +252,7 @@ void TextTermReaderTestCase::testTermRangeIterator()
     TextTermIterator::TermType upperTerm("testfield", testTerms[numTerms - 1], Term::UINT64);
 
     TermIteratorPtr pTermIt = m_pTermReader->termIterator(&lowerTerm, &upperTerm);
-    CPPUNIT_ASSERT(pTermIt.isNotNull());
+    CPPUNIT_ASSERT(pTermIt);
 
     CPPUNIT_ASSERT_EQUAL((int64_t)numTerms, pTermIt->size());
     size_t termCount = 0;
@@ -284,7 +284,7 @@ void TextTermReaderTestCase::testInMemTermRangeIterator()
     makeData();
 
     TermReaderPtr pTermReader = m_pIndexer->termReader();
-    CPPUNIT_ASSERT(pTermReader.isNotNull());
+    CPPUNIT_ASSERT(pTermReader);
 
     uint64_t testTerms[] = {
         2532843299785153037ULL, 2538691235596585163ULL,
@@ -299,7 +299,7 @@ void TextTermReaderTestCase::testInMemTermRangeIterator()
     TextTermIterator::TermType upperTerm("testfield", testTerms[numTerms - 1], Term::UINT64);
 
     TermIteratorPtr pTermIt = pTermReader->termIterator(&lowerTerm, &upperTerm);
-    CPPUNIT_ASSERT(pTermIt.isNotNull());
+    CPPUNIT_ASSERT(pTermIt);
 
     CPPUNIT_ASSERT_EQUAL((int64_t)numTerms, pTermIt->size());
     size_t termCount = 0;
@@ -341,7 +341,7 @@ void TextTermReaderTestCase::testSeek()
         TermHashMap::const_iterator it2 = m_termHashMap.find(it->first);
         Term term("testfield", it2->second);
         TermPostingIteratorPtr pPostIt = m_pTermReader->seek(&term);
-        CPPUNIT_ASSERT(pPostIt.isNotNull());
+        CPPUNIT_ASSERT(pPostIt);
 
         const TermMeta& termMeta = pPostIt->getTermMeta();
         CPPUNIT_ASSERT_EQUAL(it->second->getDocFreq(), termMeta.getDocFreq());
@@ -363,7 +363,7 @@ void TextTermReaderTestCase::testInMemSeek()
         TermHashMap::const_iterator it2 = m_termHashMap.find(it->first);
         Term term("testfield", it2->second);
         TermPostingIteratorPtr pPostIt = pTermReader->seek(&term);
-        CPPUNIT_ASSERT(pPostIt.isNotNull());
+        CPPUNIT_ASSERT(pPostIt);
 
         const TermMeta& termMeta = pPostIt->getTermMeta();
         CPPUNIT_ASSERT_EQUAL(it->second->getDocFreq(), termMeta.getDocFreq());

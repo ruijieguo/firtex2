@@ -28,7 +28,7 @@
     public:                                                             \
         Creator()                                                       \
         {                                                               \
-            m_sIdentifier += "."id;                                     \
+            m_sIdentifier += "." id;                                    \
             m_sDocType = ext;                                           \
         }                                                               \
     public:                                                             \

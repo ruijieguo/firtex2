@@ -215,7 +215,7 @@ void TypedIndexer<Key, Hasher, Traits>::init(const PostingPoolPtr& pPostingPool)
 {
     m_pPostingPool = pPostingPool;
 
-    m_pPostingTable.assign(new PostingTableType(m_pPostingPool->postingPool,
+    m_pPostingTable.reset(new PostingTableType(m_pPostingPool->postingPool,
                     std::numeric_limits<KeyType>::max(), NULL));
 }
 
@@ -237,7 +237,7 @@ void TypedIndexer<Key, Hasher, Traits>::addField(const FX_NS(document)::Analyzed
         pField->getTokenView();
     if (pTokenView)
     {
-        register loc_t lastPos = 0;
+        loc_t lastPos = 0;
         typename FX_NS(analyzer)::TokenView::Iterator it =
             pTokenView->iterator();
         while (it.hasNext())
@@ -248,7 +248,7 @@ void TypedIndexer<Key, Hasher, Traits>::addField(const FX_NS(document)::Analyzed
     }
     else
     {
-        register loc_t lastPos = 0;
+        loc_t lastPos = 0;
         const FX_NS(document)::Field* pRawField = pField->getField();
         if (!pRawField)
         {
@@ -321,7 +321,7 @@ void TypedIndexer<Key, Hasher, Traits>::commitMeta(FieldMeta& fieldMeta)
 template <typename Key, typename Hasher, typename Traits>
 void TypedIndexer<Key, Hasher, Traits>::clear()
 {
-    if (m_pPostingTable.isNotNull())
+    if (m_pPostingTable)
     {
         typename PostingTableType::Iterator iter = m_pPostingTable->iterator();
         while (iter.hasNext())

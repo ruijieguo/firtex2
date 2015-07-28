@@ -89,14 +89,14 @@ void IndexTestCase::testTextIndex()
     Term term("CONTENT", "hello");
     TermPostingIteratorPtr pPost = pTermReader->seek(&term);
 
-    CPPUNIT_ASSERT(pPost.isNotNull());
+    CPPUNIT_ASSERT(pPost);
     docid_t docId = pPost->skipTo(0);
     CPPUNIT_ASSERT_EQUAL((docid_t)0, docId);
     docId = pPost->skipTo(++docId);
     CPPUNIT_ASSERT_EQUAL((docid_t)INVALID_DOCID, docId);
 
     StoredFieldsReaderPtr pDocReader = pReader->createStoredFieldsReader();
-    CPPUNIT_ASSERT(pDocReader.isNotNull());
+    CPPUNIT_ASSERT(pDocReader);
     FieldSelector selector(pReader->getDocSchema(), true, false);
     ResultDoc resultDoc(0);
     bool ret = pDocReader->getDocument(selector, resultDoc);
@@ -132,7 +132,7 @@ void IndexTestCase::testKeywordIndex()
 
     Term term("Keyword", "hello world.");
     TermPostingIteratorPtr pPost = pTermReader->seek(&term);
-    CPPUNIT_ASSERT(pPost.isNotNull());
+    CPPUNIT_ASSERT(pPost);
     docid_t docId = pPost->skipTo(0);
     CPPUNIT_ASSERT_EQUAL((docid_t)0, docId);
     docId = pPost->skipTo(++docId);
@@ -179,7 +179,7 @@ void IndexTestCase::testPrimaryKeyIndex()
         ss2 << i;
         Term  term("PK", ss2.str());
         TermPostingIteratorPtr pPost = pTermReader->seek(&term);
-        CPPUNIT_ASSERT(pPost.isNotNull());
+        CPPUNIT_ASSERT(pPost);
         docid_t docId = pPost->skipTo(0);
         CPPUNIT_ASSERT_EQUAL((docid_t)i, docId);
         docId = pPost->skipTo(++docId);
@@ -222,7 +222,7 @@ void IndexTestCase::testInt32Index()
 
     Term term("Int32", "0");
     TermPostingIteratorPtr pPost = pTermReader->seek(&term);
-    CPPUNIT_ASSERT(pPost.isNotNull());
+    CPPUNIT_ASSERT(pPost);
     docid_t docId = pPost->skipTo(0);
     CPPUNIT_ASSERT_EQUAL((docid_t)0, docId);
     docId = pPost->skipTo(901);
@@ -264,7 +264,7 @@ void IndexTestCase::testInt32_IF()
 
     Term term("Int32", "0");
     TermPostingIteratorPtr pPost = pTermReader->seek(&term);
-    CPPUNIT_ASSERT(pPost.isNotNull());
+    CPPUNIT_ASSERT(pPost);
     docid_t docId = pPost->skipTo(0);
     CPPUNIT_ASSERT_EQUAL((docid_t)0, docId);
     docId = pPost->skipTo(901);
@@ -532,7 +532,7 @@ void IndexTestCase::testDocumentDeletion()
     sa->init();
 
     TokenViewPtr pTokens = sa->tokenize("hot", 3);
-    CPPUNIT_ASSERT(pTokens.isNull() != true);
+    CPPUNIT_ASSERT(pTokens);
     CPPUNIT_ASSERT(pTokens->getNumTokens() == 1);
     TokenView::Iterator it = pTokens->iterator();
     TermPtr pTerm(new Term("BODY", it.next().getTextValue()));
@@ -570,7 +570,7 @@ void IndexTestCase::testDocumentDeletion()
 
         TermReaderPtr pTermReader = pIndexReader->termReader();
         TermPostingIteratorPtr pDocFreqs = pTermReader->seek(pTerm.get());
-        CPPUNIT_ASSERT(!pDocFreqs.isNull());
+        CPPUNIT_ASSERT(pDocFreqs);
 
         CPPUNIT_ASSERT_EQUAL((df_t)NUM_DOCS * 2, pDocFreqs->getTermMeta().getDocFreq());
 
@@ -597,7 +597,7 @@ void IndexTestCase::testDocumentDeletion()
 
         TermReaderPtr pTermReader = pIndexReader->termReader();
         TermPostingIteratorPtr pDocFreqs = pTermReader->seek(pTerm.get());
-        CPPUNIT_ASSERT(!pDocFreqs.isNull());
+        CPPUNIT_ASSERT(pDocFreqs);
 
         CPPUNIT_ASSERT_EQUAL((df_t)(2 * NUM_DOCS), pDocFreqs->getTermMeta().getDocFreq());
         std::set<docid_t>::const_iterator it = answer.begin();
@@ -676,13 +676,13 @@ void IndexTestCase::checkDocFreq(IndexReaderPtr& pIndexReader,
     sa.init();
 
     TokenViewPtr pTokens = sa.tokenize(sTerm.c_str(), sTerm.length());
-    CPPUNIT_ASSERT(pTokens.isNull() != true);
+    CPPUNIT_ASSERT(pTokens);
     CPPUNIT_ASSERT(pTokens->getNumTokens() == 1);
     TokenView::Iterator it = pTokens->iterator();
     TermPtr pTerm(new Term(sField, it.next().getTextValue()));
 
     TermPostingIteratorPtr pPost = pTermReader->seek(pTerm.get());
-    CPPUNIT_ASSERT(!pPost.isNull());    
+    CPPUNIT_ASSERT(pPost);    
     const TermMeta& termMeta = pPost->getTermMeta();
     CPPUNIT_ASSERT_EQUAL(expDf, termMeta.getDocFreq());
 }

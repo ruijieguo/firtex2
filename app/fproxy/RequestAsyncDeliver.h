@@ -110,7 +110,7 @@ void RequestAsyncDeliver<T>::start()
 {
     for (size_t i = 0; i < m_threadPool.capacity(); i++)
     {
-        TaskPtr pTask = new Task(*this, m_queue);
+        TaskPtr pTask(new Task(*this, m_queue));
         this->m_tasks.push_back(pTask);
         this->m_threadPool.start(*pTask);
     }

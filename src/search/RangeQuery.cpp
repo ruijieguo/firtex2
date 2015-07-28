@@ -44,7 +44,7 @@ QueryExecutorPtr RangeQuery::createExecutor(IndexReaderPtr& pIndexReader,
     TermReaderPtr pTermReader = pIndexReader->termReader();
     TermIteratorPtr pTermIterator =
         pTermReader->termIterator(m_pLowerTerm.get(), m_pUpperTerm.get());
-    if (pTermIterator.isNull())
+    if (!pTermIterator)
     {
         return QueryExecutorPtr();
     }
@@ -68,7 +68,7 @@ QueryExecutorPtr RangeQuery::createExecutor(IndexReaderPtr& pIndexReader,
     while (pTermIterator->hasNext()) 
     {
         lastTerm = pTermIterator->next().term;
-        if (!m_bInclusive && m_pUpperTerm.isNotNull() 
+        if (!m_bInclusive && m_pUpperTerm 
             && !lastTerm->compare(m_pUpperTerm.get()))
         {
             continue;
@@ -103,13 +103,13 @@ tstring RangeQuery::toString() const
         ss << _T("(");
     }
 
-    if (m_pLowerTerm.isNotNull())
+    if (m_pLowerTerm)
     {
         ss << m_pLowerTerm->toString();
     }
     ss << _T(" TO ");
 
-    if (m_pUpperTerm.isNotNull())
+    if (m_pUpperTerm)
     {
         ss << m_pUpperTerm->toString();
     }

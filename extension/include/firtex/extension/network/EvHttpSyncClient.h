@@ -23,8 +23,6 @@
 #include <event2/http.h>
 #include <event2/http_struct.h>
 
-#include "firtex/thread/AtomicCount.h"
-
 FX_NS_DEF(network);
 
 class EvHttpSyncClient

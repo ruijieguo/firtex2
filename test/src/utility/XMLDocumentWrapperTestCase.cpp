@@ -45,7 +45,7 @@ void XMLDocumentWrapperTestCase::testParse()
     }
 
     XMLNodeWrapperPtr firstNode = xmlDoc.firstNode();
-    CPPUNIT_ASSERT(firstNode.isNotNull());
+    CPPUNIT_ASSERT(firstNode;
     CPPUNIT_ASSERT_EQUAL(std::string("root"), std::string(firstNode->getName()));
 
     string sPrint;

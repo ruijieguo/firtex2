@@ -62,13 +62,6 @@ public:
      */
     virtual tf_t freq() = 0;
 
-    /**
-     * Move to next position block
-     * @param positions position block
-     * @return size of position block
-     */
-    virtual tf_t nextPositions(loc_t*& positions) { return 0;}
-
     /**	 
      * Skip to position which is equal to or 
      * greater than <i>pos</i>

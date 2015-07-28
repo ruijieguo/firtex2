@@ -131,7 +131,7 @@ void StandardDocumentProcessorTestCase::testProcess()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Answer ans;
     makeAnswer(TEST_FILE1, ans);
@@ -170,7 +170,7 @@ void StandardDocumentProcessorTestCase::testProcessMultiFile()
         processor.process(docSource);
 
         DocumentPtr pDoc = docSource.stealLastDocument();
-        CPPUNIT_ASSERT(pDoc.isNotNull());
+        CPPUNIT_ASSERT(pDoc);
 
         Document::Iterator it = pDoc->iterator();
         while (it.hasNext())
@@ -199,7 +199,7 @@ void StandardDocumentProcessorTestCase::testProcessFileMisField()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Answer ans;
     makeAnswer(TEST_FILE_MISS_FIELD, ans);
@@ -232,7 +232,7 @@ void StandardDocumentProcessorTestCase::testProcessWithEmptyField()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Answer ans;
     makeAnswer(TEST_FILE_WITH_EMPTY_FIELD, ans);

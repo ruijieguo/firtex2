@@ -89,7 +89,7 @@ private:
                 return false;
             }
             std::string path = sRouterDirective.substr(n + 1, sRouterDirective.size() - n - 1);
-            m_pRE = new FX_NS(util)::Regex();
+            m_pRE.reset(new FX_NS(util)::Regex());
             if (!m_pRE->compile(path))
             {
                 return false;

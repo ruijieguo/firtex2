@@ -17,7 +17,7 @@ public:
 
 public:
     typedef RPCSyncClient<ThriftSearchServiceClient> RPCClient;
-    typedef FX_NS(common)::SharedPtr<RPCClient> RPCClientPtr;
+    DEFINE_TYPED_PTR(RPCClient);
 
 public:
     RPCSearchCluster(AsyncDeliver* pDeliver);

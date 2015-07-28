@@ -44,7 +44,7 @@ void StandardAnalyzerTestCase::testTokenize()
     sa.init();
 
     TokenViewPtr pTokenView = sa.tokenize(str.c_str());
-    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    CPPUNIT_ASSERT(pTokenView);
     
     const static size_t NUM_TOKENS = 9;
     string answer[NUM_TOKENS] = {"中国", "北京", "上海", "广州", "firtex", "Open", 
@@ -79,7 +79,7 @@ void StandardAnalyzerTestCase::testTokenizeWithUnigram()
     sa.init();
 
     TokenViewPtr pTokenView = sa.tokenize(str.c_str());
-    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    CPPUNIT_ASSERT(pTokenView);
     
     const static size_t NUM_TOKENS = 9;
     string answer[NUM_TOKENS] = {"中国", "北京", "上海", "广州", "firtex", "Open", 
@@ -114,7 +114,7 @@ void StandardAnalyzerTestCase::testTokenizeWithUnigram2()
     sa.init();
 
     TokenViewPtr pTokenView = sa.tokenize(str.c_str());
-    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    CPPUNIT_ASSERT(pTokenView);
     
     const static size_t NUM_TOKENS = 9;
     string answer[NUM_TOKENS] = {"中国", "北京", "上海", "广州", "firtex", "Open", 
@@ -152,7 +152,7 @@ void StandardAnalyzerTestCase::testTokenizeWithTwoTokens()
     tokenSource->setOriginalView(pUnAnalyzedTokens);
 
     TokenViewPtr pTokens = sa.tokenize(tokenSource);
-    CPPUNIT_ASSERT(pTokens.isNull() == false);
+    CPPUNIT_ASSERT(pTokens);
 
     TokenView::Iterator it = pTokens->iterator();
     CPPUNIT_ASSERT_EQUAL((size_t)2, it.size());
@@ -192,7 +192,7 @@ void StandardAnalyzerTestCase::testTokenizeStrict()
         count = 0;
 
         TokenViewPtr pTokens = stdAnalyzer.tokenize(testStrs[i]);
-        CPPUNIT_ASSERT(pTokens.isNull() != true);
+        CPPUNIT_ASSERT(pTokens);
 
         TokenView::Iterator it = pTokens->iterator();
 
@@ -217,7 +217,7 @@ void StandardAnalyzerTestCase::testUnigramAlgorithm()
         sa.init();
 
         TokenViewPtr pTokenView = sa.tokenize(str.c_str());
-        CPPUNIT_ASSERT(pTokenView.isNotNull());
+        CPPUNIT_ASSERT(pTokenView);
     
         const static size_t NUM_TOKENS = 2;
         string answer[NUM_TOKENS] = {"对", "数学"};
@@ -239,7 +239,7 @@ void StandardAnalyzerTestCase::testUnigramAlgorithm()
         sa.init();
 
         TokenViewPtr pTokenView = sa.tokenize(str.c_str());
-        CPPUNIT_ASSERT(pTokenView.isNotNull());
+        CPPUNIT_ASSERT(pTokenView);
     
         const static size_t NUM_TOKENS = 2;
         string answer[NUM_TOKENS] = {"对数", "学"};
@@ -273,7 +273,7 @@ void StandardAnalyzerTestCase::testTokenizeGBKFile()
     sa.init();
     
     TokenViewPtr pTokenView = sa.tokenize(data.c_str());
-    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    CPPUNIT_ASSERT(pTokenView);
 
     // TokenView::Iterator it = pTokenView->iterator();
     // while (it.hasNext())
@@ -304,7 +304,7 @@ void StandardAnalyzerTestCase::testTokenizeUTF8File()
     sa.init();
     
     TokenViewPtr pTokenView = sa.tokenize(data.c_str());
-    CPPUNIT_ASSERT(pTokenView.isNotNull());
+    CPPUNIT_ASSERT(pTokenView);
 
     // TokenView::Iterator it = pTokenView->iterator();
     // while (it.hasNext())

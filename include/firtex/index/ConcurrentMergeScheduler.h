@@ -47,7 +47,7 @@ private:
         void run()
         {
             MergeablePtr pMerger = m_queue.waitDequeue();
-            if (pMerger.isNotNull())
+            if (pMerger)
             {
                 pMerger->merge();
             }

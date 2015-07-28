@@ -18,8 +18,8 @@ bool SnippetGenerator::filter(const string& sOrgValue,
 {
 
     QueryScorer* pQueryScorer = new QueryScorer(m_pQuery.get(), m_sField.c_str());
-    HighlighterPtr pHigh = new Highlighter(new SimpleHTMLFormatter(
-                    m_sPreTag, m_sPostTag), pQueryScorer);
+    HighlighterPtr pHigh(new Highlighter(new SimpleHTMLFormatter(
+                            m_sPreTag, m_sPostTag), pQueryScorer));
     pHigh->getBestFragments(sNewValue, m_pAnalyzer, sOrgValue.c_str(),
                             sOrgValue.length(), 2, m_sSeparator);
     return true;

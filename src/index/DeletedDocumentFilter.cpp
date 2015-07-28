@@ -43,7 +43,7 @@ void DeletedDocumentFilter::open(const BarrelsInfoPtr& pBarrelsInfo)
 {
     FIRTEX_ASSERT2(!m_pBarrelsInfo && m_filters.size() == 0);
 
-    m_pBarrelsInfo.assign(pBarrelsInfo->clone());
+    m_pBarrelsInfo.reset(pBarrelsInfo->clone());
 
     BarrelsInfo::Iterator iter = m_pBarrelsInfo->iterator();
     while (iter.hasNext())
@@ -53,9 +53,9 @@ void DeletedDocumentFilter::open(const BarrelsInfoPtr& pBarrelsInfo)
         loadLatestFilter(pFilter, barrelInfo,
                          barrelInfo.getCommitId(),
                          m_pBarrelsInfo->getCommitId());
-        if (pFilter.isNull())
+        if (!pFilter)
         {
-            pFilter = new BitVector();
+            pFilter.reset(new BitVector());
         }
         BarrelFilter barrelFilter(&barrelInfo, pFilter);
         m_filters.push_back(barrelFilter);
@@ -65,9 +65,9 @@ void DeletedDocumentFilter::open(const BarrelsInfoPtr& pBarrelsInfo)
 
 void DeletedDocumentFilter::reopen(const BarrelsInfoPtr& pBarrelsInfo)
 {
-    FIRTEX_ASSERT2(m_pBarrelsInfo.isNotNull());
+    FIRTEX_ASSERT2(m_pBarrelsInfo);
 
-    BarrelsInfoPtr pNewBarrelsInfo = pBarrelsInfo->clone();
+    BarrelsInfoPtr pNewBarrelsInfo( pBarrelsInfo->clone());
     BarrelsInfo::Iterator oldIter = m_pBarrelsInfo->iterator();
     BarrelsInfo::Iterator newIter = pNewBarrelsInfo->iterator();
     
@@ -81,7 +81,7 @@ void DeletedDocumentFilter::reopen(const BarrelsInfoPtr& pBarrelsInfo)
                          m_pBarrelsInfo->getCommitId() + 1,
                          pNewBarrelsInfo->getCommitId());
 
-        if (pFilter.isNotNull())
+        if (pFilter)
         {
             BarrelFilter barrelFilter(&barrelInfo, pFilter);
             newFilters.push_back(barrelFilter);
@@ -101,7 +101,7 @@ void DeletedDocumentFilter::reopen(const BarrelsInfoPtr& pBarrelsInfo)
             ++cursor;
         }
         //insert an empty filter
-        pFilter = new BitVector();
+        pFilter.reset(new BitVector());
         BarrelFilter barrelFilter(&barrelInfo, pFilter);
         newFilters.push_back(barrelFilter);
     }
@@ -124,7 +124,7 @@ void DeletedDocumentFilter::loadLatestFilter(BitVectorPtr& pDocFilter,
         if (m_pFileSys->fileExists(sFilterFile))
         {
             InputStreamPtr pInStream = m_pFileSys->openFile(sFilterFile);
-            pDocFilter.assign(new BitVector());
+            pDocFilter.reset(new BitVector());
             pDocFilter->read(pInStream);
             break;
         }
@@ -144,7 +144,7 @@ void DeletedDocumentFilter::appendBarrel(const BarrelInfo& barrelInfo,
 
     BarrelInfo& newBarrel = m_pBarrelsInfo->newBarrel();
     newBarrel = barrelInfo;
-    if (pDocFilter.isNotNull() && pDocFilter->any())
+    if (pDocFilter && pDocFilter->any())
     {
         m_filters.push_back(BarrelFilter(&newBarrel, pDocFilter, true));
     }
@@ -171,7 +171,7 @@ bool DeletedDocumentFilter::deleteDocument(docid_t docId)
             BitVectorPtr& pFilter = (*it).m_pFilter;
             if (!pFilter)
             {
-                pFilter = new BitVector();
+                pFilter.reset(new BitVector());
             }
             if (!pFilter->test(docId - pBarrelInfo->getBaseDocId()))
             {
@@ -233,7 +233,7 @@ void DeletedDocumentFilter::undeleteAll()
             (*it).m_bDirty = true;
         }
         BitVectorPtr& pFilter = (*it).m_pFilter;
-        if (pFilter.isNotNull())
+        if (pFilter)
         {
             pFilter->reset();
             (*it).m_bDirty = true;
@@ -255,7 +255,7 @@ bool DeletedDocumentFilter::isDeleted(docid_t docId) const
         else 
         {
             const BitVectorPtr& pFilter = (*it).m_pFilter;
-             if (pFilter.isNotNull())
+             if (pFilter)
              {
                  return false;
              }
@@ -275,7 +275,7 @@ bool DeletedDocumentFilter::isDeleted(docid_t docId) const
      while (it != m_filters.end())
      {
          const BitVectorPtr& pFilter = (*it).m_pFilter;
-         if (pFilter.isNotNull() && pFilter->any())
+         if (pFilter && pFilter->any())
          {
              return true;
          }
@@ -290,7 +290,7 @@ df_t DeletedDocumentFilter::getDeletedDocCount() const
     for (; it != m_filters.end(); ++it)
     {
         const BitVectorPtr& pFilter = (*it).m_pFilter;
-        if (pFilter.isNotNull())
+        if (pFilter)
         {
             nNumDelDocs += (df_t)pFilter->count();
         }

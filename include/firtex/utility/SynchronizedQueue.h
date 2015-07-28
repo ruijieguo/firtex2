@@ -149,7 +149,7 @@ typename SynchronizedQueue<T>::ElemType SynchronizedQueue<T>::waitDequeue()
     {
         FX_NS(thread)::FastMutex::Guard lock(m_mutex);
         elem = dequeueOne();
-        if (!elem.isNull())
+        if (elem)
         {
             return elem;
         }
@@ -170,7 +170,7 @@ typename SynchronizedQueue<T>::ElemType SynchronizedQueue<T>::waitDequeue(int64_
     {
         FX_NS(thread)::FastMutex::Guard lock(m_mutex);
         elem = dequeueOne();
-        if (!elem.isNull()) 
+        if (elem) 
         {
             return elem;
         }

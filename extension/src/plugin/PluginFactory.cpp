@@ -85,7 +85,7 @@ bool PluginFactory::getClassObject(const PluginPtr& pPlugin, FX_REFIID iid, void
     }
     else 
     {
-        sharedLib.assign(new SharedLibrary);
+        sharedLib.reset(new SharedLibrary);
         try 
         {
             sharedLib->load(p.toString());

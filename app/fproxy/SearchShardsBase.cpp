@@ -96,8 +96,8 @@ bool SearchShardsBase::init(const ProxyServerConf::sResource& resConf)
     
     m_deliver.start();
 
-    m_pHealthChecker = new ReplicaHealthChecker(m_shards);
-    m_pCheckThread = new Thread();
+    m_pHealthChecker(new ReplicaHealthChecker(m_shards));
+    m_pCheckThread.reset(new Thread());
     m_pCheckThread->start(*m_pHealthChecker);
 
     return true;
@@ -212,12 +212,12 @@ void SearchShardsBase::collectPhaseOneResult()
     FX_DEBUG("Collect phase one result");
     size_t nTopDocs = ParameterClause::DEFAULT_TOPDOCS;
     ParameterClausePtr pParamClause = m_stat.getParameterClause();
-    if (pParamClause.isNotNull())
+    if (pParamClause)
     {
         nTopDocs = pParamClause->getTopDocs();
     }
     
-    if (m_pResultCollector.isNull() || m_pResultCollector->capacity() != nTopDocs)
+    if (!m_pResultCollector || m_pResultCollector->capacity() != nTopDocs)
     {
         m_pResultCollector.reset(new ResultCollectorImpl(nTopDocs));
     }
@@ -359,9 +359,9 @@ void SearchShardsBase::collectPhaseTwoResult()
 
         // merge trace information
         QueryTracerPtr& pTracer = pTmpQRes->getTracer();
-        if (pTracer.isNotNull())
+        if (pTracer)
         {
-            if (phaseTwoResult.getTracer().isNull())
+            if (!phaseTwoResult.getTracer())
             {
                 phaseTwoResult.setTracer(new QueryTracer("proxy", pTracer->getLevel()));
             }
@@ -399,7 +399,7 @@ void SearchShardsBase::collectPhaseTwoResult()
 
     // Add query trace information
     QueryTracerPtr& pResTracer = phaseTwoResult.getTracer();
-    if (pResTracer.isNotNull())
+    if (pResTracer)
     {
         FX_QUERY_TRACE(DEBUG, pResTracer, "Phase one search latency: [%d] ms",
                        m_nPhaseOneLatency);

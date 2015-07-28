@@ -155,7 +155,7 @@ void BlockFileInputStreamTestCase::testReadInt()
     pOutput.reset();
 
     InputStreamPtr pInput = m_pBlockFileSystem->openFile("testfile1");
-    CPPUNIT_ASSERT(pInput.isNotNull());
+    CPPUNIT_ASSERT(pInput);
 
     string expStr;
     expStr.resize(str.size());

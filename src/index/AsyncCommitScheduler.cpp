@@ -46,7 +46,7 @@ void AsyncCommitScheduler::run()
     {
         CommittablePtr pCommitObj = m_commitQueue.waitDequeue();
         {
-            if (pCommitObj.isNotNull())
+            if (pCommitObj)
             {
                 FastMutex::Guard g(m_mutex);
                 m_bCommitting = true;
@@ -66,7 +66,7 @@ void AsyncCommitScheduler::run()
     while (!m_commitQueue.isEmpty())
     {
         CommittablePtr pCommitObj = m_commitQueue.waitDequeue();
-        if (pCommitObj.isNotNull())
+        if (pCommitObj)
         {
             FastMutex::Guard g(m_mutex);
             m_bCommitting = true;

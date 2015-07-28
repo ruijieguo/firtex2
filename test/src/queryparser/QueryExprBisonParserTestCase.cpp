@@ -163,7 +163,7 @@ string QueryExprBisonParserTestCase::parseExpr(const string& exprStr)
 {
     QueryExprParser parser("def_field");
     QueryExprPtr pExpr = parser.parse(exprStr);
-    CPPUNIT_ASSERT(pExpr.isNotNull());
+    CPPUNIT_ASSERT(pExpr);
     return pExpr->toString();
 }
 

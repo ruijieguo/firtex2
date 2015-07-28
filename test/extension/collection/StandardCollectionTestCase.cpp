@@ -77,7 +77,7 @@ void StandardCollectionTestCase::testScan()
 {    
     string sConf = getFilePath("standard_collection", "standard.xml");
     CollectionPtr pCol = Collection::buildCollection(sConf);
-    CPPUNIT_ASSERT(pCol.isNotNull());
+    CPPUNIT_ASSERT(pCol);
 
     pCol->scan(true);
 
@@ -88,7 +88,7 @@ void StandardCollectionTestCase::testScanAsync()
 {    
     string sConf = getFilePath("standard_collection", "standard.xml");
     CollectionPtr pCol = Collection::buildCollection(sConf);
-    CPPUNIT_ASSERT(pCol.isNotNull());
+    CPPUNIT_ASSERT(pCol);
 
     pCol->scan(false);
     pCol->waitStop();
@@ -100,7 +100,7 @@ void StandardCollectionTestCase::testScanWithMonitor()
 {    
     string sConf = getFilePath("standard_collection", "standard_with_monitor.xml");
     CollectionPtr pCol = Collection::buildCollection(sConf);
-    CPPUNIT_ASSERT(pCol.isNotNull());
+    CPPUNIT_ASSERT(pCol);
 
     pCol->scan(false);
     Thread::sleep(1000);

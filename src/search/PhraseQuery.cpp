@@ -43,15 +43,15 @@ QueryExecutorPtr PhraseQuery::createExecutor(IndexReaderPtr& pIndexReader,
 
     TermReaderPtr pTermReader = pIndexReader->termReader();
     size_t size = m_terms.size();
-    PhraseQueryExecutorPtr pExe = new PhraseQueryExecutor(
-            this, pProvider, pPool);
+    PhraseQueryExecutorPtr pExe(new PhraseQueryExecutor(
+                    this, pProvider, pPool));
 
     vector<TermPostingIteratorPtr> termPosVec;
     termPosVec.reserve(size);
     for (size_t i = 0; i < size; i++)
     {
         TermPostingIteratorPtr pPostIter = pTermReader->seek(m_terms[i].get());
-        if (pPostIter.isNull())
+        if (!pPostIter)
         {
             return QueryExecutorPtr();
         }

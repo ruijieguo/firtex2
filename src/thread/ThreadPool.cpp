@@ -216,7 +216,7 @@ ThreadPool::ThreadPool(size_t nMinCapacity, size_t nMaxCapacity,
 
     for (size_t i = 0; i < m_nMinCapacity; i++)
     {
-        PooledThread* pThread = createThread();
+        PooledThreadPtr pThread(createThread());
         m_threads.push_back(pThread);
         pThread->start();
     }
@@ -238,7 +238,7 @@ ThreadPool::ThreadPool(const string& sName, size_t nMinCapacity,
 
     for (size_t i = 0; i < m_nMinCapacity; i++)
     {
-        PooledThread* pThread = createThread();
+        PooledThreadPtr pThread(createThread());
         m_threads.push_back(pThread);
         pThread->start();
     }
@@ -415,11 +415,11 @@ PooledThreadPtr ThreadPool::getThread(bool bBlock)
             }
         }
 
-        if (pThread.isNull())
+        if (!pThread)
         {
             if (m_threads.size() < m_nMaxCapacity)
             {
-                pThread = createThread();
+                pThread.reset(createThread());
                 m_threads.push_back(pThread);
                 pThread->start();
             }

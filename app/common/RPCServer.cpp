@@ -58,8 +58,8 @@ void RPCServer::start(bool bBlocking)
         {
             FX_LOG(INFO, "Start server in non-blocking mode, port: [%d], "
                    "thread count: [%d]...", m_nPort, m_nThreadCount);
-            m_pServerRunner = new ServerRunner(*this);
-            m_pServerThread = new FX_NS(thread)::Thread();
+            m_pServerRunner.reset(new ServerRunner(*this));
+            m_pServerThread.reset(new FX_NS(thread)::Thread());
             m_pServerThread->start(*m_pServerRunner);
         }
     }
@@ -75,7 +75,7 @@ void RPCServer::start(bool bBlocking)
 
 void RPCServer::stop()
 {
-    if (m_pServerRunner.isNotNull())
+    if (m_pServerRunner)
     {
         FX_LOG(INFO, "Stopping server in non-blocking mode, port: [%d]", m_nPort);
         m_pServerRunner->stop();
@@ -88,7 +88,7 @@ void RPCServer::stop()
  
 void RPCServer::join()
 {
-    if (m_pServerThread.isNotNull())
+    if (m_pServerThread)
     {
         m_pServerThread->join();
     }
@@ -108,8 +108,8 @@ void RPCServer::startServer()
         threadManager->threadFactory(threadFactory);
         threadManager->start();
         
-        m_pServer = new TNonblockingServer(m_pProcessor, protocolFactory,
-                m_nPort, threadManager);
+        m_pServer.reset(new TNonblockingServer(m_pProcessor, protocolFactory,
+                        m_nPort, threadManager));
     
         m_pServer->serve();
     }
@@ -121,7 +121,7 @@ void RPCServer::startServer()
 
 void RPCServer::stopServer()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }

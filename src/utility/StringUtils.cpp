@@ -21,7 +21,7 @@ FX_NS_DEF(utility)
 
 size_t strLength(const char *s) 
 {
-    register const char *pos = s;
+    const char *pos = s;
     while (*pos) 
     {
         pos++;

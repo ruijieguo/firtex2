@@ -64,12 +64,12 @@ void Collection::init(const CollectionConfigurePtr& pConfigure)
         initParam(pConfigure->Collection.parameter);
     }
 
-    if (m_pConfigure->getTemplate().isNotNull())
+    if (m_pConfigure->getTemplate())
     {
         m_pConfigure->getTemplate()->makeSure(m_pConfigure->getDocSchema().get());
     }
 
-    m_pInputDocQueue = new InputDocQueue(m_pConfigure->Collection.inputDocQueueSize);
+    m_pInputDocQueue.reset(new InputDocQueue(m_pConfigure->Collection.inputDocQueueSize));
 
     Index::AccessMode am = Index::WRITE;
     if (!strCompareNoCase(m_pConfigure->Collection.buildMode.c_str(), _T("batch") ))
@@ -77,10 +77,10 @@ void Collection::init(const CollectionConfigurePtr& pConfigure)
     else if (!strCompareNoCase(m_pConfigure->Collection.buildMode.c_str(), _T("append")))
         am = Index::APPEND;
 
-    m_pIndex = new Index();
+    m_pIndex.reset(new Index());
     m_pIndex->open(m_pConfigure->Collection.target, am, m_pConfigure->getDocSchema().get());
     m_pWriter = m_pIndex->acquireWriter();
-    if (m_pWriter.isNull())
+    if (!m_pWriter)
     {
         FIRTEX_THROW(NullPointerException, _T("Acquire index writer FAILED."));
     }
@@ -100,7 +100,7 @@ void Collection::init(const CollectionConfigurePtr& pConfigure)
 
 void Collection::sanityCheck(const CollectionConfigurePtr& pConfigure)
 {
-    FIRTEX_ASSERT((pConfigure.isNotNull()),
+    FIRTEX_ASSERT((pConfigure),
                   _T("Invalid argument:Collection.buildIndex()"));
 
     if (pConfigure->Collection.source.empty())
@@ -123,8 +123,8 @@ void Collection::sanityCheck(const CollectionConfigurePtr& pConfigure)
 
 void Collection::scan(bool bBlock)
 {
-    m_pFileFetcher = createFileFetcher();
-    if (m_pFileFetcher.isNull())
+    m_pFileFetcher.reset(createFileFetcher());
+    if (!m_pFileFetcher)
     {
         FIRTEX_THROW(UnImplementException, "Create file fetcher FAILED.");
     }
@@ -136,7 +136,7 @@ void Collection::scan(bool bBlock)
     }
     else
     {
-        m_pScanThread = new Thread();
+        m_pScanThread.reset(new Thread());
         m_pScanThread->start(*this);
     }
 }
@@ -149,13 +149,13 @@ void Collection::stop()
 
 void Collection::waitStop()
 {
-    if (m_pScanThread.isNotNull())
+    if (m_pScanThread)
     {
         m_pScanThread->join();
         m_pScanThread.reset();
     }
 
-    if (m_pThreadPool.isNotNull())
+    if (m_pThreadPool)
     {
         for (size_t i = 0; i < m_processors.size(); ++i)
         {
@@ -166,7 +166,7 @@ void Collection::waitStop()
         m_pThreadPool.reset();
     }
 
-    if (m_pIndex.isNotNull())
+    if (m_pIndex)
     {
         m_pIndex->close();
         m_pIndex.reset();
@@ -184,7 +184,7 @@ void Collection::doScan()
 
     while (!m_bStop)
     {
-        RawDocumentPtr pRawDoc = new RawDocument();
+        RawDocumentPtr pRawDoc(new RawDocument());
         if (m_pFileFetcher->fetchNext(pRawDoc))
         {
             m_pInputDocQueue->enqueue(pRawDoc);
@@ -198,12 +198,12 @@ void Collection::doScan()
 
 void Collection::initProcessThreads()
 {
-    m_pThreadPool = new ThreadPool(m_pConfigure->Collection.processThreadCount,
-                                   m_pConfigure->Collection.processThreadCount);
+    m_pThreadPool.reset(new ThreadPool(m_pConfigure->Collection.processThreadCount,
+                    m_pConfigure->Collection.processThreadCount));
 
     for (size_t i = 0; i < m_pThreadPool->capacity(); ++i)
     {
-        ProcessorRunnerPtr pRunner = new ProcessorRunner(*this);
+        ProcessorRunnerPtr pRunner(new ProcessorRunner(*this));
         m_pThreadPool->start(*pRunner);
         m_processors.push_back(pRunner);
     }
@@ -211,24 +211,24 @@ void Collection::initProcessThreads()
 
 void Collection::doProcess()
 {
-    DocumentProcessorPtr pDocProcessor = createDocumentProcessor();
+    DocumentProcessorPtr pDocProcessor(createDocumentProcessor());
 
     DocumentSource source(m_pConfigure->getDocSchema().get());
     while (true)
     {
         source.reset();
         RawDocumentPtr pRawDoc = m_pInputDocQueue->waitDequeue();
-        if (pRawDoc.isNotNull())
+        if (pRawDoc)
         {
             source.setRawDocument(pRawDoc);
             do 
             {
                 pDocProcessor->process(source);
                 DocumentPtr pDoc = source.stealLastDocument();
-                if (pDoc.isNotNull() && pDoc->getAction() != Document::AT_NONE)
+                if (pDoc && pDoc->getAction() != Document::AT_NONE)
                 {
                     m_pWriter->addDocument(pDoc);
-                    if (m_pObserver.isNotNull())
+                    if (m_pObserver)
                     {
                         m_pObserver->step();
                     }
@@ -237,7 +237,7 @@ void Collection::doProcess()
         }
         else 
         {
-            if (m_pObserver.isNotNull())
+            if (m_pObserver)
             {
                 m_pObserver->complete();
             }
@@ -255,7 +255,7 @@ CollectionPtr Collection::buildIndex(const std::string& sConfFile,
                                      const ProgressObserverPtr& pProgressObserver,
                                      bool bBlock)
 {
-    CollectionConfigurePtr pConfigure = new CollectionConfigure();
+    CollectionConfigurePtr pConfigure(new CollectionConfigure());
     XMLConfigurator xmlConf;
     xmlConf.load(sConfFile);
     pConfigure->configure(xmlConf);
@@ -270,17 +270,17 @@ CollectionPtr Collection::buildIndex(const CollectionConfigurePtr& pConfigure,
                                      const ProgressObserverPtr& pProgressObserver, 
                                      bool bBlock)
 {
-    FIRTEX_ASSERT((pConfigure.isNotNull()),
+    FIRTEX_ASSERT((pConfigure),
                   _T("Invalid argument:Collection.buildIndex()"));
 
-    CollectionPtr pCol = CollectionFactory::instance()->createCollection(
-            pConfigure->Collection.identifier);
-    if (pCol.isNull())
+    CollectionPtr pCol( CollectionFactory::instance()->createCollection(
+                    pConfigure->Collection.identifier));
+    if (!pCol)
     {
         FIRTEX_THROW(IllegalArgumentException, _T("Create collection : [%s] FAILED"),
                      pConfigure->Collection.identifier.c_str());
     }
-    if (pProgressObserver.isNotNull())
+    if (pProgressObserver)
     {
         pCol->setObserver(pProgressObserver);
     }
@@ -308,9 +308,9 @@ CollectionPtr Collection::buildCollection(const string& sConfFile)
                sConfFile.c_str(), fe.what().c_str());
         throw;
     }
-    CollectionPtr pCol = CollectionFactory::instance()->createCollection(
-            pConfigure->Collection.identifier);
-    if (pCol.isNull())
+    CollectionPtr pCol(CollectionFactory::instance()->createCollection(
+                    pConfigure->Collection.identifier));
+    if (!pCol)
     {
         return pCol;
     }
@@ -334,7 +334,7 @@ void Collection::initParam(const std::string& sParam)
     FileFilter* pFileFilter = createFileFilter(sParam);
     if (pFileFilter)
     {
-        m_pFileFilter.assign(pFileFilter);
+        m_pFileFilter.reset(pFileFilter);
     }
 
     doInitParam(sParam);

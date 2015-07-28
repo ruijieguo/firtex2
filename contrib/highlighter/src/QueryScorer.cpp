@@ -85,12 +85,12 @@ void QueryScorer::init(const WeightedTermsPtr& pWeightedTerms)
         }
         else 
         {
-            pExistingTerm = NULL;
+            pExistingTerm.reset();
         }
 
-        if( (pExistingTerm == NULL) || (pExistingTerm->getWeight() < pWT->getWeight()))
+        if( (!pExistingTerm) || (pExistingTerm->getWeight() < pWT->getWeight()))
         {
-            if(pExistingTerm.isNotNull())
+            if(pExistingTerm)
             {
                 m_termsToFind.erase(iter);
             }

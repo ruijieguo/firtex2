@@ -205,12 +205,14 @@ ZkClientWrapper::watcherid_t ZkClientWrapper::addHandler(
     ListenersMap::iterator it = map.find(sPath);
     if (it != map.end())
     {
-        it->second->insert(make_pair(wid, pHandler));
+        EventHandlerPtr p(pHandler);
+        it->second->insert(make_pair(wid, p));
     }
     else
     {
-        ListenerMapPtr pHandlers = new ListenerMap();
-        pHandlers->insert(make_pair(wid, pHandler));
+        ListenerMapPtr pHandlers(new ListenerMap());
+        EventHandlerPtr p(pHandler);
+        pHandlers->insert(make_pair(wid, p));
         map.insert(make_pair(sPath, pHandlers));
     }
     return wid;
@@ -489,7 +491,7 @@ bool ZkClientWrapper::hasListeners(const std::string& sPath,
                                    const ListenersMap& map)
 {
     ListenersMap::const_iterator it = map.find(sPath);
-    return (it != map.end() && it->second.isNotNull() && it->second->size() > 0);
+    return (it != map.end() && it->second && it->second->size() > 0);
 }
 
 bool ZkClientWrapper::remove(const std::string& sPath) 

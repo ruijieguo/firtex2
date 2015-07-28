@@ -13,7 +13,7 @@ SyncSegregatedAllocator::SyncSegregatedAllocator(size_t nPoolSize, size_t nMaxAl
     FX_DEBUG("Allocate size: [%llu], max chunks: [%llu]",
              (unsigned long long)nAllocSize, (unsigned long long)nMaxAllocChunks);
     
-    m_pool = new SimpleSegregatedAllocator(nAllocSize, nMaxAllocChunks);
+    m_pool.reset(new SimpleSegregatedAllocator(nAllocSize, nMaxAllocChunks));
 
     m_nTotalSize = nPoolSize;
 }

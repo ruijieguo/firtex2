@@ -44,7 +44,7 @@ bool SearchServerBase::init(const std::string& sConfFile)
 
 void SearchServerBase::stop()
 {
-    if (m_pRefreshRunner.isNotNull())
+    if (m_pRefreshRunner)
     {
         m_pRefreshRunner->stop();
     }
@@ -52,7 +52,7 @@ void SearchServerBase::stop()
 
 void SearchServerBase::join()
 {
-    if (m_pRefreshThread.isNotNull())
+    if (m_pRefreshThread)
     {
         m_pRefreshThread->join();
     }
@@ -60,9 +60,9 @@ void SearchServerBase::join()
 
 void SearchServerBase::initRefreshThread(int32_t nRefreshTimer)
 {
-    m_pRefreshRunner = new RefreshRunner(m_resource, 
-            nRefreshTimer);
-    m_pRefreshThread = new Thread();
+    m_pRefreshRunner.reset(new RefreshRunner(m_resource, 
+                    nRefreshTimer));
+    m_pRefreshThread.reset(new Thread());
     m_pRefreshThread->start(*m_pRefreshRunner);
 }
 

@@ -43,7 +43,7 @@ SETUP_LOGGER_EMBED(index, IndexWriter, AutoCommitTask);
 IndexWriter::IndexWriter()
     : m_nOpCountSinceLastCommit(0)
 {
-    m_pCommitScheduler = new AsyncCommitScheduler();
+    m_pCommitScheduler.reset(new AsyncCommitScheduler());
 }
 
 IndexWriter::~IndexWriter(void)
@@ -58,7 +58,7 @@ void IndexWriter::open(const IndexBarrelKeeperPtr& pBarrelKeeper)
     m_pKeeper->setCommitScheduler(m_pCommitScheduler);
 
     createMerger();
-    m_pDocConsumer = new AsyncDocumentConsumer(m_pKeeper);
+    m_pDocConsumer.reset(new AsyncDocumentConsumer(m_pKeeper));
     
     m_pDocConsumer->start();
 
@@ -121,16 +121,16 @@ bool IndexWriter::addExistIndex(FileSystemPtr& pFileSys)
 
 void IndexWriter::mergeIndex()
 {
-    if (m_pIndexMerger.isNull())
+    if (!m_pIndexMerger)
     {
         createMerger();
     }
 
-    if (m_pIndexMerger.isNotNull())
+    if (m_pIndexMerger)
     {
         //Flush all documents in memory
         m_pDocConsumer->commit();
-        CommittablePtr pCommitObj = m_pIndexMerger.cast<Committable>();
+        CommittablePtr pCommitObj = std::dynamic_pointer_cast<Committable>(m_pIndexMerger);
         m_pCommitScheduler->commit(pCommitObj);
         m_pCommitScheduler->waitCommit();
     }
@@ -149,14 +149,14 @@ void IndexWriter::optimizeIndex()
     MergePolicyPtr pPolicy(new OptimizeMergePolicy);
     IndexMergerPtr pIndexMerger(new IndexMerger(pPolicy, m_pKeeper.get()));
 
-    CommittablePtr pCommitObj = pIndexMerger.cast<Committable>();
+    CommittablePtr pCommitObj = std::dynamic_pointer_cast<Committable>(pIndexMerger);
     m_pCommitScheduler->commit(pCommitObj);
     m_pCommitScheduler->waitCommit();
 }
 
 void IndexWriter::close()
 {
-    if (m_pDocConsumer.isNotNull())
+    if (m_pDocConsumer)
     {
         FX_TRACE("Close index writer");
 
@@ -166,9 +166,9 @@ void IndexWriter::close()
         m_pKeeper->waitCommit();
 
         ///perform last merge
-        if (m_pIndexMerger.isNotNull())
+        if (m_pIndexMerger)
         {
-            CommittablePtr pCommitObj = m_pIndexMerger.cast<Committable>();
+            CommittablePtr pCommitObj = std::dynamic_pointer_cast<Committable>(m_pIndexMerger);
             m_pCommitScheduler->commit(pCommitObj);
             m_pCommitScheduler->waitCommit();
             m_pIndexMerger.reset();
@@ -178,7 +178,7 @@ void IndexWriter::close()
         m_pCommitScheduler.reset();
     }
 
-    if (m_pAutoCommitTask.isNotNull())
+    if (m_pAutoCommitTask)
     {
         m_pAutoCommitTask->stop();
         m_autoCommitThread.join();
@@ -188,13 +188,12 @@ void IndexWriter::close()
 
 void IndexWriter::createMerger()
 {
-    if (m_pIndexMerger.isNull())
+    if (!m_pIndexMerger)
     {
-        m_pIndexMerger.assign(new IndexMerger(m_pKeeper.get()));
+        m_pIndexMerger.reset(new IndexMerger(m_pKeeper.get()));
         std::string sIdent = GLOBAL_CONF().Merge.strategy;
-        MergePolicyPtr pMergePolicy =
-            MergePolicyFactory::instance()->createMergePolicy(sIdent);
-        if (pMergePolicy.isNull())
+        MergePolicyPtr pMergePolicy(MergePolicyFactory::instance()->createMergePolicy(sIdent));
+        if (!pMergePolicy)
         {
             FX_LOG(WARN, "Invalid merge policy identifier: [%s]",
                    sIdent.c_str());
@@ -208,7 +207,7 @@ void IndexWriter::createMerger()
 
 IndexMergerPtr IndexWriter::acquireMerger()
 {
-    if (m_pIndexMerger.isNull())
+    if (!m_pIndexMerger)
     {
         createMerger();
     }
@@ -227,13 +226,14 @@ void IndexWriter::setAutoCommit(const CommitCondition& cond)
 
     if (m_autoCommitCondition.maxTime > 0)
     {
-        if (m_pAutoCommitTask.isNotNull())
+        if (m_pAutoCommitTask)
         {
             m_pAutoCommitTask->stop();
             m_autoCommitThread.join();
         }
 
-        m_pAutoCommitTask = new AutoCommitTask(*this, (int32_t)(m_autoCommitCondition.maxTime + 1)/2);
+        m_pAutoCommitTask.reset(new AutoCommitTask(*this,
+                        (int32_t)(m_autoCommitCondition.maxTime + 1)/2));
         m_autoCommitThread.start(*m_pAutoCommitTask);
     }
 }

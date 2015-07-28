@@ -412,7 +412,7 @@ inline void DoubleArrayTrie::updateStatistics(ValueType val)
 
 inline void DoubleArrayTrie::onTraversalFinish(ValueType s, ValueType off)
 {
-    if (m_pTraversalCallback.isNotNull())
+    if (m_pTraversalCallback)
     {
         m_pTraversalCallback->invoke(m_traveralBuff, getBase(s));
     }

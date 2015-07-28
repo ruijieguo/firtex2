@@ -32,7 +32,7 @@ void TextIndexMerger::beginMerge(const IndexMergeInfos& mergeFieldInfos)
     m_pPosOutStream = getFileSystem()->createFile(
             BarrelDirectory::getFilePath(pFieldSchema->getName(),
                     POS_POSTING_FILEEXT, sSuffix));
-    m_pDictWriter.assign(new DictWriter(m_pDictOutStream));
+    m_pDictWriter.reset(new DictWriter(m_pDictOutStream));
 
     m_nTotalTerms = 0;
     m_pDictWriter->reserve(10000); //TODO: optimize

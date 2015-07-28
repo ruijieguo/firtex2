@@ -24,6 +24,7 @@ FX_NS_DEF(search);
 class TermQuery : public Query
 {
 public:
+    TermQuery(FX_NS(index)::Term* pTerm);
     TermQuery(const FX_NS(index)::TermPtr& pTerm);
     TermQuery(const TermQuery& src);
     ~TermQuery();

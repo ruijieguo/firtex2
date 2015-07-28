@@ -8,22 +8,22 @@
 FX_NS_DEF(index);
 
 typedef TypedForwardIndexIterator<int32_t> Int32ForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<Int32ForwardIndexIterator> Int32ForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(Int32ForwardIndexIterator);
 
 typedef TypedForwardIndexIterator<int64_t> Int64ForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<Int64ForwardIndexIterator> Int64ForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(Int64ForwardIndexIterator);
 
 typedef TypedForwardIndexIterator<uint32_t> UInt32ForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<UInt32ForwardIndexIterator> UInt32ForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(UInt32ForwardIndexIterator);
 
 typedef TypedForwardIndexIterator<uint64_t> UInt64ForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<UInt64ForwardIndexIterator> UInt64ForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(UInt64ForwardIndexIterator);
 
 typedef TypedForwardIndexIterator<float> FloatForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<FloatForwardIndexIterator> FloatForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(FloatForwardIndexIterator);
 
 typedef TypedForwardIndexIterator<double> DoubleForwardIndexIterator;
-typedef FX_NS(common)::SharedPtr<DoubleForwardIndexIterator> DoubleForwardIndexIteratorPtr;
+DEFINE_TYPED_PTR(DoubleForwardIndexIterator);
 
 FX_NS_END
 

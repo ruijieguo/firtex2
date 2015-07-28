@@ -14,10 +14,11 @@ SortedHitCollector::SortedHitCollector(const SorterPtr& pSort,
     , m_nTopDocs(nTopDocs)
     , m_minScore(minScore)
 {
-    m_pAllocator = new SimpleSegregatedAllocator(
-            sizeof(ScoredDoc) + pSort->getLastExprValueIdx(), (uint32_t)nTopDocs + 1);
-    ScoredDocDestroyerPtr pDestroyer = new ScoredDocDestroyer(m_pAllocator);
-    m_pHitQueue = new SortedHitQueue(pSort, nTopDocs, pDestroyer);
+    m_pAllocator.reset(new SimpleSegregatedAllocator(
+                    sizeof(ScoredDoc) + pSort->getLastExprValueIdx(),
+                    (uint32_t)nTopDocs + 1));
+    ScoredDocDestroyerPtr pDestroyer(new ScoredDocDestroyer(m_pAllocator));
+    m_pHitQueue.reset(new SortedHitQueue(pSort, nTopDocs, pDestroyer));
 }
 
 SortedHitCollector::~SortedHitCollector()
@@ -65,7 +66,7 @@ size_t SortedHitCollector::totalHits() const
 
 HitQueuePtr SortedHitCollector::getHitQueue() const
 {
-    return m_pHitQueue.cast<HitQueue>();
+    return std::dynamic_pointer_cast<HitQueue>(m_pHitQueue);
 }
 
 FX_NS_END

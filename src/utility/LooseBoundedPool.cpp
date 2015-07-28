@@ -11,8 +11,8 @@ LooseBoundedPool::LooseBoundedPool(size_t nPoolSize)
     , m_pSimpleAllocator(new SimpleAllocator)
     , m_excepPool(m_pSimpleAllocator, DEFAULT_EXCEPTION_CHUNK_SIZE)
 {
-    SyncSegregatedAllocatorPtr pAllocator = new SyncSegregatedAllocator(nPoolSize);
-    m_pBoudedAllocator = new BoundedChunkAllocator(pAllocator);
+    SyncSegregatedAllocatorPtr pAllocator(new SyncSegregatedAllocator(nPoolSize));
+    m_pBoudedAllocator.reset(new BoundedChunkAllocator(pAllocator));
     bool ret = m_pBoudedAllocator->init(1);
     FIRTEX_ASSERT2(ret);
     (void)ret;

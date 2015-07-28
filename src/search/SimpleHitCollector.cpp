@@ -13,9 +13,10 @@ SimpleHitCollector::SimpleHitCollector(size_t nTopDocs,
     , m_nTopDocs(nTopDocs)
     , m_minScore(minScore)
 {
-    m_pAllocator = new SimpleSegregatedAllocator(sizeof(ScoredDoc), (uint32_t)nTopDocs + 1);
-    ScoredDocDestroyerPtr pDestroyer = new ScoredDocDestroyer(m_pAllocator);
-    m_pHitQueue = new SimpleHitQueue(nTopDocs, pDestroyer);
+    m_pAllocator.reset(new SimpleSegregatedAllocator(sizeof(ScoredDoc),
+                    (uint32_t)nTopDocs + 1));
+    ScoredDocDestroyerPtr pDestroyer(new ScoredDocDestroyer(m_pAllocator));
+    m_pHitQueue.reset(new SimpleHitQueue(nTopDocs, pDestroyer));
 }
 
 SimpleHitCollector::~SimpleHitCollector()

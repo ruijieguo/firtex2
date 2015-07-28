@@ -58,7 +58,7 @@ public:
      */
     void merge(const QueryTracerPtr& pTracer)
     {
-        if (pTracer.isNotNull())
+        if (pTracer)
         {
             m_pTraceAppender->merge(pTracer->m_pTraceAppender->getTraceInfo());
         }
@@ -137,7 +137,7 @@ private:
 };
 
 
-#define FX_QUERY_TRACE(lvl, tracer, format, ...) if (tracer.isNotNull()) { \
+#define FX_QUERY_TRACE(lvl, tracer, format, ...) if (tracer) { \
         tracer->log(FX_NS(common)::LoggingLevel::LEVEL_##lvl, __FILE__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__); }
 
 

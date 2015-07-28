@@ -59,7 +59,7 @@ void MultiIndexReader::createBarrelReader()
     //     SingleIndexBarrelReader* pSingleReader  = new SingleIndexBarrelReader(
     //         indexVector[0]->getFileSystem(), indexVector[0]->getDocSchema(),
     //         indexVector[0]->getComponentBuilder());
-    //     m_pBarrelReader.assign(pSingleReader);
+    //     m_pBarrelReader.reset(pSingleReader);
     //     pSingleReader->open(&lastBarrel, pDocFilter);
     // }
     // else if(bc > 1)

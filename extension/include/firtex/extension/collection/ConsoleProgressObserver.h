@@ -18,8 +18,8 @@
 #include "firtex/common/SharedPtr.h"
 #include "firtex/utility/Timestamp.h"
 #include "firtex/thread/FastMutex.h"
-#include "firtex/thread/AtomicCount.h"
 #include "firtex/extension/collection/ProgressObserver.h"
+#include <atomic>
 
 FX_NS_DEF(collection);
 
@@ -43,7 +43,7 @@ private:
 
     FX_NS(thread)::FastMutex m_mutex;
     FX_NS(utility)::Timestamp m_lastProccessTime;
-    FX_NS(thread)::AtomicCount m_lastProccessed;
+    std::atomic_long m_lastProccessed;
 
 private:
     DECLARE_STREAM_LOGGER();

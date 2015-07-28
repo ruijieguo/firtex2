@@ -17,7 +17,8 @@ MultiTypeDocumentProcessor::MultiTypeDocumentProcessor(const MultiTypeDocumentPr
     for (ProcessorMap::const_iterator it = src.m_extToProcessor.begin();
          it != src.m_extToProcessor.end(); ++it)
     {
-        m_extToProcessor.insert(make_pair(it->first, it->second->clone()));
+        DocumentProcessorPtr pTmp(it->second->clone());
+        m_extToProcessor.insert(make_pair(it->first, pTmp));
     }
 }
 

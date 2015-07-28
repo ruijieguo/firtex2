@@ -10,6 +10,11 @@ FX_NS_DEF(search);
 
 SETUP_STREAM_LOGGER(search, TermQuery);
 
+TermQuery::TermQuery(Term* pTerm) 
+    : m_pTerm(pTerm)
+{
+}
+
 TermQuery::TermQuery(const TermPtr& pTerm) 
     : m_pTerm(pTerm)
 {
@@ -40,13 +45,13 @@ QueryExecutorPtr TermQuery::createExecutor(IndexReaderPtr& pIndexReader,
     TermReaderPtr pTermReader = pIndexReader->termReader();
 
     TermPostingIteratorPtr pPostIter = pTermReader->seek(m_pTerm.get());
-    if (pPostIter.isNull())
+    if (!pPostIter)
     {
         return QueryExecutorPtr();
     }
 
-    QueryExecutorPtr pExe = new TermQueryExecutor(this, pPostIter,
-            pProvider, pPool);
+    QueryExecutorPtr pExe(new TermQueryExecutor(this, pPostIter,
+                    pProvider, pPool));
     return pExe;
 }
 
@@ -59,7 +64,7 @@ string TermQuery::toString() const
 {
     stringstream ss;
     ss << "TermQuery: [";
-    if (m_pTerm.isNotNull())
+    if (m_pTerm)
     {
         ss << m_pTerm->toString();
     }

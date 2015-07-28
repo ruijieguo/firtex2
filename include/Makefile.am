@@ -62,7 +62,6 @@ nobase_include_HEADERS = \
   firtex/config/Configurable.h \
   firtex/config/Configurator.h \
   firtex/config/GlobalConfig.h \
-  firtex/config.h \
   firtex/config/XMLConfigurator.h \
   firtex/document/AnalyzedDocument.h \
   firtex/document/AnalyzedField.h \

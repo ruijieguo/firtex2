@@ -47,7 +47,7 @@ private:
     QueryExprLexer::semantic_type _yylval;
     QueryExprLexer::location_type _yylocation;
     
-    typedef FX_NS(common)::SharedPtr<std::string> StringPtr;
+    DEFINE_TYPED_PTR(std::string);
 
     typedef std::pair<QueryExprLexer::token_type, StringPtr> TokenPair;
     typedef std::vector<TokenPair> TokenVect;

@@ -238,7 +238,7 @@ DEFINE_TYPED_PTR(IndexWriter);
 inline void IndexWriter::setCommitScheduler(const CommitSchedulerPtr& pScheduler)
 {
     m_pCommitScheduler = pScheduler;
-    if (m_pKeeper.isNotNull())
+    if (m_pKeeper)
     {
         m_pKeeper->setCommitScheduler(m_pCommitScheduler);
     }

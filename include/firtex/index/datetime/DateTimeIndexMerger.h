@@ -27,7 +27,7 @@ class DateTimeIndexMerger : public FieldMerger
 {
 public:
     typedef TypedDictWriter<int64_t, offset_t> DictWriter;
-    typedef FX_NS(common)::SharedPtr<DictWriter> DictWriterPtr;
+    DEFINE_TYPED_PTR(DictWriter);
 
 public:
     DateTimeIndexMerger();

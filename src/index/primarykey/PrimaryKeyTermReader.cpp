@@ -53,7 +53,7 @@ void PrimaryKeyTermReader::open(const FileSystemPtr& pFileSys,
                                 const FieldSchema* pFieldSchema,
                                 const BitVector* pDocFilter)
 {
-    FIRTEX_ASSERT2(m_pPostingTable.isNull());
+    FIRTEX_ASSERT2(!m_pPostingTable);
 
     TermReader::open(pFileSys, pStreamPool, sSuffix, pFieldSchema, pDocFilter);
 
@@ -63,7 +63,7 @@ void PrimaryKeyTermReader::open(const FileSystemPtr& pFileSys,
             BarrelDirectory::getFilePath(pFieldSchema->getName(),
                     PRIMARYKEY_FILEEXT, sSuffix));
 
-    m_pPostingTable.assign(new PostingTable(
+    m_pPostingTable.reset(new PostingTable(
                     std::numeric_limits<uint64_t>::max(), INVALID_DOCID));
     
     m_pPostingTable->load(pInputStream);
@@ -75,7 +75,7 @@ void PrimaryKeyTermReader::open(const FileSystemPtr& pFileSys,
                                 const std::string& sField,
                                 const BitVector* pDocFilter)
 {
-    FIRTEX_ASSERT2(m_pPostingTable.isNull());
+    FIRTEX_ASSERT2(!m_pPostingTable);
 
     TermReader::open(pFileSys, pStreamPool, sSuffix, NULL, pDocFilter);
     
@@ -85,7 +85,7 @@ void PrimaryKeyTermReader::open(const FileSystemPtr& pFileSys,
             BarrelDirectory::getFilePath(sField,
                     PRIMARYKEY_FILEEXT, sSuffix));
 
-    m_pPostingTable.assign(new PostingTable(
+    m_pPostingTable.reset(new PostingTable(
                     std::numeric_limits<uint64_t>::max(), INVALID_DOCID));
     
     m_pPostingTable->load(pInputStream);

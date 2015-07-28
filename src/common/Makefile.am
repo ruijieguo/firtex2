@@ -15,6 +15,7 @@ libcommon_la_SOURCES =	\
 	LoggingLevel.cpp\
 	Logger.cpp\
 	Portability.cpp
+#	snprintf.c
 
-EXTRA_DIST = snprintf.c
+#EXTRA_DIST = snprintf.c
 

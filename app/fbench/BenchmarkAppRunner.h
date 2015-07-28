@@ -125,7 +125,6 @@ private:
     };
     DEFINE_TYPED_PTR(HttpRunner);
 
-#ifdef HAVE_THRIFT
     class RPCRunner : public RunnerBase
     {
     public:
@@ -138,7 +137,6 @@ private:
         void run();
     };
     DEFINE_TYPED_PTR(RPCRunner);
-#endif
 
 private:
     std::string m_sHost;

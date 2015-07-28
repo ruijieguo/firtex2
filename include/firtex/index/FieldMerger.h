@@ -48,7 +48,7 @@ public:
 public:
     inline bool next()
     {
-        if (!m_pIterator.isNull() && m_pIterator->hasNext())
+        if (!!m_pIterator && m_pIterator->hasNext())
         {
             m_curEntry = m_pIterator->next();
             return true;

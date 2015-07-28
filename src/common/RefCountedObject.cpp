@@ -19,7 +19,7 @@ void RefCountedObject::duplicate() const
 void RefCountedObject::release() const
 {
     --m_refCounter;
-    if (m_refCounter.value() == 0) 
+    if (std::atomic_load(&m_refCounter) == 0) 
     {
         delete this;
     }

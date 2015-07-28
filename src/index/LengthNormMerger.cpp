@@ -71,8 +71,7 @@ void LengthNormMerger::init(const DocumentSchema* pDocSchema)
         const FieldSchema* pFieldSchema = it.next();
         if (pFieldSchema->isIndexed() && pFieldSchema->hasLengthNorm())
         {
-            StandaloneNormMergerPtr merger= 
-                new StandaloneNormMerger(*pFieldSchema);
+            StandaloneNormMergerPtr merger(new StandaloneNormMerger(*pFieldSchema));
             m_merges.push_back(merger);
         }
     }

@@ -117,7 +117,7 @@ public:
     SearchType m_searchType;
 };
 
-typedef FX_NS(common)::SharedPtr<FieldType> FieldTypePtr;
+DEFINE_TYPED_PTR(FieldType);
 
 //////////////////////////////////////////////////////
 //

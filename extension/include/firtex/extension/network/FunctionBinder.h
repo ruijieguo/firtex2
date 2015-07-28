@@ -202,7 +202,7 @@ inline ReferenceWrapper<T const> const cref(T const & t)
             (m_pObject.get()->*m_fnMethod)(a1, a2);                     \
         }                                                               \
     private:                                                            \
-        typedef FX_NS(common)::SharedPtr<T> ObjPtr;                     \
+        DEFINE_TYPED_PTR(T);                                            \
         ObjPtr m_pObject;                                               \
         Callback m_fnMethod;                                            \
     };                                                                  \
@@ -308,7 +308,7 @@ inline ReferenceWrapper<T const> const cref(T const & t)
     {                                                                   \
     public:                                                             \
         typedef void (T::*Callback)(argType a1);                        \
-        typedef FX_NS(common)::SharedPtr<T> ObjPtr;                     \
+        DEFINE_TYPED_PTR(T);                                            \
     public:                                                             \
         Typed##handleClass(T* pObject, Callback method, argType a1)     \
             : m_pObject(pObject)                                        \
@@ -443,7 +443,7 @@ inline ReferenceWrapper<T const> const cref(T const & t)
             (m_pObject.get()->*m_fnMethod)(m_arg1, m_arg2);             \
         }                                                               \
     private:                                                            \
-        typedef FX_NS(common)::SharedPtr<T> ObjPtr;                     \
+        DEFINE_TYPED_PTR(T);                                            \
         ObjPtr m_pObject;                                               \
         Callback m_fnMethod;                                            \
         arg1Type m_arg1;                                                \

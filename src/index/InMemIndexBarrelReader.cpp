@@ -15,7 +15,6 @@ SETUP_STREAM_LOGGER(index, InMemIndexBarrelReader);
 InMemIndexBarrelReader::InMemIndexBarrelReader(
         const IndexBarrelWriter* pBarrelWriter, IndexBarrelKeeper* pKeeper) 
     : m_pKeeper(pKeeper)
-    , m_pDocFilter(NULL)
     , m_bHasMultiIndexFields(false)
 {
     init(pBarrelWriter);
@@ -27,8 +26,8 @@ InMemIndexBarrelReader::~InMemIndexBarrelReader()
 
 void InMemIndexBarrelReader::init(const IndexBarrelWriter* pBarrelWriter)
 {
-    m_pInStreamPool = new InputStreamPool(m_pKeeper->getFileSystem());
-    m_pDocFilter = pBarrelWriter->getDocFilter().get();
+    m_pInStreamPool.reset(new InputStreamPool(m_pKeeper->getFileSystem()));
+    m_pDocFilter = pBarrelWriter->getDocFilter();
 
     if (pBarrelWriter->getDocCount() > 0)
     {
@@ -56,9 +55,9 @@ void InMemIndexBarrelReader::init(const IndexBarrelWriter* pBarrelWriter)
                 if (pFieldSchema->hasLengthNorm())
                 {
                     LengthNormIteratorPtr pNormIt = pNormWriter->iterator(fieldId);
-                    if (m_pLengthNormReader.isNull())
+                    if (!m_pLengthNormReader)
                     {
-                        m_pLengthNormReader = new LengthNormReader();
+                        m_pLengthNormReader.reset(new LengthNormReader());
                     }
                     m_pLengthNormReader->addNormIterator(fieldId, pNormIt);
                 }
@@ -67,7 +66,7 @@ void InMemIndexBarrelReader::init(const IndexBarrelWriter* pBarrelWriter)
             if (pFieldSchema->hasForwardIndex())
             {
                 ForwardIndexWriterPtr pFdIndexWriter = pBarrelWriter->getForwardIndexWriter(fieldId);
-                FIRTEX_ASSERT2(pFdIndexWriter.isNotNull());
+                FIRTEX_ASSERT2(pFdIndexWriter);
                 if (fieldId >= (fieldid_t)m_forwardIndexes.size())
                 {
                     m_forwardIndexes.resize((size_t)fieldId + 1);
@@ -80,7 +79,7 @@ void InMemIndexBarrelReader::init(const IndexBarrelWriter* pBarrelWriter)
         {
             MultiFieldTermReader* pMultiTermReader =
                 new MultiFieldTermReader(m_pKeeper->getComponentBuilder());
-            m_pTermReader.assign(pMultiTermReader);
+            m_pTermReader.reset(pMultiTermReader);
             for (size_t i = 0; i < termReaders.size(); ++i)
             {
                 TermReaderPtr& p = termReaders[i];
@@ -107,19 +106,20 @@ StoredFieldsReaderPtr InMemIndexBarrelReader::createStoredFieldsReader() const
 
 TermReaderPtr InMemIndexBarrelReader::termReader() const
 {
-    return m_pTermReader->clone();
+    TermReaderPtr pTermReader(m_pTermReader->clone());
+    return pTermReader;
 }
 
 TermReaderPtr InMemIndexBarrelReader::termReader(const std::string& sField) const
 {
-    if (m_pTermReader.isNull())
+    if (!m_pTermReader)
         return TermReaderPtr();
 
     if (m_bHasMultiIndexFields)
     {
         MultiFieldTermReaderPtr pMultiFieldTermReader = 
-            m_pTermReader.cast<MultiFieldTermReader>();
-        FIRTEX_ASSERT2(!pMultiFieldTermReader.isNull());
+            std::dynamic_pointer_cast<MultiFieldTermReader>(m_pTermReader);
+        FIRTEX_ASSERT2(!!pMultiFieldTermReader);
         return pMultiFieldTermReader->termReader(sField);
     }
     else 
@@ -150,7 +150,7 @@ ForwardIndexIteratorPtr InMemIndexBarrelReader::forwardIndexReader(fieldid_t fie
 
 LengthNormIteratorPtr InMemIndexBarrelReader::lengthNorm(const std::string& sField) const
 {
-    if (m_pLengthNormReader.isNotNull())
+    if (m_pLengthNormReader)
     {
         return m_pLengthNormReader->lengthNorm(sField);
     }

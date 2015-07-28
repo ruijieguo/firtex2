@@ -81,7 +81,7 @@ void DirCollection::initProcessors(const string& sDocType)
 {
     if (sDocType.empty())
     {
-        m_pDocProcessor = new PlainDocumentProcessor();
+        m_pDocProcessor.reset(new PlainDocumentProcessor());
     }
     else
     {
@@ -97,7 +97,7 @@ void DirCollection::initProcessors(const string& sDocType)
             }
             else
             {
-                m_pDocProcessor.assign(pProcessor);
+                m_pDocProcessor.reset(pProcessor);
             }
         }
         else 
@@ -117,7 +117,7 @@ void DirCollection::initProcessors(const string& sDocType)
                     pMultiTypeProcessor->addProcessor(st[i], pProcessorPtr);
                 }
             }
-            m_pDocProcessor.assign(pMultiTypeProcessor);
+            m_pDocProcessor.reset(pMultiTypeProcessor);
         }
     }
     m_pDocProcessor->init(getConfigure()->getDocSchema().get(),

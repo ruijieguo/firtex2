@@ -38,7 +38,7 @@ void QueryParserTestCase::testParseTermQuery()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("field1: abc");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("TermQuery: [field1: abc]"),
                          pQuery->toString());
 }
@@ -47,7 +47,7 @@ void QueryParserTestCase::testParseTermQueryWithDefField()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("abc");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     
     CPPUNIT_ASSERT_EQUAL(std::string("TermQuery: [def_field: abc]"),
                          pQuery->toString());
@@ -57,7 +57,7 @@ void QueryParserTestCase::testParseQuery()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("field1: \"abc def\"");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("PhraseQuery: [field1: abc, field1: def]"),
                          pQuery->toString());
 }
@@ -66,7 +66,7 @@ void QueryParserTestCase::testParseQueryWithOneTerm()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("field1: \"abcdef\"");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("TermQuery: [field1: abcdef]"),
                          pQuery->toString());
 }
@@ -75,7 +75,7 @@ void QueryParserTestCase::testTermQueryWithMultiTerm()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("field2: \'abc def\'");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("BooleanQuery: [+TermQuery: [field2: abc], "
                     "+TermQuery: [field2: def]]"),
                          pQuery->toString());
@@ -85,13 +85,13 @@ void QueryParserTestCase::testBooleanQuery()
 {
     QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
     QueryPtr pQuery = parser.parse("field2: abc AND def\'");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("BooleanQuery: [+TermQuery: [field2: abc], "
                     "+TermQuery: [def_field: def]]"),
                          pQuery->toString());
 
     pQuery = parser.parse("field2: abc def\'");
-    CPPUNIT_ASSERT(pQuery.isNotNull());
+    CPPUNIT_ASSERT(pQuery);
     CPPUNIT_ASSERT_EQUAL(std::string("BooleanQuery: [+TermQuery: [field2: abc], "
                     "+TermQuery: [def_field: def]]"),
                          pQuery->toString());
@@ -102,7 +102,7 @@ void QueryParserTestCase::testTermQueryWithSpecialFieldName()
     {
         QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
         QueryPtr pQuery = parser.parse("root.field: abc");
-        CPPUNIT_ASSERT(pQuery.isNotNull());
+        CPPUNIT_ASSERT(pQuery);
         CPPUNIT_ASSERT_EQUAL(std::string("TermQuery: [root.field: abc]"),
                              pQuery->toString());
     }
@@ -110,7 +110,7 @@ void QueryParserTestCase::testTermQueryWithSpecialFieldName()
     {
         QueryParser parser(m_pAnalyzerMapper.get(), m_sDefField, m_defOp);
         QueryPtr pQuery = parser.parse("root_field: abc");
-        CPPUNIT_ASSERT(pQuery.isNotNull());
+        CPPUNIT_ASSERT(pQuery);
         CPPUNIT_ASSERT_EQUAL(std::string("TermQuery: [root_field: abc]"),
                              pQuery->toString());
     }

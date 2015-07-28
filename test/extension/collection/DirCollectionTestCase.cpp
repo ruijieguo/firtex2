@@ -40,7 +40,7 @@ void DirCollectionTestCase::testScan()
     try
     {
         CollectionPtr pCol = Collection::buildCollection(sConf);
-        CPPUNIT_ASSERT(pCol.isNotNull());
+        CPPUNIT_ASSERT(pCol);
         
         pCol->scan(true);
     }

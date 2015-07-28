@@ -2,7 +2,7 @@
 #define __REFCOUNTEDOBJECT_H
 
 #include "firtex/common/StdHeader.h"
-#include "firtex/thread/AtomicCount.h"
+#include <atomic>
 
 FX_NS_DEF(common)
 
@@ -40,7 +40,8 @@ private:
     RefCountedObject(const RefCountedObject&);
     RefCountedObject& operator = (const RefCountedObject&);
 
-    mutable FX_NS(thread)::AtomicCount m_refCounter;
+    mutable std::atomic_long m_refCounter;
+    //mutable FX_NS(thread)::AtomicCount m_refCounter;
 };
 
 FX_NS_END

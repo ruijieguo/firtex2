@@ -73,10 +73,10 @@ void BlockFileSystemTest::testOpenAFileTwiceForRead()
     BlockFileSystem blockFS2;
     blockFS2.open(path, BlockFileSystem::READ);
     BlockFileSystem::FilePtr pFile2 = blockFS2.doOpenFile("testfile1");
-    CPPUNIT_ASSERT(pFile2.isNotNull());
+    CPPUNIT_ASSERT(pFile2);
 
     BlockFileSystem::FilePtr pFile3 = blockFS2.doOpenFile("testfile1");
-    CPPUNIT_ASSERT(pFile3.isNotNull());
+    CPPUNIT_ASSERT(pFile3);
 
     CPPUNIT_ASSERT_EQUAL((size_t)2, blockFS2.openedFiles());
 
@@ -92,7 +92,7 @@ void BlockFileSystemTest::testCreateAndOpenFile()
     BlockFileSystem blockFS2;
     blockFS2.open(path, BlockFileSystem::READ);
     BlockFileSystem::FilePtr pFile1 = blockFS2.doCreateFile("testfile1");
-    CPPUNIT_ASSERT(pFile1.isNotNull());
+    CPPUNIT_ASSERT(pFile1);
     CPPUNIT_ASSERT(blockFS2.exists("testfile1"));
     CPPUNIT_ASSERT_EQUAL((size_t)1, blockFS2.openedFiles());
 
@@ -112,7 +112,7 @@ void BlockFileSystemTest::testCreateAndOpenFile()
 
     CPPUNIT_ASSERT_EQUAL((size_t)0, blockFS2.openedFiles());
     BlockFileSystem::FilePtr pFile2 = blockFS2.doOpenFile("testfile1");    
-    CPPUNIT_ASSERT(pFile2.isNotNull());
+    CPPUNIT_ASSERT(pFile2);
 
     CPPUNIT_ASSERT_EQUAL((size_t)1, blockFS2.openedFiles());
     blockFS2.closeFile(pFile2);
@@ -127,7 +127,7 @@ void BlockFileSystemTest::testOpenAndCreateFile()
     BlockFileSystem blockFS2;
     blockFS2.open(path, BlockFileSystem::READ);
     BlockFileSystem::FilePtr pFile1 = blockFS2.doOpenFile("testfile1");
-    CPPUNIT_ASSERT(pFile1.isNotNull());
+    CPPUNIT_ASSERT(pFile1);
     CPPUNIT_ASSERT_EQUAL((size_t)1, blockFS2.openedFiles());
 
     bool bHasExcep = false;
@@ -147,7 +147,7 @@ void BlockFileSystemTest::testOpenAndCreateFile()
     CPPUNIT_ASSERT_EQUAL((size_t)0, blockFS2.openedFiles());
 
     BlockFileSystem::FilePtr pFile2 = blockFS2.doCreateFile("testfile1");    
-    CPPUNIT_ASSERT(pFile2.isNotNull());
+    CPPUNIT_ASSERT(pFile2);
 
     CPPUNIT_ASSERT_EQUAL((size_t)1, blockFS2.openedFiles());
     blockFS2.closeFile(pFile2);

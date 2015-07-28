@@ -18,7 +18,7 @@ DirectoryFileFetcher::~DirectoryFileFetcher()
 void DirectoryFileFetcher::init(const tstring& sDirectory,
                                 const FileFilterPtr& pFileFilter)
 {
-    m_pDirIterator = new DirectoryIterator(sDirectory, true);
+    m_pDirIterator.reset(new DirectoryIterator(sDirectory, true));
     m_pFileFilter = pFileFilter;
 }
 
@@ -32,7 +32,7 @@ bool DirectoryFileFetcher::fetchNext(RawDocumentPtr& pRawDoc)
             continue;
         }
 
-        if (m_pFileFilter.isNotNull())
+        if (m_pFileFilter)
         {
             const Path& filePath = m_pDirIterator->getPath();
             if (m_pFileFilter->isFiltered(filePath))

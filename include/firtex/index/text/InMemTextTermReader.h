@@ -29,7 +29,7 @@ class InMemTextTermReader : public TypedInMemTermReader<uint64_t, IndexKeyHasher
 {
 public:
     typedef TextIndexer::PostingTableType PostingTableType;
-    typedef FX_NS(common)::SharedPtr<PostingTableType> PostingTableTypePtr;
+    DEFINE_TYPED_PTR(PostingTableType);
 
 public:
     InMemTextTermReader() {}

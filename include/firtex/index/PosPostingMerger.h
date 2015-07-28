@@ -130,7 +130,7 @@ inline void PosPostingMergerStreammer::init(const FX_NS(store)::OutputStreamPtr&
         m_pPosSkipListWriter = NULL;
     }
 
-    if (m_pPool.isNotNull())
+    if (m_pPool)
     {
         m_pPool->clear();
     }
@@ -157,10 +157,10 @@ inline void PosPostingMergerStreammer::addPosSkip()
 {
     if (!m_pPosSkipListWriter)
     {
-        if (m_pPool.isNull())
+        if (!m_pPool)
         {
             PoolType* pPool = new PoolType(DEFAULT_WRITE_BUFFER);
-            m_pPool.assign(pPool);
+            m_pPool.reset(pPool);
         }
         m_pPosSkipListWriter = new PosSkipListWriter(GLOBAL_CONF().Advance.Posting.maxLevel,
                 m_pPool.get(), m_pPool.get());

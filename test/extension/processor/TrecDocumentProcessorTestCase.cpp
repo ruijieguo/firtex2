@@ -129,10 +129,10 @@ void TrecDocumentProcessorTestCase::makeAnswer(const std::string& str, Answer& a
     xmlDoc.parse(str);
     
     for (XMLNodeWrapperPtr pDocNode = xmlDoc.firstNode();
-         pDocNode.isNotNull(); pDocNode = pDocNode->nextSibling())
+         pDocNode; pDocNode = pDocNode->nextSibling())
     {
         for (XMLNodeWrapperPtr pChildNode = pDocNode->firstNode();
-             pChildNode.isNotNull(); pChildNode = pChildNode->nextSibling())
+             pChildNode; pChildNode = pChildNode->nextSibling())
         {
             ans.push_back(make_pair(pChildNode->getName(), pChildNode->getValue()));
         }
@@ -154,7 +154,7 @@ void TrecDocumentProcessorTestCase::testProcess()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Answer ans;
     makeAnswer(TEST_FILE1, ans);
@@ -193,7 +193,7 @@ void TrecDocumentProcessorTestCase::testProcessMultiFile()
         processor.process(docSource);
 
         DocumentPtr pDoc = docSource.stealLastDocument();
-        CPPUNIT_ASSERT(pDoc.isNotNull());
+        CPPUNIT_ASSERT(pDoc);
 
         Document::Iterator it = pDoc->iterator();
         while (it.hasNext())
@@ -222,7 +222,7 @@ void TrecDocumentProcessorTestCase::testProcessFileMisField()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Answer ans;
     makeAnswer(TEST_FILE_MISS_FIELD, ans);
@@ -259,7 +259,7 @@ void TrecDocumentProcessorTestCase::testProcessGZipFile()
         processor.process(docSource);
 
         DocumentPtr pDoc = docSource.stealLastDocument();
-        CPPUNIT_ASSERT(pDoc.isNotNull());
+        CPPUNIT_ASSERT(pDoc);
 
         Document::Iterator it = pDoc->iterator();
         while (it.hasNext())
@@ -318,7 +318,7 @@ void TrecDocumentProcessorTestCase::testProcessTrecFileWithMeta()
     processor.process(docSource);
 
     DocumentPtr pDoc = docSource.stealLastDocument();
-    CPPUNIT_ASSERT(pDoc.isNotNull());
+    CPPUNIT_ASSERT(pDoc);
 
     Document::Iterator it = pDoc->iterator();
     CPPUNIT_ASSERT(it.hasNext());

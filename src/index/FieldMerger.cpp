@@ -118,7 +118,7 @@ bool FieldMerger::initQueue(const IndexMergeInfos& mergeFieldInfos)
         return false;
     }
 
-    m_pMergeQueue = new FieldMergeQueue(mergeFieldInfos.size());
+    m_pMergeQueue.reset(new FieldMergeQueue(mergeFieldInfos.size()));
 
     for (size_t i = 0; i < mergeFieldInfos.size(); ++i)
     {

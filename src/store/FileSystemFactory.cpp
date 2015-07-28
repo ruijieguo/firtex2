@@ -9,8 +9,10 @@ SETUP_STREAM_LOGGER(store, FileSystemFactory);
 
 FileSystemFactory::FileSystemFactory() 
 {
-    registerFileSystem(new BlockFileSystem::Creator);
-    registerFileSystem(new MMapFileSystem::Creator);
+    CreatorPtr pCreator(new BlockFileSystem::Creator);
+    registerFileSystem(pCreator);
+    pCreator.reset(new MMapFileSystem::Creator);
+    registerFileSystem(pCreator);
 }
 
 FileSystemFactory::~FileSystemFactory() 

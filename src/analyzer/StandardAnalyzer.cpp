@@ -73,11 +73,11 @@ void StandardAnalyzer::init(const tstring& sDictPath)
     TokenizerPtr pTok;
     if (m_sEncodeName == "gbk" || m_sEncodeName == "gb2312")
     {
-        pTok = new GBKStandardTokenizer();
+        pTok.reset(new GBKStandardTokenizer());
     }
     else
     {
-        pTok = new UTF8StandardTokenizer();
+        pTok.reset(new UTF8StandardTokenizer());
     }
 
     if (m_eSegAlgorithm == SA_UNIGRAM)

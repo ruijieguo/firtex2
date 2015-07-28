@@ -149,8 +149,8 @@ void StandardTokenizer<LexerT>::tokenize(TokenViewPtr& pTokenView,
     const char* szToken = NULL;
     size_t nTokenLen = 0;
 
-    register size_t pos = nStartOffOfToken;
-    register int32_t inc = nPosInc;
+    size_t pos = nStartOffOfToken;
+    int32_t inc = nPosInc;
     Token::TokenType tokenType = Token::TT_MAX;
     while ((tokenType = lexer.lex(szToken, nTokenLen)) != Token::TT_MAX)
     {

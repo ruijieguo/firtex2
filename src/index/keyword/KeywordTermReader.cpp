@@ -31,7 +31,7 @@ TermIteratorPtr KeywordTermReader::createTermIterator(
 
     InputStreamPtr pDocStream = pStreamPool->getInputStream(
             getFileName(DOC_POSTING_FILEEXT));
-    if (pDocStream.isNull())
+    if (!pDocStream)
     {
         FIRTEX_THROW(FileIOException, _T("Open posting-list file of [%s] FAILED."),
                      getFieldSchema()->getName().c_str());
@@ -54,7 +54,7 @@ TermPostingIteratorPtr KeywordTermReader::createTermPostingIterator(
 {
     InputStreamPtr pDocStream = pStreamPool->getInputStream(
                 getFileName(DOC_POSTING_FILEEXT));
-    if (pDocStream.isNull())
+    if (!pDocStream)
     {
         FIRTEX_THROW(FileIOException, _T("Open posting-list file of [%s] FAILED."),
                      getFieldSchema()->getName().c_str());

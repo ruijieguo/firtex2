@@ -46,7 +46,7 @@ void XMLConfigurator::load(XMLDocumentWrapper& xmlDoc)
 {
     setMode(Configurator::FROM_CONF);
     XMLNodeWrapperPtr pNode = xmlDoc.firstNode(CONFIGURE_TAG_NAME);
-    if (pNode.isNull())
+    if (!pNode)
     {
         FIRTEX_THROW(InvalidConfigException, "Load xml configure FAILED: no configure element.");
     }
@@ -68,7 +68,7 @@ void XMLConfigurator::loadFromBuffer(const string& sXML)
     XMLDocumentWrapper xmlDoc;
     xmlDoc.parse(sXML);
     XMLNodeWrapperPtr pRoot = xmlDoc.firstNode(CONFIGURE_TAG_NAME);
-    if (pRoot.isNotNull())
+    if (pRoot)
     {
         load(pRoot, getMap());
     }
@@ -77,7 +77,7 @@ void XMLConfigurator::loadFromBuffer(const string& sXML)
 void XMLConfigurator::load(XMLNodeWrapperPtr& pNode, Configurator::ConfMap& conf)
 {
     XMLNodeWrapperPtr pChild = pNode->firstNode();
-    if (pChild.isNull())
+    if (!pChild)
     {
         Configurator c(conf, Configurator::TO_CONF);
         string sValue = pNode->getValue();
@@ -85,7 +85,7 @@ void XMLConfigurator::load(XMLNodeWrapperPtr& pNode, Configurator::ConfMap& conf
                     sValue, (const string&)_T(""));
         conf = c.getMap();
     }
-    else if (pChild->nextSibling().isNull() 
+    else if (!pChild->nextSibling()
              && pChild->type() == XMLDocumentWrapper::NODE_DATA)
     {
         Configurator c(conf, Configurator::TO_CONF);
@@ -98,7 +98,7 @@ void XMLConfigurator::load(XMLNodeWrapperPtr& pNode, Configurator::ConfMap& conf
     {
         Configurator::ConfMap confMap;
         for (XMLNodeWrapperPtr pSubNode = pNode->firstNode();
-             pSubNode.isNotNull(); pSubNode = pSubNode->nextSibling())
+             pSubNode; pSubNode = pSubNode->nextSibling())
         {
             load(pSubNode, confMap);
         }
@@ -156,7 +156,7 @@ void XMLConfigurator::save(const string& sCfgFile, FileSystemPtr& pFileSys)
     }
 
     OutputStreamPtr pOutStream = pFileSys->createFile(sCfgFile);
-    if (pOutStream.isNull())
+    if (!pOutStream)
     {
         FIRTEX_THROW(FileIOException, "Save configure [%s] FAILED ",
                      sCfgFile.c_str());

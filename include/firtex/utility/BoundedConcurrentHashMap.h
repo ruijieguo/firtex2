@@ -1383,7 +1383,7 @@ public:
                          "least twice the concurrencyLevel");
         }
 
-        FIRTEX_ASSERT2(evictionListener.isNotNull());
+        FIRTEX_ASSERT2(evictionListener);
 
         if (concurrencyLevel > MAX_SEGMENTS) 
         {

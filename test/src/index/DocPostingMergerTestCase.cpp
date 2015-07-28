@@ -33,7 +33,6 @@ public:
     docid_t skipTo(docid_t docId) { return INVALID_DOCID;}
     docid_t doc() const { return INVALID_DOCID;}
     tf_t freq() {return 0;}
-    tf_t nextPositions(loc_t*& positions) { return 0;}
     loc_t skipToPosition(loc_t pos) { return INVALID_POS;};
 
     PostingDecoderPtr getPostingDecoder() {return m_pPostingDecoder;}
@@ -340,7 +339,7 @@ void DocPostingMergerTestCase::checkMergeResult(offset_t nStartOff)
          it != m_postingHolder.end(); ++it)
     {
         PostingDataPtr pPostingData = *it;
-        if (pPostingData->pDocFilter.isNull())
+        if (!pPostingData->pDocFilter)
         {
             baseDocId = (*m_pBarrelsInfo)[i].getBaseDocId();
         }
@@ -351,13 +350,13 @@ void DocPostingMergerTestCase::checkMergeResult(offset_t nStartOff)
         {
             tf_t tf = it2->second;
             docid_t docId = it2->first;
-            if (pPostingData->pDocFilter.isNotNull() && 
+            if (pPostingData->pDocFilter && 
                 (pPostingData->pDocFilter->test(docId)))
             {
                 continue;
             }
 
-            if (pPostingData->pDocIdRecycling.isNotNull() &&
+            if (pPostingData->pDocIdRecycling &&
                 pPostingData->pDocIdRecycling->hasDeletions())
             {
                 docId = (*(pPostingData->pDocIdRecycling))[docId];
@@ -366,7 +365,7 @@ void DocPostingMergerTestCase::checkMergeResult(offset_t nStartOff)
             mergedAnswer.push_back(make_pair(docId, tf));
             totalTF += tf;
         }
-        if (pPostingData->pDocFilter.isNotNull())
+        if (pPostingData->pDocFilter)
         {
             baseDocId += (pPostingData->maxDocId + 1 - pPostingData->pDocFilter->count());
         }

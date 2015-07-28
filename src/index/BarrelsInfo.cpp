@@ -116,10 +116,10 @@ void BarrelsInfo::clear()
 }
 
 #define  ASSERT_EXIST(node, tag)                                        \
-    if (node.isNull())                                                  \
+    if (!node)                                                  \
     {                                                                   \
         FIRTEX_THROW(IndexCollapseException,                            \
-                     "Missing "tag" tag in barrels info file.");        \
+                     "Missing " tag " tag in barrels info file.");        \
     }
 
 void BarrelsInfo::read(FileSystemPtr& pFileSys)
@@ -172,7 +172,7 @@ void BarrelsInfo::read(FileSystemPtr& pFileSys, commitid_t commitId)
 
     ///get <encoding></encoding> element
     pNode = pDbNode->firstNode("encoding");
-    if (pNode.isNotNull())
+    if (pNode)
     {
         m_sEncoding = pNode->getValue();
     }
@@ -186,9 +186,9 @@ void BarrelsInfo::read(FileSystemPtr& pFileSys, commitid_t commitId)
 
     ///read barrel information
     for (XMLNodeWrapperPtr pBarrelNode = pBarrelsNode->firstNode();
-         pBarrelNode.isNotNull(); pBarrelNode = pBarrelNode->nextSibling())
+         pBarrelNode; pBarrelNode = pBarrelNode->nextSibling())
     {
-        BarrelInfoPtr pBarrelInfo = new BarrelInfo();
+        BarrelInfoPtr pBarrelInfo(new BarrelInfo());
                 
         ///get <suffix></suffix> element
         XMLNodeWrapperPtr pChild = pBarrelNode->firstNode("suffix");
@@ -217,7 +217,7 @@ void BarrelsInfo::read(FileSystemPtr& pFileSys, commitid_t commitId)
         ASSERT_EXIST(pIndexMetaNode, "<index_meta>");
         IndexMeta& indexMeta = pBarrelInfo->getIndexMeta();
         for (XMLNodeWrapperPtr pFieldMetaNode = pIndexMetaNode->firstNode();
-             pFieldMetaNode.isNotNull(); pFieldMetaNode = pFieldMetaNode->nextSibling())
+             pFieldMetaNode; pFieldMetaNode = pFieldMetaNode->nextSibling())
         {
             ///get <suffix></suffix> element
             XMLNodeWrapperPtr pChild = pFieldMetaNode->firstNode("field");

@@ -57,12 +57,12 @@ void DateTimeSearchTestCase::testSearch()
 
     QueryHitsPtr pHits = m_pIndexSearcher->search("query=TITLE:hello;"
             "filter=modified=DATE(\'2011-12-27 21:51:1\')", *m_pQueryParser);
-    CPPUNIT_ASSERT(pHits.isNotNull());
+    CPPUNIT_ASSERT(pHits);
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
 
     pHits = m_pIndexSearcher->search("query=TITLE:hello;"
             "filter=NOW()>modified", *m_pQueryParser);
-    CPPUNIT_ASSERT(pHits.isNotNull());
+    CPPUNIT_ASSERT(pHits);
     CPPUNIT_ASSERT_EQUAL((size_t)1, pHits->size());
 }
 

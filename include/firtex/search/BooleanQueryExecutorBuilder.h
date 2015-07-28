@@ -70,7 +70,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<BooleanQueryExecutorBuilder> BooleanQueryExecutorBuilderPtr;
+DEFINE_TYPED_PTR(BooleanQueryExecutorBuilder);
 
 //////////////////////////////////////////////////////
 //

@@ -26,7 +26,7 @@ RPCSearchCluster::RPCSearchCluster(AsyncDeliver* pDeliver)
 
 RPCSearchCluster::~RPCSearchCluster()
 {
-    if (m_pSearchClient.isNotNull())
+    if (m_pSearchClient)
     {
         m_pSearchClient->close();
     }
@@ -69,7 +69,7 @@ void RPCSearchCluster::run()
 
 void RPCSearchCluster::initClient(const std::string& sAddr, int32_t nPort)
 {
-    m_pSearchClient = new RPCClient();
+    m_pSearchClient.reset(new RPCClient());
     m_pSearchClient->open(sAddr, nPort);
 }
 

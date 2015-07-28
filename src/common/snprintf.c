@@ -361,17 +361,17 @@
 #endif
 
 #define fast_memcpy(d,s,n) \
-  { register size_t nn = (size_t)(n); \
+  { size_t nn = (size_t)(n); \
     if (nn >= breakeven_point) memcpy((d), (s), nn); \
     else if (nn > 0) { /* proc call overhead is worth only for large strings*/\
-      register char *dd; register const char *ss; \
+      char *dd; const char *ss;						\
       for (ss=(s), dd=(d); nn>0; nn--) *dd++ = *ss++; } }
 
 #define fast_memset(d,c,n) \
-  { register size_t nn = (size_t)(n); \
+  { size_t nn = (size_t)(n);				  \
     if (nn >= breakeven_point) memset((d), (int)(c), nn); \
     else if (nn > 0) { /* proc call overhead is worth only for large strings*/\
-      register char *dd; register const int cc=(int)(c); \
+      char *dd; const int cc=(int)(c);					\
       for (dd=(d); nn>0; nn--) *dd++ = cc; } }
 
 /* prototypes */
@@ -705,7 +705,7 @@ int portable_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
           else if (precision == 0) str_arg_l = 0;
           else {
        /* memchr on HP does not like n > 2^31  !!! */
-            const char *q = memchr(str_arg, '\0',
+	    char *q = (char*)memchr(str_arg, '\0',
                              precision <= 0x7fffffff ? precision : 0x7fffffff);
             str_arg_l = !q ? precision : (q-str_arg);
           }

@@ -80,7 +80,7 @@ void EvHttpServer::start(bool bBlocking)
     }
     else
     {
-        m_pEventThread = new Thread();
+        m_pEventThread.reset(new Thread());
         m_pEventThread->start(*this);
     }
 }
@@ -137,12 +137,12 @@ void EvHttpServer::complete(EvHttpRequestContext* ctx)
  
 void EvHttpServer::stop()
 {
-    if (m_pEventThread.isNotNull())
+    if (m_pEventThread)
     {
         event_base_loopbreak(m_pEventBase);
     }
 
-    if (m_pRequestHandler.isNotNull())
+    if (m_pRequestHandler)
     {
         m_pRequestHandler->stop();
     }
@@ -150,12 +150,12 @@ void EvHttpServer::stop()
 
 void EvHttpServer::join()
 {
-    if (m_pEventThread.isNotNull())
+    if (m_pEventThread)
     {
         m_pEventThread->join();
     }
 
-    if (m_pRequestHandler.isNotNull())
+    if (m_pRequestHandler)
     {
         m_pRequestHandler->join();
     }

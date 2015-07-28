@@ -35,8 +35,8 @@ size_t AnyQuery::size() const
 QueryExecutorPtr AnyQuery::createExecutor(IndexReaderPtr& pIndexReader,
         FeatureProviderPtr& pProvider, PoolPtr& pPool) const
 {
-    QueryExecutorPtr pExe = new AnyQueryExecutor(pIndexReader,
-            pProvider, pPool);
+    QueryExecutorPtr pExe(new AnyQueryExecutor(pIndexReader,
+                    pProvider, pPool));
     return pExe;
 }
 

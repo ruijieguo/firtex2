@@ -5,6 +5,7 @@
 #include "firtex/common/Logger.h"
 #include "firtex/thread/FastMutex.h"
 #include "firtex/thread/Condition.h"
+#include "firtex/common/SharedPtr.h"
 
 #ifdef FX_WINDOWS
 #include <ctype.h>
@@ -26,7 +27,7 @@ FX_NS_DEF(app);
 class RPCServer
 {
 public:
-    typedef FX_NS(common)::SharedPtr<apache::thrift::server::TServer> TServerPtr;
+    typedef boost::shared_ptr<apache::thrift::server::TServer> TServerPtr;
     typedef boost::shared_ptr<apache::thrift::TProcessor> TProcessorPtr;
 
 public:

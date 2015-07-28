@@ -128,19 +128,6 @@ loc_t BarrelTermPositionIterator::skipToPosition(loc_t pos)
     return m_lastPos;
 }
 
-tf_t BarrelTermPositionIterator::nextPositions(loc_t*& positions)
-{
-    if (m_nVisitPosInDoc >= m_nVisitPosInDoc)
-    {
-        if (m_nVisitPosInDoc >= (uint32_t)m_tfBuffer[m_nVisitDocInBuffer])
-        {
-            return 0;
-        }
-        //decodePositions();
-    }
-//    positions = m_pInDocPosBuffer;
-    return m_nVisitPosInDoc;
-}	
 
 FX_NS_END
 

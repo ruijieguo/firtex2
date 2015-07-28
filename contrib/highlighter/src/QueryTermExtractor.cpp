@@ -55,7 +55,7 @@ WeightedTermsPtr QueryTermExtractor::getIdfWeightedTerms(const Query* pQuery,
 WeightedTermsPtr QueryTermExtractor::getTerms(const Query* pQuery,
         bool prohibited, const string& fieldName) 
 {
-    WeightedTermsPtr pWTs = new WeightedTerms();
+    WeightedTermsPtr pWTs(new WeightedTerms());
     getTerms(pQuery, pWTs, prohibited,fieldName);
     return pWTs;
 }
@@ -68,7 +68,7 @@ WeightedTermsPtr QueryTermExtractor::getTerms(const Query* pQuery, bool prohibit
     {
         return getTerms(pQuery, prohibited, terms[0]->getField().c_str());
     }
-    return NULL;
+    return WeightedTermsPtr();
 }	
 
 void QueryTermExtractor::getTerms(const Query* pQuery, WeightedTermsPtr& pWTs,
@@ -88,11 +88,12 @@ void QueryTermExtractor::getTerms(const Query* pQuery, WeightedTermsPtr& pWTs,
             pTerm = terms[i];
             if ((fieldName.empty()) || (pTerm->getField() == fieldName))
             {
-                pWTs->push_back(new WeightedTerm(pQuery->getBoost(), pTerm.get()));
+                WeightedTermPtr pWT(new WeightedTerm(pQuery->getBoost(), pTerm.get()));
+                pWTs->push_back(pWT);
             }
             else 
             {
-                WeightedTerm* pWT = new WeightedTerm(pQuery->getBoost(), pTerm.get());
+                WeightedTermPtr pWT(new WeightedTerm(pQuery->getBoost(), pTerm.get()));
                 pWT->setField(fieldName);
                 pWTs->push_back(pWT);
             }

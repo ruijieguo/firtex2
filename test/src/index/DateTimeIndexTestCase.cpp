@@ -110,7 +110,7 @@ void DateTimeIndexTestCase::testPosting()
     IndexReaderPtr pReader = index.acquireReader();
     TermReaderPtr pTermReader = pReader->termReader();
     TermIteratorPtr pIterator = pTermReader->termIterator("DateTime1");
-    CPPUNIT_ASSERT(!pIterator.isNull());
+    CPPUNIT_ASSERT(pIterator);
 
     size_t j = 0;
     while (pIterator->hasNext())
@@ -158,12 +158,12 @@ void DateTimeIndexTestCase::testQuery()
     QueryParser queryParser(pReader->getAnalyzerMapper(), 
                     "DateTime1", QueryParser::OP_AND);
     QueryHitsPtr pHits = se.search("query=\'2009-2-2 1:1:1\'", queryParser);
-    CPPUNIT_ASSERT(pHits.isNotNull());
+    CPPUNIT_ASSERT(pHits);
     uint64_t uTotalHits =  pHits->getTotalHits();
     CPPUNIT_ASSERT_EQUAL((uint64_t)1, uTotalHits);
 
     pHits = se.search("query=\'2009-11-11 10:10:10\'", queryParser);
-    CPPUNIT_ASSERT(pHits.isNotNull());
+    CPPUNIT_ASSERT(pHits);
     uTotalHits =  pHits->getTotalHits();
     CPPUNIT_ASSERT_EQUAL((uint64_t)2, uTotalHits);
 }

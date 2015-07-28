@@ -17,9 +17,8 @@ SETUP_STREAM_LOGGER(app, AppendResultCombiner);
 
 void AppendResultCombiner::beginCombine()
 {
-    m_pXmlDoc = new XMLDocumentWrapper();
+    m_pXmlDoc.reset(new XMLDocumentWrapper());
     m_pRootNode = m_pXmlDoc->appendNode(XMLDocumentWrapper::NODE_ELEMENT, "result");
-//    m_pRootNode = m_pXmlDoc->appendNode(XMLDocumentWrapper::NODE_ELEMENT, "result");
 }
 
 void AppendResultCombiner::combine(const std::string& sClusterId, 
@@ -117,10 +116,10 @@ void AppendResultCombiner::combine(const std::string& sClusterId,
         }//end while
 
         const QueryTracerPtr& pTracer = queryResult.getTracer();
-        if (pTracer.isNotNull())
+        if (pTracer)
         {
             XMLNodeWrapperPtr pTraceNode = m_pRootNode->firstNode("tracer");
-            if (pTraceNode.isNull())
+            if (!pTraceNode)
             {
                 pTraceNode = m_pRootNode->appendNode(
                         XMLDocumentWrapper::NODE_ELEMENT, "tracer");

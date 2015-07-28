@@ -46,12 +46,12 @@ size_t ReqProhQueryExecutor::advance(MatchedDocSet& matchedDocs)
 
 docid_t ReqProhQueryExecutor::skipTo(docid_t docId)
 {
-    if (m_pReqExecutor.isNull())
+    if (!m_pReqExecutor)
     {		
         return INVALID_DOCID;
     }
 
-    if (m_pProhExecutor.isNull())
+    if (!m_pProhExecutor)
     {
         docId = m_pReqExecutor->skipTo(docId);
     }
@@ -89,7 +89,7 @@ void ReqProhQueryExecutor::extractFeature(QueryFeature& queryFeature) const
 size_t ReqProhQueryExecutor::size() const
 {
     size_t size = m_pReqExecutor->size();
-    if (m_pProhExecutor.isNotNull())
+    if (m_pProhExecutor)
     {
         size += m_pProhExecutor->size();
     }

@@ -69,7 +69,7 @@ void Plugins::enumerate()
         FX_LOG(INFO, "Load plugins configure: [%s]", p.toString().c_str());
 
         XMLNodeWrapperPtr pRootNode = xmlDoc.firstNode("plugins");
-        if (pRootNode.isNull())
+        if (!pRootNode)
         {
             FX_STREAM_LOG(WARN) << _T("Invalid plugins configure file: ")
                                 << p.toString() << FIRTEX_ENDL;
@@ -77,9 +77,9 @@ void Plugins::enumerate()
         }
 
         for (XMLNodeWrapperPtr pNode = pRootNode->firstNode("plugin"); 
-             pNode.isNotNull(); pNode = pNode->nextSibling("plugin"))
+             pNode; pNode = pNode->nextSibling("plugin"))
         {
-            PluginPtr pPlugin = new Plugin();
+            PluginPtr pPlugin(new Plugin());
             if (pPlugin->load(pNode))
             {
                 if (!pPlugin->isEnabled())

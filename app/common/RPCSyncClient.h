@@ -32,7 +32,7 @@ public:
     typedef boost::shared_ptr<apache::thrift::protocol::TProtocol> TProtocolPtr;
 
     typedef Client ClientType;
-    typedef FX_NS(common)::SharedPtr<ClientType> ClientTypePtr;
+    DEFINE_TYPED_PTR(ClientType);
 
 public:
     RPCSyncClient();

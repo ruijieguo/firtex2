@@ -27,7 +27,7 @@ void EvHttpServiceFactory::registerService(EvHttpService* pService)
     EvHttpServicePtr pServicePtr(pService);
 
     string sRequest = pService->requestCanHandle();
-    RouterPtr pRouter = new Router();
+    RouterPtr pRouter(new Router());
     if (pRouter->init(sRequest))
     {
         FX_LOG(INFO, "Register service for [%s] SUCCESS.", sRequest.c_str());

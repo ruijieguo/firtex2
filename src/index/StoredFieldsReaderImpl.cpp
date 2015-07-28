@@ -40,13 +40,13 @@ StoredFieldsReaderImpl::StoredFieldsReaderImpl(const StoredFieldsReaderImpl& src
 {
     m_sContent.reserve(src.m_sContent.capacity());
 
-    if (src.m_pDataReader.isNotNull())
+    if (src.m_pDataReader)
     {
-        m_pDataReader = src.m_pDataReader->clone();
+        m_pDataReader.reset(src.m_pDataReader->clone());
     }
-    if (src.m_pIdxReader.isNotNull())
+    if (src.m_pIdxReader)
     {
-        m_pIdxReader = src.m_pIdxReader->clone();
+        m_pIdxReader.reset(src.m_pIdxReader->clone());
     }    
 }
 
@@ -137,11 +137,11 @@ void StoredFieldsReaderImpl::open(const InputStreamPoolPtr& pStreamPool,
 
 void StoredFieldsReaderImpl::close()
 {
-    if (m_pDataReader.isNotNull())
+    if (m_pDataReader)
     {
         m_pStreamPool->releaseInputStream(m_pDataReader);
     }
-    if (m_pIdxReader.isNotNull())
+    if (m_pIdxReader)
     {
         m_pStreamPool->releaseInputStream(m_pIdxReader);
     }

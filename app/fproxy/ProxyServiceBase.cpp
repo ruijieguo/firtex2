@@ -31,14 +31,14 @@ bool ProxyServiceBase::init(const ProxyServerConfPtr& pConf)
            pConf->serverConf.thread_pool);
 
     int32_t nThreadCount = pConf->serverConf.thread_pool;
-    m_pClusterQueue = new ClusterQueue(nThreadCount + 1);
+    m_pClusterQueue.reset(new ClusterQueue(nThreadCount + 1));
 
     FX_LOG(INFO, "Setup process queue, size: [%d]",
            nThreadCount + 1);
     for (int32_t i = 0; i < nThreadCount + 1; ++i)
     {
         FX_LOG(INFO, "Setup the [%d] processor", i);
-        SearchShardsBasePtr pRPCSearchShards = newShards(m_nTimeout);
+        SearchShardsBasePtr pRPCSearchShards(newShards(m_nTimeout));
         if (!(pRPCSearchShards->init(pConf->resourceConf)))
         {
             FX_LOG(ERROR, "Init cluster FAILED.");
@@ -64,7 +64,7 @@ void ProxyServiceBase::syntaxSearch(std::string& sResult, const std::string& sUr
     FX_TRACE("Proxy receive search request: [%s].", sUri.c_str());
 
     SearchShardsBasePtr pShards = m_pClusterQueue->waitDequeue();
-    if (pShards.isNotNull())
+    if (pShards)
     {
         pShards->syntaxSearch(sResult, sUri);
         m_pClusterQueue->enqueue(pShards);

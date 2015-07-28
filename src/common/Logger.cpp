@@ -46,7 +46,7 @@ void LoggerBase::log(const FirteXException& exc)
 
 void LoggerBase::flush()
 {
-    if (m_pAppender.isNotNull())
+    if (!m_pAppender)
     {
         m_pAppender->flush();
     }
@@ -59,7 +59,7 @@ void Logger::configure(Configurator& conf)
 
     if (conf.getMode() == Configurator::TO_CONF)
     {
-        if (m_pAppender.isNotNull())
+        if (m_pAppender)
         {
             string sApp = m_pAppender->getIdentifier();
             conf.configure("appender", sApp);
@@ -177,8 +177,9 @@ void LoggerBuilder::configureAppender(const Configurator& conf)
                             sAppName.c_str());
                 }
                 string sAppBase = AnyCast<string>(it4.next().second);
-                AppenderPtr pApp = AppenderFactory::instance()->createAppender(sAppBase);
-                if (pApp.isNull())
+                AppenderPtr pApp;
+                pApp.reset(AppenderFactory::instance()->createAppender(sAppBase));
+                if (!pApp)
                 {
                     FIRTEX_THROW(BadParameterException, "Invalid base appender name: [%s].",
                             sAppBase.c_str());
@@ -187,8 +188,8 @@ void LoggerBuilder::configureAppender(const Configurator& conf)
                 Configurator::Iterator it5 = appConf.findConf("layout");
                 if (it5.hasNext())
                 {
-                    LayoutAppenderPtr pLayoutApp = pApp.cast<LayoutAppender>();
-                    if (pLayoutApp.isNull())
+                    LayoutAppenderPtr pLayoutApp = std::dynamic_pointer_cast<LayoutAppender>(pApp);
+                    if (!pLayoutApp)
                     {
                         FIRTEX_THROW(BadParameterException, "[%s] is not a layout appender",
                                 sAppBase.c_str());
@@ -249,8 +250,9 @@ AppenderPtr LoggerBuilder::findAppenderUnsafe(const string& sAppName)
         return it->second;
     }
     
-    AppenderPtr pApp = AppenderFactory::instance()->createAppender(sAppName);
-    if (pApp.isNull())
+    AppenderPtr pApp;
+    pApp.reset(AppenderFactory::instance()->createAppender(sAppName));
+    if (!pApp)
     {
         FIRTEX_THROW(BadParameterException, "Invalid appender name: [%s]", 
                      sAppName.c_str());
@@ -319,7 +321,8 @@ void LoggerBuilder::setAppenderUnsafe(const std::string& name,
 
 void LoggerBuilder::setConsoleAppender(const string& name)
 {
-    setAppender(name, new ConsoleAppender);
+    AppenderPtr pApp(new ConsoleAppender);
+    setAppender(name, pApp);
 }
 
 void LoggerBuilder::setFileAppender(const string& name, const string& sFilePath)
@@ -338,17 +341,18 @@ Logger& LoggerBuilder::getLogger(const string& name)
 Logger& LoggerBuilder::getLoggerUnsafe(const string& name)
 {
     LoggerPtr pLogger = findLogger(name);
-    if (pLogger.isNull())
+    if (!pLogger)
     {
         if (name == ROOT_LOGGER)
         {
-            pLogger.assign(new Logger(*this, name, new ConsoleAppender,
+            AppenderPtr pConApp(new ConsoleAppender);
+            pLogger.reset(new Logger(*this, name, pConApp,
                             LoggingLevel::LEVEL_INFO));
         }
         else
         {
             Logger& par = parentLoggerUnsafe(name);
-            pLogger.assign(new Logger(*this, name, par.getAppender(), par.getLevel()));
+            pLogger.reset(new Logger(*this, name, par.getAppender(), par.getLevel()));
         }
         addLogger(pLogger);
     }
@@ -361,11 +365,11 @@ Logger& LoggerBuilder::createLogger(const string& name, const AppenderPtr& pAppe
     FastMutex::Guard lock(m_mapMtx);
 
     LoggerPtr pLogger = findLogger(name);
-    if (pLogger.isNotNull()) 
+    if (pLogger) 
     {
         FIRTEX_THROW(ExistsException, "Logger: [%s] exists", name.c_str());
     }
-    pLogger.assign(new Logger(*this, name, pAppender, level));
+    pLogger.reset(new Logger(*this, name, pAppender, level));
     addLogger(pLogger);
     return *pLogger;
 }
@@ -467,7 +471,7 @@ Logger& LoggerBuilder::parentLoggerUnsafe(const string& name)
     {
         string pname = name.substr(0, pos);
         LoggerPtr pParent = findLogger(pname);
-        if (pParent.isNotNull())
+        if (pParent)
         {
             return *pParent;
         }

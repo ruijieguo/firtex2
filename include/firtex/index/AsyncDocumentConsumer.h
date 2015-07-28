@@ -42,7 +42,7 @@ public:
 
         FX_NS(document)::Document::Action getAction() const
         {
-            return document.isNotNull() ? document->getAction() 
+            return document ? document->getAction() 
                 : FX_NS(document)::Document::AT_NONE;
         }
 

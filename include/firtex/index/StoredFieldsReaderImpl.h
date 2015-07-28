@@ -71,7 +71,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<StoredFieldsReaderImpl> StoredFieldsReaderImplPtr;
+DEFINE_TYPED_PTR(StoredFieldsReaderImpl);
 
 FX_NS_END
 

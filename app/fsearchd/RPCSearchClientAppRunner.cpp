@@ -242,7 +242,7 @@ void RPCSearchClientAppRunner::displayShellHelp()
 
 void RPCSearchClientAppRunner::stop()
 {
-    // if (m_pServer.isNotNull())
+    // if (m_pServer)
     // {
     //     m_pServer->stop();
     // }

@@ -36,7 +36,7 @@ public:
     typedef typename Traits::PostingDecoderType PostingDecoderType;
     typedef typename Traits::PostingIteratorType PostingIteratorType;
 
-    typedef FX_NS(common)::SharedPtr<PostingDecoderType> PostingDecoderTypePtr;
+    DEFINE_TYPED_PTR(PostingDecoderType);
 
 public:
     TypedTermIterator(const FX_NS(document)::FieldSchema* pFieldSchema,
@@ -114,11 +114,11 @@ TypedTermIterator<Key, Traits>::~TypedTermIterator()
 {
     if (m_pInStreamPool)
     {
-        if (m_pDocStream.isNotNull())
+        if (m_pDocStream)
         {
             m_pInStreamPool->releaseInputStream(m_pDocStream);
         }
-        if (m_pPosStream.isNotNull())
+        if (m_pPosStream)
         {
             m_pInStreamPool->releaseInputStream(m_pPosStream);
         }
@@ -178,9 +178,9 @@ bool TypedTermIterator<Key, Traits>::init(const DictType* pDict,
     m_pDocStream = pDocStream;
     m_pPosStream = pPosStream;
  
-    m_pCurDecoder = new PostingDecoderType();
+    m_pCurDecoder.reset(new PostingDecoderType());
     m_pCurIterator = new PostingIteratorType();
-    m_pIteratorPtr = m_pCurIterator;
+    m_pIteratorPtr.reset(m_pCurIterator);
     return true;
 }
 

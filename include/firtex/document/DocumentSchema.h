@@ -226,7 +226,7 @@ inline size_t DocumentSchema::getNumFields() const
 
 inline const FieldSchema* DocumentSchema::operator[](const size_t idx) const
 {
-    if (idx < 0 || idx >= m_fields.size())
+    if (idx == size_t(-1) || idx >= m_fields.size())
         return NULL;
     return m_fields[idx];
 }

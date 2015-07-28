@@ -100,7 +100,7 @@ void RPCProxyServer::run()
 
 void RPCProxyServer::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -108,7 +108,7 @@ void RPCProxyServer::stop()
 
 void RPCProxyServer::join()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

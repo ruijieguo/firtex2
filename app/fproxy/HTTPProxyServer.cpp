@@ -44,7 +44,7 @@ bool HTTPProxyServer::init(const std::string& sConfFile)
 
     setupLogger();
 
-    EvHttpServiceFactoryPtr pServiceFactory = new EvHttpServiceFactory();
+    EvHttpServiceFactoryPtr pServiceFactory(new EvHttpServiceFactory());
     if (m_sRole == "blender")
     {
         BlenderServerConfPtr pBlenderConf = m_pConf.cast<BlenderServerConf>();
@@ -79,17 +79,17 @@ bool HTTPProxyServer::init(const std::string& sConfFile)
 
 void HTTPProxyServer::run()
 {
-    FIRTEX_ASSERT2(m_pServiceFactory.isNotNull());
-    m_pServer = new EvHttpServer(m_pConf->serverConf.host,
-                                 m_pConf->serverConf.listen_port,
-                                 m_pServiceFactory,
-                                 m_pConf->serverConf.thread_pool);    
+    FIRTEX_ASSERT2(m_pServiceFactory);
+    m_pServer.reset(new EvHttpServer(m_pConf->serverConf.host,
+                    m_pConf->serverConf.listen_port,
+                    m_pServiceFactory,
+                    m_pConf->serverConf.thread_pool));
     m_pServer->start(false);
 }
 
 void HTTPProxyServer::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -97,7 +97,7 @@ void HTTPProxyServer::stop()
 
 void HTTPProxyServer::join()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

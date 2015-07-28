@@ -149,7 +149,7 @@ void TypedDictTestCase::testSaveAndLoad()
     pOutStream->close();
 
     InputStreamPtr pInStream = bfs.openFile("test_dict");
-    CPPUNIT_ASSERT(pInStream.isNotNull());
+    CPPUNIT_ASSERT(pInStream);
     
     TypedDict<uint64_t, int64_t> dict2;
     dict2.load(pInStream);

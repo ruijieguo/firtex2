@@ -92,7 +92,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<QueryExecutor> QueryExecutorPtr;
+DEFINE_TYPED_PTR(QueryExecutor);
 
 ///////////////////////////////////////////////////
 //inline function

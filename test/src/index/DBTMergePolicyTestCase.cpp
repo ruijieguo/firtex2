@@ -32,7 +32,7 @@ void DBTMergePolicyTestCase::testCreateProposals()
     DBTMergePolicy mergePolicy;
     MergeProposalPtr pProposal = mergePolicy.createProposals(*pBarrelsInfo);
 
-    CPPUNIT_ASSERT(pProposal.isNotNull());
+    CPPUNIT_ASSERT(pProposal);
 
     MergeProposalPtr pExpProposal;
     makeAnswer(pExpProposal, sBarrel);
@@ -47,7 +47,7 @@ void DBTMergePolicyTestCase::testCreateProposalsWithMergePartial()
     DBTMergePolicy mergePolicy;
     MergeProposalPtr pProposal = mergePolicy.createProposals(*pBarrelsInfo);
 
-    CPPUNIT_ASSERT(pProposal.isNotNull());
+    CPPUNIT_ASSERT(pProposal);
 
     string sExpMergeBarrel = "1, 10, 0; 2, 10, 0; 3, 10, 0";
     MergeProposalPtr pExpProposal;
@@ -63,7 +63,7 @@ void DBTMergePolicyTestCase::testCreateProposalsWithCrossLevel()
     DBTMergePolicy mergePolicy;
     MergeProposalPtr pProposal = mergePolicy.createProposals(*pBarrelsInfo);
 
-    CPPUNIT_ASSERT(pProposal.isNotNull());
+    CPPUNIT_ASSERT(pProposal);
 
     MergeProposalPtr pExpProposal;
     makeAnswer(pExpProposal, sBarrel);
@@ -78,7 +78,7 @@ void DBTMergePolicyTestCase::testCreateProposalsWithTwoProposal()
     DBTMergePolicy mergePolicy;
     MergeProposalPtr pProposal = mergePolicy.createProposals(*pBarrelsInfo);
 
-    CPPUNIT_ASSERT(pProposal.isNotNull());
+    CPPUNIT_ASSERT(pProposal);
 
     MergeProposalPtr pExpProposal;
     makeAnswer(pExpProposal, "3, 10, 0; 4, 10, 0; 5, 10, 0");
@@ -109,7 +109,7 @@ BarrelsInfoPtr DBTMergePolicyTestCase::createBarrelsInfo(const string& sBarrel)
 
 void DBTMergePolicyTestCase::makeAnswer(MergeProposalPtr& pProposal, const string& sBarrel)
 {
-    if (pProposal.isNull())
+    if (!pProposal)
     {
         pProposal = new MergeProposal();
     }

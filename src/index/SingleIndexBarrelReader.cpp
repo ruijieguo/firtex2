@@ -57,9 +57,9 @@ SingleIndexBarrelReader::SingleIndexBarrelReader(const SingleIndexBarrelReader& 
     , m_pDocFilter(NULL)
     , m_bMultiIndexFields(src.m_bMultiIndexFields)
 {
-    if (src.m_pTermReader.isNotNull())
+    if (src.m_pTermReader)
     {
-        m_pTermReader = src.m_pTermReader->clone();
+        m_pTermReader.reset(src.m_pTermReader->clone());
     }
 }
 
@@ -84,7 +84,7 @@ void SingleIndexBarrelReader::open(const BarrelInfo* pBarrelInfo,
 
     std::string sSuffix = m_pBarrelInfo->getSuffix();
 
-    m_pLengthNormReader = new LengthNormReader(m_pFileSys);
+    m_pLengthNormReader.reset(new LengthNormReader(m_pFileSys));
     m_pLengthNormReader->init(sSuffix, m_pDocSchema);
 
     createTermReader(sSuffix);
@@ -115,7 +115,7 @@ void SingleIndexBarrelReader::createForwardIndex(const std::string& sSuffix)
             {
                 m_forwardIndexReaders.resize(fieldId + 1);
             }
-            m_forwardIndexReaders[fieldId].assign(pFDReader);
+            m_forwardIndexReaders[fieldId].reset(pFDReader);
             pFDReader->open(m_pFileSys, pFieldSchema, FORWARD_INDEX_FILEEXT, sSuffix);
         }
     }
@@ -128,7 +128,7 @@ void SingleIndexBarrelReader::createTermReader(const std::string& sSuffix)
     {
         MultiFieldTermReader* pMultiReader =
             new MultiFieldTermReader(m_pComponentBuilder);
-        m_pTermReader.assign(pMultiReader);
+        m_pTermReader.reset(pMultiReader);
         pMultiReader->open(pFileSys, m_pInStreamPool, sSuffix, getDocSchema(), m_pDocFilter);
     }
     else
@@ -143,7 +143,7 @@ void SingleIndexBarrelReader::createTermReader(const std::string& sSuffix)
                     m_pComponentBuilder->buildTermReader(pFieldSchema->getId());
                 FIRTEX_ASSERT2(pTermReader != NULL);
 
-                m_pTermReader.assign(pTermReader);
+                m_pTermReader.reset(pTermReader);
                 m_pTermReader->open(pFileSys, m_pInStreamPool, sSuffix,
                         pFieldSchema, m_pDocFilter);
                 break;
@@ -182,14 +182,14 @@ df_t SingleIndexBarrelReader::getDeletedDocCount() const
 
 TermReaderPtr SingleIndexBarrelReader::termReader(const std::string& sField) const 
 {
-    if (m_pTermReader.isNull())
+    if (!m_pTermReader)
         return TermReaderPtr();
 
     if (m_bMultiIndexFields)
     {
         MultiFieldTermReaderPtr pMultiFieldTermReader = 
-            m_pTermReader.cast<MultiFieldTermReader>();
-        FIRTEX_ASSERT2(!pMultiFieldTermReader.isNull());
+            std::dynamic_pointer_cast<MultiFieldTermReader>(m_pTermReader);
+        FIRTEX_ASSERT2(pMultiFieldTermReader);
         return pMultiFieldTermReader->termReader(sField);
     }
     else 

@@ -206,7 +206,7 @@ MMapFilePtr BlockFileSystem::mmapFile(const std::string& sFileName)
     }
     
     FX_NS(utility)::File file(m_sFsPath + str);
-    MMapFilePtr pFile = new MMapFile();
+    MMapFilePtr pFile(new MMapFile());
     pFile->open(file, MMapFile::AM_READ);
     return pFile;
 }
@@ -224,11 +224,10 @@ void BlockFileSystem::closeFile(FilePtr& pFile)
                      pFile->fileName.c_str());
     }
 
-    if (pFile.referenceCount() > 2)
+    if (pFile.use_count() > 2)
     {
         /// some one still refer to this file
         pFile.reset();
-        return ;
     }
 
     FileList& fileList = m_filesOpened[pFile->fileName];

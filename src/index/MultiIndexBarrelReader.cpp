@@ -80,7 +80,8 @@ MultiIndexBarrelReader::MultiIndexBarrelReader(const MultiIndexBarrelReader& src
     for (BarrelVector::const_iterator it = src.m_readers.begin();
          it != src.m_readers.end(); ++it)
     {
-        m_readers.push_back((*it)->clone());
+        EntryPtr pTmp((*it)->clone());
+        m_readers.push_back(pTmp);
     }
 }
 
@@ -102,7 +103,7 @@ void MultiIndexBarrelReader::open(const IndexVector& indices)
         addIndex(*it);
     }
 
-    m_pTermReader.assign(new MultiTermReader(this));
+    m_pTermReader.reset(new MultiTermReader(this));
 }
 
 void MultiIndexBarrelReader::open(const BarrelsInfoPtr& pBarrelsInfo,
@@ -121,14 +122,14 @@ void MultiIndexBarrelReader::open(const BarrelsInfoPtr& pBarrelsInfo,
             docid_t baseDocdId = barrelInfo.getBaseDocId();
             const BitVector* pDocFilter = m_pDeletedDocFilter->getDocFilter(baseDocdId);
 
-            EntryPtr pEntry = new Entry(m_pFileSys, m_pDocSchema, m_pComponentBuilder);
+            EntryPtr pEntry(new Entry(m_pFileSys, m_pDocSchema, m_pComponentBuilder));
             pEntry->init(&barrelInfo, pDocFilter);
             //addFieldsInfo(pEntry->m_pBarrel->getFieldsInfo());
             m_readers.push_back(pEntry);
         }
     }
 
-    m_pTermReader.assign(new MultiTermReader(this));
+    m_pTermReader.reset(new MultiTermReader(this));
 }
 
 void MultiIndexBarrelReader::reopen(const BarrelsInfoPtr& pBarrelsInfo,
@@ -168,7 +169,7 @@ void MultiIndexBarrelReader::reopen(const BarrelsInfoPtr& pBarrelsInfo,
         if (newInfo.getDocCount() > 0)
         { 
             // Skip deletion only barrel
-            EntryPtr pEntry = new Entry(m_pFileSys, m_pDocSchema, m_pComponentBuilder);
+            EntryPtr pEntry(new Entry(m_pFileSys, m_pDocSchema, m_pComponentBuilder));
             pEntry->init(&newInfo, pOneFilter);
 
             newReaders.push_back(pEntry);
@@ -178,7 +179,7 @@ void MultiIndexBarrelReader::reopen(const BarrelsInfoPtr& pBarrelsInfo,
 
     m_readers.swap(newReaders);
 
-    m_pTermReader.assign(new MultiTermReader(this));
+    m_pTermReader.reset(new MultiTermReader(this));
 }
 
 void MultiIndexBarrelReader::addIndex(const Index* pIndex)
@@ -200,8 +201,8 @@ void MultiIndexBarrelReader::addIndex(const Index* pIndex)
             const BitVector* pDocFilter = pDelDocFilter->getDocFilter(baseDocdId);
 
             FileSystemPtr pFileSys = pIndex->getFileSystem();
-            EntryPtr pEntry = new Entry(pFileSys, pIndex->getDocSchema(),
-                    m_pComponentBuilder);
+            EntryPtr pEntry(new Entry(pFileSys, pIndex->getDocSchema(),
+                            m_pComponentBuilder));
             pEntry->init(&barrelInfo, pDocFilter);
 
             //addFieldsInfo(pEntry->m_pBarrel->getFieldsInfo());
@@ -244,7 +245,7 @@ MultiIndexBarrelReader::lengthNorm(const tstring& sField) const
     BarrelVector::const_iterator iter = m_readers.begin();
     EntryPtr pEntry = (*iter);
     LengthNormIteratorPtr pLengthNorm = pEntry->m_pBarrel->lengthNorm(sField);
-    if (pLengthNorm.isNull())
+    if (!pLengthNorm)
     {
         return pLengthNorm;
     }
@@ -268,7 +269,7 @@ MultiIndexBarrelReader::forwardIndexReader(const tstring& sField) const
     EntryPtr pEntry = (*iter);
     ForwardIndexIteratorPtr pFdIndexIter =
         pEntry->m_pBarrel->forwardIndexReader(sField);
-    if (pFdIndexIter.isNull())
+    if (!pFdIndexIter)
     {
         return pFdIndexIter;
     }

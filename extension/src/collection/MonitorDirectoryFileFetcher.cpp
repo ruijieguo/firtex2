@@ -103,7 +103,7 @@ void MonitorDirectoryFileFetcher::checkIncrementList()
             }
             filePath[readLen - 1] = '\0'; // Remove '' at tail
 
-            if (m_pFileFilter.isNotNull())
+            if (m_pFileFilter)
             {
                 Path p(filePath);
                 if (m_pFileFilter->isFiltered(p))
@@ -151,7 +151,7 @@ void MonitorDirectoryFileFetcher::buildIncrementList()
                 continue;
             }
 
-            if (m_pFileFilter.isNotNull())
+            if (m_pFileFilter)
             {
                 if (m_pFileFilter->isFiltered(filePath))
                 {
@@ -210,7 +210,7 @@ void MonitorDirectoryFileFetcher::buildIncrementList()
 //             sFilePath = sDirPath + sFileName;
 //             if (File::exists(sFilePath))
 //             {
-//                 if (m_pFileFilter.isNotNull())
+//                 if (m_pFileFilter)
 //                 {
 //                     Path filePath(sFilePath);
 //                     if (m_pFileFilter->isFiltered(filePath))

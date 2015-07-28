@@ -62,8 +62,8 @@ QueryExecutorPtr BooleanQuery::createExecutor(IndexReaderPtr& pIndexReader,
         FeatureProviderPtr& pProvider,
         PoolPtr& pPool) const
 {
-    BooleanQueryExecutorBuilderPtr pExeBuilder = new BooleanQueryExecutorBuilder(
-            pProvider, m_nMinShouldMatch, pPool);
+    BooleanQueryExecutorBuilderPtr pExeBuilder(new BooleanQueryExecutorBuilder(
+                    pProvider, m_nMinShouldMatch, pPool));
 
     for (BooleanClauseVector::const_iterator it = m_clauses.begin();
          it != m_clauses.end(); ++it)
@@ -71,7 +71,7 @@ QueryExecutorPtr BooleanQuery::createExecutor(IndexReaderPtr& pIndexReader,
         const BooleanClause& clause = (*it);
         QueryExecutorPtr pSubExe = clause.query->createExecutor(
                 pIndexReader, pProvider, pPool);
-        if (pSubExe.isNotNull())
+        if (pSubExe)
         {
             pExeBuilder->addExecutor(pSubExe, clause.required, clause.prohibited);
         }

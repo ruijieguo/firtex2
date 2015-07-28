@@ -14,6 +14,7 @@
 #define __FX_LOGGINGLEVEL_H
 
 #include "firtex/common/StdHeader.h"
+#include "firtex/utility/Exception.h"
 #include "firtex/common/SharedPtr.h"
 #include "firtex/utility/StringUtils.h"
 

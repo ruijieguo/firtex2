@@ -125,7 +125,7 @@ QueryExecutorPtr BooleanQueryExecutorBuilder::addProhibitedExecutors(const Query
         else 
         {
             OrQueryExecutor* pOrExe = new OrQueryExecutor(m_pFeatureProvider, 0, m_pPool);
-            pExe.assign(pOrExe);
+            pExe.reset(pOrExe);
             for (ExecutorVector::const_iterator it = m_prohibitedExecutors.begin();
                  it != m_prohibitedExecutors.end(); ++it)
             {
@@ -149,7 +149,7 @@ QueryExecutorPtr BooleanQueryExecutorBuilder::createScorerWithSomeRequired()
         QueryExecutorPtr pReqExe;
         if (m_requiredExecutors.size() > 1)
         {
-            pReqExe.assign(makeAndExecutor(m_requiredExecutors));
+            pReqExe = makeAndExecutor(m_requiredExecutors);
         }
         else 
         {

@@ -35,7 +35,7 @@ Sorter::~Sorter()
 bool Sorter::init(const IndexReaderPtr& pIndexReader,
                   const SortClausePtr& clause)
 {
-    m_pParser = new ExprParser(pIndexReader);
+    m_pParser.reset(new ExprParser(pIndexReader));
     string str;
     SortClause::Iterator it = clause->iterator();
     while (it.hasNext())
@@ -64,7 +64,7 @@ bool Sorter::init(const IndexReaderPtr& pIndexReader,
         else 
         {
             ExprEvaluatorPtr pEval = m_pParser->parse(str);
-            if (pEval.isNotNull())
+            if (pEval)
             {
                 m_evaluators.push_back(make_pair(pEval, m_lastValueIdx));
                 switch(pEval->getType())

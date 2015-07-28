@@ -56,7 +56,7 @@ void TrecDocumentProcessor::doProcessFile(const string& sFilePath,
         }
     }
 
-    if (m_pDocReader.isNull())
+    if (!m_pDocReader)
     {
         FX_LOG(WARN, "Skip document: document reader for [%s] FAILED did not initialize.", 
                sFilePath.c_str());
@@ -134,7 +134,7 @@ void TrecDocumentProcessor::setContentType(const string& sContType)
     if (!strCompareNoCase(sContType.c_str(), "html") 
         || !strCompareNoCase(sContType.c_str(), "htm"))
     {
-        m_pHTMLParser = new HTMLParser;
+        m_pHTMLParser.reset(new HTMLParser);
     }
     else
     {

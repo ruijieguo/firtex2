@@ -81,7 +81,7 @@ void HTTPSearchService::doSearch(const string& sUri,
     }
 
     IndexReaderPtr pIndexReader = m_searchRes.getIndexReader(sCluster, sType);
-    if (pIndexReader.isNull())
+    if (!pIndexReader)
     {
         sendErrorMessage("No such cluster [" + sCluster + "] or type ["
                          +sType + "]", pCtx);

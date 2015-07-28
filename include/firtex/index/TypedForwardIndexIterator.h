@@ -19,7 +19,7 @@ public:
     typedef typename Traits::ImplType ImplType;
     typedef T ValueType;
     typedef TypedForwardIndexIterator<T, Traits> ThisType;
-    typedef FX_NS(common)::SharedPtr<ThisType> PtrType;
+    DEFINE_TYPED_PTR(ThisType);
 
 public:
     TypedForwardIndexIterator(const ImplType* pImpl);

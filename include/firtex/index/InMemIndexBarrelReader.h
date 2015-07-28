@@ -76,7 +76,7 @@ public:
     virtual IndexBarrelReader* clone() const;
 
     /// Return deleted document reader
-    inline const FX_NS(utility)::BitVector* getDocFilter() const;
+    inline const FX_NS(utility)::BitVectorPtr getDocFilter() const;
 
 private:
     void init(const IndexBarrelWriter* pBarrelWriter);
@@ -100,7 +100,7 @@ private:
     LengthNormReaderPtr m_pLengthNormReader;
 
     /// In-memory deleted document filter
-    const FX_NS(utility)::BitVector* m_pDocFilter;
+    FX_NS(utility)::BitVectorPtr m_pDocFilter;
 
     bool m_bHasMultiIndexFields;
     
@@ -112,7 +112,7 @@ DEFINE_TYPED_PTR(InMemIndexBarrelReader);
 
 ////////////////////////////////////////////
 //
-inline const FX_NS(utility)::BitVector* InMemIndexBarrelReader::getDocFilter() const
+inline const FX_NS(utility)::BitVectorPtr InMemIndexBarrelReader::getDocFilter() const
 {
     return m_pDocFilter;
 }

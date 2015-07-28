@@ -21,7 +21,7 @@ namespace FdIndexType
 }
 
 #define FORWARD_INDEX_DEFINE(type, identifier)  \
-    m_identifier += "."identifier;              \
+    m_identifier += "." identifier;              \
     m_fdIndexType = type
 
 

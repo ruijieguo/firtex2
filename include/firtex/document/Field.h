@@ -157,7 +157,7 @@ inline void Field::setValue(char* text, size_t len, bool bNoCopy)
 
 inline 	void Field::setTokenView(Field::TokenView* pTokens)
 {
-    m_pTokenView.assign(pTokens);
+    m_pTokenView.reset(pTokens);
 }
 
 inline void Field::setTokenView(const Field::TokenViewPtr& pTokens)

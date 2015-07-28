@@ -4,9 +4,7 @@
 #include "firtex/extension/util/SharedOptionCallback.h"
 #include "firtex/extension/util/OptionException.h"
 
-#ifdef HAVE_THRIFT
 #include "RPCWatchdogServer.h"
-#endif
 
 using namespace std;
 // using namespace apache;
@@ -64,7 +62,7 @@ AppRunner::Status WatchdogAppRunner::run()
 
 bool WatchdogAppRunner::initHttpServer()
 {
-    m_pServer = new HTTPWatchdogServer(m_sWorkDir, m_nListenPort);
+    m_pServer.reset(new HTTPWatchdogServer(m_sWorkDir, m_nListenPort));
     if (!m_pServer->init(""))
     {
         FX_LOG(ERROR, "Initialize HTTP watchdog server FAILED.");
@@ -75,18 +73,13 @@ bool WatchdogAppRunner::initHttpServer()
 
 bool WatchdogAppRunner::initRPCServer()
 {
-#ifdef HAVE_THRIFT
-    m_pServer = new RPCWatchdogServer(m_sWorkDir, m_nListenPort);
+    m_pServer.reset(new RPCWatchdogServer(m_sWorkDir, m_nListenPort));
     if (!m_pServer->init(""))
     {
         FX_LOG(ERROR, "Initialize RPC server FAILED.");
         return false;
     }
     return true;
-#else
-    FX_LOG(ERROR, "No RPC server, please re-compile with thrift");
-    return false;
-#endif
 }
 
 void WatchdogAppRunner::registerOption(Application* pApp)
@@ -154,7 +147,7 @@ void WatchdogAppRunner::optionCallback(const Option& option,
 
 void WatchdogAppRunner::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -162,7 +155,7 @@ void WatchdogAppRunner::stop()
 
 void WatchdogAppRunner::waitStop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

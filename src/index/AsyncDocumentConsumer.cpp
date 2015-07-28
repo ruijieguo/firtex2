@@ -30,10 +30,10 @@ void AsyncDocumentConsumer::start()
     size_t nSizeInMB = (size_t)GLOBAL_CONF().Build.memory;
     FX_LOG(INFO, "Allocate memory for building, total size: [%u] MB, segment count: [%u]",
            (uint32_t)nSizeInMB, (uint32_t)m_threadPool.capacity());
-    m_pAllocator = new SyncSegregatedAllocator((size_t)(nSizeInMB * 1024 * 1024),
-            m_threadPool.capacity() * MAX_CHUNK_COUNT_PER_SEGMENT);
+    m_pAllocator.reset(new SyncSegregatedAllocator((size_t)(nSizeInMB * 1024 * 1024),
+                    m_threadPool.capacity() * MAX_CHUNK_COUNT_PER_SEGMENT));
 
-    m_pUpdateTask = new OnDiskUpdateTask(m_pKeeper, m_docQueue, m_docUpdateQueue);
+    m_pUpdateTask.reset(new OnDiskUpdateTask(m_pKeeper, m_docQueue, m_docUpdateQueue));
     m_updateThread.start(*m_pUpdateTask);
     
     taskid_t taskId = 0, nextTaskId = INVALID_TASKID;
@@ -160,10 +160,10 @@ void AsyncDocumentConsumer::Task::run()
 
 		
         ActionDocumentPtr pDoc = m_docQueue.waitDequeue();
-        if (pDoc.isNull())
+        if (!pDoc)
         {
             FX_TRACE("Fetched a null document, exit building thread.");
-            if (m_pIndexBarrelWriter.isNotNull())
+            if (m_pIndexBarrelWriter)
             {
                 m_consumer.getKeeper()->sealBarrel(m_pIndexBarrelWriter);
                 m_pIndexBarrelWriter.reset();
@@ -265,7 +265,7 @@ void AsyncDocumentConsumer::OnDiskUpdateTask::run()
     while (true)
     {
         ActionDocumentPtr pDoc = m_docUpdateQueue.waitDequeue();
-        if (pDoc.isNull())
+        if (!pDoc)
         {
             FX_DEBUG("Fetched a null document, exit updating thread.");
             break;

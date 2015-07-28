@@ -20,7 +20,7 @@ HTTPBuildService::HTTPBuildService(const SearchResource& searchRes)
     : m_searchRes(searchRes)
 {
     IndexReaderPtr pIndexReader = m_searchRes.getIndexReader();
-    FIRTEX_ASSERT2(pIndexReader.isNotNull());
+    FIRTEX_ASSERT2(pIndexReader);
     m_sEncoding = pIndexReader->getEncoding();
 }
 

@@ -102,7 +102,7 @@ void TextIndexMergerTestCase::MergeEntry::makeData()
         pIndexer->addField(pField.get());
         pIndexer->commitDocument((docid_t)i);
 
-        if (pDocFilter.isNotNull())
+        if (pDocFilter)
         {
             if (i % 5 == 0 || i == (nDataSize - 1))
             {
@@ -114,7 +114,7 @@ void TextIndexMergerTestCase::MergeEntry::makeData()
     BarrelDirectory::createBarrel(pFileSystem, pBarrelInfo->getSuffix());
     pIndexer->commit(pFileSystem, pBarrelInfo->getSuffix());
 
-    if (pDocFilter.isNotNull())
+    if (pDocFilter)
     {
         pDocIdRemapper = new DocIdRecycling();
         pDocIdRemapper->init(nDataSize, pDocFilter.get());
@@ -183,7 +183,7 @@ void TextIndexMergerTestCase::makeData()
         m_mergeEntries.push_back(pEntry);
 
         docId += (docid_t)pEntry->nDataSize;
-        if (pEntry->pDocFilter.isNotNull())
+        if (pEntry->pDocFilter)
         {
             docId -= pEntry->pDocFilter->count();
         }
@@ -200,7 +200,7 @@ void TextIndexMergerTestCase::makeMergedAnswer(TermMap& mergedAnswer)
         {
             for (size_t l = 0; l < it2->second.size(); ++l)
             {
-                if (m_mergeEntries[j]->pDocIdRemapper.isNotNull())
+                if (m_mergeEntries[j]->pDocIdRemapper)
                 {
                     docid_t docId = it2->second[l].first;
                     if (!m_mergeEntries[j]->pDocFilter->test((size_t)docId))
@@ -326,7 +326,7 @@ void TextIndexMergerTestCase::testMergeWithDeletions()
 
 void TextIndexMergerTestCase::checkMergedResult(TermIteratorPtr& pTermIt, TermMap& answer)
 {
-    CPPUNIT_ASSERT(pTermIt.isNotNull());
+    CPPUNIT_ASSERT(pTermIt);
 
     CPPUNIT_ASSERT_EQUAL((int64_t)answer.size(), pTermIt->size());
     size_t termCount = 0;

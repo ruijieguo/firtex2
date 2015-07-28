@@ -100,8 +100,7 @@ void FileIndexerAppRunner::indexFile()
     pConfig->Collection.identifier = _T("collection.directory");
     pConfig->Collection.docTypes = _T("txt,html,pdf");
     
-    DocumentSchema* pDocSchema = new DocumentSchema();
-    auto_ptr<DocumentSchema> schemaPtr(pDocSchema);
+    DocumentSchemaPtr pDocSchema(new DocumentSchema());
     
     pDocSchema->addUnIndexedField(_T("PATH"));
     if (m_sFileType == _T("html") || m_sFileType == _T("pdf"))

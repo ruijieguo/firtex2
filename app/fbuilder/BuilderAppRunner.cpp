@@ -90,7 +90,7 @@ void BuilderAppRunner::buildIndex(bool bBlock)
 
 void BuilderAppRunner::stop()
 {
-    if (m_pColletion.isNotNull())
+    if (m_pColletion)
     {
         m_pColletion->stop();
     }
@@ -98,7 +98,7 @@ void BuilderAppRunner::stop()
 
 void BuilderAppRunner::waitStop()
 {
-    if (m_pColletion.isNotNull())
+    if (m_pColletion)
     {
         m_pColletion->waitStop();
         m_pColletion.reset();

@@ -23,7 +23,7 @@ DocPostingDecoder::DocPostingDecoder()
 
 DocPostingDecoder::~DocPostingDecoder() 
 {
-    if (m_pDocStream.isNotNull() && m_pInStreamPool)
+    if (m_pDocStream && m_pInStreamPool)
     {
         m_pInStreamPool->releaseInputStream(m_pDocStream);
     }
@@ -48,7 +48,7 @@ void DocPostingDecoder::init(const InputStreamPtr& pDocStream,
     if (m_termMeta.getDocFreq() >= (df_t)RECORD_SIZE)
     {
         //Init skip list;
-        m_pDocSkipListReader.assign(new DocSkipListReader());
+        m_pDocSkipListReader.reset(new DocSkipListReader());
         m_pDocSkipListReader->init(m_pDocStream);
     }
     else

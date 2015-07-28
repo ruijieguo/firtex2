@@ -40,7 +40,7 @@ bool SearchClustersBase::init(const BlenderServerConf::sResource& resConf)
     {
         const BlenderServerConf::sCluster& cluster = *it;
         
-        SearchClusterBasePtr pCluster = newCluster(&m_deliver);
+        SearchClusterBasePtr pCluster(newCluster(&m_deliver));
         if (!pCluster->init(cluster))
         {
             FX_LOG(ERROR, "Init cluster: [%s] FAILED.", cluster.name.c_str());
@@ -59,7 +59,7 @@ bool SearchClustersBase::init(const BlenderServerConf::sResource& resConf)
         }
     }
 
-    m_pResultCombiner = new AppendResultCombiner();
+    m_pResultCombiner(new AppendResultCombiner());
 
     m_deliver.start();
 
@@ -76,10 +76,10 @@ void SearchClustersBase::search(std::string& sResult, const std::string& sUri)
     m_selectedClusters.clear();
 
     ClausePtr pClause = m_stat.getClause(ClusterClause::PREFIX);
-    if (pClause.isNotNull())
+    if (pClause)
     {
         ClusterClausePtr pClusterClause = pClause.cast<ClusterClause>();
-        FIRTEX_ASSERT2(pClusterClause.isNotNull());
+        FIRTEX_ASSERT2(pClusterClause);
 
         ClusterClause::Iterator it = pClusterClause->iterator();
         while (it.hasNext())

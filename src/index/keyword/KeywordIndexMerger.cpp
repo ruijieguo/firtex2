@@ -26,7 +26,7 @@ void KeywordIndexMerger::beginMerge(const IndexMergeInfos& mergeFieldInfos)
     m_pDocOutStream = getFileSystem()->createFile(
             BarrelDirectory::getFilePath(getFieldSchema()->getName(),
                     DOC_POSTING_FILEEXT, sSuffix));
-    m_pDictWriter.assign(new DictWriter(m_pDictOutStream));
+    m_pDictWriter.reset(new DictWriter(m_pDictOutStream));
 
     m_pDictWriter->reserve(10000); //TODO:
 }

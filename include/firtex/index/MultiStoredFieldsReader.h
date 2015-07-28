@@ -66,7 +66,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<MultiStoredFieldsReader> MultiStoredFieldsReaderPtr;
+DEFINE_TYPED_PTR(MultiStoredFieldsReader);
 
 ////////////////////////////////////////////////////////
 ///

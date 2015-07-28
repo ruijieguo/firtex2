@@ -17,7 +17,7 @@ public:
     typedef boost::shared_ptr<apache::thrift::protocol::TProtocolFactory> TProtocolFactoryPtr;
 
     typedef RPCSyncClient<ThriftSearchServiceClient> RPCClient;
-    typedef FX_NS(common)::SharedPtr<RPCClient> RPCClientPtr;
+    DEFINE_TYPED_PTR(RPCClient);
 
     using SearchReplicaBase::ErrorCode;
 

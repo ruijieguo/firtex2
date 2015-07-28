@@ -132,7 +132,7 @@ inline FX_NS(document)::DocumentPtr DocumentSource::acquireDocument(
         m_lastDocIt = it;
         return m_lastDocIt->second;
     }
-    FX_NS(document)::DocumentPtr pDoc = new FX_NS(document)::Document(m_pDocSchema);
+    FX_NS(document)::DocumentPtr pDoc(new FX_NS(document)::Document(m_pDocSchema));
     addDocument(sProccessorName, pDoc);
     return pDoc;
 }
@@ -149,7 +149,7 @@ inline void DocumentSource::setToBeContinued(bool bCont)
 
 inline void DocumentSource::reset()
 {
-    if (m_pRawDocument.isNotNull())
+    if (m_pRawDocument)
     {
         m_pRawDocument->clear();
     }

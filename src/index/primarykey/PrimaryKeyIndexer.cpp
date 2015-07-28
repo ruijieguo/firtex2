@@ -113,7 +113,7 @@ void PrimaryKeyIndexer::commit(FileSystemPtr& pFileSys,
                     PRIMARYKEY_FILEEXT, sSuffix));
     m_pPostingTable->save(pPKOutput);
 
-    m_pPostingTable.assign(new PostingTable(
+    m_pPostingTable.reset(new PostingTable(
                     std::numeric_limits<uint64_t>::max(), INVALID_DOCID));
 }
 

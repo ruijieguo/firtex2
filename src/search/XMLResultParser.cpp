@@ -17,10 +17,10 @@ XMLResultParser::~XMLResultParser()
 }
 
 #define ASSERT_EXIST(node, tag)                                         \
-    if (node.isNull())                                                  \
+    if (!node)                                                  \
     {                                                                   \
         FIRTEX_THROW_AND_LOG(BadXmlFormatException,                     \
-                             "Missing "tag" tag in result string.");    \
+                             "Missing " tag " tag in result string.");    \
     }
 
 
@@ -43,7 +43,7 @@ void XMLResultParser::parse(const std::string& str,
     ASSERT_EXIST(pResNode, "<result>");
 
     XMLNodeWrapperPtr pErrorNode = pResNode->firstNode("error");
-    if (pErrorNode.isNotNull())
+    if (pErrorNode)
     {
         XMLNodeWrapperPtr pDataNode = pErrorNode->firstNode();
         ASSERT_EXIST(pDataNode, "<[CDATA[]]>");
@@ -51,7 +51,7 @@ void XMLResultParser::parse(const std::string& str,
     }
 
     XMLNodeWrapperPtr pHitsNode = pResNode->firstNode("hits");
-    if (pHitsNode.isNotNull())
+    if (pHitsNode)
     {
         XMLAttributeWrapperPtr pNumHits = pHitsNode->firstAttribute("number_hits");
         ASSERT_EXIST(pNumHits, "<number_hits>");
@@ -69,40 +69,40 @@ void XMLResultParser::parse(const std::string& str,
 
         int32_t nHitCount = 0;
         for (XMLNodeWrapperPtr pHitNode = pHitsNode->firstNode();
-             pHitNode.isNotNull(); pHitNode = pHitNode->nextSibling())
+             pHitNode; pHitNode = pHitNode->nextSibling())
         {
             ResultDocPtr pResDoc;
             XMLNodeWrapperPtr pDocIdNode = pHitNode->firstNode("docid");
-            if (pDocIdNode.isNotNull())
+            if (pDocIdNode)
             {
                 result.hasDocId(true);
                 docid_t docId = NumberParser::parseInt32(pDocIdNode->getValue());
-                pResDoc = new ResultDoc(docId);
+                pResDoc.reset(new ResultDoc(docId));
             }
             else
             {
-                pResDoc = new ResultDoc();
+                pResDoc.reset(new ResultDoc());
             }
 
             XMLNodeWrapperPtr pShardIdNode = pHitNode->firstNode("shardid");
-            if (pShardIdNode.isNotNull())
+            if (pShardIdNode)
             {
                 shardid_t shardId = NumberParser::parseInt32(pShardIdNode->getValue());
                 result.setShardId(shardId);
             }
         
             XMLNodeWrapperPtr pScoreNode = pHitNode->firstNode("score");
-            if (pScoreNode.isNotNull())
+            if (pScoreNode)
             {
                 score_t score = NumberParser::parseFloat(pScoreNode->getValue());
                 pResDoc->setScore(score);
             }
         
             XMLNodeWrapperPtr pFieldsNode = pHitNode->firstNode("fields");
-            if (pFieldsNode.isNotNull())
+            if (pFieldsNode)
             {
                 for (XMLNodeWrapperPtr pFieldNode = pFieldsNode->firstNode();
-                     pFieldNode.isNotNull(); pFieldNode = pFieldNode->nextSibling())
+                     pFieldNode; pFieldNode = pFieldNode->nextSibling())
                 {
                     XMLNodeWrapperPtr pDataNode = pFieldNode->firstNode();
                     ASSERT_EXIST(pDataNode, "<[CDATA[]]>");
@@ -121,7 +121,7 @@ void XMLResultParser::parse(const std::string& str,
     }
 
     XMLNodeWrapperPtr pTraceRootNode = pResNode->firstNode("tracer");
-    if (pTraceRootNode.isNotNull())
+    if (pTraceRootNode)
     {
         result.getTracer().reset(parseTraceNode(pTraceRootNode));
     }
@@ -137,7 +137,7 @@ QueryTracer* XMLResultParser::parseTraceNode(const XMLNodeWrapperPtr& pTraceRoot
     QueryTracer* pTracer = new QueryTracer(pPath->getValue(),
             LoggingLevel::strToLevel(pLevel->getValue()));
     for (XMLNodeWrapperPtr pMsgNode = pTraceRootNode->firstNode("message");
-         pMsgNode.isNotNull(); pMsgNode = pMsgNode->nextSibling())
+         pMsgNode; pMsgNode = pMsgNode->nextSibling())
     {
         XMLNodeWrapperPtr pDataNode = pMsgNode->firstNode();
         ASSERT_EXIST(pDataNode, "<[CDATA[]]>");
@@ -145,9 +145,10 @@ QueryTracer* XMLResultParser::parseTraceNode(const XMLNodeWrapperPtr& pTraceRoot
     }
 
     XMLNodeWrapperPtr pChildNode = pTraceRootNode->firstNode("tracer");
-    if (pChildNode.isNotNull())
+    if (pChildNode)
     {
-        pTracer->addChildTracer(parseTraceNode(pChildNode));
+        QueryTracerPtr pTmp(parseTraceNode(pChildNode));
+        pTracer->addChildTracer(pTmp);
     }
 
     return pTracer;

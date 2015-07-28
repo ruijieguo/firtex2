@@ -24,7 +24,7 @@ FX_NS_DEF(utility);
 // Public Functions:
 BitVector::BitVector( size_t n,uint32_t val)
 {
-    if(n<0 || n>= NPOS)
+    if(n >= NPOS)
     {
         throw OutOfRangeException( _T("BitVector::BitVector( size_t n,uint32_t val)"));
     }
@@ -131,7 +131,7 @@ BitVector& BitVector::set()
 
 BitVector& BitVector::set(size_t pos, bool val)
 {
-    if(pos < 0 || pos >= NPOS)
+    if(pos >= NPOS)
         throw OutOfRangeException( _T("BitVector& BitVector::set(size_t pos, bool val)"));
 
     if (pos >= m_nBits)
@@ -144,7 +144,7 @@ BitVector& BitVector::set(size_t pos, bool val)
 
 BitVector& BitVector::reset(size_t pos)
 {
-    if(pos < 0 || pos > m_nBits)
+    if(pos > m_nBits)
         throw OutOfRangeException( _T("BitVector& BitVector::reset(size_t pos)"));
 
     if (pos == m_nBits)
@@ -351,7 +351,7 @@ BitVector& BitVector::operator+=(const BitVector& b)
 
 BitVector& BitVector::insert(size_t pos, const BitVector& b)
 {
-    if(pos < 0 || pos > m_nBits)
+    if(pos > m_nBits)
         throw OutOfRangeException( _T("BitVector& BitVector::insert(size_t pos, const BitVector& b)"));
 
     size_t oldlen = m_nBits;
@@ -376,7 +376,7 @@ BitVector& BitVector::insert(size_t pos, const BitVector& b)
 
 BitVector& BitVector::remove(size_t pos, size_t n)
 {			
-    if(pos < 0 || pos >= m_nBits)
+    if (pos >= m_nBits)
         throw OutOfRangeException( _T("BitVector& BitVector::remove(size_t pos, size_t n)"));
 
     if (n > m_nBits - pos)
@@ -395,7 +395,7 @@ BitVector& BitVector::remove(size_t pos, size_t n)
 BitVector& BitVector::replace(size_t pos, size_t n,const BitVector& b)
 {		
 
-    if(pos < 0 || pos > m_nBits)
+    if( pos > m_nBits)
         throw OutOfRangeException( _T("BitVector& BitVector::replace(size_t pos, size_t n,const BitVector& b)"));
 
     if (n > m_nBits - pos)
@@ -432,7 +432,7 @@ BitVector& BitVector::replace(size_t pos, size_t n,const BitVector& b)
 
 size_t BitVector::find(int val, size_t pos) const
 {			
-    if(pos < 0 || pos >= m_nBits)
+    if( pos >= m_nBits)
         throw OutOfRangeException( _T("size_t BitVector::find(int val, size_t pos) const"));
 
     for (size_t i = pos; i < m_nBits; ++i)
@@ -446,13 +446,13 @@ size_t BitVector::find(int val, size_t pos) const
 
 size_t BitVector::rfind(int val, size_t pos) const
 {			
-    if(pos < 0 || pos >= m_nBits)
+    if( pos >= m_nBits)
     {
         FIRTEX_THROW(OutOfRangeException, _T("pos=[%u], size=[%u]"),
                         (uint32_t)pos, (uint32_t)m_nBits);
     }
 
-    for (size_t i = pos; i >= 0; --i)
+    for (int i = (int)pos; i >= 0; --i)
     {
         int t = test_(i);
         if ((val && t) || (!val && !t))
@@ -463,7 +463,7 @@ size_t BitVector::rfind(int val, size_t pos) const
 
 BitVector BitVector::substr(size_t pos, size_t n) const
 {			
-    if(pos < 0 || pos > m_nBits)
+    if( pos > m_nBits)
         throw OutOfRangeException( _T("BitVector BitVector::substr(size_t pos, size_t n) const"));
 
     if (n > m_nBits - pos)
@@ -505,9 +505,9 @@ size_t BitVector::length(size_t n, bool val)
 
 size_t BitVector::trim()
 {
-    size_t i;
+    ssize_t i;
     for (i = m_nBits - 1; i >= 0; --i)
-        if (test_(i))
+        if (test_((size_t)i))
             break;
     size_t newlen = i + 1;
     length(newlen);

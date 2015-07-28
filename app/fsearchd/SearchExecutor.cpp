@@ -47,14 +47,14 @@ void SearchExecutor::search(stringstream& ss, const Statement& state)
 
     QueryResult result;
 
-    if (pHits.isNotNull())
+    if (pHits)
     {
         FieldSelectClausePtr pFieldClause = state.getFieldSelectClause();
         QueryClausePtr pQueryClause = state.getQueryClause();
-        if (pFieldClause.isNotNull() && pQueryClause.isNotNull())
+        if (pFieldClause && pQueryClause)
         {
             QueryPtr pQuery = parser.parse(pQueryClause->getQueryString());
-            FIRTEX_ASSERT2(pQuery.isNotNull());
+            FIRTEX_ASSERT2(pQuery);
 
             FieldSelector selector(pIndexReader->getDocSchema());
                 

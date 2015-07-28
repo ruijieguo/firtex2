@@ -158,7 +158,7 @@ void ForwardIndexTestCase::checkForwardIndex(
 {
     FX_NS(common)::SharedPtr<TypedForwardIndexIterator<T> > pTypedIter 
         = pIter.cast<TypedForwardIndexIterator<T> >();
-    CPPUNIT_ASSERT(!pTypedIter.isNull());
+    CPPUNIT_ASSERT(pTypedIter);
     
     CPPUNIT_ASSERT_EQUAL(answer.size(), pIter->size());
     for (size_t i = 0; i< answer.size(); ++i)

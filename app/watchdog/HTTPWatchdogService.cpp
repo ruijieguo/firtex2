@@ -35,7 +35,7 @@ void HTTPWatchdogService::handleRequest(EvHttpRequestContext* pCtx)
         {
             ErrorInfo errorInfo;
             ProcessInfoPtr pProcInfo = getProcessInfo(errorInfo, task.command);
-            if (pProcInfo.isNull())
+            if (!pProcInfo)
             {
                 sendErrorInfo(pCtx, errorInfo);
             }
@@ -84,10 +84,10 @@ void HTTPWatchdogService::handleRequest(EvHttpRequestContext* pCtx)
 }
 
 #define EXTRACT_NODE_STRING(pNode, value)                               \
-    if (pNode.isNotNull())                                              \
+    if (pNode)                                              \
     {                                                                   \
         XMLNodeWrapperPtr pDataNode = pNode->firstNode();               \
-        if (pDataNode.isNotNull())                                      \
+        if (pDataNode)                                      \
             value = pDataNode->getValue();                              \
     }
 
@@ -158,7 +158,7 @@ bool HTTPWatchdogService::commandToTask(EvHttpRequestContext* pCtx,
         }
 
         XMLNodeWrapperPtr pRootNode = xmlDoc.firstNode("process");
-        if (pRootNode.isNull())
+        if (!pRootNode)
         {
             sendErrorMsg(pCtx, "Missing process info", 
                         HTTPTypes::RESPONSE_CODE_BAD_REQUEST);
@@ -175,10 +175,10 @@ bool HTTPWatchdogService::commandToTask(EvHttpRequestContext* pCtx,
         }
             
         XMLNodeWrapperPtr pParamRootNode = pRootNode->firstNode("parameters");
-        if (pParamRootNode.isNotNull())
+        if (pParamRootNode)
         {
             for (XMLNodeWrapperPtr pParamNode = pParamRootNode->firstNode("parameter");
-                 pParamNode.isNotNull(); pParamNode = pParamNode->nextSibling())
+                 pParamNode; pParamNode = pParamNode->nextSibling())
             {
                 string str;
                 EXTRACT_NODE_STRING(pParamNode, str);
@@ -187,10 +187,10 @@ bool HTTPWatchdogService::commandToTask(EvHttpRequestContext* pCtx,
         }
 
         XMLNodeWrapperPtr pEnvNode = pRootNode->firstNode("environment");
-        if (pEnvNode.isNotNull())
+        if (pEnvNode)
         {
             for (XMLNodeWrapperPtr pValueNode = pEnvNode->firstNode("value");
-                 pValueNode.isNotNull(); pValueNode = pValueNode->nextSibling())
+                 pValueNode; pValueNode = pValueNode->nextSibling())
             {
                 XMLAttributeWrapperPtr pNameAttr = pValueNode->firstAttribute("name");
                 XMLNodeWrapperPtr pDataNode = pValueNode->firstNode();
@@ -201,14 +201,14 @@ bool HTTPWatchdogService::commandToTask(EvHttpRequestContext* pCtx,
 
         XMLNodeWrapperPtr pProcInfoKeepTimeNode = 
             pRootNode->firstNode("process_info_keep_time");
-        if (pProcInfoKeepTimeNode.isNotNull())
+        if (pProcInfoKeepTimeNode)
         {
             task.processInfoKeepTime = NumberParser::parseInt32(
                     pProcInfoKeepTimeNode->getValue());
         }
 
         XMLNodeWrapperPtr pStopSignalNode = pRootNode->firstNode("stop_signal");
-        if (pStopSignalNode.isNotNull())
+        if (pStopSignalNode)
         {
             stopSignal = NumberParser::parseInt32(pStopSignalNode->getValue());
         }
@@ -216,7 +216,7 @@ bool HTTPWatchdogService::commandToTask(EvHttpRequestContext* pCtx,
         EXTRACT_NODE_STRING2(pRootNode, "work_directory", task.workDirectory);
 
         XMLNodeWrapperPtr pRestartAfterCrash = pRootNode->firstNode("restart_after_crash");
-        if (pRestartAfterCrash.isNotNull())
+        if (pRestartAfterCrash)
         {
             if (!strCompareNoCase(pRestartAfterCrash->getValue(), "true"))
             {

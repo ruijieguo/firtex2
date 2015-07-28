@@ -134,7 +134,7 @@ void IndexMergerTestCase::buildIndex(
     }
     pIndexWriter->commit();
 
-    if (pDocFilter.isNotNull())
+    if (pDocFilter)
     {
         size_t count = (builtDocCount > pDocFilter->length()) 
                        ? pDocFilter->length() : builtDocCount;
@@ -243,7 +243,7 @@ void IndexMergerTestCase::makeAnswer(const string& sResult,
     docid_t docId = 0;
     for (size_t i = 0; i < nNumDocs; ++i)
     {
-        if (pDocFilter.isNull() || !pDocFilter->test(i))
+        if (!pDocFilter || !pDocFilter->test(i))
         {
             StringTokenizer st2(st[i], ",", StringTokenizer::TOKEN_TRIM | 
                     StringTokenizer::TOKEN_IGNORE_EMPTY);
@@ -281,7 +281,7 @@ void IndexMergerTestCase::makeAnswer(const string& sResult,
                 }
             }
             ++docId;
-        }//if (pDocFilter.isNull() || !pDocFilter->test(i))
+        }//if (!pDocFilter || !pDocFilter->test(i))
     }
 }
 
@@ -369,8 +369,8 @@ void IndexMergerTestCase::checkResult(MockIndex& answer,
                 }
                 
                 TermPostingIteratorPtr pPost = pTermReader->seek(pTerm.get());
-                assert(!pPost.isNull());
-                CPPUNIT_ASSERT(!pPost.isNull());
+                assert(pPost);
+                CPPUNIT_ASSERT(pPost);
                 const TermMeta& termMeta = pPost->getTermMeta();
                 CPPUNIT_ASSERT_EQUAL((df_t)aIt->second.size(), termMeta.getDocFreq());
             }

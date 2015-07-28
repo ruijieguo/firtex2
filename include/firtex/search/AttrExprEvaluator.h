@@ -28,7 +28,7 @@ struct AttrExprEvaluatorTraits
 {
     typedef T ValueType;
     typedef FX_NS(index)::FloatForwardIndexIterator AttrIterType;
-    typedef FX_NS(common)::SharedPtr<AttrIterType>  AttrIterPtrType;
+    DEFINE_TYPED_PTR(AttrIterType);
 
     static ValueType EMPTY_VALUE;
 };
@@ -43,14 +43,14 @@ class AttrExprEvaluator : public ExprEvaluator
 public:
     typedef typename Traits::ValueType ValueType;
     typedef typename Traits::AttrIterType AttrIterType;
-    typedef typename Traits::AttrIterPtrType IterPtrType;
+    typedef typename Traits::AttrIterTypePtr IterTypePtr;
 
     typedef typename AttrIterType::ValueType IterValueType;
 
     static ValueType EMPTY_VALUE;
 
 public:
-    AttrExprEvaluator(const IterPtrType& iter);
+    AttrExprEvaluator(const IterTypePtr& iter);
     ~AttrExprEvaluator();
 
 public:
@@ -86,7 +86,7 @@ private:
     ValueType evaluate(const ScoreDoc& scoredDoc);
 
 private:
-    IterPtrType m_pAttrIter;
+    IterTypePtr m_pAttrIter;
 
 private:
 //    DECLARE_STREAM_LOGGER();
@@ -102,7 +102,7 @@ AttrExprEvaluator<T, Traits>::EMPTY_VALUE = Traits::EMPTY_VALUE;
 //SETUP_STREAM_LOGGER_TEMP2(search, AttrExprEvaluator);
 
 template<typename T, typename Traits>
-AttrExprEvaluator<T, Traits>::AttrExprEvaluator(const IterPtrType& iter)
+AttrExprEvaluator<T, Traits>::AttrExprEvaluator(const IterTypePtr& iter)
     : ExprEvaluator(ExprTypeTraits<T>::VALUE_TYPE)
     , m_pAttrIter(iter)
 {
@@ -153,18 +153,18 @@ AttrExprEvaluator<T, Traits>::evaluate(const ScoreDoc& scoredDoc)
     {                                                                   \
         typedef type ValueType;                                         \
         typedef iterType AttrIterType;                                  \
-        typedef FX_NS(common)::SharedPtr<AttrIterType>  AttrIterPtrType; \
+        DEFINE_TYPED_PTR(AttrIterType);                                 \
         static ValueType EMPTY_VALUE;                                   \
     };                                                                  \
-    AttrExprEvaluatorTraits<type>::ValueType                            \
-    AttrExprEvaluatorTraits<type>::EMPTY_VALUE = emptyVal
+    FX_NS(search)::AttrExprEvaluatorTraits<type>::ValueType             \
+    FX_NS(search)::AttrExprEvaluatorTraits<type>::EMPTY_VALUE = emptyVal
 
  #define DECLARE_ATTREXPR_EVALUATOR_CAST_TRAITS(name, type, iterType, emptyVal) \
      template<typename T> struct name##AttrExprEvaluatorCastTraits       \
      {                                                                   \
          typedef T ValueType;                                            \
          typedef iterType AttrIterType;                                  \
-         typedef FX_NS(common)::SharedPtr<AttrIterType>  AttrIterPtrType; \
+         DEFINE_TYPED_PTR(AttrIterType);                                 \
          static ValueType EMPTY_VALUE;                                   \
      };                                                                  \
      template<typename T> typename name##AttrExprEvaluatorCastTraits<T>::ValueType \
@@ -173,10 +173,10 @@ AttrExprEvaluator<T, Traits>::evaluate(const ScoreDoc& scoredDoc)
      {                                                                   \
          typedef type ValueType;                                         \
          typedef iterType AttrIterType;                                  \
-         typedef FX_NS(common)::SharedPtr<AttrIterType>  AttrIterPtrType; \
-         static ValueType EMPTY_VALUE;                                  \
+         DEFINE_TYPED_PTR(AttrIterType);                                 \
+         static ValueType EMPTY_VALUE;                                   \
      };                                                                  \
-     name##AttrExprEvaluatorCastTraits<type>::ValueType                 \
+     name##AttrExprEvaluatorCastTraits<type>::ValueType                  \
         name##AttrExprEvaluatorCastTraits<type>::EMPTY_VALUE = emptyVal
 
 DECLARE_ATTREXPR_EVALUATOR_TRAITS(int32_t, FX_NS(index)::Int32ForwardIndexIterator, 0);

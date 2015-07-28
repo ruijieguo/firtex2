@@ -22,7 +22,7 @@ MaxForwardSegmenter::~MaxForwardSegmenter()
 
 void MaxForwardSegmenter::init(const tstring& sLexiconFile)
 {
-    m_pLexicon = new DoubleArrayTrie();
+    m_pLexicon.reset(new DoubleArrayTrie());
     m_pLexicon->load(sLexiconFile);
 }
 

@@ -11,7 +11,7 @@ SETUP_STREAM_LOGGER(index, InMemIndexMerger);
 InMemIndexMerger::InMemIndexMerger(IndexBarrelKeeper* pBarrelKeeper) 
     : IndexMerger(pBarrelKeeper)
 {
-    m_pMergePolicy = new OptimizeMergePolicy();
+    m_pMergePolicy.reset(new OptimizeMergePolicy());
 }
 
 InMemIndexMerger::~InMemIndexMerger() 
@@ -38,9 +38,9 @@ void InMemIndexMerger::merge()
 void InMemIndexMerger::addToMerge(const BarrelInfo& barrelInfo, 
                                   const IndexBarrelWriterPtr& pIndexBarrelWriter)
 {
-    if (m_pInMemBarrelsInfo.isNull())
+    if (!m_pInMemBarrelsInfo)
     {
-        m_pInMemBarrelsInfo = new BarrelsInfo();
+        m_pInMemBarrelsInfo.reset(new BarrelsInfo());
     }
 
     FX_LOG(INFO, "Add in-memory barrel to merge: commit: [%d], "
@@ -74,12 +74,12 @@ BarrelsInfoPtr InMemIndexMerger::initBarrelsInfo()
 
 DeletedDocumentFilterPtr InMemIndexMerger::initDeletionFilter()
 {
-    DeletedDocumentFilterPtr pDocFilter = new DeletedDocumentFilter(m_pKeeper->getFileSystem());
+    DeletedDocumentFilterPtr pDocFilter(new DeletedDocumentFilter(m_pKeeper->getFileSystem()));
     for (InMemReaderMap::const_iterator it = m_readers.begin();
          it != m_readers.end(); ++it)
     {
         pDocFilter->appendBarrel(*(m_pInMemBarrelsInfo->getBarrel(it->first)),
-                const_cast<BitVector*>(it->second->getDocFilter()));
+                it->second->getDocFilter());
     }
     return pDocFilter;
 }
@@ -150,7 +150,7 @@ BarrelsInfoPtr InMemIndexMerger::createMergedBarrelsInfo(
         const BarrelsInfoPtr& pMergeBarrels)
 {
     FileSystemPtr pFileSys = m_pKeeper->getFileSystem();
-    BarrelsInfoPtr pNewBarrelsInfo = new BarrelsInfo();
+    BarrelsInfoPtr pNewBarrelsInfo(new BarrelsInfo());
     pNewBarrelsInfo->read(pFileSys);
     return pNewBarrelsInfo;
 }

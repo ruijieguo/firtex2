@@ -59,7 +59,7 @@ void StoredFieldsWriter::addDocument(const AnalyzedDocument* pDoc)
     fieldid_t fid  = 0;
     int32_t nCount = 0;
 
-    if (m_pIdxOutStream.isNull())
+    if (!m_pIdxOutStream)
     {
         createStreams();
     }
@@ -109,12 +109,12 @@ void StoredFieldsWriter::seal()
 {
     FX_DEBUG("Seal stored fields: [%s]", m_sCacheDir.c_str());
              
-    if (m_pValueOutStream.isNotNull())
+    if (m_pValueOutStream)
     {
         m_pValueOutStream->close();
         m_pValueOutStream.reset();
     }
-    if (m_pIdxOutStream.isNotNull())
+    if (m_pIdxOutStream)
     {
         m_pIdxOutStream->close();
         m_pIdxOutStream.reset();
@@ -126,12 +126,12 @@ void StoredFieldsWriter::seal()
 void StoredFieldsWriter::commitBarrel(const string& sPrefix)
 {
     FX_DEBUG("Commit stored fields data: [%s]", sPrefix.c_str());
-    if (m_pValueOutStream.isNotNull() || m_pIdxOutStream.isNotNull())
+    if (m_pValueOutStream || m_pIdxOutStream)
     {
         seal();
     }
 
-    if (m_pFileSys.isNotNull())
+    if (m_pFileSys)
     {
         string sCacheValFile = BarrelDirectory::getFilePath(STORED_FIELDS_VALUE_FILENAME, m_sCacheDir);
         string sCacheIdxFile = BarrelDirectory::getFilePath(STORED_FIELDS_IDX_FILENAME, m_sCacheDir);

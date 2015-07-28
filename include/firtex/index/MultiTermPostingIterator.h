@@ -124,13 +124,6 @@ public:
      */
     tf_t freq();
 
-    /**
-     * Move to next position block
-     * @param positions position block
-     * @return size of position block
-     */
-    tf_t nextPositions(loc_t*& positions);
-
     /**	 
      * Skip to position which is equal to or 
      * greater than <i>pos</i>

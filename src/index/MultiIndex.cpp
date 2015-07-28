@@ -39,7 +39,7 @@ void MultiIndex::open(const IndexVector& indices)
     {
         addIndex(*it); 
     }
-    m_pReader.assign(new MultiIndexReader(this));
+    m_pReader.reset(new MultiIndexReader(this));
 }
 
 void MultiIndex::open(const vector<tstring>& indexPaths)
@@ -49,7 +49,7 @@ void MultiIndex::open(const vector<tstring>& indexPaths)
     {
         addIndex(*it);
     }
-    m_pReader.assign(new MultiIndexReader(this));
+    m_pReader.reset(new MultiIndexReader(this));
 }
 
 void MultiIndex::addIndex(Index* pIndex)
@@ -80,9 +80,9 @@ void MultiIndex::addIndex(const tstring& sIndexPath)
 
 void MultiIndex::addBarrels(const BarrelsInfoPtr& pBarrels)
 {
-    if (m_pBarrelsInfo.isNull())
+    if (!m_pBarrelsInfo)
     {
-        m_pBarrelsInfo.assign(new BarrelsInfo());
+        m_pBarrelsInfo.reset(new BarrelsInfo());
     }
 
     BarrelsInfo::Iterator iter = pBarrels->iterator();
@@ -98,13 +98,13 @@ void MultiIndex::addSchema(const DocumentSchema* pSchema)
 {
     if (pSchema)
     {
-        if (m_pDocSchema.isNotNull())
+        if (m_pDocSchema)
         {
             m_pDocSchema->mergeSchema(*pSchema);
         }
         else
         {
-            m_pDocSchema = new DocumentSchema(*pSchema);
+            m_pDocSchema.reset(new DocumentSchema(*pSchema));
         }
     }
 }

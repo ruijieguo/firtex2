@@ -24,7 +24,7 @@ RPCSearchReplica::RPCSearchReplica()
 
 RPCSearchReplica::~RPCSearchReplica()
 {
-    if (m_pSearchClient.isNotNull())
+    if (m_pSearchClient)
     {
         m_pSearchClient->close();
     }
@@ -34,7 +34,7 @@ void RPCSearchReplica::initClient(const std::string& sAddr, int32_t nPort)
 {
     FX_DEBUG("Setup connection to [%s : %u].", sAddr.c_str(), nPort);
 
-    m_pSearchClient = new RPCClient();
+    m_pSearchClient.reset(new RPCClient());
     m_pSearchClient->open(sAddr, nPort);
 }
 

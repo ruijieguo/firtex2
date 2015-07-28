@@ -45,7 +45,7 @@ InputStreamPtr InputStreamPool::getInputStream(const std::string& sFileName) con
         ScopedLock<FastMutex> lock(m_mutex);
 
         InputStreamPtr pInStream = doGetInputStream(sFileName);
-        if (pInStream.isNotNull())
+        if (pInStream)
         {
             return pInStream;
         }
@@ -80,18 +80,18 @@ InputStreamPool::getInputStreams(const StringPair& fileNames) const
 
         pInStream1 = doGetInputStream(fileNames.first);
         pInStream2 = doGetInputStream(fileNames.second);
-        if (pInStream1.isNotNull() && pInStream2.isNotNull())
+        if (pInStream1 && pInStream2)
         {
             return std::make_pair(pInStream1, pInStream2);
         }
     }
     
-    if (pInStream1.isNull())
+    if (!pInStream1)
     {
         pInStream1 = m_pFileSystem->openFile(fileNames.first);
     }
 
-    if (pInStream2.isNull())
+    if (!pInStream2)
     {
         pInStream2 = m_pFileSystem->openFile(fileNames.second);
     }

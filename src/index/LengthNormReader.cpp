@@ -54,12 +54,12 @@ void LengthNormReader::init(const std::string& sSuffix,
             {
                 m_lengthNorms.resize(fieldId + 1);
             }
-            m_lengthNorms[fieldId].assign(new LengthNorm(FdIndexType::INT32));
+            m_lengthNorms[fieldId].reset(new LengthNorm(FdIndexType::INT32));
             m_lengthNorms[fieldId]->open(m_pFileSys, pFieldSchema,
                     NORM_FILEEXT, sSuffix);
 
             ForwardIndexIteratorPtr pIt = m_lengthNorms[fieldId]->iterator();
-            LengthNormIteratorPtr pNormIt = pIt.cast<LengthNormIterator>();
+            LengthNormIteratorPtr pNormIt = std::dynamic_pointer_cast<LengthNormIterator>(pIt);
             if (!pNormIt)
             {
                 FIRTEX_THROW(CastException, "Create length norm iterator of field: [%d] FAILED",
@@ -109,7 +109,7 @@ void LengthNormReader::addNormIterator(fieldid_t fieldId, const LengthNormIterat
     {
         m_lengthNormIts.resize(fieldId + 1);
     }
-    m_lengthNormIts[fieldId].assign(pNormIt);
+    m_lengthNormIts[fieldId] = pNormIt;
 }
 
 FX_NS_END

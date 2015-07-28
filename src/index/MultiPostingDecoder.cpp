@@ -36,7 +36,8 @@ void MultiPostingDecoder::addDecoder(const BarrelInfo* pBarrelInfo,
         FIRTEX_THROW(OutOfOrderException, "Decoder is out of order.");
     }
 
-    m_postingDecoders.push_back(new Entry(pBarrelInfo, pPosting));
+    EntryPtr pTmp(new Entry(pBarrelInfo, pPosting));
+    m_postingDecoders.push_back(pTmp);
     const TermMeta& termMeta = pPosting->getTermMeta();
     m_termMeta.getCTF() += termMeta.getCTF();
     m_termMeta.getDocFreq() += termMeta.getDocFreq();

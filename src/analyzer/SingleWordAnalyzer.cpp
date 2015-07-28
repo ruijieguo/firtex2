@@ -35,11 +35,11 @@ void SingleWordAnalyzer::init()
 {
     if (m_sEncodeName == "gbk" || m_sEncodeName == "gb2312")
     {
-        m_pTokenizer = new GBKStandardTokenizer();
+        m_pTokenizer.reset(new GBKStandardTokenizer());
     }
     else
     {
-        m_pTokenizer = new UTF8StandardTokenizer();
+        m_pTokenizer.reset(new UTF8StandardTokenizer());
     }
 }
 

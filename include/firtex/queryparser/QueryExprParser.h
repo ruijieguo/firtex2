@@ -109,7 +109,7 @@ inline void QueryExprParser::fail(const std::string& m)
 
 inline void QueryExprParser::finalize(QueryExpr* pExpr)
 {
-    m_pRootExpr = pExpr;
+    m_pRootExpr.reset(pExpr);
 }
 
 inline const std::string& QueryExprParser::getDefaultField() const

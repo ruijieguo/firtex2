@@ -11,7 +11,8 @@ SETUP_STREAM_LOGGER(store, IndexCleanerFactory);
 
 IndexCleanerFactory::IndexCleanerFactory() 
 {
-    registerIndexCleaner(new KeepByCommitIndexCleaner::Creator);
+    CreatorPtr pTmp(new KeepByCommitIndexCleaner::Creator);
+    registerIndexCleaner(pTmp);
 }
 
 IndexCleanerFactory::~IndexCleanerFactory() 

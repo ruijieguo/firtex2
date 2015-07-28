@@ -85,7 +85,7 @@ inline void ReqOptQueryExecutor::doGetMatchedDoc(MatchedDoc& matchedDoc)
 
     m_pReqExecutor->currentMatchedDoc(matchedDoc);
 
-    if (m_pOptExecutor.isNotNull())
+    if (m_pOptExecutor)
     {
         m_pOptExecutor->skipTo(matchedDoc.getDocId());
         m_pOptExecutor->currentMatchedDoc(matchedDoc);

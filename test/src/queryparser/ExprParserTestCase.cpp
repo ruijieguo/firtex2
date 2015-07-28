@@ -38,7 +38,7 @@ void ExprParserTestCase::parseAndAssertInt32(
     IndexReaderPtr pIndexReader;
     ExprParser parser(pIndexReader);
     ExprEvaluatorPtr pEval = parser.parse(sExpr);
-    CPPUNIT_ASSERT(pEval.isNotNull());
+    CPPUNIT_ASSERT(pEval);
     ScoredDoc doc(0, 0.0f);
     CPPUNIT_ASSERT_EQUAL(iExpectVal, pEval->evaluateInt32(doc));
 }
@@ -49,7 +49,7 @@ void ExprParserTestCase::parseAndAssertInt64(
     IndexReaderPtr pIndexReader;
     ExprParser parser(pIndexReader);
     ExprEvaluatorPtr pEval = parser.parse(sExpr);
-    CPPUNIT_ASSERT(pEval.isNotNull());
+    CPPUNIT_ASSERT(pEval);
     ScoredDoc doc(0, 0.0f);
     CPPUNIT_ASSERT_EQUAL(iExpectVal, pEval->evaluateInt64(doc));
 }
@@ -60,7 +60,7 @@ void ExprParserTestCase::parseAndAssertFloat(
     IndexReaderPtr pIndexReader;
     ExprParser parser(pIndexReader);
     ExprEvaluatorPtr pEval = parser.parse(sExpr);
-    CPPUNIT_ASSERT(pEval.isNotNull());
+    CPPUNIT_ASSERT(pEval);
     ScoredDoc doc(0, 0.0f);
     CPPUNIT_ASSERT_EQUAL(fExpectVal, pEval->evaluateFloat(doc));
 }
@@ -71,7 +71,7 @@ void ExprParserTestCase::parseAndAssertDouble(
     IndexReaderPtr pIndexReader;
     ExprParser parser(pIndexReader);
     ExprEvaluatorPtr pEval = parser.parse(sExpr);
-    CPPUNIT_ASSERT(pEval.isNotNull());
+    CPPUNIT_ASSERT(pEval);
     ScoredDoc doc(0, 0.0f);
     CPPUNIT_ASSERT_EQUAL(dbExpectVal, pEval->evaluateDouble(doc));
 }

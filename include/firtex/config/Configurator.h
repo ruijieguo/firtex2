@@ -380,10 +380,10 @@ public:
     static void fromConf(std::vector<std::pair<tstring, T> >& m, const FX_NS(common)::Any& a);
 
     template<typename T>
-    static FX_NS(common)::Any toConf(const FX_NS(common)::SharedPtr<T>& m);
+    static FX_NS(common)::Any toConf(const std::shared_ptr<T>& m);
 
     template<typename T>
-    static void fromConf(const FX_NS(common)::SharedPtr<T>& m, const FX_NS(common)::Any& a);
+    static void fromConf(const std::shared_ptr<T>& m, const FX_NS(common)::Any& a);
 
 protected:
     Mode m_eMode;
@@ -521,13 +521,13 @@ void Configurator::fromConf(std::vector<std::pair<tstring, T> >& m, const FX_NS(
 }
 
 template<typename T>
-FX_NS(common)::Any Configurator::toConf(const FX_NS(common)::SharedPtr<T>& m)
+FX_NS(common)::Any Configurator::toConf(const std::shared_ptr<T>& m)
 {
     return toConf(m.get());
 }
 
 template<typename T>
-void Configurator::fromConf(const FX_NS(common)::SharedPtr<T>& m,
+void Configurator::fromConf(const std::shared_ptr<T>& m,
                             const FX_NS(common)::Any& a)
 {
     fromConf(m.get(), a);

@@ -57,7 +57,8 @@ void IndexBuilderAppRunner::buildIndex()
         cout << _T("Begin build index, config file: ") << m_sConfFile << endl;
         TimeProbe p;
         p.start();
-        FX_NS(collection)::Collection::buildIndex(m_sConfFile, new ConsoleProgressObserver(1000));
+        ProgressObserverPtr pOb(new ConsoleProgressObserver(1000));
+        FX_NS(collection)::Collection::buildIndex(m_sConfFile, pOb);
         p.stop();
         cout << _T("Build index success! finished in ") << p.elapsedSeconds() 
              << _T(" s.") << endl;

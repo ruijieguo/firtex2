@@ -31,7 +31,7 @@ public:
     typedef Hasher HasherType;
 
     typedef typename Traits::PostingTableType PostingTableType;
-    typedef FX_NS(common)::SharedPtr<PostingTableType> PostingTableTypePtr;
+    typedef typename Traits::PostingTableTypePtr PostingTableTypePtr;
 
 public:
     TypedInMemTermReader();

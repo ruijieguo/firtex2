@@ -61,7 +61,7 @@ void PrimitiveTypeForwardIndexMerger<T>::merge(const ForwardIndexMergeInfos& mer
         return;
     }
 
-    if (mergeInfos[0].getIterator().isNull())
+    if (!mergeInfos[0].getIterator())
     {
         doOnDiskMerge(mergeInfos);
     }

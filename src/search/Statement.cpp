@@ -120,7 +120,7 @@ void Statement::setParameter(const string& sKey,
 {
     std::string sClauseValue = sKey + CLAUSE_KV_SEPARATOR + sValue;
 
-    if (m_pParamClause.isNull())
+    if (!m_pParamClause)
     {
         ClauseCreatorMap::const_iterator it = m_creators.find(ParameterClause::PREFIX);
         if (it == m_creators.end())
@@ -129,9 +129,9 @@ void Statement::setParameter(const string& sKey,
         }
         else
         {
-            ClausePtr pClause = it->second->create(ParameterClause::PREFIX, sClauseValue);
+            ClausePtr pClause(it->second->create(ParameterClause::PREFIX, sClauseValue));
             m_clauses.insert(make_pair(ParameterClause::PREFIX, pClause));
-            m_pParamClause = pClause.cast<ParameterClause>();
+            m_pParamClause = std::dynamic_pointer_cast<ParameterClause>(pClause);
         }
     }
     else
@@ -146,11 +146,11 @@ void Statement::extractBuiltInClause(bool bOverride)
     cIt = m_clauses.find(prefix);                                       \
     if (cIt != m_clauses.end())                                         \
     {                                                                   \
-        if (clause.isNull() || override)                                \
+        if (!clause || override)                                        \
         {                                                               \
-            clause = cIt->second.cast<type>();                          \
+            clause = std::dynamic_pointer_cast<type>(cIt->second);      \
         }                                                               \
-        FIRTEX_ASSERT2(clause.isNotNull());                             \
+        FIRTEX_ASSERT2(clause);                                         \
     }
 
     ClauseMap::const_iterator cIt;
@@ -228,11 +228,11 @@ bool Statement::doAddClause(const string& sClauseName,
     ClauseCreatorMap::const_iterator it = m_creators.find(sClauseName);
     if (it != m_creators.end())
     {
-        pClause = it->second->create(sClauseName, sClauseValue);
+        pClause.reset(it->second->create(sClauseName, sClauseValue));
     }
     else 
     {
-        pClause = new Clause(sClauseName, sClauseValue);
+        pClause.reset(new Clause(sClauseName, sClauseValue));
     }
     m_clauses.insert(make_pair(sClauseName, pClause));
     return true;

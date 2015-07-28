@@ -91,7 +91,7 @@ DEFINE_TYPED_PTR(DocPostingDecoder);
 //
 inline ctf_t DocPostingDecoder::getCumulatedSumTf() const
 {
-    return m_pDocSkipListReader.isNotNull() ? m_pDocSkipListReader->getCurPoint().cumSumTf : 0;
+    return m_pDocSkipListReader ? m_pDocSkipListReader->getCurPoint().cumSumTf : 0;
 }
 
 FX_NS_END

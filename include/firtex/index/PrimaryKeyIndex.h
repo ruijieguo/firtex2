@@ -19,7 +19,7 @@ class PrimaryKeyIndex
 {
 public:
     typedef FX_NS(utility)::HashMap<uint64_t, docid_t> HashTable;
-    typedef FX_NS(common)::SharedPtr<HashTable> HashTablePtr;
+    DEFINE_TYPED_PTR(HashTable);
     
 public:
     PrimaryKeyIndex(const tstring& sPrimKeyField);

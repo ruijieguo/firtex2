@@ -171,10 +171,10 @@ void LoggerTestCase::testConfigureLog()
     CPPUNIT_ASSERT(log3->getLevel() == LoggingLevel::LEVEL_TRACE);
 
     AppenderPtr pApp3 = log3->getAppender();
-    CPPUNIT_ASSERT(pApp3.isNotNull());
+    CPPUNIT_ASSERT(pApp3);
     
     FileAppenderPtr pFileApp3 = pApp3.cast<FileAppender>();
-    CPPUNIT_ASSERT(pFileApp3.isNotNull());
+    CPPUNIT_ASSERT(pFileApp3);
     CPPUNIT_ASSERT_EQUAL(string("myAppenderPath"), pFileApp3->getPath());
 
     LoggerPtr log4 = logBuilder2.hasLogger("child3.grandchild3");
@@ -182,7 +182,7 @@ void LoggerTestCase::testConfigureLog()
     CPPUNIT_ASSERT(log4->getLevel() == LoggingLevel::LEVEL_DEBUG);
 
     AppenderPtr pApp4 = log4->getAppender();
-    CPPUNIT_ASSERT(pApp4.isNotNull());
+    CPPUNIT_ASSERT(pApp4);
     CPPUNIT_ASSERT(pApp4 == pApp3);
 }
 

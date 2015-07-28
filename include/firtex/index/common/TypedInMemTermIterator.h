@@ -28,16 +28,15 @@ public:
     typedef typename Traits::TermType TermType;
     typedef typename Traits::InMemDictType InMemDictType;
     typedef typename Traits::PostingDecoderType PostingDecoderType;
+    typedef typename Traits::PostingDecoderTypePtr PostingDecoderTypePtr;
     typedef typename Traits::PostingIteratorType PostingIteratorType;
     typedef typename Traits::PostingTableType PostingTableType;
+    typedef typename Traits::PostingTableTypePtr PostingTableTypePtr;
     
-    typedef FX_NS(common)::SharedPtr<PostingDecoderType> PostingDecoderTypePtr;
-    typedef FX_NS(common)::SharedPtr<PostingTableType> PostingTablePtr;
-
 public:
     TypedInMemTermIterator(const FX_NS(document)::FieldSchema* pFieldSchema,
                            const FX_NS(utility)::BitVector* pDocFilter);
-    ~TypedInMemTermIterator();
+    virtual ~TypedInMemTermIterator();
 
 public:
     /**
@@ -49,7 +48,7 @@ public:
      * @return false if failure
      * @throw throw CastException if given a wrong term type
      */
-    bool init(const PostingTablePtr& pPostingTable,
+    bool init(const PostingTableTypePtr& pPostingTable,
               const Term* pLowerTerm, const Term* pUpperTerm);
 
     /**
@@ -107,7 +106,7 @@ TypedInMemTermIterator<Key, Traits>::~TypedInMemTermIterator()
 }
 template <typename Key, typename Traits>
 bool TypedInMemTermIterator<Key, Traits>::init(
-        const PostingTablePtr& pPostingTable,
+        const PostingTableTypePtr& pPostingTable,
         const Term* pLowerTerm, const Term* pUpperTerm)
 {
     const TermType* pLTerm = NULL;
@@ -166,9 +165,9 @@ bool TypedInMemTermIterator<Key, Traits>::init(
         m_iterator = m_dict.iterator();
     }
 
-    m_pCurDecoder = new PostingDecoderType();
+    m_pCurDecoder.reset(new PostingDecoderType());
     m_pCurIterator = new PostingIteratorType();
-    m_pIteratorPtr = m_pCurIterator;
+    m_pIteratorPtr.reset(m_pCurIterator);
     return true;
 }
 

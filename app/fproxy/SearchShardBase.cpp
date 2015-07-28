@@ -33,7 +33,7 @@ bool SearchShardBase::init(const ProxyServerConf::sShard& shardConf,
          it != shardConf.replicas.end(); ++it, ++repId)
     {
 
-        SearchReplicaBasePtr pReplica = newReplica();
+        SearchReplicaBasePtr pReplica(newReplica());
         if (!pReplica->init(*it))
         {
             FX_LOG(ERROR, "Init replica: [%s] FAILED.", it->server.c_str());
@@ -64,7 +64,7 @@ void SearchShardBase::run()
     do
     {
         SearchReplicaBasePtr pReplica = m_pBallancePolicy->select();
-        if (pReplica.isNull())
+        if (!pReplica)
         {
             FX_LOG(ERROR, "No replica to select: shard: [%d]", m_shardId);
 

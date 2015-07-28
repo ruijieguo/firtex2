@@ -279,12 +279,12 @@ inline const DeletedDocumentFilterPtr& IndexBarrelKeeper::getOnDiskDocFilterUnSa
 inline bool IndexBarrelKeeper::hasOnDiskDeletion() const
 {
     FX_NS(thread)::ScopedRWLock lock(m_lock, false);
-    return (m_pOnDiskDocFilter.isNotNull() && m_pOnDiskDocFilter->isDirty());
+    return (m_pOnDiskDocFilter && m_pOnDiskDocFilter->isDirty());
 }
 
 inline bool IndexBarrelKeeper::hasOnDiskDeletionUnSafe() const
 {
-    return (m_pOnDiskDocFilter.isNotNull() && m_pOnDiskDocFilter->isDirty());
+    return (m_pOnDiskDocFilter && m_pOnDiskDocFilter->isDirty());
 }
 
 inline void IndexBarrelKeeper::setCommitScheduler(const CommitSchedulerPtr& pCommitScheduler)
@@ -295,7 +295,7 @@ inline void IndexBarrelKeeper::setCommitScheduler(const CommitSchedulerPtr& pCom
 inline bool IndexBarrelKeeper::hasDocument(const std::string& sPrimkey) const
 {
     FX_NS(thread)::ScopedRWLock lock(m_lock, false);
-    if (m_pOnDiskPrimKeyIndex.isNotNull())
+    if (m_pOnDiskPrimKeyIndex)
     {
         return (m_pOnDiskPrimKeyIndex->lookup(sPrimkey) != INVALID_DOCID);
     }
@@ -320,7 +320,7 @@ inline size_t IndexBarrelKeeper::getHeldCommitCount() const
 
 inline const FX_NS(utility)::Timestamp& IndexBarrelKeeper::getLastCommitTime() const
 {
-    FIRTEX_ASSERT2(m_pCommitScheduler.isNotNull());
+    FIRTEX_ASSERT2(m_pCommitScheduler);
     return m_pCommitScheduler->getLastCommitTime();
 }
 

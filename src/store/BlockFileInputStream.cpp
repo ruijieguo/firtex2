@@ -173,7 +173,7 @@ bool BlockFileInputStream::isEof() const
 
 void BlockFileInputStream::close()
 {
-    if (m_pFile.isNotNull())
+    if (m_pFile)
     {
         m_fileSystem.closeFile(m_pFile);
         m_pFile.reset();

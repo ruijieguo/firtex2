@@ -55,7 +55,7 @@ protected:
     ctf_t m_totalTermFreq;
 };
 
-typedef FX_NS(common)::SharedPtr<TermMeta> TermMetaPtr;
+DEFINE_TYPED_PTR(TermMeta);
 
 /////////////////////////////////////////
 //

@@ -6,13 +6,11 @@
 #include "firtex/extension/util/SharedOptionCallback.h"
 #include "firtex/extension/util/OptionException.h"
 
-#ifdef HAVE_THRIFT
 #include "RPCProxyService.h"
 #include "RPCProxyServer.h"
 #include "RPCBlenderService.h"
 using namespace apache;
 using namespace apache::thrift;
-#endif
 
 using namespace std;
 
@@ -74,7 +72,7 @@ AppRunner::Status ProxyServerAppRunner::run()
 
 bool ProxyServerAppRunner::initHttpServer()
 {
-    m_pServer = new HTTPProxyServer(m_sRole);
+    m_pServer.reset(new HTTPProxyServer(m_sRole));
     if (!m_pServer->init(m_sConfFile))
     {
         return false;
@@ -84,17 +82,12 @@ bool ProxyServerAppRunner::initHttpServer()
 
 bool ProxyServerAppRunner::initRPCServer()
 {
-#ifdef HAVE_THRIFT
-    m_pServer = new RPCProxyServer(m_sRole);
+    m_pServer.reset(new RPCProxyServer(m_sRole));
     if (!m_pServer->init(m_sConfFile))
     {
         return false;
     }
     return true;
-#else
-    FX_LOG(ERROR, "No RPC server, please re-compile with thrift");
-    return false;
-#endif
 }
 
 void ProxyServerAppRunner::registerOption(Application* pApp)
@@ -165,7 +158,7 @@ void ProxyServerAppRunner::optionCallback(const Option& option,
 
 void ProxyServerAppRunner::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -173,7 +166,7 @@ void ProxyServerAppRunner::stop()
 
 void ProxyServerAppRunner::waitStop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

@@ -237,11 +237,11 @@ inline bool StandardDocumentProcessor::initDocumentReader(const std::string& sPa
 {
     if (sPath.size() > 3 && !FX_NS(utility)::strCompareNoCase(sPath.c_str() + sPath.size() - 3, ".gz"))
     {
-        m_pDocReader.assign(new GZipDocumentReader());
+        m_pDocReader.reset(new GZipDocumentReader());
     }
     else 
     {
-        m_pDocReader.assign(new PlainDocumentReader());
+        m_pDocReader.reset(new PlainDocumentReader());
     }
 
     try

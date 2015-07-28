@@ -46,12 +46,12 @@ public:
 
         bool hasFilter() const
         {
-            return fieldFilter.isNotNull();
+            return (fieldFilter.get() != NULL);
         }
 
         bool filter(const std::string& sOrgValue, std::string& sNewValue) const
         {
-            if (fieldFilter.isNotNull())
+            if (fieldFilter)
             {
                 return fieldFilter->filter(sOrgValue, sNewValue);
             }

@@ -96,12 +96,12 @@ bool MMapFileInputStream::isEof() const
 
 void MMapFileInputStream::close()
 {
-    if (m_pMMapFile.isNotNull())
+    if (m_pMMapFile)
     {
         m_pMMapFile.reset();
     }
 
-    if (m_pFile.isNotNull())
+    if (m_pFile)
     {
         m_fileSystem.closeFile(m_pFile);
         m_pFile.reset();

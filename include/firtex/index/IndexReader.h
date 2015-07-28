@@ -212,7 +212,7 @@ IndexReader::getAnalyzerMapper() const
 inline TermReaderPtr IndexReader::termReader() const
 {
     const IndexBarrelReaderPtr& pReader = m_pBarrel->getReader();
-    if (pReader.isNotNull())
+    if (pReader)
     {
         return pReader->termReader();
     }
@@ -222,7 +222,7 @@ inline TermReaderPtr IndexReader::termReader() const
 inline TermReaderPtr IndexReader::termReader(const tstring& sField) const
 {
     const IndexBarrelReaderPtr& pReader = m_pBarrel->getReader();
-    if (pReader.isNotNull())
+    if (pReader)
     {
         return pReader->termReader(sField);
     }
@@ -232,7 +232,7 @@ inline TermReaderPtr IndexReader::termReader(const tstring& sField) const
 inline LengthNormIteratorPtr IndexReader::lengthNorm(const tstring& sField) const
 {
     const IndexBarrelReaderPtr& pReader = m_pBarrel->getReader();
-    if (pReader.isNotNull())
+    if (pReader)
     {
         return pReader->lengthNorm(sField);
     }

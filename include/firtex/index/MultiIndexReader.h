@@ -53,7 +53,7 @@ private:
     DECLARE_STREAM_LOGGER();
 };
 
-typedef FX_NS(common)::SharedPtr<MultiIndexReader> MultiIndexReaderPtr;
+DEFINE_TYPED_PTR(MultiIndexReader);
 
 FX_NS_END
 

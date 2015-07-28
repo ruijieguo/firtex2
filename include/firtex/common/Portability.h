@@ -16,25 +16,26 @@
 
 #else
 
-#if defined(HAVE_VPRINTF) || defined(FX_POSIX)
+//#if defined(HAVE_VPRINTF) || defined(FX_POSIX) || defined(FX_MACOS)
 #define VSNPRINTF vsnprintf
 #define SNPRINTF snprintf
-#else
+//#else
 /* use alternative snprintf() from http://www.ijs.si/software/snprintf/ */
 
-#define HAVE_VPRINTF
-#define PREFER_PORTABLE_SNPRINTF
+// #define HAVE_VPRINTF
+// #define HAVE_SNPRINTF
+// #define PREFER_PORTABLE_SNPRINTF
 
-#include <stdlib.h>
-#include <stdarg.h>
+// #include <stdlib.h>
+// #include <stdarg.h>
 
-extern int portable_snprintf(char *str, size_t str_m, const char *fmt, /*args*/ ...);
-extern int portable_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap);
+//extern int portable_snprintf(char *str, size_t str_m, const char *fmt, /*args*/ ...);
+//extern int portable_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap);
 
-#define VSNPRINTF portable_vsnprintf
-#define SNPRINTF portable_snprintf
+//#define VSNPRINTF portable_vsnprintf
+//#define SNPRINTF portable_snprintf
 
-#endif // HAVE_VPRINTF
+//#endif // HAVE_VPRINTF
 
 #define STRTOLL strtoll 
 #define STRTOULL strtoull

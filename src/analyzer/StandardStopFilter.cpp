@@ -97,7 +97,7 @@ size_t StandardStopFilter::loadWords(const tstring& sWords)
     StandardAnalyzer analyzer;
     analyzer.init();
     TokenViewPtr pTokens = analyzer.tokenize(sWords.c_str(), sWords.length());
-    if (pTokens.isNotNull())
+    if (pTokens)
     {
         TokenView::Iterator it = pTokens->iterator();
         while (it.hasNext())
@@ -120,7 +120,7 @@ const tstring& StandardStopFilter::getIdentifier() const
 void StandardStopFilter::filterInternal(TokenSourcePtr& tokenSource) const
 {
     TokenViewPtr pTokenView = tokenSource->getLastView();
-    if (!pTokenView.isNull())
+    if (!!pTokenView)
     {
         TokenView::Iterator it = pTokenView->iterator();
         while (it.hasNext())

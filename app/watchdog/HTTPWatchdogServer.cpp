@@ -43,16 +43,16 @@ bool HTTPWatchdogServer::init(const std::string& sConfFile)
 
 void HTTPWatchdogServer::run()
 {
-    m_pServiceFactory = new EvHttpServiceFactory();
+    m_pServiceFactory.reset(new EvHttpServiceFactory());
     HTTPWatchdogService* pService = new HTTPWatchdogService();
     pService->init(m_sWorkDir);
     m_pServiceFactory->registerService(pService);
     m_pServiceFactory->registerService(new HTTPPingService());
 
-    m_pServer = new EvHttpServer("localhost",
-                                 m_nListenPort,
-                                 m_pServiceFactory,
-                                 DEFAULT_THREAD_POOL_SIZE);
+    m_pServer.reset(new EvHttpServer("localhost",
+                    m_nListenPort,
+                    m_pServiceFactory,
+                    DEFAULT_THREAD_POOL_SIZE));
     try 
     {
         m_pServer->start(false);
@@ -67,7 +67,7 @@ void HTTPWatchdogServer::run()
 
 void HTTPWatchdogServer::stop()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->stop();
     }
@@ -75,7 +75,7 @@ void HTTPWatchdogServer::stop()
 
 void HTTPWatchdogServer::join()
 {
-    if (m_pServer.isNotNull())
+    if (m_pServer)
     {
         m_pServer->join();
     }

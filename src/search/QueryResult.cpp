@@ -37,7 +37,7 @@ void QueryResult::init(const FieldSelector& selector,
                        const QueryHits& hits)
 {
     StoredFieldsReaderPtr pStoredFieldsReader = pIndexReader->createStoredFieldsReader();
-    if (pStoredFieldsReader.isNull())
+    if (!pStoredFieldsReader)
     {
         return;
     }
