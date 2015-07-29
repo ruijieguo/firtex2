@@ -332,40 +332,6 @@ nobase_include_HEADERS = \
   firtex/store/MMapFileInputStream.h \
   firtex/store/MMapFileSystem.h \
   firtex/store/OutputStream.h \
-  firtex/thread/atomic/Atomic_GCC_IA64.h \
-  firtex/thread/atomic/Atomic_GCC_PPC64.h \
-  firtex/thread/atomic/Atomic_GCC_SPARC.h \
-  firtex/thread/atomic/Atomic_GCC_X86_64.h \
-  firtex/thread/atomic/Atomic_GCC_X86_atomic_bool.h \
-  firtex/thread/atomic/Atomic_GCC_X86_cas32.h \
-  firtex/thread/atomic/Atomic_GCC_X86_fence.h \
-  firtex/thread/atomic/Atomic_GCC_X86.h \
-  firtex/thread/atomic/Atomic_GCC_X86_load32.h \
-  firtex/thread/atomic/Atomic_GCC_X86_loadptr.h \
-  firtex/thread/atomic/Atomic_GCC_X86_spinlock.h \
-  firtex/thread/atomic/Atomic_GCC_X86_store32.h \
-  firtex/thread/atomic/Atomic_GCC_X86_storeptr.h \
-  firtex/thread/atomic/Atomic_GCC_X86_xadd32.h \
-  firtex/thread/atomic/Atomic_GCC_X86_xchg32.h \
-  firtex/thread/atomic/AtomicImpl.h \
-  firtex/thread/atomic/AtomicIntegrals.h \
-  firtex/thread/atomic/AtomicInt.h \
-  firtex/thread/atomic/AtomicOperations.h \
-  firtex/thread/atomic/AtomicTypedOps.h \
-  firtex/thread/atomic/Atomic_VC_X86_64.h \
-  firtex/thread/atomic/Atomic_VC_X86.h \
-  firtex/thread/atomic/Barrier_GCC.h \
-  firtex/thread/atomic/Barrier.h \
-  firtex/thread/atomic/Barrier_VC.h \
-  firtex/thread/AtomicCount_GCC.h \
-  firtex/thread/AtomicCount_GCC_X86.h \
-  firtex/thread/AtomicCount.h \
-  firtex/thread/AtomicCount_PTHREADS.h \
-  firtex/thread/AtomicCount_SYNC.h \
-  firtex/thread/AtomicCount_WIN32.h \
-  firtex/thread/Atomic.h \
-  firtex/thread/atomic/IsAligned.h \
-  firtex/thread/atomic/MemoryOrder.h \
   firtex/thread/Condition.h \
   firtex/thread/Event.h \
   firtex/thread/Event_POSIX.h \
@@ -373,7 +339,6 @@ nobase_include_HEADERS = \
   firtex/thread/FastMutex.h \
   firtex/thread/FastMutex_POSIX.h \
   firtex/thread/HPSMR.h \
-  firtex/thread/interlocked.h \
   firtex/thread/Mutex.h \
   firtex/thread/Mutex_POSIX.h \
   firtex/thread/Mutex_WIN32.h \

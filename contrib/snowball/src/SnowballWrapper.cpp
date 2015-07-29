@@ -81,13 +81,13 @@ size_t SnowballWrapper::stemmer(char* szStemmedBuf, size_t nBufSize,
 
     bool bFlagEnglish = true;
     int i;
-    register char* pWord;
+    char* pWord;
     int  nWordLen;
     char* pStemmerStart = szStemmedBuf;
-    register char* pStemmedBufStart = pStemmerStart;
-    register char *pStemmedBufEnd;
-    register const char* pWordStart;
-    register const char* pWordEnd;
+    char* pStemmedBufStart = pStemmerStart;
+    char *pStemmedBufEnd;
+    const char* pWordStart;
+    const char* pWordEnd;
 
     pWordStart = szTextBuf;
     const char* pTextEnd = szTextBuf + nTextLen;

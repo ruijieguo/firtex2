@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.0.2.
+// A Bison parser, made by GNU Bison 3.0.4.
 
 // Skeleton implementation for Bison LALR(1) parsers in C++
 
-// Copyright (C) 2002-2013 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #define yylex   fx_bisonlex
 
 // First part of user declarations.
-#line 1 "DateTimeBisonParser.yy" // lalr1.cc:399
+#line 1 "DateTimeBisonParser.yy" // lalr1.cc:404
 
 #include <stdio.h>
 #include <string>
@@ -51,7 +51,7 @@ FX_NS_END
 FX_NS_USE(analyzer);
 
 
-#line 55 "DateTimeBisonParser.cc" // lalr1.cc:399
+#line 55 "DateTimeBisonParser.cc" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -64,7 +64,7 @@ FX_NS_USE(analyzer);
 #include "DateTimeBisonParser.hh"
 
 // User implementation prologue.
-#line 65 "DateTimeBisonParser.yy" // lalr1.cc:407
+#line 65 "DateTimeBisonParser.yy" // lalr1.cc:412
 
 #include "firtex/analyzer/DateTimeLexer.h"
 #include "firtex/analyzer/DateTimeAnalyzer.h"
@@ -77,7 +77,7 @@ FX_NS_USE(analyzer);
 #undef yylex
 #define yylex lexer.lex
 
-#line 81 "DateTimeBisonParser.cc" // lalr1.cc:407
+#line 81 "DateTimeBisonParser.cc" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -154,7 +154,7 @@ FX_NS_USE(analyzer);
 #endif // !YYDEBUG
 
 #define yyerrok         (yyerrstatus_ = 0)
-#define yyclearin       (yyempty = true)
+#define yyclearin       (yyla.clear ())
 
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
@@ -163,7 +163,7 @@ FX_NS_USE(analyzer);
 
 
 namespace fx_bison {
-#line 167 "DateTimeBisonParser.cc" // lalr1.cc:474
+#line 167 "DateTimeBisonParser.cc" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -268,6 +268,23 @@ namespace fx_bison {
   inline
   DateTimeBisonParser::basic_symbol<Base>::~basic_symbol ()
   {
+    clear ();
+  }
+
+  template <typename Base>
+  inline
+  void
+  DateTimeBisonParser::basic_symbol<Base>::clear ()
+  {
+    Base::clear ();
+  }
+
+  template <typename Base>
+  inline
+  bool
+  DateTimeBisonParser::basic_symbol<Base>::empty () const
+  {
+    return Base::type_get () == empty_symbol;
   }
 
   template <typename Base>
@@ -283,7 +300,7 @@ namespace fx_bison {
   // by_type.
   inline
   DateTimeBisonParser::by_type::by_type ()
-     : type (empty)
+    : type (empty_symbol)
   {}
 
   inline
@@ -298,10 +315,17 @@ namespace fx_bison {
 
   inline
   void
+  DateTimeBisonParser::by_type::clear ()
+  {
+    type = empty_symbol;
+  }
+
+  inline
+  void
   DateTimeBisonParser::by_type::move (by_type& that)
   {
     type = that.type;
-    that.type = empty;
+    that.clear ();
   }
 
   inline
@@ -315,7 +339,7 @@ namespace fx_bison {
   // by_state.
   inline
   DateTimeBisonParser::by_state::by_state ()
-    : state (empty)
+    : state (empty_state)
   {}
 
   inline
@@ -325,10 +349,17 @@ namespace fx_bison {
 
   inline
   void
+  DateTimeBisonParser::by_state::clear ()
+  {
+    state = empty_state;
+  }
+
+  inline
+  void
   DateTimeBisonParser::by_state::move (by_state& that)
   {
     state = that.state;
-    that.state = empty;
+    that.clear ();
   }
 
   inline
@@ -340,7 +371,10 @@ namespace fx_bison {
   DateTimeBisonParser::symbol_number_type
   DateTimeBisonParser::by_state::type_get () const
   {
-    return state == empty ? 0 : yystos_[state];
+    if (state == empty_state)
+      return empty_symbol;
+    else
+      return yystos_[state];
   }
 
   inline
@@ -354,7 +388,7 @@ namespace fx_bison {
   {
     value = that.value;
     // that is emptied.
-    that.type = empty;
+    that.type = empty_symbol;
   }
 
   inline
@@ -389,6 +423,10 @@ namespace fx_bison {
     std::ostream& yyoutput = yyo;
     YYUSE (yyoutput);
     symbol_number_type yytype = yysym.type_get ();
+    // Avoid a (spurious) G++ 4.8 warning about "array subscript is
+    // below array bounds".
+    if (yysym.empty ())
+      std::abort ();
     yyo << (yytype < yyntokens_ ? "token" : "nterm")
         << ' ' << yytname_[yytype] << " ("
         << yysym.location << ": ";
@@ -473,9 +511,6 @@ namespace fx_bison {
   int
   DateTimeBisonParser::parse ()
   {
-    /// Whether yyla contains a lookahead.
-    bool yyempty = true;
-
     // State.
     int yyn;
     /// Length of the RHS of the rule being reduced.
@@ -527,7 +562,7 @@ namespace fx_bison {
       goto yydefault;
 
     // Read a lookahead token.
-    if (yyempty)
+    if (yyla.empty ())
       {
         YYCDEBUG << "Reading a token: ";
         try
@@ -539,7 +574,6 @@ namespace fx_bison {
             error (yyexc);
             goto yyerrlab1;
           }
-        yyempty = false;
       }
     YY_SYMBOL_PRINT ("Next token is", yyla);
 
@@ -558,9 +592,6 @@ namespace fx_bison {
         yyn = -yyn;
         goto yyreduce;
       }
-
-    // Discard the token being shifted.
-    yyempty = true;
 
     // Count tokens shifted since error; after three, turn off error status.
     if (yyerrstatus_)
@@ -611,7 +642,7 @@ namespace fx_bison {
           switch (yyn)
             {
   case 2:
-#line 80 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 80 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /**
                       * The date/time format defined in the ISO 8601 standard:
@@ -627,11 +658,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 631 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 662 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 3:
-#line 96 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 96 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /**
                       * The date/time format defined in RFC 1123:
@@ -647,11 +678,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 651 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 682 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 4:
-#line 112 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 112 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /**
                       * The date/time format defined in RFC 850 (obsoleted by RFC 1036).
@@ -667,11 +698,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 671 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 702 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 5:
-#line 128 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 128 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /** format: 2008/1/1 12:00:00 */
                      if (FX_NS(utility)::DateTime::isValid((yystack_[10].value.intVal), (yystack_[8].value.intVal), (yystack_[6].value.intVal), (yystack_[5].value.intVal), (yystack_[3].value.intVal), (yystack_[1].value.intVal)))
@@ -684,11 +715,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 688 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 719 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 6:
-#line 141 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 141 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                    /** simple, sortable date/time format: 2008-01-01 12:00:00 */
                    if (FX_NS(utility)::DateTime::isValid((yystack_[10].value.intVal), (yystack_[8].value.intVal), (yystack_[6].value.intVal), (yystack_[5].value.intVal), (yystack_[3].value.intVal), (yystack_[1].value.intVal)))
@@ -701,11 +732,11 @@ namespace fx_bison {
                        YYERROR;
                    }
                }
-#line 705 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 736 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 7:
-#line 154 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 154 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /** 
                       * The date/time format produced by the ANSI C asctime() function:
@@ -721,11 +752,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 725 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 756 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
   case 8:
-#line 170 "DateTimeBisonParser.yy" // lalr1.cc:847
+#line 170 "DateTimeBisonParser.yy" // lalr1.cc:859
     {
                      /** format: 2008年1月1日 12点00分00秒 */
                      if (FX_NS(utility)::DateTime::isValid((yystack_[12].value.intVal), (yystack_[10].value.intVal), (yystack_[8].value.intVal), (yystack_[6].value.intVal), (yystack_[4].value.intVal), (yystack_[2].value.intVal)))
@@ -738,11 +769,11 @@ namespace fx_bison {
                          YYERROR; 
                      }
                  }
-#line 742 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 773 "DateTimeBisonParser.cc" // lalr1.cc:859
     break;
 
 
-#line 746 "DateTimeBisonParser.cc" // lalr1.cc:847
+#line 777 "DateTimeBisonParser.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -770,8 +801,7 @@ namespace fx_bison {
     if (!yyerrstatus_)
       {
         ++yynerrs_;
-        error (yyla.location, yysyntax_error_ (yystack_[0].state,
-                                           yyempty ? yyempty_ : yyla.type_get ()));
+        error (yyla.location, yysyntax_error_ (yystack_[0].state, yyla));
       }
 
 
@@ -784,10 +814,10 @@ namespace fx_bison {
         // Return failure if at end of input.
         if (yyla.type_get () == yyeof_)
           YYABORT;
-        else if (!yyempty)
+        else if (!yyla.empty ())
           {
             yy_destroy_ ("Error: discarding", yyla);
-            yyempty = true;
+            yyla.clear ();
           }
       }
 
@@ -863,7 +893,7 @@ namespace fx_bison {
     goto yyreturn;
 
   yyreturn:
-    if (!yyempty)
+    if (!yyla.empty ())
       yy_destroy_ ("Cleanup: discarding lookahead", yyla);
 
     /* Do not reclaim the symbols of the rule whose action triggered
@@ -883,7 +913,7 @@ namespace fx_bison {
                  << std::endl;
         // Do not try to display the values of the reclaimed symbols,
         // as their printer might throw an exception.
-        if (!yyempty)
+        if (!yyla.empty ())
           yy_destroy_ (YY_NULLPTR, yyla);
 
         while (1 < yystack_.size ())
@@ -903,9 +933,8 @@ namespace fx_bison {
 
   // Generate an error message.
   std::string
-  DateTimeBisonParser::yysyntax_error_ (state_type yystate, symbol_number_type yytoken) const
+  DateTimeBisonParser::yysyntax_error_ (state_type yystate, const symbol_type& yyla) const
   {
-    std::string yyres;
     // Number of reported tokens (one for the "unexpected", one per
     // "expected").
     size_t yycount = 0;
@@ -919,7 +948,7 @@ namespace fx_bison {
          the only way this function was invoked is if the default action
          is an error action.  In that case, don't check for expected
          tokens because there are none.
-       - The only way there can be no lookahead present (in yytoken) is
+       - The only way there can be no lookahead present (in yyla) is
          if this state is a consistent state with a default action.
          Thus, detecting the absence of a lookahead is sufficient to
          determine that there is no unexpected or expected token to
@@ -939,8 +968,9 @@ namespace fx_bison {
          token that will not be accepted due to an error action in a
          later state.
     */
-    if (yytoken != yyempty_)
+    if (!yyla.empty ())
       {
+        int yytoken = yyla.type_get ();
         yyarg[yycount++] = yytname_[yytoken];
         int yyn = yypact_[yystate];
         if (!yy_pact_value_is_default_ (yyn))
@@ -983,6 +1013,7 @@ namespace fx_bison {
 #undef YYCASE_
       }
 
+    std::string yyres;
     // Argument number.
     size_t yyi = 0;
     for (char const* yyp = yyformat; *yyp; ++yyp)
@@ -1191,8 +1222,8 @@ namespace fx_bison {
 
 
 } // fx_bison
-#line 1195 "DateTimeBisonParser.cc" // lalr1.cc:1155
-#line 183 "DateTimeBisonParser.yy" // lalr1.cc:1156
+#line 1226 "DateTimeBisonParser.cc" // lalr1.cc:1167
+#line 183 "DateTimeBisonParser.yy" // lalr1.cc:1168
  
 
 /** Additional Code */

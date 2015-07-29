@@ -341,7 +341,7 @@ fi
 
 AM_CONDITIONAL([WITH_TCMALLOC], [test "x$with_tcmalloc" = "xyes"]) 
 
-CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -msse2"
+CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing"
 
 ac_configure_args="$ac_configure_args CXXFLAGS='$CXXFLAGS'"
 CONFIGURE_ARGS="$CONFIGURE_ARGS $ac_configure_args"

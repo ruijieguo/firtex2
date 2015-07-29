@@ -17,3 +17,9 @@ external_srcdir = $(top_srcdir)/external
 if WITH_BUNDLED_PCRE2
 libfirtexext_la_LIBADD += $(external_srcdir)/$(PCRE2)/libpcre2-8.la
 endif
+
+if WITH_BUNDLED_LIBEVENT
+libfirtexext_la_LIBADD += $(external_srcdir)/$(LIBEVENT)/libevent_pthreads.la
+libfirtexext_la_LIBADD += $(external_srcdir)/$(LIBEVENT)/libevent.la
+endif
+

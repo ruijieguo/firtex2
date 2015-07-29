@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.0.2.
+// A Bison parser, made by GNU Bison 3.0.4.
 
 // Stack handling for Bison parsers in C++
 
-// Copyright (C) 2002-2013 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 
 
 namespace fx_bison {
-#line 46 "stack.hh" // stack.hh:133
+#line 46 "stack.hh" // stack.hh:151
   template <class T, class S = std::vector<T> >
   class stack
   {
@@ -54,12 +54,12 @@ namespace fx_bison {
     stack ()
       : seq_ ()
     {
+      seq_.reserve (200);
     }
 
     stack (unsigned int n)
       : seq_ (n)
-    {
-    }
+    {}
 
     inline
     T&
@@ -136,8 +136,7 @@ namespace fx_bison {
     slice (const S& stack, unsigned int range)
       : stack_ (stack)
       , range_ (range)
-    {
-    }
+    {}
 
     inline
     const T&
@@ -153,6 +152,6 @@ namespace fx_bison {
 
 
 } // fx_bison
-#line 157 "stack.hh" // stack.hh:133
+#line 156 "stack.hh" // stack.hh:151
 
 #endif // !YY_FX_BISON_STACK_HH_INCLUDED
