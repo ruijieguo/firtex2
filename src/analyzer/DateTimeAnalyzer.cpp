@@ -16,7 +16,7 @@
 #include "firtex/analyzer/DateTimeAnalyzer.h"
 #include "firtex/analyzer/DateTimeLexer.h"
 #include "firtex/utility/NumberFormatter.h"
-#include "DateTimeBisonParser.h"
+#include "DateTimeBisonParser.hh"
 
 using namespace std;
 using namespace fx_bison;

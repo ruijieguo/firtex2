@@ -1,25 +1,25 @@
 include $(top_srcdir)/external/versions.am
 
-AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/external -Ithrift/gen-cpp
-
 AUTOMAKE_OPTIONS = subdir-objects
 
-EXTRA_DIST = \
-	ThriftSearchServiceHelper.h\
-	SearchService.thrift\
-	WatchdogService.thrift
+gen-cpp/ThriftSearchService.cpp gen-cpp/ThriftSearchService.h: SearchService.thrift
+	$(THRIFT_BIN) -r --gen cpp:cob_style $<
 
+gen-cpp/ThriftWatchdogService.cpp gen-cpp/WatchdogService_types.cpp gen-cpp/WatchdogService_constants.cpp: WatchdogService.thrift
+	$(THRIFT_BIN) -r --gen cpp:cob_style $<
 
 noinst_LTLIBRARIES = libthriftgen.la
 
 libthriftgen_la_SOURCES = \
-	ThriftSearchServiceHelper.cpp\
 	gen-cpp/ThriftSearchService.cpp\
 	gen-cpp/ThriftWatchdogService.cpp\
 	gen-cpp/SearchService_types.cpp\
 	gen-cpp/SearchService_constants.cpp\
 	gen-cpp/WatchdogService_types.cpp\
-	gen-cpp/WatchdogService_constants.cpp
+	gen-cpp/WatchdogService_constants.cpp\
+	ThriftSearchServiceHelper.cpp
+
+AM_CPPFLAGS = -I $(top_srcdir)/include -I $(top_srcdir)/external -Ithrift/gen-cpp
 
 THRIFT_BIN = 
 external_srcdir = $(top_srcdir)/external
@@ -35,13 +35,10 @@ else
 THRIFT_BIN += /usr/bin/thrift
 endif
 
-
-gen-cpp/ThriftSearchService.cpp gen-cpp/ThriftSearchService.h: $(top_srcdir)/app/thrift/SearchService.thrift
-	$(THRIFT_BIN) -r --gen cpp:cob_style $<
-
-gen-cpp/ThriftWatchdogService.cpp gen-cpp/WatchdogService_types.cpp gen-cpp/WatchdogService_constants.cpp: $(top_srcdir)/app/thrift/WatchdogService.thrift
-	$(THRIFT_BIN) -r --gen cpp:cob_style $<
-
+EXTRA_DIST = \
+	ThriftSearchServiceHelper.h\
+	SearchService.thrift\
+	WatchdogService.thrift
 
 distclean-local:
 	$(RM) gen-cpp -rf

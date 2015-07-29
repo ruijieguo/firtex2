@@ -43,6 +43,6 @@ libanalyzer_la_SOURCES = \
 	UnigramSegmenter.cpp
 
 extraclean:
-	$(RM) -f DateTimeBisonParser.h DateTimeBisonParser.cc
+	$(RM) -f DateTimeBisonParser.h DateTimeBisonParser.cc DateTimeLexer.cc GBKTokenLexer.cc UTF8TokenLexer.cc DateTimeBisonParser.hh  location.hh  position.hh  stack.hh
 
 rebuild: clean extraclean all

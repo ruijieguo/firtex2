@@ -1,142 +1,180 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+// A Bison parser, made by GNU Bison 3.0.2.
 
-/* Positions for Bison parsers in C++
+// Positions for Bison parsers in C++
 
-   Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+// Copyright (C) 2002-2013 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/* As a special exception, you may create a larger work that contains
-   part or all of the Bison parser skeleton and distribute that work
-   under terms of your choice, so long as that work isn't itself a
-   parser generator using the skeleton or a modified version thereof
-   as a parser skeleton.  Alternatively, if you modify or redistribute
-   the parser skeleton itself, you may (at your option) remove this
-   special exception, which will cause the skeleton and the resulting
-   Bison output files to be licensed under the GNU General Public
-   License without this special exception.
+// As a special exception, you may create a larger work that contains
+// part or all of the Bison parser skeleton and distribute that work
+// under terms of your choice, so long as that work isn't itself a
+// parser generator using the skeleton or a modified version thereof
+// as a parser skeleton.  Alternatively, if you modify or redistribute
+// the parser skeleton itself, you may (at your option) remove this
+// special exception, which will cause the skeleton and the resulting
+// Bison output files to be licensed under the GNU General Public
+// License without this special exception.
 
-   This special exception was added by the Free Software Foundation in
-   version 2.2 of Bison.  */
+// This special exception was added by the Free Software Foundation in
+// version 2.2 of Bison.
 
 /**
  ** \file position.hh
  ** Define the fx_bison::position class.
  */
 
-#ifndef BISON_POSITION_HH
-# define BISON_POSITION_HH
+#ifndef YY_FX_BISON_POSITION_HH_INCLUDED
+# define YY_FX_BISON_POSITION_HH_INCLUDED
 
+# include <algorithm> // std::max
 # include <iostream>
 # include <string>
 
-namespace fx_bison
-{
+# ifndef YY_NULLPTR
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULLPTR nullptr
+#  else
+#   define YY_NULLPTR 0
+#  endif
+# endif
+
+
+namespace fx_bison {
+#line 56 "position.hh" // location.cc:291
   /// Abstract a position.
   class position
   {
   public:
-
     /// Construct a position.
-    position ()
-      : filename (0), line (1), column (0)
+    explicit position (std::string* f = YY_NULLPTR,
+                       unsigned int l = 1u,
+                       unsigned int c = 1u)
+      : filename (f)
+      , line (l)
+      , column (c)
     {
     }
 
 
     /// Initialization.
-    inline void initialize (std::string* fn)
+    void initialize (std::string* fn = YY_NULLPTR,
+                     unsigned int l = 1u,
+                     unsigned int c = 1u)
     {
       filename = fn;
-      line = 1;
-      column = 0;
+      line = l;
+      column = c;
     }
 
     /** \name Line and Column related manipulators
      ** \{ */
-  public:
     /// (line related) Advance to the COUNT next lines.
-    inline void lines (int count = 1)
+    void lines (int count = 1)
     {
-      column = 0;
-      line += count;
+      if (count)
+        {
+          column = 1u;
+          line = add_ (line, count, 1);
+        }
     }
 
     /// (column related) Advance to the COUNT next columns.
-    inline void columns (int count = 1)
+    void columns (int count = 1)
     {
-      int leftmost = 0;
-      int current  = column;
-      if (leftmost <= current + count)
-	column += count;
-      else
-	column = 0;
+      column = add_ (column, count, 1);
     }
     /** \} */
 
-  public:
     /// File name to which this position refers.
     std::string* filename;
     /// Current line number.
     unsigned int line;
     /// Current column number.
     unsigned int column;
+
+  private:
+    /// Compute max(min, lhs+rhs) (provided min <= lhs).
+    static unsigned int add_ (unsigned int lhs, int rhs, unsigned int min)
+    {
+      return (0 < rhs || -static_cast<unsigned int>(rhs) < lhs
+              ? rhs + lhs
+              : min);
+    }
   };
 
   /// Add and assign a position.
-  inline const position&
-  operator+= (position& res, const int width)
+  inline position&
+  operator+= (position& res, int width)
   {
     res.columns (width);
     return res;
   }
 
   /// Add two position objects.
-  inline const position
-  operator+ (const position& begin, const int width)
+  inline position
+  operator+ (position res, int width)
   {
-    position res = begin;
     return res += width;
   }
 
   /// Add and assign a position.
-  inline const position&
-  operator-= (position& res, const int width)
+  inline position&
+  operator-= (position& res, int width)
   {
     return res += -width;
   }
 
   /// Add two position objects.
-  inline const position
-  operator- (const position& begin, const int width)
+  inline position
+  operator- (position res, int width)
   {
-    return begin + -width;
+    return res -= width;
+  }
+
+  /// Compare two position objects.
+  inline bool
+  operator== (const position& pos1, const position& pos2)
+  {
+    return (pos1.line == pos2.line
+            && pos1.column == pos2.column
+            && (pos1.filename == pos2.filename
+                || (pos1.filename && pos2.filename
+                    && *pos1.filename == *pos2.filename)));
+  }
+
+  /// Compare two position objects.
+  inline bool
+  operator!= (const position& pos1, const position& pos2)
+  {
+    return !(pos1 == pos2);
   }
 
   /** \brief Intercept output stream redirection.
    ** \param ostr the destination output stream
    ** \param pos a reference to the position to redirect
    */
-  inline std::ostream&
-  operator<< (std::ostream& ostr, const position& pos)
+  template <typename YYChar>
+  inline std::basic_ostream<YYChar>&
+  operator<< (std::basic_ostream<YYChar>& ostr, const position& pos)
   {
     if (pos.filename)
       ostr << *pos.filename << ':';
     return ostr << pos.line << '.' << pos.column;
   }
 
-}
-#endif // not BISON_POSITION_HH
+
+} // fx_bison
+#line 180 "position.hh" // location.cc:291
+#endif // !YY_FX_BISON_POSITION_HH_INCLUDED

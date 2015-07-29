@@ -63,7 +63,7 @@ fi
 AS_IF([test "x${ac_cv_env_CFLAGS_set}" = "x"],
       [CFLAGS="$debug_flags $optimize_flags"])
 AS_IF([test "x${ac_cv_env_CXXFLAGS_set}" = "x"],
-      [CXXFLAGS="$debug_flags $optimize_flags"])
+      [CXXFLAGS="$CXXFLAGS $debug_flags $optimize_flags"])
 
 dnl Check for dl
 AC_CHECK_LIB(dl, dlopen, [LIBS="$LIBS -ldl"], exit 1)

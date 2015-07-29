@@ -88,7 +88,7 @@
   </proxy>
 
   <searcher>
-    <port>19803</port>
+    <port>5151</port>
     <!-- Size of thread pool for processing request -->
     <thread_pool>10</thread_pool>
   </searcher>

@@ -35,12 +35,6 @@ AC_FUNC_VPRINTF
 CONFIGURE_ARGS="$ac_configure_args"
 AC_SUBST(CONFIGURE_ARGS)
 
-ac_configure_args_pre="$ac_configure_args"
-ac_configure_args_post="$ac_configure_args --enable-shared=no --with-pic"
-ac_configure_args="$ac_configure_args_post"
-
-AC_CONFIG_COMMANDS_PRE([ac_configure_args="$ac_configure_args_pre"])
-AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args_post"])
 
 AC_ARG_ENABLE([debug],
               AS_HELP_STRING([--enable-debug],
@@ -349,7 +343,8 @@ AM_CONDITIONAL([WITH_TCMALLOC], [test "x$with_tcmalloc" = "xyes"])
 
 CXXFLAGS="$CXXFLAGS -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing -msse2"
 
-CONFIGURE_ARGS="$CONFIGURE_ARGS CXXFLAGS='$CXXFLAGS'"
+ac_configure_args="$ac_configure_args CXXFLAGS='$CXXFLAGS'"
+CONFIGURE_ARGS="$CONFIGURE_ARGS $ac_configure_args"
 
 dnl #######################################################################
 dnl # Doxygen Stuff
@@ -372,7 +367,13 @@ fi
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
 
-CONFIGURE_ARGS="$CONFIGURE_ARGS $ac_configure_args"
+
+ac_configure_args_pre="$ac_configure_args"
+ac_configure_args_post="$ac_configure_args --enable-shared=no --with-pic"
+ac_configure_args="$ac_configure_args_post"
+
+AC_CONFIG_COMMANDS_PRE([ac_configure_args="$ac_configure_args_pre"])
+AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args_post"])
 
 AC_CONFIG_SUBDIRS([contrib])
 

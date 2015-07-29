@@ -79,8 +79,9 @@ void BuilderAppRunner::buildIndex(bool bBlock)
     try
     {
         cout << "[INFO] Begin build index, config file: " << m_sConfFile << endl;
+        ProgressObserverPtr pOb(new ConsoleProgressObserver(1000));
         m_pColletion = FX_NS(collection)::Collection::buildIndex(
-                m_sConfFile, new ConsoleProgressObserver(1000), bBlock);
+                m_sConfFile, pOb, bBlock);
     }
     catch(const FirteXException& fe)
     {

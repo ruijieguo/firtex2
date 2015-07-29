@@ -457,7 +457,7 @@ inline void LoggerBase::valog(LevelType level, const char* file,
 
 inline void LoggerBase::doLog(const LoggingEvent& event)
 {
-    if (!m_pAppender)
+    if (m_pAppender)
     {
         m_pAppender->append(event);
     }

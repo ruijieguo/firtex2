@@ -120,7 +120,7 @@ void EvHttpAsyncClient::run()
         }
         m_procCount++;
         FX_DEBUG("Fetch one valid request, proccess count: [%d], queue size: [%d]",
-                 std::atomic_load(&m_procCount), (int32_t)m_requests.getSize());
+                 m_procCount.load(), (int32_t)m_requests.getSize());
         int ret = event_base_loop(m_evbase, EVLOOP_ONCE);
         if (ret == -1)
         {
@@ -153,7 +153,7 @@ void EvHttpAsyncClient::get(const std::string& sURI)
     m_requests.enqueue(pReq);
     m_inCount++;
     FX_TRACE("made request: incoming count: [%d], [%s], queue size: [%d]",
-             std::atomic_load(&m_inCount), sURI.c_str(), (int32_t)m_requests.getSize());
+             m_inCount.load(), sURI.c_str(), (int32_t)m_requests.getSize());
     return;
 }
 

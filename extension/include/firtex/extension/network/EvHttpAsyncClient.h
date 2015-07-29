@@ -177,7 +177,7 @@ DEFINE_TYPED_PTR(EvHttpAsyncClient);
 inline void EvHttpAsyncClient::done(struct evhttp_request* req)
 {
     m_compCount++;
-    FX_DEBUG("complete count : [%d]", std::atomic_load(&m_compCount));
+    FX_DEBUG("complete count : [%d]", m_compCount.load());
 
     m_pLastRequest = req;
     if (!req)

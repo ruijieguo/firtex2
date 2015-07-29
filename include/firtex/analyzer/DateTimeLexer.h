@@ -29,7 +29,7 @@ FX_NS_DEF(analyzer);
 class DateTimeLexer;
 FX_NS_END
 
-#include "analyzer/DateTimeBisonParser.h"
+#include "analyzer/DateTimeBisonParser.hh"
 
 FX_NS_DEF(analyzer);
 

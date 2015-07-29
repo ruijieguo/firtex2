@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configure>
+	<index_schema>
+		<fields>
+			<default_field/>
+			<field>
+				<name>FILEPATH</name>
+				<type>KEYWORD</type>
+				<store>true</store>
+			</field>
+			<field>
+				<name>FILENAME</name>
+				<type>KEYWORD</type>
+				<store>true</store>
+			</field>
+			<field>
+				<name>FILETYPE</name>
+				<type>KEYWORD</type>
+				<store>true</store>
+			</field>
+			<field>
+				<name>MODIFIED</name>
+				<type>INT64</type>
+				<store>true</store>
+			</field>
+			<field>
+				<name>FILESIZE</name>
+				<type>INT32</type>
+				<store>true</store>
+			</field>
+			<field>
+				<name>BODY</name>
+				<type>UTF8_TEXT</type>
+				<store>true</store>
+			</field>
+		</fields>
+	</index_schema>
+</configure>
+

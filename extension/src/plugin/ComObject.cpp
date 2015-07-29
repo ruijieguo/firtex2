@@ -44,7 +44,7 @@ FX_STDMETHODIMP_(uint32_t) ComObject::Release()
     {
         delete this;
     }
-    return (uint32_t)std::atomic_load(&m_refCount);
+    return (uint32_t)m_refCount.load();
 };	
 
 /////////////////////////////////////////////////////////////////////////////
